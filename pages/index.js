@@ -1,14 +1,16 @@
 import * as React from "react";
-import { truncate, distanceBetween } from "../helpers";
+import { truncate, distanceBetween, states } from "../helpers";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import useLocalStorage from "../hooks/use-local-storage";
+import Select from "react-select";
 
 export default function Home() {
 	const [species, setSpecies] = React.useState([]);
 	const [expanded, setExpanded] = React.useState([]);
 	const [seen, setSeen] = useLocalStorage("seenSpecies", []);
+	const [selectedStates, setSelectedStates] = useLocalStorage("states", []);
 	const region = "US-OH";
 	const myLat = 41.1508759;
 	const myLng = -81.5139457;
@@ -41,7 +43,7 @@ export default function Home() {
 			setSpecies(species);
 		}
 		fetchSightings();
-	}, [region]);
+	}, [region, myLat, myLng]);
 
 	const handleToggle = (code) => {
 		if (expanded.includes(code)) {
@@ -55,13 +57,27 @@ export default function Home() {
 		setSeen([...seen, code]);
 	}
 
+	const handleStateChange = (value) => {
+		const values = value ? value.map(({value}) => value) : [];
+		setSelectedStates(values);
+	}
+
 	const filteredSpecies = species.filter(species => ! seen.includes(species.code));
 
+	const stateOptions = Object.entries(states).map((item) => ({ value: item[0], label: item[1] }));
+
+	const stateValue = selectedStates.map(value => ({ value, label: states[value] }));
+	
 	return (
 		<div className="container mx-auto max-w-xl">
 			<h1 className="text-3xl font-bold text-center my-8">
-      			Rare Birds for {region}
+      			Rare Birds
     		</h1>
+
+			<Select options={stateOptions} onChange={handleStateChange} value={stateValue} isMulti isClearable placeholder="Select states..."/>
+
+			<br/>
+
 			{filteredSpecies?.map(({name, code, reports}) => {
 				const date = reports[0].obsDt;
 				const isExpanded = expanded.includes(code);
@@ -85,11 +101,16 @@ export default function Home() {
 									<h4 className="text-orange-900">
 										{truncate(locName, 32)}, {subnational2Name}, {subnational1Name}
 									</h4>
-									{(!distancesAllEqual && shortestDistance === distance) && <span dateTime={date} className="bg-green-400 rounded-sm ml-4 px-2 py-1 text-xs">Closest</span>}
-									<br/>
+									{(!distancesAllEqual && shortestDistance === distance) &&
+										<>
+											<span dateTime={date} className="bg-green-400 rounded-sm ml-4 px-2 py-1 text-xs">Closest</span>
+											<br/>
+										</>
+									}
 									<span className="text-gray-700 text-sm">{dayjs(obsDt).fromNow()} by {userDisplayName}</span>
 									<br/>
 									{distance} mi
+									<br/>
 									<a href={`https://ebird.org/checklist/${subId}`}>View Checklist</a> | <a href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}>Directions</a>
 								</li>
 							))}
