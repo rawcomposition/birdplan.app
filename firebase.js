@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, setDoc, getDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
 	apiKey: "AIzaSyCGaBX_cx-ho80gdc93nR2zGX2VxyJN538",
@@ -19,4 +19,26 @@ const logout = () => {
 	signOut(auth);
 };
 
-export { auth, db, logout };
+const saveSeenSpecies = async (seenSpecies) => {
+	const user = auth.currentUser;
+	if (!user) {
+		return false;
+	}
+	await setDoc(doc(db, "seenSpecies", user.uid), {
+		species_ids: seenSpecies,
+	});
+}
+
+const fetchSeenSpecies = async () => {
+	const user = auth.currentUser;
+	if (!user) {
+		return [];
+	}
+	const snapshot = await getDoc(doc(db, "seenSpecies", user.uid));
+	if (snapshot.exists()) {
+		return snapshot.data()?.species_ids;
+	}
+	return [];
+}
+
+export { auth, db, logout, saveSeenSpecies, fetchSeenSpecies };
