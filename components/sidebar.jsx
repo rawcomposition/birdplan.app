@@ -10,6 +10,8 @@ export default function Sidebar() {
 	
 	return (
 		<div className="h-screen w-72 bg-slate-900 p-6 relative">
+			<img src="/icon.png" className="mx-auto" width="85"/>
+			<h1 className="text-center mb-6 text-[#757c8c] font-logo text-2xl">birdy alert</h1>
 			{!user && <div className="rounded-md bg-white p-4">
 				{showSignup
 					? <>
@@ -22,7 +24,18 @@ export default function Sidebar() {
 					</>
 				}
 			</div>}
-			{user && <p className="text-white text-center font-bold mx-2">Hello, {user?.displayName}!</p>}
+			{user && 
+				<>
+					<div className="rounded-md bg-white py-4 px-3 mt-4 flex gap-3">
+						<img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&s=150" className="w-[50px] h-[50px] object-cover rounded-full"/>
+						<div>
+							<span className="font-bold">{user.displayName}</span>
+							<br/>
+							<span className="text-xs">{user.email}</span>
+						</div>
+					</div>
+				</>
+			}
 			{user && <div className="absolute left-0 bottom-0 w-full p-6 text-center">
 				<button type="button" onClick={logout} className="text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full">Sign Out</button>
 			</div>}

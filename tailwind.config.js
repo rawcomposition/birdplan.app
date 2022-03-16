@@ -5,6 +5,10 @@ module.exports = {
 	  ],
 	theme: {
 		extend: {},
+		fontFamily: {
+			"body": ["Ubuntu", "sans-serif"],
+			"logo": ["Lobster", "cursive"],
+		}
 	},
 	plugins: [],
 }
