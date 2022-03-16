@@ -9,7 +9,7 @@ export default function Sidebar() {
 	const { user } = useUser();
 	
 	return (
-		<div className="h-screen w-72 bg-slate-900 p-6 relative">
+		<div className="h-screen w-72 bg-slate-900 p-6 relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity">
 			<img src="/icon.png" className="mx-auto" width="85"/>
 			<h1 className="text-center mb-6 text-[#757c8c] font-logo text-2xl">birdy alert</h1>
 			{!user && <div className="rounded-md bg-white p-4">

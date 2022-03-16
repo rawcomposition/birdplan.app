@@ -13,4 +13,10 @@
 	a {
 	  @apply text-blue-900;
 	}
+
+	svg.icon {
+		width: 1em;
+		height: 1em;
+		@apply inline;
+	}
 }
