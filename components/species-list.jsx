@@ -18,7 +18,7 @@ export default function SpeciesList({items, onSeen, onToggle}) {
 					<article key={code} className="mb-4 rounded-sm shadow-sm bg-white">
 						<div className="flex">
 							<div className="flex-shrink-0">
-								<img src={imageUrl} width="150" height="150" className="object-cover rounded p-4 w-[150px] h-[150px]"/>
+								<img src={imageUrl} width="150" height="150" className={`object-cover rounded p-4 w-[150px] h-[150px] ${!images[sciName] ? "opacity-50" : ""}`}/>
 							</div>
 							<div className="pr-4 pt-6 w-full">
 								<header className="flex justify-between">

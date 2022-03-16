@@ -1,25 +1,31 @@
 import * as React from "react";
 import Sidebar from "../components/sidebar";
 import SpeciesList from "../components/species-list";
-import { distanceBetween, states as allStates } from "../helpers";
-import Select from "react-select";
+import { distanceBetween, postProcessSpecies } from "../helpers";
 import reducer from "../reducer";
 import { useUser } from "../providers/user";
 import { saveSeenSpecies, fetchSeenSpecies } from "../firebase";
+import useSyncLocalhost from "../hooks/use-sync-localhost";
+import LocationSelect from "../components/location-select";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, {
 		species: [],
 		expanded: [],
 		seen: [],
-		states: [],
+		showSeen: false,
+		address: {
+			label: "Akron, OH",
+			lat: 41.0843458,
+			lng: -81.5830169,
+		}
 	});
-	const { species, expanded, seen, states } = state;
-	const region = "US-OH";
-	const myLat = 41.1508759;
-	const myLng = -81.5139457;
+	const { address, species, expanded, seen, showSeen } = state;
+	const { lat, lng } = address || {};
 
 	const { user } = useUser();
+
+	useSyncLocalhost(dispatch, showSeen, address);
 
 	React.useEffect(() => {
 		const getData = async () => {
@@ -34,47 +40,13 @@ export default function Home() {
 	}, [user?.uid]);
 
 	React.useEffect(() => {
-		const states = window.localStorage.getItem("states");
-		
-		if (states) {
-			dispatch({ type: "set_states", payload: JSON.parse(states) });
-		}
-	}, []);
-
-	React.useEffect(() => {
-		window.localStorage.setItem("states",  JSON.stringify(states) || []);
-	}, [states]);
-
-	React.useEffect(() => {
 		const fetchSightings = async () => {
-			const response = await fetch(`https://api.ebird.org/v2/data/obs/${region}/recent/notable?detail=full&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`);
-			const json = await response.json();
-
-			//For unknown reasons, eBird sometimes returns duplicates
-			const unique = json?.filter((value, index, array) => array.findIndex(searchItem => (searchItem.obsId === value.obsId)) === index);
-
-			const structuredResults = {};
-
-			unique?.map(item => {
-				const distance = parseInt(distanceBetween(myLat, myLng, item.lat, item.lng));
-				item = {...item, distance}
-				if (!structuredResults[item.speciesCode]) {
-					structuredResults[item.speciesCode] = {
-						name: item.comName,
-						sciName: item.sciName,
-						code: item.speciesCode,
-						reports: [],
-					};
-				}
-				structuredResults[item.speciesCode].reports.push(item);
-			});
-
-			const species = Object.entries(structuredResults).map(([key, value]) => value);
-
+			const response = await fetch(`http://localhost:3000/api/fetch?lat=${lat}&lng=${lng}`);
+			const species = await response.json();
 			dispatch({ type: "set_species", payload: species }); 
 		}
-		//fetchSightings();
-	}, [region, myLat, myLng]);
+		fetchSightings();
+	}, [lat, lng]);
 
 	const handleToggle = (code) => {
 		dispatch({ type: "expand_toggle", payload: code }); 
@@ -85,32 +57,25 @@ export default function Home() {
 		saveSeenSpecies([...seen, code]);
 	}
 
-	const handleStateChange = (value) => {
-		const values = value ? value.map(({value}) => value) : [];
-		dispatch({ type: "set_states", payload: values });
+	const handleAddressChange = React.useCallback((value) => {
+		dispatch({ type: "set_address", payload: value });
+	}, []);
+
+	const handleFilterChange = (field, value) => {
+		dispatch({ type: "filter_change", payload: { field, value } });
 	}
 
-	const stateOptions = Object.entries(allStates).map((item) => ({ value: item[0], label: item[1] }));
-
-	let stateValue = states;
-
-	if (states?.length) {
-		stateValue = states.length === 1 ? { label: allStates[states[0]], value: states[0] } : states.map(value => ({ value, label: states[value] }));
-	}
-
-	const filteredSpecies = species
-		.filter(species => ! seen.includes(species.code))
-		.map(species => ({...species, isExpanded: expanded.includes(species.code)}));
+	const filteredSpecies = postProcessSpecies({species, expanded, seen, showSeen});
 
 	return (
 		<div className="flex h-screen">
-			<Sidebar/>
+			<Sidebar seenCount={seen?.length} filters={{ showSeen }} onFilterChange={handleFilterChange}/>
 			<div className="container mx-auto max-w-xl">
 				<h1 className="text-3xl font-bold text-center my-8">
-					Rare Birds
+					Rare Birds Near Me
 				</h1>
 
-				<Select options={stateOptions} onChange={handleStateChange} value={stateValue} isMulti placeholder="Select states..."/>
+				<LocationSelect className="w-full" value={address} onChange={handleAddressChange}/>
 
 				<br/>
 				<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen}/> 

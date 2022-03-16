@@ -3,10 +3,20 @@ import LoginForm from "./login-form";
 import SignupForm from "./signup-form";
 import { useUser } from "../providers/user";
 import { logout } from "../firebase";
+import Select from "react-select";
 
-export default function Sidebar() {
+export default function Sidebar({seenCount, filters, onFilterChange}) {
 	const [showSignup, setShowSignup] = React.useState(false);
 	const { user } = useUser();
+
+	const radiusOptions = [
+		{ label: "5 mi", value: 5 },
+		{ label: "10 mi", value: 10 },
+		{ label: "20 mi", value: 20 },
+		{ label: "50 mi", value: 50 },
+		{ label: "100 mi", value: 100 },
+		{ label: "250 mi", value: 250 },
+	];
 	
 	return (
 		<div className="h-screen w-72 bg-slate-900 p-6 relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity">
@@ -36,6 +46,15 @@ export default function Sidebar() {
 					</div>
 				</>
 			}
+			<div className="mt-4">
+				<label htmlFor="radius" className="text-white text-sm">Radius</label>
+				<Select options={radiusOptions} defaultValue={radiusOptions[3]} placeholder="Select radius..."/>
+			</div>
+			<div className="mt-4">
+				<label className="text-white text-sm">
+					<input type="checkbox" className="mr-2" checked={!filters?.showSeen} onChange={() => onFilterChange("showSeen")}/> Hide species I&apos;ve seen ({seenCount})
+				</label>
+			</div>
 			{user && <div className="absolute left-0 bottom-0 w-full p-6 text-center">
 				<button type="button" onClick={logout} className="text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full">Sign Out</button>
 			</div>}

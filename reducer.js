@@ -1,6 +1,6 @@
 export default function reducer(state, action) {
 	const { type, payload } = action;
-	const { species, expanded, seen, states } = state;
+	const { species, expanded, seen, states, showSeen } = state;
 	switch (type) {
 		case "set_species": {
 			return { ...state, species: payload };
@@ -10,6 +10,12 @@ export default function reducer(state, action) {
 		}
 		case "set_seen": {
 			return { ...state, seen: payload };
+		}
+		case "set_showSeen": {
+			return { ...state, showSeen: payload };
+		}
+		case "set_address": {
+			return { ...state, address: payload };
 		}
 		case "add_seen": {
 			return { ...state, seen: [...seen, payload] };
@@ -22,6 +28,17 @@ export default function reducer(state, action) {
 			} else {
 				return { ...state, expanded: [...expanded, code] };
 			}
+		}
+		case "filter_change": {
+			const { field, value } = payload;
+			if (field === "showSeen") {
+				return { ...state, showSeen: ! showSeen }
+			} else {
+				return { ...state, [field]: value };
+			}
+		}
+		default: {
+			throw "Invalid reducer action";
 		}
 	}
 }

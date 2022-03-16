@@ -1,4 +1,14 @@
 {
-	"Chondestes grammacus": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/351375121/640",
-	"Bubo scandiacus": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/75929641/640"
+	"Chondestes grammacus": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/351375121/480",
+	"Bubo scandiacus": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/75929641/480",
+	"Pelecanus erythrorhynchos": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/142362211/480",
+	"Melanerpes erythrocephalus": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/203317111/480",
+	"Anser rossii": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/398912841/480",
+	"Corthylio calendula": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/123107851/480",
+	"Podiceps nigricollis": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/157218471/480",
+	"Calidris minutilla": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/33765831/480",
+	"Cygnus buccinator": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/203322821/480",
+	"Polioptila caerulea": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/69548171/480",
+	"Acanthis flammea": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/299389731/480",
+	"Toxostoma rufum": "https://cdn.download.ams.birds.cornell.edu/api/v1/asset/224055581/480"
 }

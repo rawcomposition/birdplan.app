@@ -9,6 +9,7 @@ class MyDocument extends Document {
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossrigin="true"/>
 					<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Ubuntu:wght@300;400&display=swap" rel="stylesheet"/>
 					<link rel="icon" href="/favicon.png"/>
+					<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyDTIORmh3RAwAmckeA6eNk_zwUKcUBwtEg&sensor=false&libraries=places" async/>
 				</Head>
 				<body>
 					<Main />
