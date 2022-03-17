@@ -16,7 +16,8 @@
 
 	svg.icon {
 		width: 1em;
-		height: 1em;
+		height: 1em;		
+		@apply fill-current;
 		@apply inline;
 	}
 }

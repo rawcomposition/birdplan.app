@@ -8,6 +8,7 @@ import { saveSeenSpecies, fetchSeenSpecies } from "../firebase";
 import useSyncLocalhost from "../hooks/use-sync-localhost";
 import LocationSelect from "../components/location-select";
 import useFetchSpecies from "../hooks/use-fetch-species";
+import AnimatedArrow from "../components/animated-arrow";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, {
@@ -79,16 +80,10 @@ export default function Home() {
 			<div className="h-screen overflow-auto grow">
 				{isCacheRestored && <div className="container mx-auto max-w-xl">
 					{showWelcome &&
-						<div className="text-center flex flex-col gap-2 my-12">
+						<div className="text-center flex flex-col gap-2 mt-12 mb-6">
 							<h3 className="text-3xl font-bold text-slate-500 text-shadow">Looking for rare birds?</h3>
 							<p className="text-gray-500 font-bold">Enter a location to get started</p>
-							<p className="text-sm text-gray-500">
-								Forgot where you live? Try
-								&nbsp;
-								<button type="button" className="font-bold text-orange-600" onClick={
-									() => handleAddressChange({ label: "Akron, OH", lat: 41.0843458, lng: -81.5830169})
-								}>Akron, Ohio</button>
-							</p>
+							<AnimatedArrow/>
 						</div>
 					}
 
