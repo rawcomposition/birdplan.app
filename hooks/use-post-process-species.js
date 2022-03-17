@@ -3,14 +3,18 @@ export default function usePostProcessSpecies({species, expanded, seen, showSeen
 		return { seenCount: 0, filteredSpecies: null };
 	}
 	let filteredSpecies = species;
+	
+	filteredSpecies = filteredSpecies.map(species => ({
+		...species,
+		isSeen: seen.includes(species.code),
+		isExpanded: expanded.includes(species.code),
+	}));
+
+	const seenCount = filteredSpecies.filter(({isSeen}) => !! isSeen ).length;
 
 	if (!showSeen) {
-		filteredSpecies = species.filter(species => ! seen.includes(species.code));
+		filteredSpecies = filteredSpecies.filter(({isSeen}) => !isSeen);
 	}
-
-	filteredSpecies = filteredSpecies.map(species => ({...species, isExpanded: expanded.includes(species.code)}));
-
-	const seenCount = species.filter(species => seen.includes(species.code)).length;
-
+	
 	return { seenCount, filteredSpecies };
 }

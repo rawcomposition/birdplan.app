@@ -7,5 +7,5 @@ export default function Button({className, type="button", size="md", color="defa
 		sm: "py-1 px-4",
 		md: "py-2 px-4",
 	}
-	return <button type={type} className={`flex justify-center border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${sizes[size]} ${colors[color]} ${className}`} {...props}>{children}</button>
+	return <button type={type} className={`flex items-center justify-center border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${sizes[size]} ${colors[color]} ${className}`} {...props}>{children}</button>
 }

@@ -2,11 +2,13 @@ import ObservationList from "../components/observation-list";
 import Timeago from "../components/timeago";
 import images from "../images.json";
 import Button from "./button";
+import CheckIcon from "../icons/check";
+import MapIcon from "../icons/map";
 
 export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 	return (
 		<div>
-			{items?.map(({name, sciName, code, reports, isExpanded}) => {
+			{items?.map(({name, sciName, code, reports, isExpanded, isSeen}) => {
 				const date = reports[0].obsDt;
 				const distances = reports.map(({distance}) => distance);
 				const shortestDistance = distances.sort((a, b) => (a - b)).shift();
@@ -23,14 +25,22 @@ export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 								<header className="flex justify-between">
 									<h3 className="font-bold text-lg mb-4">{name}</h3>
 									<div>
-										<Timeago datetime={date} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap"/>
-										<span dateTime={date} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap">{shortestDistance} mi</span>
+										<span className="bg-gray-300 text-gray-600 rounded-sm ml-2 px-2 py-1 text-xs whitespace-nowrap">
+											<Timeago datetime={date}/>
+										</span>
+										<span dateTime={date} className="bg-gray-300 text-gray-600 rounded-sm ml-2 px-2 py-1 text-xs whitespace-nowrap">
+											<MapIcon className="mr-1 mt-[-2px] text-[0.85em]"/>
+											{shortestDistance} mi
+										</span>
 									</div>
 								</header>
 								<hr className="mb-4"/>
 								<div className="flex gap-2">
 									<Button size="sm" onClick={() => onToggle(code)}>{isExpanded ? "Hide" : "Show"} {reports.length} {reports.length === 1 ? "Report" : "Reports"}</Button>
-									<Button size="sm" onClick={() => onSeen(code)}>Seen</Button>
+									<Button size="sm" onClick={() => onSeen(code)}>
+										{isSeen && <CheckIcon className="mr-2"/>}
+										{isSeen ? "Seen" : "Not Seen"}
+									</Button>
 								</div>
 							</div>
 						</div>
