@@ -72,15 +72,17 @@ export default function Home() {
 	return (
 		<div className="flex h-screen">
 			<Sidebar seenCount={seen?.length} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
-			<div className="container mx-auto max-w-xl">
-				<h1 className="text-3xl font-bold text-center my-8">
-					Rare Birds Near Me
-				</h1>
+			<div className="h-screen overflow-auto grow">
+				<div className="container mx-auto max-w-xl">
+					<h1 className="text-3xl font-bold text-center my-8">
+						Rare Birds Near Me
+					</h1>
 
-				<LocationSelect className="w-full" value={address} onChange={handleAddressChange}/>
+					<LocationSelect className="w-full" value={address} onChange={handleAddressChange}/>
 
-				<br/>
-				<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen}/> 
+					<br/>
+					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen}/> 
+				</div>
 			</div>
 		</div>
 	)
