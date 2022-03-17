@@ -15,7 +15,7 @@ export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 				const imageUrl = images[sciName] || "/bird.svg";
 				reports = reports.map(report => ({...report, isClosest: !distancesAllEqual && shortestDistance === report.distance}));
 				return (
-					<article key={code} className="mb-4 rounded-sm shadow-sm bg-white">
+					<article key={code} className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full">
 						<div className="flex">
 							<div className="flex-shrink-0">
 								<img src={imageUrl} width="150" height="150" className={`object-cover rounded p-4 w-[150px] h-[150px] ${!images[sciName] ? "opacity-50" : ""}`}/>
