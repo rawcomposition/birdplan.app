@@ -102,7 +102,13 @@ export default function Home() {
 					}
 					{showNoResults && <NoResults/>}
 
-					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/> 
+					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/>
+
+					{filteredSpecies?.length > 0 &&
+						<div className="flex justify-between mb-4">
+							<span className="text-xs text-gray-500">Showing {filteredSpecies.length} of {species?.length} results</span>
+						</div>
+					}
 				</div>}
 			</div>
 		</div>
