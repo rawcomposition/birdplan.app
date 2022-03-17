@@ -3,7 +3,6 @@ import Sidebar from "../components/sidebar";
 import SpeciesList from "../components/species-list";
 import Skeleton from "../components/skeleton";
 import Timeago from "../components/timeago";
-import { postProcessSpecies } from "../helpers";
 import reducer from "../reducer";
 import { useUser } from "../providers/user";
 import { saveSeenSpecies, fetchSeenSpecies } from "../firebase";
@@ -12,6 +11,7 @@ import LocationSelect from "../components/location-select";
 import useFetchSpecies from "../hooks/use-fetch-species";
 import AnimatedArrow from "../components/animated-arrow";
 import NoResults from "../components/no-results";
+import usePostProcessSpecies from "../hooks/use-post-process-species";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, {
@@ -73,14 +73,14 @@ export default function Home() {
 		}
 	}, [lat, lng, radius, call]);
 
-	const filteredSpecies = postProcessSpecies({species, expanded, seen, showSeen});
+	const { seenCount, filteredSpecies } = usePostProcessSpecies({species, expanded, seen, showSeen});
 
 	const showWelcome = (!lat || !lng) && isCacheRestored;
 	const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0;
 
 	return (
 		<div className="flex h-screen">
-			<Sidebar seenCount={seen?.length} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
+			<Sidebar seenCount={seenCount} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
 			<div className="h-screen overflow-auto grow pt-6">
 				{isCacheRestored && <div className="container mx-auto max-w-xl">
 					{showWelcome &&

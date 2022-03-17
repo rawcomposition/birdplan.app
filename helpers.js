@@ -25,16 +25,3 @@ export function distanceBetween(lat1, lon1, lat2, lon2, metric = true) {
 		return parseFloat(dist);
 	}
 }
-
-export function postProcessSpecies({species, expanded, seen, showSeen}) {
-	if (!species) {
-		return null;
-	}
-	let filteredSpecies = species;
-
-	if (!showSeen) {
-		filteredSpecies = species.filter(species => ! seen.includes(species.code));
-	}
-
-	return filteredSpecies.map(species => ({...species, isExpanded: expanded.includes(species.code)}));
-}
