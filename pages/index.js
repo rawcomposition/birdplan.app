@@ -7,6 +7,7 @@ import { useUser } from "../providers/user";
 import { saveSeenSpecies, fetchSeenSpecies } from "../firebase";
 import useSyncLocalhost from "../hooks/use-sync-localhost";
 import LocationSelect from "../components/location-select";
+import useFetchSpecies from "../hooks/use-fetch-species";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, {
@@ -16,9 +17,9 @@ export default function Home() {
 		showSeen: false,
 		radius: 50,
 		address: {
-			label: "Akron, OH",
-			lat: 41.0843458,
-			lng: -81.5830169,
+			label: null,
+			lat: null,
+			lng: null,
 		}
 	});
 	const { address, radius, species, expanded, seen, showSeen } = state;
@@ -40,15 +41,6 @@ export default function Home() {
 		}
 	}, [user?.uid]);
 
-	React.useEffect(() => {
-		const fetchSightings = async () => {
-			const response = await fetch(`http://localhost:3000/api/fetch?lat=${lat}&lng=${lng}&radius=${radius}`);
-			const species = await response.json();
-			dispatch({ type: "set_species", payload: species }); 
-		}
-		fetchSightings();
-	}, [lat, lng, radius]);
-
 	const handleToggle = (code) => {
 		dispatch({ type: "expand_toggle", payload: code }); 
 	}
@@ -67,6 +59,16 @@ export default function Home() {
 		dispatch({ type: "filter_change", payload: { field, value } });
 	}
 
+	const { loading, error, call } = useFetchSpecies({ lat, lng, radius, onFinished: (response) => {
+		dispatch({ type: "set_species", payload: response })
+	 }});
+
+	 React.useEffect(() => {
+		if (lat && lng) {
+			call();
+		}
+	}, [lat, lng, radius, call]);
+
 	const filteredSpecies = postProcessSpecies({species, expanded, seen, showSeen});
 
 	return (
@@ -81,6 +83,10 @@ export default function Home() {
 					<LocationSelect className="w-full" value={address} onChange={handleAddressChange}/>
 
 					<br/>
+
+					{error && <div>Error fetching data</div>}
+					{loading && <div>loading...</div>}
+
 					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/> 
 				</div>
 			</div>
