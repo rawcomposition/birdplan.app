@@ -1,6 +1,7 @@
 import * as React from "react";
 import Sidebar from "../components/sidebar";
 import SpeciesList from "../components/species-list";
+import Skeleton from "../components/skeleton";
 import { postProcessSpecies } from "../helpers";
 import reducer from "../reducer";
 import { useUser } from "../providers/user";
@@ -9,10 +10,11 @@ import useSyncLocalhost from "../hooks/use-sync-localhost";
 import LocationSelect from "../components/location-select";
 import useFetchSpecies from "../hooks/use-fetch-species";
 import AnimatedArrow from "../components/animated-arrow";
+import NoResults from "../components/no-results";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, {
-		species: [],
+		species: null,
 		expanded: [],
 		seen: [],
 		showSeen: false,
@@ -66,21 +68,22 @@ export default function Home() {
 
 	 React.useEffect(() => {
 		if (lat && lng) {
-			//call();
+			call();
 		}
 	}, [lat, lng, radius, call]);
 
 	const filteredSpecies = postProcessSpecies({species, expanded, seen, showSeen});
 
 	const showWelcome = (!lat || !lng) && isCacheRestored;
+	const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0;
 
 	return (
 		<div className="flex h-screen">
 			<Sidebar seenCount={seen?.length} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
-			<div className="h-screen overflow-auto grow">
+			<div className="h-screen overflow-auto grow pt-6">
 				{isCacheRestored && <div className="container mx-auto max-w-xl">
 					{showWelcome &&
-						<div className="text-center flex flex-col gap-2 mt-12 mb-6">
+						<div className="text-center flex flex-col gap-2 my-6">
 							<h3 className="text-3xl font-bold text-slate-500 text-shadow">Looking for rare birds?</h3>
 							<p className="text-gray-500 font-bold">Enter a location to get started</p>
 							<AnimatedArrow/>
@@ -92,7 +95,12 @@ export default function Home() {
 					<br/>
 
 					{error && <div>Error fetching data</div>}
-					{loading && <div>loading...</div>}
+					{loading &&
+						<div className="flex flex-col gap-4">
+							<Skeleton count={3}/>
+						</div>
+					}
+					{showNoResults && <NoResults/>}
 
 					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/> 
 				</div>}
