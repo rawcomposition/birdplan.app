@@ -4,6 +4,7 @@ import Input from "./input";
 export default function LocationSelect({value, onChange, ...props}) {
 	const { label } = value;
 	const inputRef = React.useRef(null);
+	const isInitalizedRef = React.useRef();
 
 	const handleKeyDown = (e) => {
 		if (e.keyCode === 13) { 
@@ -12,6 +13,9 @@ export default function LocationSelect({value, onChange, ...props}) {
 	}
 
 	React.useEffect(() => {
+		if (isInitalizedRef.current || !window.google) {
+			return;
+		}
 		const handlePlaceSelect = (googlePlaces) => {
 			const place = googlePlaces.getPlace();
 			onChange({
@@ -31,6 +35,7 @@ export default function LocationSelect({value, onChange, ...props}) {
 		googlePlaces.addListener("place_changed", () => {
 			handlePlaceSelect(googlePlaces);
 		});
+		isInitalizedRef.current = true;
 	}, [onChange]);
 
 	return (
