@@ -17,9 +17,11 @@ export default function Sidebar({seenCount, filters, onFilterChange}) {
 		{ label: "100 mi", value: 100 },
 		{ label: "250 mi", value: 250 },
 	];
+
+	const selectedRadius = filters.radius ? radiusOptions.find(({value}) => value == filters.radius) : null;
 	
 	return (
-		<div className="h-screen w-72 bg-slate-900 p-6 relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity">
+		<div className="h-screen w-80 bg-slate-900 p-6 relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity">
 			<img src="/icon.png" className="mx-auto" width="85"/>
 			<h1 className="text-center mb-6 text-[#757c8c] font-logo text-2xl">birdy alert</h1>
 			{!user && <div className="rounded-md bg-white p-4">
@@ -48,7 +50,7 @@ export default function Sidebar({seenCount, filters, onFilterChange}) {
 			}
 			<div className="mt-4">
 				<label htmlFor="radius" className="text-white text-sm">Radius</label>
-				<Select options={radiusOptions} defaultValue={radiusOptions[3]} placeholder="Select radius..."/>
+				<Select options={radiusOptions} value={selectedRadius} onChange={({value}) => onFilterChange("radius", value)} defaultValue={radiusOptions[3]} placeholder="Select radius..."/>
 			</div>
 			<div className="mt-4">
 				<label className="text-white text-sm">

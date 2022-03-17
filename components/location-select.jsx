@@ -2,7 +2,7 @@ import * as React from "react";
 import Input from "./input";
 
 export default function LocationSelect({value, onChange, ...props}) {
-	const { label, lat, lng } = value;
+	const { label } = value;
 	const inputRef = React.useRef(null);
 
 	const handleKeyDown = (e) => {
@@ -16,8 +16,8 @@ export default function LocationSelect({value, onChange, ...props}) {
 			const place = googlePlaces.getPlace();
 			onChange({
 				label: place.formatted_address,
-				lat: place.geometry.location.lat(),
-				lng: place.geometry.location.lng()
+				lat: parseFloat(place.geometry.location.lat().toFixed(7)),
+				lng: parseFloat(place.geometry.location.lng().toFixed(7))
 			});
 		}
 

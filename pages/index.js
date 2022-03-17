@@ -1,7 +1,7 @@
 import * as React from "react";
 import Sidebar from "../components/sidebar";
 import SpeciesList from "../components/species-list";
-import { distanceBetween, postProcessSpecies } from "../helpers";
+import { postProcessSpecies } from "../helpers";
 import reducer from "../reducer";
 import { useUser } from "../providers/user";
 import { saveSeenSpecies, fetchSeenSpecies } from "../firebase";
@@ -14,18 +14,19 @@ export default function Home() {
 		expanded: [],
 		seen: [],
 		showSeen: false,
+		radius: 50,
 		address: {
 			label: "Akron, OH",
 			lat: 41.0843458,
 			lng: -81.5830169,
 		}
 	});
-	const { address, species, expanded, seen, showSeen } = state;
+	const { address, radius, species, expanded, seen, showSeen } = state;
 	const { lat, lng } = address || {};
 
 	const { user } = useUser();
 
-	useSyncLocalhost(dispatch, showSeen, address);
+	useSyncLocalhost(dispatch, showSeen, address, radius);
 
 	React.useEffect(() => {
 		const getData = async () => {
@@ -41,12 +42,12 @@ export default function Home() {
 
 	React.useEffect(() => {
 		const fetchSightings = async () => {
-			const response = await fetch(`http://localhost:3000/api/fetch?lat=${lat}&lng=${lng}`);
+			const response = await fetch(`http://localhost:3000/api/fetch?lat=${lat}&lng=${lng}&radius=${radius}`);
 			const species = await response.json();
 			dispatch({ type: "set_species", payload: species }); 
 		}
 		fetchSightings();
-	}, [lat, lng]);
+	}, [lat, lng, radius]);
 
 	const handleToggle = (code) => {
 		dispatch({ type: "expand_toggle", payload: code }); 
@@ -62,6 +63,7 @@ export default function Home() {
 	}, []);
 
 	const handleFilterChange = (field, value) => {
+		console.log(field, value); //TODO: Remove after testing
 		dispatch({ type: "filter_change", payload: { field, value } });
 	}
 
@@ -69,7 +71,7 @@ export default function Home() {
 
 	return (
 		<div className="flex h-screen">
-			<Sidebar seenCount={seen?.length} filters={{ showSeen }} onFilterChange={handleFilterChange}/>
+			<Sidebar seenCount={seen?.length} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
 			<div className="container mx-auto max-w-xl">
 				<h1 className="text-3xl font-bold text-center my-8">
 					Rare Birds Near Me

@@ -22,7 +22,7 @@ export function distanceBetween(lat1, lon1, lat2, lon2, metric = true) {
 		if (metric) {
 			dist = dist * 1.609344;
 		}
-		return dist;
+		return parseFloat(dist);
 	}
 }
 

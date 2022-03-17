@@ -17,6 +17,9 @@ export default function reducer(state, action) {
 		case "set_address": {
 			return { ...state, address: payload };
 		}
+		case "set_radius": {
+			return { ...state, radius: payload };
+		}
 		case "add_seen": {
 			return { ...state, seen: [...seen, payload] };
 		}
