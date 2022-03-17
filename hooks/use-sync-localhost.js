@@ -19,6 +19,8 @@ export default function useSyncLocalhost(dispatch, showSeen, address, radius) {
 		if (radius) {
 			dispatch({ type: "set_radius", payload: radius });
 		}
+
+		dispatch({ type: "set_cacheRestored" });
 	}, [dispatch]);
 
 	React.useEffect(() => {

@@ -27,6 +27,9 @@ export function distanceBetween(lat1, lon1, lat2, lon2, metric = true) {
 }
 
 export function postProcessSpecies({species, expanded, seen, showSeen}) {
+	if (!species) {
+		return null;
+	}
 	let filteredSpecies = species;
 
 	if (!showSeen) {

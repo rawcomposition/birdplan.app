@@ -16,13 +16,14 @@ export default function Home() {
 		seen: [],
 		showSeen: false,
 		radius: 50,
+		isCacheRestored: false,
 		address: {
 			label: null,
 			lat: null,
 			lng: null,
 		}
 	});
-	const { address, radius, species, expanded, seen, showSeen } = state;
+	const { address, radius, species, expanded, seen, showSeen, isCacheRestored } = state;
 	const { lat, lng } = address || {};
 
 	const { user } = useUser();
@@ -55,7 +56,6 @@ export default function Home() {
 	}, []);
 
 	const handleFilterChange = (field, value) => {
-		console.log(field, value); //TODO: Remove after testing
 		dispatch({ type: "filter_change", payload: { field, value } });
 	}
 
@@ -65,22 +65,34 @@ export default function Home() {
 
 	 React.useEffect(() => {
 		if (lat && lng) {
-			call();
+			//call();
 		}
 	}, [lat, lng, radius, call]);
 
 	const filteredSpecies = postProcessSpecies({species, expanded, seen, showSeen});
 
+	const showWelcome = (!lat || !lng) && isCacheRestored;
+
 	return (
 		<div className="flex h-screen">
 			<Sidebar seenCount={seen?.length} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
 			<div className="h-screen overflow-auto grow">
-				<div className="container mx-auto max-w-xl">
-					<h1 className="text-3xl font-bold text-center my-8">
-						Rare Birds Near Me
-					</h1>
+				{isCacheRestored && <div className="container mx-auto max-w-xl">
+					{showWelcome &&
+						<div className="text-center flex flex-col gap-2 my-12">
+							<h3 className="text-3xl font-bold text-slate-500 text-shadow">Looking for rare birds?</h3>
+							<p className="text-gray-500 font-bold">Enter a location to get started</p>
+							<p className="text-sm text-gray-500">
+								Forgot where you live? Try
+								&nbsp;
+								<button type="button" className="font-bold text-orange-600" onClick={
+									() => handleAddressChange({ label: "Akron, OH", lat: 41.0843458, lng: -81.5830169})
+								}>Akron, Ohio</button>
+							</p>
+						</div>
+					}
 
-					<LocationSelect className="w-full" value={address} onChange={handleAddressChange}/>
+					<LocationSelect className="w-full mt-6" value={address} onChange={handleAddressChange}/>
 
 					<br/>
 
@@ -88,7 +100,7 @@ export default function Home() {
 					{loading && <div>loading...</div>}
 
 					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/> 
-				</div>
+				</div>}
 			</div>
 		</div>
 	)

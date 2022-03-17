@@ -1,6 +1,6 @@
 export default function reducer(state, action) {
 	const { type, payload } = action;
-	const { species, expanded, seen, states, showSeen } = state;
+	const { species, expanded, seen, showSeen } = state;
 	switch (type) {
 		case "set_species": {
 			return { ...state, species: payload };
@@ -13,6 +13,9 @@ export default function reducer(state, action) {
 		}
 		case "set_showSeen": {
 			return { ...state, showSeen: payload };
+		}
+		case "set_cacheRestored": {
+			return { ...state, isCacheRestored: true };
 		}
 		case "set_address": {
 			return { ...state, address: payload };
