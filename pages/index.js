@@ -101,7 +101,7 @@ export default function Home() {
 							<Skeleton count={3}/>
 						</div>
 					}
-					{showNoResults && <NoResults/>}
+					{showNoResults && <NoResults reload={call}/>}
 
 					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/>
 

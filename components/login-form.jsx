@@ -20,7 +20,7 @@ export default function LoginForm(props) {
 			<h3>Login</h3>
 			<Input type="text" id="email" placeholder="Email"/>
 			<Input type="password" id="password" placeholder="Password"/>
-			<Submit loading={loading} className="mt-2">Login</Submit>
+			<Submit loading={loading} className="mt-2 w-full">Login</Submit>
 			{error && <Error>Error logging in</Error>}
 		</form>
 	)

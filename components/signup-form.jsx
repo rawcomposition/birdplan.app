@@ -25,7 +25,7 @@ export default function SignupForm(props) {
 			<Input type="text" id="name" placeholder="Name"/>
 			<Input type="email" id="email" placeholder="Email"/>
 			<Input type="password" id="password" placeholder="Password"/>
-			<Submit loading={loading} className="mt-2">Sign up</Submit>
+			<Submit loading={loading} className="mt-2 w-full">Sign up</Submit>
 			{error && <Error>Error creating account</Error>}
 		</form>
 	)

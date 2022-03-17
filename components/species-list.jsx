@@ -1,6 +1,7 @@
 import ObservationList from "../components/observation-list";
 import Timeago from "../components/timeago";
 import images from "../images.json";
+import Button from "./button";
 
 export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 	return (
@@ -27,8 +28,10 @@ export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 									</div>
 								</header>
 								<hr className="mb-4"/>
-								<button type="button" className="inline-flex justify-center py-1 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500" onClick={() => onToggle(code)}>{isExpanded ? "Hide" : "Show"} {reports.length} {reports.length === 1 ? "Report" : "Reports"}</button>
-								<button type="button" className="ml-2 inline-flex justify-center py-1 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500" onClick={() => onSeen(code)}>Seen</button>
+								<div className="flex gap-2">
+									<Button size="sm" onClick={() => onToggle(code)}>{isExpanded ? "Hide" : "Show"} {reports.length} {reports.length === 1 ? "Report" : "Reports"}</Button>
+									<Button size="sm" onClick={() => onSeen(code)}>Seen</Button>
+								</div>
 							</div>
 						</div>
 						{isExpanded && <ul className="pl-4 pr-4 pb-4 flex flex-col gap-4">

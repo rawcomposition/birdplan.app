@@ -28,11 +28,12 @@ export default function Sidebar({seenCount, filters, onFilterChange}) {
 				{showSignup
 					? <>
 						<SignupForm className="mb-1"/>
-						<span className="text-sm text-gray-500">Have an account? <button type="button" className="text-[#ee1540]" onClick={() => setShowSignup(false)}>Login</button></span>
+						<span className="text-sm text-gray-500">Have an account? <button type="button" className="text-rose-600/75" onClick={() => setShowSignup(false)}>Login</button></span>
+						<span className="text-sm text-gray-500">Have an account? <button type="button" className="text-rose-600/75" onClick={() => setShowSignup(false)}>Login</button></span>
 					</>
 					: <>
 						<LoginForm className="mb-1"/>
-						<span className="text-sm text-gray-500">Need an account? <button type="button" className="text-[#ee1540]" onClick={() => setShowSignup(true)}>Sign up</button></span>
+						<span className="text-sm text-gray-500">Need an account? <button type="button" className="text-rose-600/75" onClick={() => setShowSignup(true)}>Sign up</button></span>
 					</>
 				}
 			</div>}
