@@ -1,7 +1,5 @@
 import { truncate } from "../helpers";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
+import Timeago from "../components/timeago";
 
 export default function ObservationList({userLat, userLng, items}) {
 	return (
@@ -21,7 +19,9 @@ export default function ObservationList({userLat, userLng, items}) {
 							<br/>
 						</>
 					}
-					<span className="text-gray-700 text-sm">{dayjs(obsDt).fromNow()} by {userDisplayName}</span>
+					<span className="text-gray-700 text-sm">
+						<Timeago datetime={obsDt} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap"/> by {userDisplayName}
+					</span>
 					<br/>
 					<a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">View Checklist</a>
 					&nbsp;|&nbsp;

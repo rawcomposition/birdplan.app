@@ -2,6 +2,7 @@ import * as React from "react";
 import Sidebar from "../components/sidebar";
 import SpeciesList from "../components/species-list";
 import Skeleton from "../components/skeleton";
+import Timeago from "../components/timeago";
 import { postProcessSpecies } from "../helpers";
 import reducer from "../reducer";
 import { useUser } from "../providers/user";
@@ -62,7 +63,7 @@ export default function Home() {
 		dispatch({ type: "filter_change", payload: { field, value } });
 	}
 
-	const { loading, error, call } = useFetchSpecies({ lat, lng, radius, onFinished: (response) => {
+	const { loading, error, lastUpdate, call } = useFetchSpecies({ lat, lng, radius, onCallback: (response) => {
 		dispatch({ type: "set_species", payload: response })
 	 }});
 
@@ -107,6 +108,12 @@ export default function Home() {
 					{filteredSpecies?.length > 0 &&
 						<div className="flex justify-between mb-4">
 							<span className="text-xs text-gray-500">Showing {filteredSpecies.length} of {species?.length} results</span>
+							{lastUpdate && 
+								<span className="text-xs text-gray-500">
+									Updated <Timeago datetime={lastUpdate}/>&nbsp;-&nbsp;
+									<button type="button" className="text-blue-900" onClick={call}>Reload</button>
+								</span>
+							}
 						</div>
 					}
 				</div>}

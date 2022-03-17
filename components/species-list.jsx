@@ -1,7 +1,5 @@
 import ObservationList from "../components/observation-list";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
+import Timeago from "../components/timeago";
 import images from "../images.json";
 
 export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
@@ -24,7 +22,7 @@ export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 								<header className="flex justify-between">
 									<h3 className="font-bold text-lg mb-4">{name}</h3>
 									<div>
-										<time dateTime={date} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap">{dayjs(date).fromNow()}</time>
+										<Timeago datetime={date} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap"/>
 										<span dateTime={date} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap">{shortestDistance} mi</span>
 									</div>
 								</header>
