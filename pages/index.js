@@ -81,7 +81,7 @@ export default function Home() {
 					<LocationSelect className="w-full" value={address} onChange={handleAddressChange}/>
 
 					<br/>
-					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen}/> 
+					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/> 
 				</div>
 			</div>
 		</div>

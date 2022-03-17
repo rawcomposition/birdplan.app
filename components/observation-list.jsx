@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
-export default function ObservationList({items}) {
+export default function ObservationList({userLat, userLng, items}) {
 	return (
 		<ul className="pl-4 pr-4 pb-4 flex flex-col gap-4">
 			{items?.map(({locName, subnational2Name, subnational1Name, subId, obsId, obsDt, userDisplayName, lat, lng, distance, isClosest}) => (
@@ -23,7 +23,9 @@ export default function ObservationList({items}) {
 					}
 					<span className="text-gray-700 text-sm">{dayjs(obsDt).fromNow()} by {userDisplayName}</span>
 					<br/>
-					<a href={`https://ebird.org/checklist/${subId}`}>View Checklist</a> | <a href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}>Directions</a>
+					<a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">View Checklist</a>
+					&nbsp;|&nbsp;
+					<a href={`https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${lat},${lng}`} target="_blank" rel="noreferrer">Directions</a>
 				</li>
 			))}
 		</ul>

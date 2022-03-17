@@ -4,7 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import images from "../images.json";
 
-export default function SpeciesList({items, onSeen, onToggle}) {
+export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 	return (
 		<div>
 			{items?.map(({name, sciName, code, reports, isExpanded}) => {
@@ -34,7 +34,7 @@ export default function SpeciesList({items, onSeen, onToggle}) {
 							</div>
 						</div>
 						{isExpanded && <ul className="pl-4 pr-4 pb-4 flex flex-col gap-4">
-							<ObservationList items={reports}/>
+							<ObservationList items={reports} userLat={lat} userLng={lng}/>
 						</ul>}
 					</article>
 				)
