@@ -3,29 +3,24 @@ import Timeago from "../components/timeago";
 
 export default function ObservationList({userLat, userLng, items}) {
 	return (
-		<ul className="pl-4 pr-4 pb-4 flex flex-col gap-4">
+		<ul className="pl-4 pr-4 pb-4 flex flex-col gap-7 mt-3">
 			{items?.map(({locName, subnational2Name, subnational1Name, subId, obsId, obsDt, userDisplayName, lat, lng, distance, isClosest}) => (
 				<li key={obsId + userDisplayName} className="rounded-sm bg-white">
-					<div className="flex justify-between">
-						<h4 className="text-orange-900">
-							{truncate(locName, 32)}, {subnational2Name}, {subnational1Name}
+					<div className="flex items-start">
+						<h4 className="text-slate-700 text-[0.85em] mr-auto">
+							{truncate(locName, 45)}, {subnational2Name}, {subnational1Name}
 						</h4>
-						<span className="bg-gray-100 rounded-sm ml-4 px-2 py-1 text-xs">{distance} mi</span>
+						{isClosest && <span className="bg-lime-600 rounded-sm ml-2 px-2 py-1 text-xs text-white">Closest</span>}
+						<span className="bg-gray-100 rounded-sm ml-2 px-2 py-1 text-xs whitespace-nowrap">{distance} mi</span>
 					</div>
 					
-					{isClosest &&
-						<>
-							<span className="bg-green-400 rounded-sm ml-4 px-2 py-1 text-xs">Closest</span>
-							<br/>
-						</>
-					}
-					<span className="text-gray-700 text-sm">
+					<p className="text-gray-500 text-xs">
 						<Timeago datetime={obsDt}/> by {userDisplayName}
-					</span>
-					<br/>
-					<a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">View Checklist</a>
-					&nbsp;|&nbsp;
-					<a href={`https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${lat},${lng}`} target="_blank" rel="noreferrer">Directions</a>
+					</p>
+					<div className="text-[0.85em] mt-2 space-x-3">
+						<a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">View Checklist</a>
+						<a href={`https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${lat},${lng}`} target="_blank" rel="noreferrer">Directions</a>
+					</div>
 				</li>
 			))}
 		</ul>
