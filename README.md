@@ -9,7 +9,7 @@ This is a little project I put together to make finding rare eBird reports withi
 3. Run `npm run dev` in terminal
 4. Open [http://localhost:3000](http://localhost:3000) with your browser
 
-## Feature roadmap
+## Feature Roadmap
 
 - [ ] Convert to Typescript
 - [ ] Create component tests with `react-testing-library`
@@ -22,3 +22,5 @@ This is a little project I put together to make finding rare eBird reports withi
 - [ ] Show alert when new species found
 - [ ] Use Gravatars and/or setup Google login
 - [ ] Highlight birds that are close
+
+If you would like to contribute to any of the features above, feel free to open a pull request.
