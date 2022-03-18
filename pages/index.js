@@ -35,7 +35,7 @@ export default function Home() {
 
 	const { user } = useUser();
 
-	useSyncLocalhost(dispatch, showSeen, address, radius);
+	useSyncLocalhost({dispatch, seen, showSeen, address, radius});
 
 	React.useEffect(() => {
 		const getData = async () => {
