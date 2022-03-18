@@ -9,7 +9,7 @@ This is a little project I put together to make finding rare eBird reports withi
 3. Run `npm run dev` in terminal
 4. Open [http://localhost:3000](http://localhost:3000) with your browser
 
-## Feature Roadmap
+## Roadmap
 
 - [ ] Convert to Typescript
 - [ ] Create component tests with `react-testing-library`
