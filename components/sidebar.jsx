@@ -31,7 +31,6 @@ export default function Sidebar({seenCount, filters, onFilterChange, onLogout, o
 					? <>
 						<SignupForm className="mb-1"/>
 						<span className="text-sm text-gray-500">Have an account? <button type="button" className="text-rose-600/75" onClick={() => setShowSignup(false)}>Login</button></span>
-						<span className="text-sm text-gray-500">Have an account? <button type="button" className="text-rose-600/75" onClick={() => setShowSignup(false)}>Login</button></span>
 					</>
 					: <>
 						<LoginForm className="mb-1"/>
