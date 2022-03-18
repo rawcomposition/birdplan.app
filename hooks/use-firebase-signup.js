@@ -1,5 +1,5 @@
 import * as React from "react";
-import { auth } from "../firebase";
+import { auth, uploadSeenSpeciesFromLocalhost } from "../firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useUser } from "../providers/user";
 	
@@ -14,7 +14,9 @@ export default function useFirebaseSignup()  {
 		try {
 			await createUserWithEmailAndPassword(auth, email, password);
 			await updateProfile(auth.currentUser, { displayName: name });
-			refreshUser();
+			await refreshUser();
+			uploadSeenSpeciesFromLocalhost();
+			
 		} catch (error) {
 			setError(error);
 			console.error(error);

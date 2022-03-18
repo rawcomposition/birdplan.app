@@ -12,11 +12,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 
-const saveSeenSpecies = async (seenSpecies) => {
+export const saveSeenSpecies = async (seenSpecies) => {
 	const user = auth.currentUser;
 	if (!user) {
 		return false;
@@ -26,7 +26,19 @@ const saveSeenSpecies = async (seenSpecies) => {
 	});
 }
 
-const fetchSeenSpecies = async () => {
+export const uploadSeenSpeciesFromLocalhost = async () => {
+	try {
+		const seen = window.localStorage.getItem("seen");
+		if (seen) {
+			const seenArray = JSON.parse(seen);
+			if (Array.isArray(seenArray) && seenArray.length > 0) {
+				saveSeenSpecies(seenArray);
+			}
+		}
+	} catch (error) {}
+}
+
+export const fetchSeenSpecies = async () => {
 	const user = auth.currentUser;
 	if (!user) {
 		return [];
@@ -37,5 +49,3 @@ const fetchSeenSpecies = async () => {
 	}
 	return [];
 }
-
-export { auth, db, saveSeenSpecies, fetchSeenSpecies };
