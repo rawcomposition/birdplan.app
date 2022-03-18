@@ -21,7 +21,7 @@ export default function Sidebar({seenCount, filters, onFilterChange, open}) {
 	const selectedRadius = filters.radius ? radiusOptions.find(({value}) => value == filters.radius) : null;
 	
 	return (
-		<div className={`h-screen w-80 ${!open ? "-ml-96" : ""} md:ml-0 bg-slate-900 p-6 absolute md:relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity shadow-2xl md:shadow-none transition-all z-10`}>
+		<aside className={`h-screen w-80 ${!open ? "-ml-96" : ""} md:ml-0 bg-slate-900 p-6 absolute md:relative aside-bg bg-bottom shadow-2xl md:shadow-none transition-all z-10`}>
 			<img src="/icon.png" className="mx-auto" width="85"/>
 			<h1 className="text-center mb-6 text-[#757c8c] font-logo text-2xl">birdy alert</h1>
 			{!user && <div className="rounded-md bg-white p-4">
@@ -59,6 +59,6 @@ export default function Sidebar({seenCount, filters, onFilterChange, open}) {
 			{user && <div className="absolute left-0 bottom-0 w-full p-6 text-center">
 				<button type="button" onClick={logout} className="text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full">Sign Out</button>
 			</div>}
-		</div>
+		</aside>
 	)
 }
