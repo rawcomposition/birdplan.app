@@ -49,7 +49,7 @@ export default function Sidebar({seenCount, filters, onFilterChange, open}) {
 			}
 			<div className="mt-4">
 				<label htmlFor="radius" className="text-white text-sm">Radius</label>
-				<Select options={radiusOptions} value={selectedRadius} onChange={({value}) => onFilterChange("radius", value)} defaultValue={radiusOptions[3]} placeholder="Select radius..."/>
+				<Select instanceId="radius-select" options={radiusOptions} value={selectedRadius} onChange={({value}) => onFilterChange("radius", value)} defaultValue={radiusOptions[3]} placeholder="Select radius..."/>
 			</div>
 			<div className="mt-4">
 				<label className="text-white text-sm">
