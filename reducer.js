@@ -1,4 +1,19 @@
-export default function reducer(state, action) {
+export const initialState = {
+	species: null,
+	expanded: [],
+	seen: [],
+	showSeen: false,
+	radius: 50,
+	isCacheRestored: false,
+	showSidebar: false,
+	address: {
+		label: null,
+		lat: null,
+		lng: null,
+	}
+}
+
+export function reducer(state, action) {
 	const { type, payload } = action;
 	const { expanded, seen, showSeen, showSidebar } = state;
 	switch (type) {
@@ -50,6 +65,9 @@ export default function reducer(state, action) {
 			} else {
 				return { ...state, [field]: value };
 			}
+		}
+		case "reset": {
+			return { ...initialState, isCacheRestored: true };
 		}
 		default: {
 			throw "Invalid reducer action";

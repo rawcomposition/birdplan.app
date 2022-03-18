@@ -3,7 +3,7 @@ import Sidebar from "../components/sidebar";
 import SpeciesList from "../components/species-list";
 import Skeleton from "../components/skeleton";
 import Timeago from "../components/timeago";
-import reducer from "../reducer";
+import { reducer, initialState } from "../reducer";
 import { useUser } from "../providers/user";
 import { saveSeenSpecies, fetchSeenSpecies } from "../firebase";
 import useSyncLocalhost from "../hooks/use-sync-localhost";
@@ -16,20 +16,7 @@ import usePostProcessSpecies from "../hooks/use-post-process-species";
 import CogIcon from "../icons/cog";
 
 export default function Home() {
-	const [state, dispatch] = React.useReducer(reducer, {
-		species: null,
-		expanded: [],
-		seen: [],
-		showSeen: false,
-		radius: 50,
-		isCacheRestored: false,
-		showSidebar: false,
-		address: {
-			label: null,
-			lat: null,
-			lng: null,
-		}
-	});
+	const [state, dispatch] = React.useReducer(reducer, initialState);
 	const { address, radius, species, expanded, seen, showSeen, isCacheRestored, showSidebar } = state;
 	const { lat, lng } = address || {};
 
@@ -88,7 +75,7 @@ export default function Home() {
 
 	return (
 		<div className="flex h-screen">
-			<Sidebar seenCount={seenCount} filters={{ showSeen, radius }} open={showSidebar} onFilterChange={handleFilterChange}/>
+			<Sidebar seenCount={seenCount} filters={{ showSeen, radius }} open={showSidebar} onFilterChange={handleFilterChange} onLogout={() => dispatch({ type: "reset" })}/>
 			<div className="h-screen overflow-auto grow pt-6 px-4" onClick={showSidebar ? () => dispatch({ type: "toggle_sidebar" }) : null}>
 				{isCacheRestored && <div className="container mx-auto max-w-xl">
 					{showWelcome &&

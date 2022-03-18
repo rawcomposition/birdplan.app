@@ -1,8 +1,9 @@
 import * as React from "react";
+import { auth } from "../firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useUser } from "../providers/user";
 	
-export default function useFirebaseSignup(auth)  {
+export default function useFirebaseSignup()  {
 	const [error, setError] = React.useState();
 	const [loading, setLoading] = React.useState(false);
 	const { refreshUser } = useUser();

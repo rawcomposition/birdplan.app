@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore, setDoc, getDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -15,9 +15,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const logout = () => {
-	signOut(auth);
-};
 
 const saveSeenSpecies = async (seenSpecies) => {
 	const user = auth.currentUser;
@@ -41,4 +38,4 @@ const fetchSeenSpecies = async () => {
 	return [];
 }
 
-export { auth, db, logout, saveSeenSpecies, fetchSeenSpecies };
+export { auth, db, saveSeenSpecies, fetchSeenSpecies };

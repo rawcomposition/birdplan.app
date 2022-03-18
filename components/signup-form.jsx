@@ -1,11 +1,10 @@
-import { auth } from "../firebase";
 import useFirebaseSignup from "../hooks/use-firebase-signup";
 import Submit from "./submit";
 import AuthError from "./auth-error";
 import Input from "./input";
 
 export default function SignupForm(props) {
-	const { createUser, loading, error } = useFirebaseSignup(auth);
+	const { createUser, loading, error } = useFirebaseSignup();
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const name = e.target.elements.name.value;

@@ -2,10 +2,10 @@ import * as React from "react";
 import LoginForm from "./login-form";
 import SignupForm from "./signup-form";
 import { useUser } from "../providers/user";
-import { logout } from "../firebase";
 import Select from "react-select";
+import useFirebaseLogout from "../hooks/use-firebase-logout";
 
-export default function Sidebar({seenCount, filters, onFilterChange, open}) {
+export default function Sidebar({seenCount, filters, onFilterChange, onLogout, open}) {
 	const [showSignup, setShowSignup] = React.useState(false);
 	const { user } = useUser();
 
@@ -19,6 +19,8 @@ export default function Sidebar({seenCount, filters, onFilterChange, open}) {
 	];
 
 	const selectedRadius = filters.radius ? radiusOptions.find(({value}) => value == filters.radius) : null;
+
+	const { logout, loading } = useFirebaseLogout(onLogout);
 	
 	return (
 		<aside className={`h-screen w-80 ${!open ? "-ml-96" : ""} md:ml-0 bg-slate-900 p-6 absolute md:relative aside-bg bg-bottom shadow-2xl md:shadow-none transition-all z-10`}>
@@ -57,7 +59,7 @@ export default function Sidebar({seenCount, filters, onFilterChange, open}) {
 				</label>
 			</div>
 			{user && <div className="absolute left-0 bottom-0 w-full p-6 text-center">
-				<button type="button" onClick={logout} className="text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full">Sign Out</button>
+				<button type="button" onClick={logout} className="text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full">{loading ? "..." : "Sign Out"}</button>
 			</div>}
 		</aside>
 	)
