@@ -5,7 +5,7 @@ import Button from "./button";
 import CheckIcon from "../icons/check";
 import MapIcon from "../icons/map";
 
-export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
+export default function SpeciesList({items, onAddSeen, onRemoveSeen, onToggleExpand, lat, lng}) {
 	return (
 		<div>
 			{items?.map(({name, sciName, code, reports, isExpanded, isSeen}) => {
@@ -36,11 +36,11 @@ export default function SpeciesList({items, onSeen, onToggle, lat, lng}) {
 								</header>
 								<hr className="mb-4"/>
 								<div className="flex gap-2">
-									<Button size="sm" onClick={() => onToggle(code)}>{isExpanded ? "Hide" : "Show"} {reports.length} {reports.length === 1 ? "Report" : "Reports"}</Button>
-									<Button size="sm" onClick={() => onSeen(code)}>
-										{isSeen && <CheckIcon className="mr-2"/>}
-										{isSeen ? "Seen" : "Not Seen"}
-									</Button>
+									<Button size="sm" onClick={() => onToggleExpand(code)}>{isExpanded ? "Hide" : "Show"} {reports.length} {reports.length === 1 ? "Report" : "Reports"}</Button>
+									{isSeen
+										? <Button size="sm" onClick={() => onRemoveSeen(code)}><CheckIcon className="mr-2"/> Seen</Button>
+										: <Button size="sm" onClick={() => onAddSeen(code)}>Not Seen</Button>
+									}
 								</div>
 							</div>
 						</div>

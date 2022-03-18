@@ -46,13 +46,18 @@ export default function Home() {
 		}
 	}, [user?.uid]);
 
-	const handleToggle = (code) => {
+	const handleToggleExpand = (code) => {
 		dispatch({ type: "expand_toggle", payload: code }); 
 	}
 
-	const handleSeen = (code) => {
+	const addSeenSpecies = (code) => {
 		dispatch({ type: "add_seen", payload: code });
 		saveSeenSpecies([...seen, code]);
+	}
+
+	const removeSeenSpecies = (code) => {
+		dispatch({ type: "remove_seen", payload: code });
+		saveSeenSpecies(seen.filter(value => value !== code));
 	}
 
 	const handleAddressChange = React.useCallback((value) => {
@@ -103,7 +108,7 @@ export default function Home() {
 					}
 					{showNoResults && <NoResults reload={call}/>}
 
-					<SpeciesList items={filteredSpecies} onToggle={handleToggle} onSeen={handleSeen} lat={lat} lng={lng}/>
+					<SpeciesList items={filteredSpecies} onToggleExpand={handleToggleExpand} onAddSeen={addSeenSpecies} onRemoveSeen={removeSeenSpecies} lat={lat} lng={lng}/>
 
 					{filteredSpecies?.length > 0 &&
 						<div className="flex justify-between mb-4">

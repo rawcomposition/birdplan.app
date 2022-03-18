@@ -24,7 +24,12 @@ export default function reducer(state, action) {
 			return { ...state, radius: payload };
 		}
 		case "add_seen": {
-			return { ...state, seen: [...seen, payload] };
+			const code = payload;
+			return { ...state, seen: [...seen, code] };
+		}
+		case "remove_seen": {
+			const code = payload;
+			return { ...state, seen: seen.filter(value => value !== code) }
 		}
 		case "expand_toggle": {
 			const code = payload;
