@@ -1,5 +1,3 @@
-import Button from "./button";
-
 export default function NoResults({reload}) {
 	return (
 		<div className="flex flex-col items-center gap-3">

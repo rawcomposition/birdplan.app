@@ -1,7 +1,7 @@
 import { auth } from "../firebase";
 import useFirebaseSignup from "../hooks/use-firebase-signup";
 import Submit from "./submit";
-import Error from "./error";
+import AuthError from "./auth-error";
 import Input from "./input";
 
 export default function SignupForm(props) {
@@ -26,7 +26,7 @@ export default function SignupForm(props) {
 			<Input type="email" id="email" placeholder="Email"/>
 			<Input type="password" id="password" placeholder="Password"/>
 			<Submit loading={loading} className="mt-2 w-full">Sign up</Submit>
-			{error && <Error>Error creating account</Error>}
+			{error && <AuthError>Error creating account</AuthError>}
 		</form>
 	)
 }

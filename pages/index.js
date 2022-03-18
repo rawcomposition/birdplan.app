@@ -11,6 +11,7 @@ import LocationSelect from "../components/location-select";
 import useFetchSpecies from "../hooks/use-fetch-species";
 import AnimatedArrow from "../components/animated-arrow";
 import NoResults from "../components/no-results";
+import FetchError from "../components/fetch-error";
 import usePostProcessSpecies from "../hooks/use-post-process-species";
 import CogIcon from "../icons/cog";
 
@@ -83,7 +84,7 @@ export default function Home() {
 	const { seenCount, filteredSpecies } = usePostProcessSpecies({species, expanded, seen, showSeen});
 
 	const showWelcome = (!lat || !lng) && isCacheRestored;
-	const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0;
+	const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0 && ! error;
 
 	return (
 		<div className="flex h-screen">
@@ -107,7 +108,7 @@ export default function Home() {
 
 					<br/>
 
-					{error && <div>Error fetching data</div>}
+					{error && <FetchError reload={call}/>}
 					{loading &&
 						<div className="flex flex-col gap-4">
 							<Skeleton count={3}/>

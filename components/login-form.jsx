@@ -1,7 +1,7 @@
 import { auth } from "../firebase";
 import useFirebaseLogin from "../hooks/use-firebase-login";
 import Submit from "./submit";
-import Error from "./error";
+import AuthError from "./auth-error";
 import Input from "./input";
 
 export default function LoginForm(props) {
@@ -21,7 +21,7 @@ export default function LoginForm(props) {
 			<Input type="text" id="email" placeholder="Email"/>
 			<Input type="password" id="password" placeholder="Password"/>
 			<Submit loading={loading} className="mt-2 w-full">Login</Submit>
-			{error && <Error>Error logging in</Error>}
+			{error && <AuthError>Error logging in</AuthError>}
 		</form>
 	)
 }
