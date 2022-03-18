@@ -20,7 +20,7 @@ export default function ObservationList({userLat, userLng, items}) {
 						</>
 					}
 					<span className="text-gray-700 text-sm">
-						<Timeago datetime={obsDt} className="bg-gray-300 rounded-sm ml-4 px-2 py-1 text-xs whitespace-nowrap"/> by {userDisplayName}
+						<Timeago datetime={obsDt}/> by {userDisplayName}
 					</span>
 					<br/>
 					<a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">View Checklist</a>
