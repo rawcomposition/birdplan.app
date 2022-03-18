@@ -9,7 +9,7 @@ export default function useSyncLocalhost(dispatch, showSeen, address, radius) {
 		const radius = window.localStorage.getItem("radius");
 
 		if (showSeen === "false" || showSeen === "true") {
-			dispatch({ type: "set_showSeen", payload: showSeen });
+			dispatch({ type: "show_seen", payload: showSeen });
 		}
 
 		if (address) {

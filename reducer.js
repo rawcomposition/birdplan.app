@@ -1,6 +1,6 @@
 export default function reducer(state, action) {
 	const { type, payload } = action;
-	const { species, expanded, seen, showSeen } = state;
+	const { expanded, seen, showSeen, showSidebar } = state;
 	switch (type) {
 		case "set_species": {
 			return { ...state, species: payload };
@@ -11,8 +11,11 @@ export default function reducer(state, action) {
 		case "set_seen": {
 			return { ...state, seen: payload };
 		}
-		case "set_showSeen": {
+		case "show_seen": {
 			return { ...state, showSeen: payload };
+		}
+		case "toggle_sidebar": {
+			return { ...state, showSidebar: !showSidebar };
 		}
 		case "set_cacheRestored": {
 			return { ...state, isCacheRestored: true };

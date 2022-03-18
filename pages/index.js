@@ -12,6 +12,7 @@ import useFetchSpecies from "../hooks/use-fetch-species";
 import AnimatedArrow from "../components/animated-arrow";
 import NoResults from "../components/no-results";
 import usePostProcessSpecies from "../hooks/use-post-process-species";
+import CogIcon from "../icons/cog";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, {
@@ -21,13 +22,14 @@ export default function Home() {
 		showSeen: false,
 		radius: 50,
 		isCacheRestored: false,
+		showSidebar: false,
 		address: {
 			label: null,
 			lat: null,
 			lng: null,
 		}
 	});
-	const { address, radius, species, expanded, seen, showSeen, isCacheRestored } = state;
+	const { address, radius, species, expanded, seen, showSeen, isCacheRestored, showSidebar } = state;
 	const { lat, lng } = address || {};
 
 	const { user } = useUser();
@@ -85,8 +87,8 @@ export default function Home() {
 
 	return (
 		<div className="flex h-screen">
-			<Sidebar seenCount={seenCount} filters={{ showSeen, radius }} onFilterChange={handleFilterChange}/>
-			<div className="h-screen overflow-auto grow pt-6">
+			<Sidebar seenCount={seenCount} filters={{ showSeen, radius }} open={showSidebar} onFilterChange={handleFilterChange}/>
+			<div className="h-screen overflow-auto grow pt-6 px-4" onClick={showSidebar ? () => dispatch({ type: "toggle_sidebar" }) : null}>
 				{isCacheRestored && <div className="container mx-auto max-w-xl">
 					{showWelcome &&
 						<div className="text-center flex flex-col gap-2 my-6">
@@ -96,7 +98,12 @@ export default function Home() {
 						</div>
 					}
 
-					<LocationSelect className="w-full mt-6" value={address} onChange={handleAddressChange}/>
+					<div className="flex">
+						<LocationSelect className="w-full mt-6" value={address} onChange={handleAddressChange}/>
+						<button type="button" className="text-2xl text-slate-700 px-5 md:hidden" onClick={() => dispatch({type: "toggle_sidebar"})}>
+							<CogIcon/>
+						</button>
+					</div>
 
 					<br/>
 

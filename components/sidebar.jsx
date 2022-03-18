@@ -5,7 +5,7 @@ import { useUser } from "../providers/user";
 import { logout } from "../firebase";
 import Select from "react-select";
 
-export default function Sidebar({seenCount, filters, onFilterChange}) {
+export default function Sidebar({seenCount, filters, onFilterChange, open}) {
 	const [showSignup, setShowSignup] = React.useState(false);
 	const { user } = useUser();
 
@@ -21,7 +21,7 @@ export default function Sidebar({seenCount, filters, onFilterChange}) {
 	const selectedRadius = filters.radius ? radiusOptions.find(({value}) => value == filters.radius) : null;
 	
 	return (
-		<div className="h-screen w-80 bg-slate-900 p-6 relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity">
+		<div className={`h-screen w-80 ${!open ? "-ml-96" : ""} md:ml-0 bg-slate-900 p-6 absolute md:relative bg-[url('/flock.svg')] bg-bottom bg-no-repeat bg-[length:200%] bg-blend-luminosity shadow-2xl md:shadow-none transition-all z-10`}>
 			<img src="/icon.png" className="mx-auto" width="85"/>
 			<h1 className="text-center mb-6 text-[#757c8c] font-logo text-2xl">birdy alert</h1>
 			{!user && <div className="rounded-md bg-white p-4">
@@ -38,16 +38,14 @@ export default function Sidebar({seenCount, filters, onFilterChange}) {
 				}
 			</div>}
 			{user && 
-				<>
-					<div className="rounded-md bg-white py-4 px-3 mt-4 flex gap-3">
-						<img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&s=150" className="w-[50px] h-[50px] object-cover rounded-full"/>
-						<div>
-							<span className="font-bold">{user.displayName}</span>
-							<br/>
-							<span className="text-xs">{user.email}</span>
-						</div>
+				<div className="rounded-md bg-white py-4 px-3 mt-4 flex gap-3">
+					<img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&s=150" className="w-[50px] h-[50px] object-cover rounded-full"/>
+					<div>
+						<span className="font-bold">{user.displayName}</span>
+						<br/>
+						<span className="text-xs">{user.email}</span>
 					</div>
-				</>
+				</div>
 			}
 			<div className="mt-4">
 				<label htmlFor="radius" className="text-white text-sm">Radius</label>

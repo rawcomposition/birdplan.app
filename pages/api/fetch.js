@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 			const distance = parseFloat(distanceBetween(lat, lng, item.lat, item.lng).toFixed(2));
 			return { ...item, distance };
 		})
-		.filter(({distance}) => distance <= parseInt(radius))
+		.filter(({distance, comName}) => distance <= parseInt(radius) && ! comName.includes("(hybrid)"))
 		.map(item => ({...item, distance: parseInt(item.distance)}));
 
 	const reportsBySpecies = {};

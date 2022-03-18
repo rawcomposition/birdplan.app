@@ -1,4 +1,5 @@
 import ObservationList from "../components/observation-list";
+import { truncate } from "../helpers";
 import Timeago from "../components/timeago";
 import images from "../images.json";
 import Button from "./button";
@@ -19,16 +20,16 @@ export default function SpeciesList({items, onAddSeen, onRemoveSeen, onToggleExp
 					<article key={code} className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full">
 						<div className="flex">
 							<div className="flex-shrink-0">
-								<img src={imageUrl} width="150" height="150" className={`object-cover rounded p-4 w-[150px] h-[150px] ${!images[sciName] ? "opacity-50" : ""}`}/>
+								<img src={imageUrl} width="150" height="150" className={`object-cover rounded p-4 w-[140px] h-[140px] xs:w-[150px] xs:h-[150px] ${!images[sciName] ? "opacity-50" : ""}`}/>
 							</div>
-							<div className="pr-4 pt-6 w-full">
-								<header className="flex justify-between">
-									<h3 className="font-bold text-lg mb-4">{name}</h3>
-									<div>
-										<span className="bg-gray-300 text-gray-600 rounded-sm ml-2 px-2 py-1 text-xs whitespace-nowrap">
+							<div className="pr-2 pt-3 xs:pr-4 xs:pt-6 w-full">
+								<header className="xs:flex xs:justify-between mb-4">
+									<h3 className="font-bold xs:text-lg">{truncate(name, 32)}</h3>
+									<div className="whitespace-nowrap space-x-2">
+										<span className="bg-gray-300 text-gray-600 rounded-sm px-2 py-1 text-xs whitespace-nowrap">
 											<Timeago datetime={date}/>
 										</span>
-										<span dateTime={date} className="bg-gray-300 text-gray-600 rounded-sm ml-2 px-2 py-1 text-xs whitespace-nowrap">
+										<span dateTime={date} className="bg-gray-300 text-gray-600 rounded-sm px-2 py-1 text-xs whitespace-nowrap">
 											<MapIcon className="mr-1 mt-[-2px] text-[0.85em]"/>
 											{shortestDistance} mi
 										</span>
@@ -36,7 +37,9 @@ export default function SpeciesList({items, onAddSeen, onRemoveSeen, onToggleExp
 								</header>
 								<hr className="mb-4"/>
 								<div className="flex gap-2">
-									<Button size="sm" onClick={() => onToggleExpand(code)}>{isExpanded ? "Hide" : "Show"} {reports.length} {reports.length === 1 ? "Report" : "Reports"}</Button>
+									<Button size="sm" onClick={() => onToggleExpand(code)}>
+										<span className="hidden xs:block">{isExpanded ? "Hide" : "Show"}&nbsp;</span>{reports.length} {reports.length === 1 ? "Report" : "Reports"}
+									</Button>
 									{isSeen
 										? <Button size="sm" onClick={() => onRemoveSeen(code)}><CheckIcon className="mr-2"/> Seen</Button>
 										: <Button size="sm" onClick={() => onAddSeen(code)}>Not Seen</Button>
