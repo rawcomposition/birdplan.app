@@ -20,7 +20,8 @@ export default function SignupForm(props) {
 
 	return (
 		<form onSubmit={handleSubmit} {...props}>
-			<h3>Sign up</h3>
+			<h3 className="text-slate-700">Sign up</h3>
+			<span className="text-sm text-slate-500">Sync between devices</span>
 			<Input type="text" id="name" placeholder="Name"/>
 			<Input type="email" id="email" placeholder="Email"/>
 			<Input type="password" id="password" placeholder="Password"/>
