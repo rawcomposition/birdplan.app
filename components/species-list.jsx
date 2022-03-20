@@ -20,7 +20,7 @@ export default function SpeciesList({items, onAddSeen, onRemoveSeen, onToggleExp
 					<article key={code} className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full">
 						<div className="flex">
 							<div className="flex-shrink-0">
-								<img src={imageUrl} width="150" height="150" className={`object-cover rounded p-4 w-[140px] h-[140px] xs:w-[150px] xs:h-[150px] ${!images[sciName] ? "opacity-50" : ""}`}/>
+								<img loading="lazy" src={imageUrl} width="150" height="150" className={`object-cover rounded p-4 w-[140px] h-[140px] xs:w-[150px] xs:h-[150px] ${!images[sciName] ? "opacity-50" : ""}`}/>
 							</div>
 							<div className="pr-2 pt-3 xs:pr-4 xs:pt-6 w-full">
 								<header className="xs:flex xs:justify-between mb-4">
