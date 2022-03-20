@@ -14,7 +14,7 @@ export default function SpeciesList({items, onAddSeen, onRemoveSeen, onToggleExp
 				const distancesAllEqual = distances.every(value => value === distances[0]);
 				reports = reports.map(report => ({...report, isClosest: !distancesAllEqual && shortestDistance === report.distance}));
 				return (
-					<Species key={code} reports={reports} userLat={lat} userLng={lng}>
+					<Species isExpanded={isExpanded} key={code} reports={reports} userLat={lat} userLng={lng}>
 						<SpeciesImage sciName={sciName}/>
 						<div className="pr-2 pt-3 xs:pr-4 xs:pt-6 w-full">
 							<SpeciesHeader name={name} date={date} distance={shortestDistance}/>

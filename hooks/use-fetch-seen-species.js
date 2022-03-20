@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useUser } from "../providers/user";
+import { fetchSeenSpecies } from "../firebase";
 
 export default function useFetchSeenSpecies({dispatch}) {
 	const { user } = useUser();
