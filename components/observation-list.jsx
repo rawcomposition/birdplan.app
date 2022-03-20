@@ -1,10 +1,11 @@
 import { truncate } from "../helpers";
 import Timeago from "../components/timeago";
+import CameraIcon from "../icons/camera";
 
 export default function ObservationList({userLat, userLng, items}) {
 	return (
 		<ul className="pl-4 pr-4 pb-4 flex flex-col gap-7 mt-3">
-			{items?.map(({locName, subnational2Name, subnational1Name, subId, obsId, obsDt, userDisplayName, lat, lng, distance, isClosest}) => (
+			{items?.map(({locName, subnational2Name, subnational1Name, subId, obsId, obsDt, userDisplayName, lat, lng, distance, isClosest, hasRichMedia}) => (
 				<li key={obsId + userDisplayName} className="rounded-sm bg-white">
 					<div className="flex items-start">
 						<h4 className="text-slate-700 text-[0.85em] mr-auto">
@@ -15,6 +16,7 @@ export default function ObservationList({userLat, userLng, items}) {
 					</div>
 					
 					<p className="text-gray-500 text-xs">
+						{hasRichMedia && <CameraIcon className="mr-1.5 text-lime-600"/>}
 						<Timeago datetime={obsDt}/> by {userDisplayName}
 					</p>
 					<div className="text-[0.85em] mt-2 space-x-3">
