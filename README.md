@@ -14,6 +14,8 @@ Try it out at [https://birdyalert.com](https://birdyalert.com)
 
 ## Roadmap
 
+- [ ] Make Seen/Not Seen toggle clearer - possibly a checkbox?
+- [ ] Add link from app to Github
 - [ ] Convert to Typescript
 - [ ] Create component tests with `react-testing-library`
 - [ ] Get location from device
