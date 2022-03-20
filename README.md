@@ -8,8 +8,9 @@ Try it out at [https://birdyalert.com](https://birdyalert.com)
 
 1. Change `.env.example` to `.env` and add your API keys 
 2. Make sure your google maps API key has Google Places enabled
-3. Run `npm run dev` in terminal
-4. Open [http://localhost:3000](http://localhost:3000) with your browser
+3. Run `npm install`
+4. Run `npm run dev` in terminal
+5. Open [http://localhost:3000](http://localhost:3000) with your browser
 
 ## Roadmap
 

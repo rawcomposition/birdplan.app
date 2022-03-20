@@ -14,6 +14,7 @@ import NoResults from "../components/no-results";
 import FetchError from "../components/fetch-error";
 import usePostProcessSpecies from "../hooks/use-post-process-species";
 import CogIcon from "../icons/cog";
+import Head from "next/head";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -75,6 +76,9 @@ export default function Home() {
 
 	return (
 		<div className="flex h-screen">
+			<Head>
+				<title>BirdyAlert.com - Find rare birds near you</title>
+			</Head>
 			<Sidebar seenCount={seenCount} filters={{ showSeen, radius }} open={showSidebar} onFilterChange={handleFilterChange} onLogout={() => dispatch({ type: "reset" })}/>
 			<div className="h-screen overflow-auto grow pt-6 px-4" onClick={showSidebar ? () => dispatch({ type: "toggle_sidebar" }) : null}>
 				{isCacheRestored && <div className="container mx-auto max-w-xl">
