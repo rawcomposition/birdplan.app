@@ -14,7 +14,7 @@ export default function useFetchSpecies({lat, lng, radius, onCallback}) {
 		setState(current => ({ ...current, loading: true, error: null }));
 		callbackRef.current([]);
 		try {
-			const response = await fetch(`http://localhost:3000/api/fetch?lat=${lat}&lng=${lng}&radius=${radius}`);
+			const response = await fetch(`/api/fetch?lat=${lat}&lng=${lng}&radius=${radius}`);
 			const species = await response.json();
 			if (!Array.isArray(species)) {
 				callbackRef.current([]);
