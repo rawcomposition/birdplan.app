@@ -15,7 +15,7 @@ export default function LoginForm(props) {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} {...props}>
+		<form onSubmit={handleSubmit} className="mb-1" {...props}>
 			<h3 className="text-slate-700">Login</h3>
 			<span className="text-sm text-slate-500">Sync between devices</span>
 			<Input type="text" id="email" placeholder="Email"/>

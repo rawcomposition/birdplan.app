@@ -22,8 +22,8 @@ export default function Skeleton({count = 1}) {
 	);
 	
 	return (
-		<>
+		<div className="flex flex-col gap-4">
 			{Array.apply(null, { length: count }).map((e, i) => <React.Fragment key={i}>{item}</React.Fragment>)}
-		</>
+		</div>
 	)
 }
