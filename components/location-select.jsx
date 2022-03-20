@@ -38,6 +38,12 @@ export default function LocationSelect({value, onChange, ...props}) {
 		isInitalizedRef.current = true;
 	}, [onChange]);
 
+	React.useEffect(() => {
+		if (!label) {
+			inputRef.current.value = "";
+		}
+	}, [label]);
+
 	return (
 		<Input ref={inputRef} onKeyDown={handleKeyDown} defaultValue={label} placeholder="Enter a location" {...props}/>
 	)
