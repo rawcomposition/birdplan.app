@@ -23,8 +23,8 @@ export default function SpeciesList({items, onAddSeen, onRemoveSeen, onToggleExp
 								<Button size="sm" className="whitespace-nowrap" onClick={() => onToggleExpand(code)}>
 									<span className="hidden xs:block">{isExpanded ? "Hide" : "Show"}&nbsp;</span>{reports.length} {reports.length === 1 ? "Report" : "Reports"}
 								</Button>
-								{isSeen
-									? <Button size="sm" color="green" onClick={() => onRemoveSeen(code)}><CheckIcon className="mr-2"/> Seen</Button>
+								{(isSeen || isPending)
+									? <Button size="sm" disabled={isPending} color="green" onClick={() => onRemoveSeen(code)}><CheckIcon className="mr-2"/> Seen</Button>
 									: <Button size="sm" onClick={() => onAddSeen(code)}><CheckIcon className="mr-2"/> Mark as Seen</Button>
 								}
 							</div>
