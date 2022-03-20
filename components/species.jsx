@@ -1,6 +1,6 @@
 import ObservationList from "../components/observation-list";
 
-export default function Species({isExpanded, reports, userLat, userLng, props}) {
+export default function Species({isExpanded, reports, userLat, userLng, children, props}) {
 	
 	return (
 		<article className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full" {...props}>
