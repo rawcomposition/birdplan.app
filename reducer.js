@@ -2,6 +2,7 @@ export const initialState = {
 	species: null,
 	expanded: [],
 	seen: [],
+	pending: [],
 	showSeen: false,
 	radius: 50,
 	isCacheRestored: false,
@@ -15,7 +16,7 @@ export const initialState = {
 
 export function reducer(state, action) {
 	const { type, payload } = action;
-	const { expanded, seen, showSeen, showSidebar } = state;
+	const { expanded, seen, pending, showSeen, showSidebar } = state;
 	switch (type) {
 		case "set_species": {
 			return { ...state, species: payload };
@@ -43,7 +44,15 @@ export function reducer(state, action) {
 		}
 		case "add_seen": {
 			const code = payload;
-			return { ...state, seen: [...seen, code] };
+			return {
+				...state,
+				pending: pending.filter(item => item !== code),
+				seen: [...seen, code],
+			};
+		}
+		case "add_pending": {
+			const code = payload;
+			return { ...state, pending: [...pending, code] };
 		}
 		case "remove_seen": {
 			const code = payload;

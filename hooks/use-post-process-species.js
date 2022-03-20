@@ -1,4 +1,4 @@
-export default function usePostProcessSpecies({species, expanded, seen, showSeen}) {
+export default function usePostProcessSpecies({species, expanded, seen, pending, showSeen}) {
 	if (!species) {
 		return { seenCount: 0, filteredSpecies: null };
 	}
@@ -6,7 +6,8 @@ export default function usePostProcessSpecies({species, expanded, seen, showSeen
 	
 	filteredSpecies = filteredSpecies.map(species => ({
 		...species,
-		isSeen: seen.includes(species.code),
+		isSeen: seen?.includes(species.code),
+		isPending: pending?.includes(species.code),
 		isExpanded: expanded.includes(species.code),
 	}));
 

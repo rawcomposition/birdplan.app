@@ -19,7 +19,7 @@ import useFetchSeenSpecies from "../hooks/use-fetch-seen-species";
 
 export default function Home() {
 	const [state, dispatch] = React.useReducer(reducer, initialState);
-	const { address, radius, species, expanded, seen, showSeen, isCacheRestored, showSidebar } = state;
+	const { address, radius, species, expanded, seen, pending, showSeen, isCacheRestored, showSidebar } = state;
 	const { lat, lng } = address || {};
 
 	useSyncLocalhost({dispatch, seen, showSeen, address, radius});
@@ -41,7 +41,14 @@ export default function Home() {
 	}
 
 	const addSeenSpecies = (code) => {
-		dispatch({ type: "add_seen", payload: code });
+		if (showSeen) {
+			dispatch({ type: "add_seen", payload: code });
+		} else {
+			dispatch({ type: "add_pending", payload: code });
+			setTimeout(() => {
+				dispatch({ type: "add_seen", payload: code });
+			}, 1300);
+		}
 		saveSeenSpecies([...seen, code]);
 	}
 
@@ -58,7 +65,7 @@ export default function Home() {
 		dispatch({ type: "filter_change", payload: { field, value } });
 	}
 
-	const { seenCount, filteredSpecies } = usePostProcessSpecies({species, expanded, seen, showSeen});
+	const { seenCount, filteredSpecies } = usePostProcessSpecies({species, expanded, seen, pending, showSeen});
 
 	const showWelcome = (!lat || !lng) && isCacheRestored;
 	const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0 && ! error;

@@ -2,7 +2,7 @@ import { distanceBetween } from "../../helpers";
 
 export default async function handler(req, res) {
 	const { lat, lng, radius = 50 } = req.query;
-	const country = "US";
+	const country = "US-OH"; //TODO: Change to US after testing is complete
 
 	const response = await fetch(`https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&key=${process.env.EBIRD_KEY}`);
 	let reports = await response.json();

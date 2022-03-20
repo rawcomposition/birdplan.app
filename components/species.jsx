@@ -1,9 +1,9 @@
 import ObservationList from "../components/observation-list";
 
-export default function Species({isExpanded, reports, userLat, userLng, children, props}) {
+export default function Species({isExpanded, reports, userLat, userLng, children, isFadingOut, ...props}) {
 	
 	return (
-		<article className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full" {...props}>
+		<article className={`mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full transition-opacity duration-[1.5s] ${isFadingOut ? "opacity-0" : ""}`} {...props}>
 			<div className="flex">
 				{children}
 			</div>

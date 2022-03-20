@@ -1,7 +1,7 @@
 import images from "../images.json";
 
 export default function SpeciesImage({sciName}) {
-	const url = images[sciName] || "/bird.svg";
+	const url = images[sciName] || "/placeholder.png";
 
 	return (
 		<div className="flex-shrink-0">

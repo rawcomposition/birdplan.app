@@ -5,7 +5,7 @@ export default function Skeleton({count = 1}) {
 		<article className="border border-gray-200 bg-white shadow-sm rounded-md w-full">
 			<div className="animate-pulse flex">
 				<div className="flex-shrink-0">
-					<img src="/bird.svg" width="150" height="150" className="object-cover rounded p-4 w-[150px] h-[150px] opacity-50"/>
+					<img src="/placeholder.png" width="150" height="150" className="object-cover rounded p-4 w-[150px] h-[150px] opacity-50"/>
 				</div>
 				<div className="flex-1 py-8 pr-4 flex-shrink">
 					<div className="space-y-5">
