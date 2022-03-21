@@ -36,7 +36,7 @@ export default function LocationSelect({value, onChange, ...props}) {
 			handlePlaceSelect(googlePlaces);
 		});
 		isInitalizedRef.current = true;
-	}, [onChange]);
+	});
 
 	React.useEffect(() => {
 		if (!label) {
