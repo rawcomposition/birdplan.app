@@ -17,6 +17,7 @@ Try it out at [https://birdyalert.com](https://birdyalert.com)
 
 ## Roadmap
 
+- [ ] Remove subspecies and hybrids (group reports based on scientific name)
 - [ ] Add link from app to Github
 - [ ] Cache eBird API response for several minutes (or do all processing on the client side and cache results client side)
 - [ ] Convert to Typescript
