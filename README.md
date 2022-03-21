@@ -17,6 +17,7 @@ Try it out at [https://birdyalert.com](https://birdyalert.com)
 
 ## Roadmap
 
+- [ ] Switch to Cloudinary for thumbnails
 - [ ] Remove subspecies and hybrids (group reports based on scientific name)
 - [ ] Add link from app to Github
 - [ ] Cache eBird API response for several minutes (or do all processing on the client side and cache results client side)
@@ -25,7 +26,6 @@ Try it out at [https://birdyalert.com](https://birdyalert.com)
 - [ ] Get location from device
 - [ ] Setup error boundaries
 - [ ] Add time period picker to allow showing results between 1 and 30 days
-- [ ] Expand all button
 - [ ] Show Google map of reports
 - [ ] Play sound when new species found
 - [ ] Show alert when new species found
