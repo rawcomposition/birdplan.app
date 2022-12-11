@@ -14,7 +14,7 @@ export default function Sidebar({ seenCount, filters, onFilterChange, onLogout, 
     { label: "100 mi", value: 100 },
     { label: "250 mi", value: 250 },
     { label: "350 mi", value: 350 },
-    { label: "500 mi", value: 350 },
+    { label: "500 mi", value: 500 },
   ];
 
   const selectedRadius = filters.radius ? radiusOptions.find(({ value }) => value == filters.radius) : null;
