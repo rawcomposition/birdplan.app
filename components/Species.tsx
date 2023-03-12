@@ -13,7 +13,7 @@ type Props = {
 export default function Species({ isExpanded, reports, userLat, userLng, children, isFadingOut, ...props }: Props) {
   return (
     <article
-      className={`mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full transition-opacity duration-[1.5s] ${
+      className={`mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full transition-opacity duration-[1s] ${
         isFadingOut ? "opacity-0" : ""
       }`}
       {...props}

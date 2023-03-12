@@ -9,7 +9,6 @@ import SidebarToggle from "components/SidebarToggle";
 import NoResults from "components/NoResults";
 import FetchError from "components/FetchError";
 import ResultsInfo from "components/ResultsInfo";
-import MainContent from "components/MainContent";
 import Head from "next/head";
 import useProfile from "hooks/useProfile";
 
@@ -40,9 +39,9 @@ export default function Home() {
     }
   };
 
-  const handleRemoveLifelist = (code: string) => {
+  const handleSeen = (code: string) => {
     setFading((current) => [...current, code]);
-    setTimeout(() => removeLifelist(code), 500);
+    setTimeout(() => appendLifelist(code), 1000);
   };
 
   const filteredSpecies = species?.filter(({ code }) => showSeen || !lifelist.includes(code));
@@ -66,7 +65,7 @@ export default function Home() {
 
       <div className="h-screen overflow-auto grow pt-6 px-4" onClick={() => setShowSidebar(false)}>
         <div className="container mx-auto max-w-xl">
-          {!lat || (!lng && <WelcomeMessage />)}
+          {(!lat || !lng) && <WelcomeMessage />}
 
           <div className="flex mb-4">
             <LocationSelect className="w-full mt-6" value={address} onChange={setAddress} />
@@ -83,8 +82,8 @@ export default function Home() {
             <SpeciesList
               items={filteredSpecies}
               onToggleExpand={handleToggleExpand}
-              onAddSeen={appendLifelist}
-              onRemoveSeen={handleRemoveLifelist}
+              onAddSeen={handleSeen}
+              onRemoveSeen={removeLifelist}
               fading={fading}
               lifelist={lifelist}
               expanded={expanded}
