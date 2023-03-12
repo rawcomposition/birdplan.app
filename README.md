@@ -16,19 +16,17 @@ Try it out at [https://rba.rawcomposition.com](https://rba.rawcomposition.com)
 
 ## Roadmap
 
-- [ ] Switch to Cloudinary for thumbnails
 - [ ] Remove subspecies and hybrids (group reports based on scientific name)
+- [ ] Allow uploading eBird lifelist .csv file
+- [ ] Expand thumbnail coverage, consider Cloudinary
 - [ ] Add link from app to Github
 - [ ] Cache eBird API response for several minutes (or do all processing on the client side and cache results client side)
-- [ ] Convert to Typescript
-- [ ] Create component tests with `react-testing-library`
 - [ ] Get location from device
 - [ ] Setup error boundaries
 - [ ] Add time period picker to allow showing results between 1 and 30 days
 - [ ] Show Google map of reports
 - [ ] Play sound when new species found
 - [ ] Show alert when new species found
-- [ ] Use Gravatars and/or setup Google login
-- [ ] Highlight birds that are close
+- [ ] Setup Google login
 
 If you would like to contribute to any of the features above, feel free to open a pull request.
