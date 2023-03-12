@@ -1,4 +1,4 @@
-import { distanceBetween } from "../../helpers";
+import { distanceBetween } from "lib/helpers";
 
 export default async function handler(req, res) {
   const { lat, lng, radius = 50 } = req.query;
