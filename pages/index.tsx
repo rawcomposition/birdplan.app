@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Sidebar from "components/sidebar";
 import SpeciesList from "components/SpeciesList";
 import Skeleton from "components/Skeleton";

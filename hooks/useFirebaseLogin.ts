@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { auth } from "lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { DispatchAction, Address } from "lib/types";
 
 type Props = {

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useUser } from "providers/user";
 import { fetchSeenSpecies } from "lib/firebase";
 import { DispatchAction } from "lib/types";
