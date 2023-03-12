@@ -2,9 +2,6 @@ import React from "react";
 import Sidebar from "components/sidebar";
 import SpeciesList from "components/SpeciesList";
 import Skeleton from "components/Skeleton";
-import { reducer, initialState } from "../reducer";
-import { saveSeenSpecies } from "lib/firebase";
-import useSyncLocalhost from "hooks/useSyncLocalStorage";
 import LocationSelect from "components/LocationSelect";
 import useFetchSpecies from "hooks/useFetchSpecies";
 import WelcomeMessage from "components/WelcomeMessage";
@@ -13,120 +10,99 @@ import NoResults from "components/NoResults";
 import FetchError from "components/FetchError";
 import ResultsInfo from "components/ResultsInfo";
 import MainContent from "components/MainContent";
-import usePostProcessSpecies from "hooks/usePostProcessSpecies";
 import Head from "next/head";
-import useFetchSeenSpecies from "hooks/useFetchSeenSpecies";
-import { Address } from "lib/types";
+import useProfile from "hooks/useProfile";
 
 export default function Home() {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { address, radius, species, expanded, seen, pending, showSeen, isCacheRestored, showSidebar } = state;
+  const { lifelist, radius, address, setRadius, setAddress, appendLifelist, removeLifelist } = useProfile();
   const { lat, lng } = address || {};
 
-  useSyncLocalhost({ dispatch, seen, showSeen, address, radius });
-
-  useFetchSeenSpecies({ dispatch });
-
-  const { loading, error, lastUpdate, call } = useFetchSpecies({
+  const { species, loading, error, lastUpdate, call } = useFetchSpecies({
     lat: lat || null,
     lng: lng || null,
     radius,
-    onCallback: (response) => {
-      dispatch({ type: "set_species", payload: response });
-    },
   });
 
+  const [expanded, setExpanded] = React.useState<string[]>([]);
+  const [fading, setFading] = React.useState<string[]>([]);
+  const [showSidebar, setShowSidebar] = React.useState(false);
+  const [showSeen, setShowSeen] = React.useState(false);
+
   React.useEffect(() => {
-    if (lat && lng) {
-      call();
-    }
+    if (lat && lng) call();
   }, [lat, lng, radius, call]);
 
   const handleToggleExpand = (code: string) => {
-    dispatch({ type: "expand_toggle", payload: code });
-  };
-
-  const addSeenSpecies = (code: string) => {
-    if (showSeen) {
-      dispatch({ type: "add_seen", payload: code });
+    if (expanded.includes(code)) {
+      setExpanded(expanded.filter((value) => value !== code));
     } else {
-      dispatch({ type: "add_pending", payload: code });
-      setTimeout(() => {
-        dispatch({ type: "add_seen", payload: code });
-      }, 1300);
+      setExpanded([...expanded, code]);
     }
-    saveSeenSpecies([...seen, code]);
   };
 
-  const removeSeenSpecies = (code: string) => {
-    dispatch({ type: "remove_seen", payload: code });
-    saveSeenSpecies(seen.filter((value) => value !== code));
+  const handleRemoveLifelist = (code: string) => {
+    setFading((current) => [...current, code]);
+    setTimeout(() => removeLifelist(code), 500);
   };
 
-  const handleAddressChange = React.useCallback((value: Address) => {
-    dispatch({ type: "set_address", payload: value });
-  }, []);
+  const filteredSpecies = species?.filter(({ code }) => showSeen || !lifelist.includes(code));
 
-  const handleFilterChange = (field: string, value: any) => {
-    dispatch({ type: "filter_change", payload: { field, value } });
-  };
-
-  const { seenCount, filteredSpecies } = usePostProcessSpecies({ species, expanded, seen, pending, showSeen });
-
-  const showWelcome = (!lat || !lng) && isCacheRestored;
   const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0 && !error;
 
   return (
     <div className="flex h-screen">
       <Head>
-        <title>BirdyAlert.com - Find rare birds near you</title>
+        <title>Find rare birds near you</title>
       </Head>
 
       <Sidebar
-        seenCount={seenCount}
-        filters={{ showSeen, radius }}
+        seenCount={lifelist.length}
+        showSeen={showSeen}
+        radius={radius}
         open={showSidebar}
-        onFilterChange={handleFilterChange}
-        onLogout={() => dispatch({ type: "reset" })}
+        onShowSeenChange={(value) => setShowSeen(value)}
+        onRadiusChange={(value) => setRadius(value)}
       />
 
-      <MainContent
-        shouldRender={isCacheRestored}
-        onClick={showSidebar ? () => dispatch({ type: "toggle_sidebar" }) : null}
-      >
-        {showWelcome && <WelcomeMessage />}
+      <div className="h-screen overflow-auto grow pt-6 px-4" onClick={() => setShowSidebar(false)}>
+        <div className="container mx-auto max-w-xl">
+          {!lat || (!lng && <WelcomeMessage />)}
 
-        <div className="flex mb-4">
-          <LocationSelect className="w-full mt-6" value={address} onChange={handleAddressChange} />
-          <SidebarToggle onClick={() => dispatch({ type: "toggle_sidebar" })} />
+          <div className="flex mb-4">
+            <LocationSelect className="w-full mt-6" value={address} onChange={setAddress} />
+            <SidebarToggle onClick={() => setShowSidebar(!showSidebar)} />
+          </div>
+
+          {error && <FetchError reload={call} />}
+
+          {loading && <Skeleton count={3} />}
+
+          {showNoResults && <NoResults reload={call} />}
+
+          {lat && lng && !!filteredSpecies?.length && (
+            <SpeciesList
+              items={filteredSpecies}
+              onToggleExpand={handleToggleExpand}
+              onAddSeen={appendLifelist}
+              onRemoveSeen={handleRemoveLifelist}
+              fading={fading}
+              lifelist={lifelist}
+              expanded={expanded}
+              lat={lat}
+              lng={lng}
+            />
+          )}
+
+          {!!filteredSpecies?.length && (
+            <ResultsInfo
+              count={filteredSpecies.length}
+              total={species?.length || 0}
+              onReload={call}
+              lastUpdate={lastUpdate?.toString()}
+            />
+          )}
         </div>
-
-        {error && <FetchError reload={call} />}
-
-        {loading && <Skeleton count={3} />}
-
-        {showNoResults && <NoResults reload={call} />}
-
-        {lat && lng && !!filteredSpecies?.length && (
-          <SpeciesList
-            items={filteredSpecies}
-            onToggleExpand={handleToggleExpand}
-            onAddSeen={addSeenSpecies}
-            onRemoveSeen={removeSeenSpecies}
-            lat={lat}
-            lng={lng}
-          />
-        )}
-
-        {!!filteredSpecies?.length && (
-          <ResultsInfo
-            count={filteredSpecies.length}
-            total={species?.length || 0}
-            onReload={call}
-            lastUpdate={lastUpdate?.toString()}
-          />
-        )}
-      </MainContent>
+      </div>
     </div>
   );
 }

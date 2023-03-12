@@ -5,13 +5,14 @@ import Account from "components/Account";
 
 type Props = {
   seenCount: number;
-  filters: any;
-  onFilterChange: (key: string, value: any) => void;
-  onLogout: () => void;
+  showSeen: boolean;
+  radius: number;
+  onRadiusChange: (value: number) => void;
+  onShowSeenChange: (value: boolean) => void;
   open: boolean;
 };
 
-export default function Sidebar({ seenCount, filters, onFilterChange, onLogout, open }: Props) {
+export default function Sidebar({ seenCount, showSeen, radius, onRadiusChange, onShowSeenChange, open }: Props) {
   const { user } = useUser();
 
   const radiusOptions = [
@@ -25,9 +26,9 @@ export default function Sidebar({ seenCount, filters, onFilterChange, onLogout, 
     { label: "500 mi", value: 500 },
   ];
 
-  const selectedRadius = filters.radius ? radiusOptions.find(({ value }) => value == filters.radius) : null;
+  const selectedRadius = radius ? radiusOptions.find(({ value }) => value == radius) : null;
 
-  const { logout, loading } = useFirebaseLogout(onLogout);
+  const { logout, loading } = useFirebaseLogout();
 
   return (
     <aside
@@ -46,19 +47,14 @@ export default function Sidebar({ seenCount, filters, onFilterChange, onLogout, 
           instanceId="radius-select"
           options={radiusOptions}
           value={selectedRadius}
-          onChange={(option) => onFilterChange("radius", option?.value)}
+          onChange={(option) => onRadiusChange(option?.value || radiusOptions[4].value)}
           defaultValue={radiusOptions[3]}
           placeholder="Select radius..."
         />
       </div>
       <div className="mt-4">
         <label className="text-white text-sm">
-          <input
-            type="checkbox"
-            className="mr-2"
-            checked={!filters?.showSeen}
-            onChange={() => onFilterChange("showSeen", !filters?.showSeen)}
-          />
+          <input type="checkbox" className="mr-2" checked={!showSeen} onChange={() => onShowSeenChange(!showSeen)} />
           &nbsp; Hide species I&apos;ve seen ({seenCount})
         </label>
       </div>

@@ -3,10 +3,13 @@ import CheckIcon from "icons/check";
 import Species from "components/Species";
 import SpeciesHeader from "components/SpeciesHeader";
 import SpeciesImage from "components/SpeciesImage";
-import { RBAItem } from "lib/types";
+import { Species as SpeciesT } from "lib/types";
 
 type Props = {
-  items: RBAItem[];
+  items: SpeciesT[];
+  fading: string[];
+  lifelist: string[];
+  expanded: string[];
   onAddSeen: (code: string) => void;
   onRemoveSeen: (code: string) => void;
   onToggleExpand: (code: string) => void;
@@ -14,10 +17,23 @@ type Props = {
   lng: number;
 };
 
-export default function SpeciesList({ items, onAddSeen, onRemoveSeen, onToggleExpand, lat, lng }: Props) {
+export default function SpeciesList({
+  items,
+  fading,
+  lifelist,
+  expanded,
+  onAddSeen,
+  onRemoveSeen,
+  onToggleExpand,
+  lat,
+  lng,
+}: Props) {
   return (
     <div>
-      {items?.map(({ name, sciName, code, reports, isExpanded, isSeen, isPending }) => {
+      {items?.map(({ name, sciName, code, reports }) => {
+        const isPending = fading.includes(code);
+        const isExpanded = expanded.includes(code);
+        const isOnLifelist = lifelist.includes(code);
         const date = reports[0].obsDt;
         const distances = reports.map(({ distance }) => distance);
         const shortestDistance = distances.sort((a, b) => a - b).shift();
@@ -44,7 +60,7 @@ export default function SpeciesList({ items, onAddSeen, onRemoveSeen, onToggleEx
                   <span className="hidden xs:block">{isExpanded ? "Hide" : "Show"}&nbsp;</span>
                   {reports.length} {reports.length === 1 ? "Report" : "Reports"}
                 </Button>
-                {isSeen || isPending ? (
+                {isOnLifelist || isPending ? (
                   <Button size="sm" disabled={isPending} color="green" onClick={() => onRemoveSeen(code)}>
                     <CheckIcon className="mr-2" /> Seen
                   </Button>

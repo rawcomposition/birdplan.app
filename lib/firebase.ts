@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, setDoc, getDoc, doc } from "firebase/firestore";
+import { getFirestore, setDoc, getDoc, doc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { Profile } from "lib/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
@@ -15,36 +16,48 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-export const saveSeenSpecies = async (seenSpecies: string[]) => {
+export const fetchProfile = async (): Promise<Profile | null> => {
   const user = auth.currentUser;
-  if (!user) {
-    return false;
-  }
-  await setDoc(doc(db, "seenSpecies", user.uid), {
-    species_ids: seenSpecies,
-  });
-};
-
-export const uploadSeenSpeciesFromLocalStorage = async () => {
-  try {
-    const seen = window.localStorage.getItem("seen");
-    if (seen) {
-      const seenArray = JSON.parse(seen);
-      if (Array.isArray(seenArray) && seenArray.length > 0) {
-        saveSeenSpecies(seenArray);
-      }
-    }
-  } catch (error) {}
-};
-
-export const fetchSeenSpecies = async () => {
-  const user = auth.currentUser;
-  if (!user) {
-    return [];
-  }
-  const snapshot = await getDoc(doc(db, "seenSpecies", user.uid));
+  if (!user) return null;
+  const snapshot = await getDoc(doc(db, "profile", user.uid));
   if (snapshot.exists()) {
-    return snapshot.data()?.species_ids;
+    return snapshot.data() as Profile;
   }
-  return [];
+  return null;
+};
+
+export const setProfileValue = async (key: string, value: Profile[keyof Profile]) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await setDoc(
+    doc(db, "profile", user.uid),
+    {
+      [key]: value,
+    },
+    { merge: true }
+  );
+};
+
+export const appendProfileLifelist = async (speciesCode: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await setDoc(
+    doc(db, "profile", user.uid),
+    {
+      lifelist: arrayUnion(speciesCode),
+    },
+    { merge: true }
+  );
+};
+
+export const removeProfileLifelist = async (speciesCode: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await setDoc(
+    doc(db, "profile", user.uid),
+    {
+      lifelist: arrayRemove(speciesCode),
+    },
+    { merge: true }
+  );
 };

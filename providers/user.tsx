@@ -6,9 +6,11 @@ import { User as FirebaseUser } from "firebase/auth";
 export const UserContext = React.createContext<{
   user: FirebaseUser | null;
   refreshUser: () => Promise<void>;
+  isInitialized: boolean;
 }>({
   user: null,
   refreshUser: async () => {},
+  isInitialized: false,
 });
 
 type Props = {
@@ -17,10 +19,12 @@ type Props = {
 
 const UserProvider = ({ children }: Props) => {
   const [user, setUser] = React.useState<FirebaseUser | null>(null);
+  const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setIsInitialized(true);
     });
   }, []);
 
@@ -31,7 +35,7 @@ const UserProvider = ({ children }: Props) => {
     }
   }, []);
 
-  return <UserContext.Provider value={{ user, refreshUser }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ isInitialized, user, refreshUser }}>{children}</UserContext.Provider>;
 };
 
 const useUser = () => {

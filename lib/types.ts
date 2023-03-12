@@ -1,3 +1,9 @@
+export type Profile = {
+  lifelist: string[];
+  radius: number;
+  address?: Address;
+};
+
 export type Observation = {
   locName: string;
   subnational2Name: string;
@@ -19,12 +25,6 @@ export type Species = {
   code: string;
   reports: Observation[];
 };
-
-export interface RBAItem extends Species {
-  isExpanded: boolean;
-  isSeen: boolean;
-  isPending: boolean;
-}
 
 export type Address = {
   label: string;
