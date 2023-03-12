@@ -16,12 +16,13 @@ Try it out at [https://rba.rawcomposition.com](https://rba.rawcomposition.com)
 
 ## Roadmap
 
+- [ ] Enable anonymous users so it works without logging in
 - [ ] Remove subspecies and hybrids (group reports based on scientific name)
 - [ ] Allow uploading eBird lifelist .csv file
+- [ ] Get location from device
 - [ ] Expand thumbnail coverage, consider Cloudinary
 - [ ] Add link from app to Github
 - [ ] Cache eBird API response for several minutes (or do all processing on the client side and cache results client side)
-- [ ] Get location from device
 - [ ] Setup error boundaries
 - [ ] Add time period picker to allow showing results between 1 and 30 days
 - [ ] Show Google map of reports
