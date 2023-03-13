@@ -1,12 +1,15 @@
 import type { AppProps } from "next/app";
 import "styles/globals.css";
 import { UserProvider } from "providers/user";
+import { ModalProvider } from "providers/modals";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <UserProvider>
-      <Component {...pageProps} />
-    </UserProvider>
+    <ModalProvider>
+      <UserProvider>
+        <Component {...pageProps} />
+      </UserProvider>
+    </ModalProvider>
   );
 }
 

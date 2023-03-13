@@ -2,6 +2,7 @@ import * as React from "react";
 import mapboxgl from "mapbox-gl";
 import { getRadiusForBounds } from "lib/helpers";
 import { getMarkerShade } from "lib/helpers";
+import { EbirdHotspot } from "lib/types";
 
 const keys = process.env.NEXT_PUBLIC_MAPBOX_KEY?.split(",") || [];
 const key = keys[Math.floor(Math.random() * keys.length)];
@@ -10,9 +11,10 @@ mapboxgl.accessToken = key || "";
 type Props = {
   lat?: number;
   lng?: number;
+  onSelect: (hotspot: EbirdHotspot) => void;
 };
 
-export default function ExploreMap({ lat, lng }: Props) {
+export default function ExploreMap({ lat, lng, onSelect }: Props) {
   const [satellite, setSatellite] = React.useState<boolean>(false);
   const mapContainer = React.useRef(null);
   const map = React.useRef<any>(null);
@@ -28,24 +30,23 @@ export default function ExploreMap({ lat, lng }: Props) {
     const res = await fetch(
       `https://api.ebird.org/v2/ref/hotspot/geo?lat=${centerLat}8&lng=${centerLng}&dist=${radius}&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}&fmt=json`
     );
-    const data = await res.json();
+    const data: EbirdHotspot[] = await res.json();
     const containedHotspots = data.filter((hotspot: any) => {
       const { lat, lng } = hotspot;
       return lat > swLat && lat < neLat && lng > swLng && lng < neLng;
     });
     refs.current?.map((ref: any) => ref.remove());
-    refs.current = containedHotspots.map(({ locName, locId, lat, lng, numSpeciesAllTime }: any) => {
+    refs.current = containedHotspots.map((hotspot) => {
+      const { lat, lng, numSpeciesAllTime } = hotspot;
       const icon = document.createElement("img");
       icon.className = "marker-sm";
       icon.src = `/markers/shade-${getMarkerShade(numSpeciesAllTime)}.svg`;
 
       const marker = new mapboxgl.Marker(icon);
-      const targetUrl = `https://ebird.org/targets?r1=${locId}&bmo=1&emo=12&r2=world&t2=life`;
-      const targetLink = `<a href="${targetUrl}" class="marker-link" target="_blank"><b>Targets</b></a>`;
-      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-        `<h3 class="font-medium text-sm mb-2">${locName}</h3>${targetLink}&nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" class="marker-link"><b>Directions</b></a>`
-      );
-      marker.setLngLat([lng, lat]).setPopup(popup).addTo(map.current);
+      marker.setLngLat([lng, lat]).addTo(map.current);
+      marker.getElement().addEventListener("click", () => {
+        onSelect(hotspot);
+      });
 
       return marker;
     });

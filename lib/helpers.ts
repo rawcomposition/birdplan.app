@@ -36,7 +36,7 @@ export const getMarkerShade = (count: number) => {
   if (count <= 300) return 8;
   if (count <= 400) return 9;
   if (count <= 500) return 10;
-  return "#bcbcbc";
+  return 1;
 };
 
 export const getRadiusForBounds = (lat1: number, lon1: number, lat2: number, lon2: number) => {

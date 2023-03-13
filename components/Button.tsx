@@ -1,33 +1,64 @@
+import clsx from "clsx";
+import Link from "next/link";
+
 type Props = {
   className?: string;
-  type?: "button" | "submit" | "reset";
-  size?: "sm" | "md";
-  color?: "default" | "red" | "green";
+  color?: string;
+  size?: string;
+  type?: "submit" | "reset" | "button" | undefined;
+  disabled?: boolean;
+  href?: string;
   children: React.ReactNode;
-  [key: string]: any;
+  [x: string]: any;
+};
+
+type ColorTypes = {
+  [x: string]: string;
+};
+
+type SizeTypes = {
+  [x: string]: string;
 };
 
 export default function Button({
   className,
+  disabled,
   type = "button",
+  color = "primary",
   size = "md",
-  color = "default",
+  href,
   children,
   ...props
 }: Props) {
-  const colors = {
-    default: "bg-slate-600 hover:bg-slate-700 focus:ring-slate-500",
-    red: "bg-rose-600 hover:bg-rose-700 focus:ring-rose-500",
-    green: "bg-lime-600 hover:bg-lime-700 focus:ring-lime-500",
+  const baseClasses = "font-semibold rounded";
+
+  const sizes: SizeTypes = {
+    lg: "text-md py-[0.625rem] px-[1.125rem]",
+    md: "text-sm py-[0.625rem] px-4",
+    sm: "text-[13px] py-1 px-2",
   };
-  const sizes = {
-    sm: "py-0.5 px-3",
-    md: "py-2 px-4",
+
+  const colors: ColorTypes = {
+    default: "bg-gray-300 text-gray-700",
+    gray: "text-gray-600 bg-gray-100",
   };
-  return (
+
+  const colorClasses = colors[color];
+  const sizeClasses = sizes[size];
+
+  return href ? (
+    <Link
+      href={href}
+      className={clsx(className, baseClasses, sizeClasses, colorClasses, disabled ? "opacity-60" : "")}
+      {...props}
+    >
+      {children}
+    </Link>
+  ) : (
     <button
       type={type}
-      className={`flex items-center justify-center border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${sizes[size]} ${colors[color]} ${className}`}
+      className={clsx(className, baseClasses, sizeClasses, colorClasses, disabled ? "opacity-60" : "")}
+      disabled={disabled}
       {...props}
     >
       {children}

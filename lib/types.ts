@@ -57,3 +57,19 @@ export type Marker = {
   id: string;
   species?: number;
 };
+
+export type EbirdHotspot = {
+  locId: string;
+  locName: string;
+  countryCode: "MX";
+  subnational1Code: string;
+  subnational2Code: string;
+  lat: number;
+  lng: number;
+  latestObsDt: string;
+  numSpeciesAllTime: number;
+};
+
+export type KeyValue = {
+  [key: string]: any;
+};

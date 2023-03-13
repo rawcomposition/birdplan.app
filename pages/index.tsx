@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "components/sidebar";
+import Header from "components/Header";
 import SpeciesList from "components/SpeciesList";
 import Skeleton from "components/Skeleton";
 import LocationSelect from "components/LocationSelect";
@@ -53,72 +54,75 @@ export default function Home() {
   const selectedRadius = radius ? radiusOptions.find(({ value }) => value == radius) : null;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col h-screen">
       <Head>
         <title>Find rare birds near you</title>
       </Head>
 
-      <Sidebar open={showSidebar}>
-        <div className="mt-4">
-          <label htmlFor="radius" className="text-white text-sm">
-            Radius
-          </label>
-          <Select
-            instanceId="radius-select"
-            options={radiusOptions}
-            value={selectedRadius}
-            onChange={(option) => setRadius(option?.value || radiusOptions[4].value)}
-            defaultValue={radiusOptions[3]}
-            placeholder="Select radius..."
-          />
-        </div>
-        <div className="mt-4">
-          <label className="text-white text-sm">
-            <input type="checkbox" className="mr-2" checked={!showSeen} onChange={() => setShowSeen(!showSeen)} />
-            &nbsp; Hide species I&apos;ve seen ({lifelist.length})
-          </label>
-        </div>
-      </Sidebar>
-
-      <div className="h-screen overflow-auto grow pt-6 px-4" onClick={() => setShowSidebar(false)}>
-        <div className="container mx-auto max-w-xl">
-          {(!lat || !lng) && <WelcomeMessage />}
-
-          <div className="flex mb-4">
-            <LocationSelect className="w-full mt-6" value={address} onChange={setAddress} />
-            <SidebarToggle onClick={() => setShowSidebar(!showSidebar)} />
+      <Header title="rare bird alert" />
+      <main className="flex">
+        <Sidebar open={showSidebar}>
+          <div className="mt-4">
+            <label htmlFor="radius" className="text-white text-sm">
+              Radius
+            </label>
+            <Select
+              instanceId="radius-select"
+              options={radiusOptions}
+              value={selectedRadius}
+              onChange={(option) => setRadius(option?.value || radiusOptions[4].value)}
+              defaultValue={radiusOptions[3]}
+              placeholder="Select radius..."
+            />
           </div>
+          <div className="mt-4">
+            <label className="text-white text-sm">
+              <input type="checkbox" className="mr-2" checked={!showSeen} onChange={() => setShowSeen(!showSeen)} />
+              &nbsp; Hide species I&apos;ve seen ({lifelist.length})
+            </label>
+          </div>
+        </Sidebar>
 
-          {error && <FetchError reload={call} />}
+        <div className="h-screen overflow-auto grow pt-6 px-4" onClick={() => setShowSidebar(false)}>
+          <div className="container mx-auto max-w-xl">
+            {(!lat || !lng) && <WelcomeMessage />}
 
-          {loading && <Skeleton count={3} />}
+            <div className="flex mb-4">
+              <LocationSelect className="w-full mt-6" value={address} onChange={setAddress} />
+              <SidebarToggle onClick={() => setShowSidebar(!showSidebar)} />
+            </div>
 
-          {showNoResults && <NoResults reload={call} />}
+            {error && <FetchError reload={call} />}
 
-          {lat && lng && !!filteredSpecies?.length && (
-            <SpeciesList
-              items={filteredSpecies}
-              onToggleExpand={handleToggleExpand}
-              onAddSeen={handleSeen}
-              onRemoveSeen={removeLifelist}
-              fading={fading}
-              lifelist={lifelist}
-              expanded={expanded}
-              lat={lat}
-              lng={lng}
-            />
-          )}
+            {loading && <Skeleton count={3} />}
 
-          {!!filteredSpecies?.length && (
-            <ResultsInfo
-              count={filteredSpecies.length}
-              total={species?.length || 0}
-              onReload={call}
-              lastUpdate={lastUpdate?.toString()}
-            />
-          )}
+            {showNoResults && <NoResults reload={call} />}
+
+            {lat && lng && !!filteredSpecies?.length && (
+              <SpeciesList
+                items={filteredSpecies}
+                onToggleExpand={handleToggleExpand}
+                onAddSeen={handleSeen}
+                onRemoveSeen={removeLifelist}
+                fading={fading}
+                lifelist={lifelist}
+                expanded={expanded}
+                lat={lat}
+                lng={lng}
+              />
+            )}
+
+            {!!filteredSpecies?.length && (
+              <ResultsInfo
+                count={filteredSpecies.length}
+                total={species?.length || 0}
+                onReload={call}
+                lastUpdate={lastUpdate?.toString()}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
