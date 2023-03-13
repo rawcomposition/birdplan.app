@@ -4,25 +4,41 @@ import Header from "components/Header";
 import Head from "next/head";
 import useProfile from "hooks/useProfile";
 import MapBox from "components/Mapbox";
-import { EbirdHotspot } from "lib/types";
+import { EbirdHotspot, Marker } from "lib/types";
 import { useModal } from "providers/modals";
 import Expand from "components/Expand";
+import useFetchHotspots from "hooks/useFetchHotspots";
+import { getMarkerShade } from "lib/helpers";
 
 export default function Planner() {
-  const { lifelist, radius, address, setRadius } = useProfile();
+  const { hotspots, call } = useFetchHotspots();
+  const {} = useProfile();
   const { open } = useModal();
 
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showSeen, setShowSeen] = React.useState(false);
-  const [selected, setSelected] = React.useState<EbirdHotspot>();
+  const [selectedId, setSelectedId] = React.useState<string>();
 
-  const handleSelect = (hotspot: EbirdHotspot) => {
-    setSelected(hotspot);
-    open("hotspot", { hotspot });
+  const hotspotMarkers = hotspots.map((it) => ({
+    lat: it.lat,
+    lng: it.lng,
+    type: "hotspot",
+    shade: getMarkerShade(it.numSpeciesAllTime),
+    id: it.locId,
+  }));
+
+  const markers = [...hotspotMarkers];
+
+  const handleSelect = ({ id, type }: Marker) => {
+    setSelectedId(id);
+    if (type === "hotspot") {
+      const hotspot = hotspots.find((it) => it.locId === id);
+      open("hotspot", { hotspot });
+    }
   };
 
-  const lat = 20.652816318357367;
-  const lng = -87.67056139518648;
+  const initialLat = 20.652816318357367;
+  const initialLng = -87.67056139518648;
 
   return (
     <div className="flex flex-col h-screen">
@@ -54,7 +70,13 @@ export default function Planner() {
 
         <div className="h-[calc(100vh_-_60px)] grow" onClick={() => setShowSidebar(false)}>
           <div className="w-full h-full">
-            <MapBox lat={lat} lng={lng} onSelect={handleSelect} />
+            <MapBox
+              lat={initialLat}
+              lng={initialLng}
+              onSelect={handleSelect}
+              onShouldRefetch={call}
+              markers={markers}
+            />
           </div>
         </div>
       </main>

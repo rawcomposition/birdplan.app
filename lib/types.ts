@@ -50,12 +50,11 @@ export type DispatchAction = {
 };
 
 export type Marker = {
-  name: string;
   lat: number;
   lng: number;
   type: string;
   id: string;
-  species?: number;
+  shade?: number;
 };
 
 export type EbirdHotspot = {

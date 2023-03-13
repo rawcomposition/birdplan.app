@@ -1,100 +1,69 @@
-import * as React from "react";
-import mapboxgl from "mapbox-gl";
-import { getRadiusForBounds } from "lib/helpers";
-import { getMarkerShade } from "lib/helpers";
-import { EbirdHotspot } from "lib/types";
-
-const keys = process.env.NEXT_PUBLIC_MAPBOX_KEY?.split(",") || [];
-const key = keys[Math.floor(Math.random() * keys.length)];
-mapboxgl.accessToken = key || "";
+import React from "react";
+import Map, { NavigationControl, Marker, ViewStateChangeEvent, MapboxEvent } from "react-map-gl";
+import { Marker as MarkerT } from "lib/types";
 
 type Props = {
   lat?: number;
   lng?: number;
-  onSelect: (hotspot: EbirdHotspot) => void;
+  markers: MarkerT[];
+  onSelect: (hotspot: MarkerT) => void;
+  onShouldRefetch: (swLat: number, swLng: number, neLat: number, neLng: number) => void;
 };
 
-export default function ExploreMap({ lat, lng, onSelect }: Props) {
-  const [satellite, setSatellite] = React.useState<boolean>(false);
-  const mapContainer = React.useRef(null);
-  const map = React.useRef<any>(null);
-  const zoomRef = React.useRef<any>(6);
-  const refs = React.useRef<any>(null);
-  const tooLargeRef = React.useRef<boolean>(false);
+export default function Mapbox({ lat, lng, markers, onSelect, onShouldRefetch }: Props) {
+  const [satellite, setSatellite] = React.useState(false);
+  const [zoom, setZoom] = React.useState(8);
 
-  const fetchMarkers = async (swLat: number, swLng: number, neLat: number, neLng: number) => {
-    const centerLat = (swLat + neLat) / 2;
-    const centerLng = (swLng + neLng) / 2;
-    const bestRadius = getRadiusForBounds(swLat, swLng, neLat, neLng);
-    const radius = Math.min(bestRadius, 500);
-    const res = await fetch(
-      `https://api.ebird.org/v2/ref/hotspot/geo?lat=${centerLat}8&lng=${centerLng}&dist=${radius}&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}&fmt=json`
-    );
-    const data: EbirdHotspot[] = await res.json();
-    const containedHotspots = data.filter((hotspot: any) => {
-      const { lat, lng } = hotspot;
-      return lat > swLat && lat < neLat && lng > swLng && lng < neLng;
-    });
-    refs.current?.map((ref: any) => ref.remove());
-    refs.current = containedHotspots.map((hotspot) => {
-      const { lat, lng, numSpeciesAllTime } = hotspot;
-      const icon = document.createElement("img");
-      icon.className = "marker-sm";
-      icon.src = `/markers/shade-${getMarkerShade(numSpeciesAllTime)}.svg`;
+  const handleMoveEnd = (e: ViewStateChangeEvent) => {
+    // Don't refetch if zooming in
+    const newZoom = e.viewState.zoom;
+    if (newZoom < 7) return;
+    const oldZoom = zoom;
+    setZoom(newZoom);
+    if (newZoom > oldZoom) return;
 
-      const marker = new mapboxgl.Marker(icon);
-      marker.setLngLat([lng, lat]).addTo(map.current);
-      marker.getElement().addEventListener("click", () => {
-        onSelect(hotspot);
-      });
+    // Get bounds
+    const bounds = e.target.getBounds();
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
 
-      return marker;
-    });
+    onShouldRefetch(sw.lat, sw.lng, ne.lat, ne.lng);
   };
 
-  const handleToggle = () => {
-    const style = satellite ? "outdoors-v11" : "satellite-streets-v11";
-    map.current.setStyle(`mapbox://styles/mapbox/${style}`);
-    setSatellite((prev) => !prev);
+  const handleLoad = (e: MapboxEvent) => {
+    const bounds = e.target.getBounds();
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+    onShouldRefetch(sw.lat, sw.lng, ne.lat, ne.lng);
   };
-
-  React.useEffect(() => {
-    if (!mapContainer.current) return;
-    if (map.current) return;
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/outdoors-v11",
-      center: [lng || -95.7129, lat || 37.0902],
-      zoom: 8,
-    });
-    map.current.addControl(new mapboxgl.NavigationControl());
-
-    map.current.on("moveend", () => {
-      const newZoom = map.current.getZoom();
-      if (newZoom < 7) return;
-      const oldZoom = zoomRef.current;
-      zoomRef.current = newZoom;
-      if (newZoom > oldZoom && !tooLargeRef.current) return;
-      const bounds = map.current.getBounds();
-      const ne = bounds.getNorthEast();
-      const sw = bounds.getSouthWest();
-      fetchMarkers(sw.lat, sw.lng, ne.lat, ne.lng);
-    });
-
-    const bounds = map.current.getBounds();
-    fetchMarkers(
-      bounds.getSouthWest().lat,
-      bounds.getSouthWest().lng,
-      bounds.getNorthEast().lat,
-      bounds.getNorthEast().lng
-    );
-  });
 
   return (
     <div className="relative w-full h-full">
-      <div ref={mapContainer} className="w-full h-full" />
+      <Map
+        initialViewState={{
+          longitude: lng,
+          latitude: lat,
+          zoom,
+        }}
+        style={{ width: "100%", height: "100%" }}
+        mapStyle={satellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"}
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
+        onMoveEnd={handleMoveEnd}
+        onLoad={handleLoad}
+      >
+        <NavigationControl showCompass={false} />
+        {markers.map((marker) => (
+          <Marker key={marker.id} latitude={marker.lat} longitude={marker.lng} onClick={() => onSelect(marker)}>
+            <img src={`/markers/${marker.type}-${marker.shade || 1}.svg`} className="marker-sm" alt="marker" />
+          </Marker>
+        ))}
+      </Map>
       <div className="flex gap-2 absolute top-2 left-2">
-        <button type="button" className="bg-white shadow text-black rounded-sm px-4" onClick={handleToggle}>
+        <button
+          type="button"
+          className="bg-white shadow text-black rounded-sm px-4"
+          onClick={() => setSatellite((prev) => !prev)}
+        >
           {satellite ? "Terrain" : "Satellite"}
         </button>
       </div>

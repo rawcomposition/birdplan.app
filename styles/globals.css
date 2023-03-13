@@ -44,10 +44,6 @@
   }
 }
 
-.mapboxgl-ctrl-compass {
-  display: none !important;
-}
-
 .mapboxgl-popup-anchor-top {
   margin-top: -25px;
 }
