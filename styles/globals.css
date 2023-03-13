@@ -2,31 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 @layer base {
-	body {
-		background-color: #f3f5f9;
-		@apply font-body;
-	}
+  body {
+    background-color: #f3f5f9;
+    @apply font-body;
+  }
 
-	a {
-	  @apply text-blue-900;
-	}
+  a {
+    @apply text-blue-900;
+  }
 
-	svg.icon {
-		width: 1em;
-		height: 1em;		
-		@apply fill-current;
-		@apply inline;
-	}
+  svg.icon {
+    width: 1em;
+    height: 1em;
+    @apply fill-current;
+    @apply inline;
+  }
+
+  img.marker-sm {
+    width: 15px;
+    height: 20px;
+    margin-top: -10px;
+    cursor: pointer;
+  }
 }
 
 @layer components {
-	.aside-bg {
-		background-image: url(/flock.svg), radial-gradient(farthest-corner at 40% -10%, rgba(255,255,255,0.2) 0%, transparent 40%, transparent 100%);
-		@apply bg-no-repeat;
-		@apply bg-[length:200%];
-		@apply bg-blend-luminosity;
-	}
+  .aside-bg {
+    background-image: url(/flock.svg),
+      radial-gradient(farthest-corner at 40% -10%, rgba(255, 255, 255, 0.2) 0%, transparent 40%, transparent 100%);
+    @apply bg-no-repeat;
+    @apply bg-[length:200%];
+    @apply bg-blend-luminosity;
+  }
+}
+
+.mapboxgl-ctrl-compass {
+  display: none !important;
+}
+
+.mapboxgl-popup-anchor-top {
+  margin-top: -25px;
+}
+
+.mapboxgl-popup-anchor-left {
+  margin-left: -15px;
+  margin-top: -15px;
+}
+
+.mapboxgl-popup-anchor-right {
+  margin-right: -25px;
+  margin-top: -15px;
+}
+
+.mapboxAddMarkerMode .mapboxgl-canvas-container {
+  @apply cursor-crosshair;
+}
+
+.mapboxgl-popup-close-button {
+  display: none;
+}
+
+.mapboxgl-ctrl-fullscreen .mapboxgl-ctrl-icon,
+.mapboxgl-ctrl-shrink .mapboxgl-ctrl-icon {
+  background-size: 80%;
+  opacity: 0.8;
+}
+
+.mapboxgl-popup-content {
+  overflow: hidden;
+  @apply p-4;
+}
+
+.marker-link:focus-visible {
+  @apply outline-none;
 }

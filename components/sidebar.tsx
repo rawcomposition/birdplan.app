@@ -1,32 +1,14 @@
 import { useUser } from "providers/user";
-import Select from "react-select";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
 import Account from "components/Account";
 
 type Props = {
-  seenCount: number;
-  showSeen: boolean;
-  radius: number;
-  onRadiusChange: (value: number) => void;
-  onShowSeenChange: (value: boolean) => void;
   open: boolean;
+  children?: React.ReactNode;
 };
 
-export default function Sidebar({ seenCount, showSeen, radius, onRadiusChange, onShowSeenChange, open }: Props) {
+export default function Sidebar({ open, children }: Props) {
   const { user } = useUser();
-
-  const radiusOptions = [
-    { label: "5 mi", value: 5 },
-    { label: "10 mi", value: 10 },
-    { label: "20 mi", value: 20 },
-    { label: "50 mi", value: 50 },
-    { label: "100 mi", value: 100 },
-    { label: "250 mi", value: 250 },
-    { label: "350 mi", value: 350 },
-    { label: "500 mi", value: 500 },
-  ];
-
-  const selectedRadius = radius ? radiusOptions.find(({ value }) => value == radius) : null;
 
   const { logout, loading } = useFirebaseLogout();
 
@@ -39,25 +21,7 @@ export default function Sidebar({ seenCount, showSeen, radius, onRadiusChange, o
       <img src="/icon.png" className="mx-auto" width="120" />
       <h1 className="text-center mb-6 text-[#757c8c] font-logo text-2xl">birdy alert</h1>
       <Account />
-      <div className="mt-4">
-        <label htmlFor="radius" className="text-white text-sm">
-          Radius
-        </label>
-        <Select
-          instanceId="radius-select"
-          options={radiusOptions}
-          value={selectedRadius}
-          onChange={(option) => onRadiusChange(option?.value || radiusOptions[4].value)}
-          defaultValue={radiusOptions[3]}
-          placeholder="Select radius..."
-        />
-      </div>
-      <div className="mt-4">
-        <label className="text-white text-sm">
-          <input type="checkbox" className="mr-2" checked={!showSeen} onChange={() => onShowSeenChange(!showSeen)} />
-          &nbsp; Hide species I&apos;ve seen ({seenCount})
-        </label>
-      </div>
+      <div className="mt-4">{children}</div>
       {user?.uid && (
         <div className="absolute left-0 bottom-0 w-full p-6 text-center">
           <button

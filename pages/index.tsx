@@ -11,6 +11,8 @@ import FetchError from "components/FetchError";
 import ResultsInfo from "components/ResultsInfo";
 import Head from "next/head";
 import useProfile from "hooks/useProfile";
+import Select from "react-select";
+import { radiusOptions } from "lib/helpers";
 
 export default function Home() {
   const { lifelist, radius, address, setRadius, setAddress, appendLifelist, removeLifelist } = useProfile();
@@ -48,20 +50,35 @@ export default function Home() {
 
   const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0 && !error;
 
+  const selectedRadius = radius ? radiusOptions.find(({ value }) => value == radius) : null;
+
   return (
     <div className="flex h-screen">
       <Head>
         <title>Find rare birds near you</title>
       </Head>
 
-      <Sidebar
-        seenCount={lifelist.length}
-        showSeen={showSeen}
-        radius={radius}
-        open={showSidebar}
-        onShowSeenChange={(value) => setShowSeen(value)}
-        onRadiusChange={(value) => setRadius(value)}
-      />
+      <Sidebar open={showSidebar}>
+        <div className="mt-4">
+          <label htmlFor="radius" className="text-white text-sm">
+            Radius
+          </label>
+          <Select
+            instanceId="radius-select"
+            options={radiusOptions}
+            value={selectedRadius}
+            onChange={(option) => setRadius(option?.value || radiusOptions[4].value)}
+            defaultValue={radiusOptions[3]}
+            placeholder="Select radius..."
+          />
+        </div>
+        <div className="mt-4">
+          <label className="text-white text-sm">
+            <input type="checkbox" className="mr-2" checked={!showSeen} onChange={() => setShowSeen(!showSeen)} />
+            &nbsp; Hide species I&apos;ve seen ({lifelist.length})
+          </label>
+        </div>
+      </Sidebar>
 
       <div className="h-screen overflow-auto grow pt-6 px-4" onClick={() => setShowSidebar(false)}>
         <div className="container mx-auto max-w-xl">

@@ -48,3 +48,12 @@ export type DispatchAction = {
   type: string;
   payload?: any;
 };
+
+export type Marker = {
+  name: string;
+  lat: number;
+  lng: number;
+  type: string;
+  id: string;
+  species?: number;
+};
