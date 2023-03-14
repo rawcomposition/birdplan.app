@@ -37,16 +37,18 @@ export default function Planner() {
     }
   };
 
+  //TODO
   const initialLat = 20.652816318357367;
   const initialLng = -87.67056139518648;
+  const title = "Playa del Carmen";
 
   return (
     <div className="flex flex-col h-screen">
       <Head>
-        <title>Find rare birds near you</title>
+        <title>{title} | bird planner</title>
       </Head>
 
-      <Header title="bird planner" />
+      <Header title={title} parent={{ title: "Trips", href: "/" }} />
       <main className="flex">
         <Sidebar open={showSidebar}>
           <div className="mb-4">
