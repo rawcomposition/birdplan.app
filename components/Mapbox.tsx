@@ -1,40 +1,31 @@
 import React from "react";
 import Map, { NavigationControl, Marker, ViewStateChangeEvent, MapboxEvent } from "react-map-gl";
-import { Marker as MarkerT } from "lib/types";
+import { Marker as MarkerT, Bounds } from "lib/types";
 
 type Props = {
   lat?: number;
   lng?: number;
   markers: MarkerT[];
   onSelect: (hotspot: MarkerT) => void;
-  onShouldRefetch: (swLat: number, swLng: number, neLat: number, neLng: number) => void;
+  onMove: (bounds: Bounds) => void;
 };
 
-export default function Mapbox({ lat, lng, markers, onSelect, onShouldRefetch }: Props) {
+export default function Mapbox({ lat, lng, markers, onSelect, onMove }: Props) {
   const [satellite, setSatellite] = React.useState(false);
-  const [zoom, setZoom] = React.useState(8);
 
   const handleMoveEnd = (e: ViewStateChangeEvent) => {
-    // Don't refetch if zooming in
-    const newZoom = e.viewState.zoom;
-    if (newZoom < 7) return;
-    const oldZoom = zoom;
-    setZoom(newZoom);
-    if (newZoom > oldZoom) return;
-
-    // Get bounds
     const bounds = e.target.getBounds();
     const ne = bounds.getNorthEast();
     const sw = bounds.getSouthWest();
 
-    onShouldRefetch(sw.lat, sw.lng, ne.lat, ne.lng);
+    onMove({ swLat: sw.lat, swLng: sw.lng, neLat: ne.lat, neLng: ne.lng });
   };
 
   const handleLoad = (e: MapboxEvent) => {
     const bounds = e.target.getBounds();
     const ne = bounds.getNorthEast();
     const sw = bounds.getSouthWest();
-    onShouldRefetch(sw.lat, sw.lng, ne.lat, ne.lng);
+    onMove({ swLat: sw.lat, swLng: sw.lng, neLat: ne.lat, neLng: ne.lng });
   };
 
   return (
@@ -43,7 +34,7 @@ export default function Mapbox({ lat, lng, markers, onSelect, onShouldRefetch }:
         initialViewState={{
           longitude: lng,
           latitude: lat,
-          zoom,
+          zoom: 8,
         }}
         style={{ width: "100%", height: "100%" }}
         mapStyle={satellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"}

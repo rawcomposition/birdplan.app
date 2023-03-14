@@ -83,7 +83,7 @@ const Footer = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Header = ({ children }: { children: React.ReactNode }) => (
-  <Dialog.Title as="h3" className="px-4 sm:px-6 py-4 border-b flex bg-gray-50 text-lg font-medium">
+  <Dialog.Title as="h3" className="pl-4 sm:pl-6 pr-12 py-4 border-b flex bg-gray-50 text-lg font-medium">
     {children}
   </Dialog.Title>
 );

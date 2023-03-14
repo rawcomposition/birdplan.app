@@ -39,25 +39,6 @@ export const getMarkerShade = (count: number) => {
   return 1;
 };
 
-export const getRadiusForBounds = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-  const R = 6371; // Earth's radius in km
-
-  function toRad(x: number) {
-    return (x * Math.PI) / 180;
-  }
-
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const radius = R * c;
-  //Unsure why this needs to be divided by 2, but it does
-  return radius / 2;
-};
-
 export const radiusOptions = [
   { label: "5 mi", value: 5 },
   { label: "10 mi", value: 10 },

@@ -6,14 +6,27 @@ import Feather from "icons/Feather";
 import Directions from "icons/Directions";
 import Star from "icons/Star";
 import StarOutline from "icons/StarOutline";
+import toast from "react-hot-toast";
+import { useProfile } from "providers/profile";
 
 type Props = {
   hotspot: EbirdHotspot;
 };
 
 export default function StateInfo({ hotspot }: Props) {
+  const { hotspots, appendHotspot, removeHotspot } = useProfile();
   const [checklistCount, setChecklistCount] = React.useState<number>();
   const { locId, locName, lat, lng, numSpeciesAllTime } = hotspot;
+  const isSaved = hotspots.some((it) => it.locId === locId);
+
+  const handleSave = async () => {
+    if (isSaved) {
+      removeHotspot(locId);
+    } else {
+      toast.success("Hotspot saved!");
+      appendHotspot(hotspot);
+    }
+  };
 
   React.useEffect(() => {
     (async () => {
@@ -58,8 +71,16 @@ export default function StateInfo({ hotspot }: Props) {
           >
             <Directions className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
           </Button>
-          <Button color="gray" size="sm">
-            <StarOutline className="mr-1 -mt-[3px] text-sky-600" /> Save
+          <Button color="gray" size="sm" onClick={handleSave}>
+            {isSaved ? (
+              <>
+                <Star className="mr-1 -mt-[3px] text-sky-600" /> Saved
+              </>
+            ) : (
+              <>
+                <StarOutline className="mr-1 -mt-[3px] text-sky-600" /> Save
+              </>
+            )}
           </Button>
         </div>
       </Body>

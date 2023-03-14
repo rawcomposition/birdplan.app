@@ -1,6 +1,7 @@
 export type Profile = {
   lifelist: string[];
   radius: number;
+  hotspots: EbirdHotspot[];
   address?: Address;
 };
 
@@ -71,4 +72,17 @@ export type EbirdHotspot = {
 
 export type KeyValue = {
   [key: string]: any;
+};
+
+export type Bounds = {
+  swLat: number;
+  swLng: number;
+  neLat: number;
+  neLng: number;
+};
+
+export type Trip = {
+  id: string;
+  name: string;
+  region: string;
 };

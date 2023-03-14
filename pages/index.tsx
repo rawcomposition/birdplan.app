@@ -11,7 +11,7 @@ import NoResults from "components/NoResults";
 import FetchError from "components/FetchError";
 import ResultsInfo from "components/ResultsInfo";
 import Head from "next/head";
-import useProfile from "hooks/useProfile";
+import { useProfile } from "providers/profile";
 import Select from "react-select";
 import { radiusOptions } from "lib/helpers";
 
