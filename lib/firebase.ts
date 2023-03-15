@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, setDoc, getDoc, doc, arrayUnion, arrayRemove } from "firebase/firestore";
-import { Profile, EbirdHotspot } from "lib/types";
+import { Profile, Hotspot } from "lib/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
@@ -62,7 +62,7 @@ export const removeProfileLifelist = async (speciesCode: string) => {
   );
 };
 
-export const appendProfileHotspots = async (hotspot: EbirdHotspot) => {
+export const appendProfileHotspots = async (hotspot: Hotspot) => {
   const user = auth.currentUser;
   if (!user) return;
   await setDoc(
@@ -74,7 +74,7 @@ export const appendProfileHotspots = async (hotspot: EbirdHotspot) => {
   );
 };
 
-export const updateProfileHotspots = async (hotspots: EbirdHotspot[]) => {
+export const updateProfileHotspots = async (hotspots: Hotspot[]) => {
   const user = auth.currentUser;
   if (!user) return;
   await setDoc(doc(db, "profile", user.uid), { hotspots }, { merge: true });

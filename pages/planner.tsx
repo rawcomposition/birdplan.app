@@ -8,7 +8,7 @@ import { Marker, Bounds } from "lib/types";
 import { useModal } from "providers/modals";
 import Expand from "components/Expand";
 import useFetchHotspots from "hooks/useFetchHotspots";
-import { getMarkerShade } from "lib/helpers";
+import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
 import { GetServerSideProps } from "next";
 
@@ -22,37 +22,23 @@ export default function Planner({ isNew }: any) {
   const { open } = useModal();
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
-  const [bounds, setBounds] = React.useState<Bounds>();
 
-  const { hotspots, call } = useFetchHotspots({ region, fetchImmediately: isNew });
   const { hotspots: savedHotspots } = useProfile();
+  const savedIdStr = savedHotspots.map((it) => it.id).join(",");
+  const { hotspots, layer, call } = useFetchHotspots({ region, fetchImmediately: isNew, savedIdStr });
 
-  const containedHotspots = bounds
-    ? hotspots.filter((hotspot: any) => {
-        const { lat, lng } = hotspot;
-        return lat > bounds.swLat && lat < bounds.neLat && lng > bounds.swLng && lng < bounds.neLng;
-      })
-    : [];
-
-  const savedIds = savedHotspots.map((it) => it.locId);
-  const filteredHotspots = showAll
-    ? [...savedHotspots, ...containedHotspots.filter((it) => !savedIds.includes(it.locId))]
-    : savedHotspots;
-  const hotspotMarkers = filteredHotspots.map((it) => ({
+  const markers = savedHotspots.map((it) => ({
     lat: it.lat,
     lng: it.lng,
     type: "hotspot",
-    shade: getMarkerShade(it.numSpeciesAllTime),
-    id: it.locId,
+    shade: getMarkerColorIndex(it.species),
+    id: it.id,
   }));
 
-  const markers = [...hotspotMarkers];
-
-  const handleSelect = ({ id, type }: Marker) => {
-    if (type === "hotspot") {
-      const hotspot = hotspots.find((it) => it.locId === id);
-      open("hotspot", { hotspot });
-    }
+  const handleHotspotClick = (id: string) => {
+    const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
+    const hotspot = allHotspots.find((it) => it.id === id);
+    open("hotspot", { hotspot });
   };
 
   const handleToggleShowAll = () => {
@@ -90,7 +76,13 @@ export default function Planner({ isNew }: any) {
 
         <div className="h-[calc(100vh_-_60px)] grow" onClick={() => setShowSidebar(false)}>
           <div className="w-full h-full">
-            <MapBox lat={initialLat} lng={initialLng} onSelect={handleSelect} onMove={setBounds} markers={markers} />
+            <MapBox
+              lat={initialLat}
+              lng={initialLng}
+              onHotspotClick={handleHotspotClick}
+              markers={markers}
+              layer={layer}
+            />
           </div>
         </div>
       </main>

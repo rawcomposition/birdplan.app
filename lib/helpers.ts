@@ -25,18 +25,36 @@ export function distanceBetween(lat1: number, lon1: number, lat2: number, lon2: 
   }
 }
 
-export const getMarkerShade = (count: number) => {
-  if (count === 0) return 1;
-  if (count <= 15) return 2;
-  if (count <= 50) return 3;
-  if (count <= 100) return 4;
-  if (count <= 150) return 5;
-  if (count <= 200) return 6;
-  if (count <= 250) return 7;
-  if (count <= 300) return 8;
-  if (count <= 400) return 9;
-  if (count <= 500) return 10;
-  return 1;
+export const markerColors = [
+  "#bcbcbc",
+  "#8f9ca0",
+  "#9bc4cf",
+  "#aaddeb",
+  "#c7e466",
+  "#eaeb1f",
+  "#fac500",
+  "#e57701",
+  "#ce0d02",
+  "#ad0002",
+];
+
+export const getMarkerColor = (count: number) => {
+  if (count === 0) return markerColors[0];
+  if (count <= 15) return markerColors[1];
+  if (count <= 50) return markerColors[2];
+  if (count <= 100) return markerColors[3];
+  if (count <= 150) return markerColors[4];
+  if (count <= 200) return markerColors[5];
+  if (count <= 250) return markerColors[6];
+  if (count <= 300) return markerColors[7];
+  if (count <= 400) return markerColors[8];
+  if (count <= 500) return markerColors[9];
+  return markerColors[0];
+};
+
+export const getMarkerColorIndex = (count: number) => {
+  const color = getMarkerColor(count);
+  return markerColors.indexOf(color);
 };
 
 export const radiusOptions = [

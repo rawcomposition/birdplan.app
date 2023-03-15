@@ -19,13 +19,6 @@
     @apply inline;
   }
 
-  img.marker-sm {
-    width: 15px;
-    height: 20px;
-    margin-top: -10px;
-    cursor: pointer;
-  }
-
   .expand-btn {
     width: 1em;
     height: 1em;

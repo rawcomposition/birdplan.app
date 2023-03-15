@@ -1,12 +1,8 @@
 import React from "react";
-import { EbirdHotspot } from "lib/types";
 import { useModal } from "providers/modals";
-import { getMarkerShade } from "lib/helpers";
+import { getMarkerColor } from "lib/helpers";
 import { useProfile } from "providers/profile";
-
-type Props = {
-  hotspots: EbirdHotspot[];
-};
+import Marker from "icons/Marker";
 
 export default function HotspotList() {
   const { hotspots } = useProfile();
@@ -15,12 +11,12 @@ export default function HotspotList() {
     <ul className="space-y-2">
       {hotspots.map((it) => (
         <li
-          key={it.locId}
+          key={it.id}
           className="flex items-center gap-2 text-sm text-gray-200 cursor-pointer"
           onClick={() => open("hotspot", { hotspot: it })}
         >
-          <img src={`/markers/hotspot-${getMarkerShade(it.numSpeciesAllTime) || 1}.svg`} className="w-3" alt="marker" />
-          <span className="truncate">{it.locName}</span>
+          <Marker className="w-3 shrink-0" color={getMarkerColor(it.species)} />
+          <span className="truncate">{it.name}</span>
         </li>
       ))}
     </ul>

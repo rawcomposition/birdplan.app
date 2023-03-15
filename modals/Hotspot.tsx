@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
-import { EbirdHotspot } from "lib/types";
+import { Hotspot } from "lib/types";
 import Button from "components/Button";
 import Feather from "icons/Feather";
 import Directions from "icons/Directions";
@@ -10,18 +10,18 @@ import toast from "react-hot-toast";
 import { useProfile } from "providers/profile";
 
 type Props = {
-  hotspot: EbirdHotspot;
+  hotspot: Hotspot;
 };
 
 export default function StateInfo({ hotspot }: Props) {
   const { hotspots, appendHotspot, removeHotspot } = useProfile();
   const [checklistCount, setChecklistCount] = React.useState<number>();
-  const { locId, locName, lat, lng, numSpeciesAllTime } = hotspot;
-  const isSaved = hotspots.some((it) => it.locId === locId);
+  const { id, name, lat, lng, species } = hotspot;
+  const isSaved = hotspots.some((it) => it.id === id);
 
   const handleSave = async () => {
     if (isSaved) {
-      removeHotspot(locId);
+      removeHotspot(id);
     } else {
       toast.success("Hotspot saved!");
       appendHotspot(hotspot);
@@ -31,22 +31,22 @@ export default function StateInfo({ hotspot }: Props) {
   React.useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`/api/hotspot-info?locationId=${locId}`);
+        const res = await fetch(`/api/hotspot-info?id=${id}`);
         const json = await res.json();
         setChecklistCount(json.numChecklists);
       } catch (err) {
         console.log(err);
       }
     })();
-  }, [locId]);
+  }, [id]);
 
   return (
     <>
-      <Header>{locName}</Header>
+      <Header>{name}</Header>
       <Body>
         <div className="flex gap-10 text-gray-500">
           <div className="flex flex-col text-[#1c6900]">
-            <span className="text-3xl font-bold">{numSpeciesAllTime}</span>
+            <span className="text-3xl font-bold">{species || 0}</span>
             <span className="text-xs">Species</span>
           </div>
           <div className="flex flex-col">
@@ -56,7 +56,7 @@ export default function StateInfo({ hotspot }: Props) {
         </div>
         <div className="flex gap-2 mt-6 mb-2">
           <Button
-            href={`https://ebird.org/targets?r1=${locId}&bmo=1&emo=12&r2=world&t2=life`}
+            href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
             color="gray"
             size="sm"

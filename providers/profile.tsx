@@ -1,6 +1,6 @@
 import React from "react";
 import { useUser } from "providers/user";
-import { Address, Profile, EbirdHotspot } from "lib/types";
+import { Address, Profile, Hotspot } from "lib/types";
 import {
   fetchProfile,
   setProfileValue,
@@ -15,8 +15,8 @@ interface ContextT extends Profile {
   removeLifelist: (speciesCode: string) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
   setAddress: (address: Address) => Promise<void>;
-  appendHotspot: (hotspot: EbirdHotspot) => Promise<void>;
-  removeHotspot: (locId: string) => Promise<void>;
+  appendHotspot: (hotspot: Hotspot) => Promise<void>;
+  removeHotspot: (id: string) => Promise<void>;
   initialized: boolean;
 }
 
@@ -85,15 +85,15 @@ const ProfileProvider = ({ children }: Props) => {
     await setProfileValue("address", address);
   };
 
-  const appendHotspot = async (hotspot: EbirdHotspot) => {
-    const alreadyExists = state.hotspots.find((it) => it.locId === hotspot.locId);
+  const appendHotspot = async (hotspot: Hotspot) => {
+    const alreadyExists = state.hotspots.find((it) => it.id === hotspot.id);
     const newHotspots = alreadyExists ? state.hotspots : [...state.hotspots, hotspot];
     setState((state) => ({ ...state, hotspots: newHotspots }));
     await updateProfileHotspots(newHotspots);
   };
 
-  const removeHotspot = async (locId: string) => {
-    const newHotspots = state.hotspots.filter((it) => it.locId !== locId);
+  const removeHotspot = async (id: string) => {
+    const newHotspots = state.hotspots.filter((it) => it.id !== id);
     setState((state) => ({ ...state, hotspots: newHotspots }));
     await updateProfileHotspots(newHotspots);
   };
