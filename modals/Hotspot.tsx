@@ -13,11 +13,15 @@ type Props = {
   hotspot: HotspotT;
 };
 
+type Info = {
+  checklists: number;
+  species: number;
+};
+
 export default function Hotspot({ hotspot }: Props) {
   const { hotspots, appendHotspot, removeHotspot } = useProfile();
-  const [checklistCount, setChecklistCount] = React.useState<number>();
-  const [speciesCount, setSpeciesCount] = React.useState<number>();
-  const { id, name, lat, lng, species } = hotspot;
+  const [info, setInfo] = React.useState<Info>();
+  const { id, name, lat, lng } = hotspot;
   const isSaved = hotspots.some((it) => it.id === id);
 
   const handleSave = async () => {
@@ -25,7 +29,7 @@ export default function Hotspot({ hotspot }: Props) {
       removeHotspot(id);
     } else {
       toast.success("Hotspot saved!");
-      appendHotspot({ ...hotspot, species: hotspot.species || speciesCount || 0 });
+      appendHotspot({ ...hotspot, species: hotspot.species || info?.species || 0 });
     }
   };
 
@@ -34,8 +38,7 @@ export default function Hotspot({ hotspot }: Props) {
       try {
         const res = await fetch(`/api/hotspot-info?id=${id}`);
         const json = await res.json();
-        setChecklistCount(json.numChecklists);
-        setSpeciesCount(json.numSpecies);
+        setInfo({ checklists: json.numChecklists, species: json.numSpecies });
       } catch (err) {
         console.log(err);
       }
@@ -48,11 +51,11 @@ export default function Hotspot({ hotspot }: Props) {
       <Body>
         <div className="flex gap-10 text-gray-500">
           <div className="flex flex-col text-[#1c6900]">
-            <span className="text-3xl font-bold">{species || speciesCount || 0}</span>
+            <span className="text-3xl font-bold">{hotspot.species || info?.species || "--"}</span>
             <span className="text-xs">Species</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-3xl font-bold">{checklistCount?.toLocaleString() || "--"}</span>
+            <span className="text-3xl font-bold">{info?.checklists?.toLocaleString() || "--"}</span>
             <span className="text-xs">Checklists</span>
           </div>
         </div>
