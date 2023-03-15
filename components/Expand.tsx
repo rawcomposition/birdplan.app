@@ -17,7 +17,7 @@ export default function Expand({ heading, children, className, defaultOpen, coun
         <button type="button" className={`expand-btn ${!open ? "-rotate-90" : ""}`} />
         <div className="flex justify-between items-center flex-1">
           <h3 className="font-medium text-[15px] flex justify-between">{heading}</h3>
-          {count && <span className="text-gray-400 text-[13px]">{count.toLocaleString()}</span>}
+          {!!count && <span className="text-gray-400 text-[13px]">{count.toLocaleString()}</span>}
         </div>
       </div>
       <div

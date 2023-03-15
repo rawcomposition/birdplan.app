@@ -24,7 +24,7 @@ export default function Button({
   className,
   disabled,
   type = "button",
-  color = "primary",
+  color = "default",
   size = "md",
   href,
   children,
@@ -36,6 +36,7 @@ export default function Button({
     lg: "text-md py-[0.625rem] px-[1.125rem]",
     md: "text-sm py-[0.625rem] px-4",
     sm: "text-[13px] py-1 px-2",
+    xs: "text-[12px] py-0.5 px-1.5",
   };
 
   const colors: ColorTypes = {

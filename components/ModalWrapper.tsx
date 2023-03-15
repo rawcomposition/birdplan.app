@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import XMark from "icons/XMark";
+import CloseButton from "components/CloseButton";
 
 type Props = {
   title: string;
@@ -46,14 +47,7 @@ export default function ColModal({ hideBg, open, onClose, maxWidth, children }: 
                 className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full"
                 style={{ maxWidth: maxWidth || "700px" }}
               >
-                <button
-                  type="button"
-                  className="text-gray-400 hover:text-gray-500 absolute top-5 right-5 focus:outline-none"
-                  onClick={onClose}
-                >
-                  <span className="sr-only">Close</span>
-                  <XMark className="text-2xl" aria-hidden="true" />
-                </button>
+                <CloseButton className="absolute top-5 right-5" onClick={onClose} />
                 {children}
               </Dialog.Panel>
             </Transition.Child>

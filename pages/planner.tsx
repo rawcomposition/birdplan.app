@@ -8,11 +8,17 @@ import { useModal } from "providers/modals";
 import Expand from "components/Expand";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
+import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
 import { GetServerSideProps } from "next";
 import LifelistUpload from "components/LifelistUpload";
 import SpeciesRow from "components/SpeciesRow";
+import Button from "components/Button";
+import Bullseye from "icons/Bullseye";
+import CloseButton from "components/CloseButton";
+import clsx from "clsx";
+import toast from "react-hot-toast";
 
 //TODO
 const initialLat = 20.652816318357367;
@@ -24,25 +30,40 @@ export default function Planner({ isNew }: any) {
   const { open } = useModal();
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
-  const [selectedSpecies, setSelectedSpecies] = React.useState<string>();
+  const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
 
   const { hotspots: savedHotspots, lifelist } = useProfile();
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
   const { hotspots, hotspotLayer, call } = useFetchHotspots({ region, fetchImmediately: isNew, savedIdStr });
   const { recentSpecies } = useFetchRecentSpecies(region);
+  const selectedSpecies = recentSpecies.find((it) => it.code === selectedSpeciesCode);
+  const { obs, obsLayer } = useFetchSpeciesObs({ region, code: selectedSpeciesCode });
 
-  const markers = savedHotspots.map((it) => ({
+  const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,
     lng: it.lng,
     type: "hotspot",
-    shade: getMarkerColorIndex(it.species),
+    shade: getMarkerColorIndex(it.species || 0),
     id: it.id,
   }));
 
-  const handleHotspotClick = (id: string) => {
+  const markers = selectedSpeciesCode ? [] : [...savedHotspotMarkers];
+
+  const hotspotClick = (id: string) => {
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
     const hotspot = allHotspots.find((it) => it.id === id);
+    if (!hotspot) return toast.error("Hotspot not found");
     open("hotspot", { hotspot });
+  };
+
+  const obsClick = (id: string) => {
+    const observation = obs.find((it) => it.id === id);
+    console.log(observation);
+    if (!observation) return toast.error("Observation not found");
+    open(observation.isPersonal ? "personalLocation" : "hotspot", {
+      hotspot: observation,
+      speciesCode: selectedSpeciesCode,
+    });
   };
 
   const handleToggleShowAll = () => {
@@ -59,14 +80,14 @@ export default function Planner({ isNew }: any) {
       <Header title={title} parent={{ title: "Trips", href: "/" }} />
       <main className="flex">
         <Sidebar open={showSidebar}>
-          <div className="mb-4">
+          <div className={clsx("mb-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={handleToggleShowAll} />
               Show all hotspots
             </label>
           </div>
           <div className="-mx-6">
-            <Expand heading="Saved Hotspots" className="text-white" defaultOpen>
+            <Expand heading="Saved Hotspots" className="text-white" defaultOpen count={savedHotspots.length}>
               <HotspotList />
             </Expand>
             <Expand heading="Target Species" className="text-white">
@@ -78,8 +99,8 @@ export default function Planner({ isNew }: any) {
                   <SpeciesRow
                     key={code}
                     name={name}
-                    selected={selectedSpecies === code}
-                    onClick={() => setSelectedSpecies(code)}
+                    selected={selectedSpeciesCode === code}
+                    onClick={() => setSelectedSpeciesCode(code)}
                   />
                 ))}
               </ul>
@@ -91,14 +112,27 @@ export default function Planner({ isNew }: any) {
         </Sidebar>
 
         <div className="h-[calc(100vh_-_60px)] grow" onClick={() => setShowSidebar(false)}>
-          <div className="w-full h-full">
+          <div className="w-full h-full relative">
             <MapBox
               lat={initialLat}
               lng={initialLng}
-              onHotspotClick={handleHotspotClick}
+              onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
               markers={markers}
               hotspotLayer={hotspotLayer}
+              obsLayer={selectedSpeciesCode && obsLayer}
             />
+            {selectedSpecies && (
+              <div className="absolute top-0 left-1/2 bg-white px-4 py-3 -translate-x-1/2 rounded-b-lg w-full max-w-md">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-semibold">{selectedSpecies.name}</h2>
+                  <Button color="gray" size="xs">
+                    <Bullseye className="mr-1 -mt-[3px] text-[#c2410d]" /> Add Target
+                  </Button>
+                  <CloseButton onClick={() => setSelectedSpeciesCode(undefined)} className="ml-auto" />
+                </div>
+                <p className="text-xs text-gray-500 mt-1.5">Showing reports over the last 30 days</p>
+              </div>
+            )}
           </div>
         </div>
       </main>

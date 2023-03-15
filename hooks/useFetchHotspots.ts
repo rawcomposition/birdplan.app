@@ -3,11 +3,11 @@ import { Hotspot } from "lib/types";
 import { getMarkerColorIndex } from "lib/helpers";
 import toast from "react-hot-toast";
 
-interface State {
+type State = {
   error: boolean;
   loading: boolean;
   hotspots: Hotspot[];
-}
+};
 
 type Props = {
   region: string;

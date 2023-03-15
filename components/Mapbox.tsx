@@ -9,10 +9,11 @@ type Props = {
   lng?: number;
   markers: MarkerT[];
   hotspotLayer: any;
+  obsLayer: any;
   onHotspotClick: (id: string) => void;
 };
 
-export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer }: Props) {
+export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer, obsLayer }: Props) {
   const [satellite, setSatellite] = React.useState(false);
 
   const hsLayerStyle = {
@@ -50,6 +51,19 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
     },
   };
 
+  const obsLayerStyle = {
+    id: "obs",
+    type: "circle",
+    paint: {
+      "circle-radius": 5,
+      "circle-stroke-width": 0.75,
+      "circle-stroke-color": "#555",
+      "circle-color": "#ce0d02",
+    },
+  };
+
+  const activeLayers = [hotspotLayer && "hotspots", obsLayer && "obs"].filter(Boolean);
+
   return (
     <div className="relative w-full h-full">
       <Map
@@ -61,7 +75,7 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
         style={{ width: "100%", height: "100%" }}
         mapStyle={satellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
-        interactiveLayerIds={hotspotLayer && ["hotspots"]}
+        interactiveLayerIds={activeLayers}
         onMouseLeave={(e) => {
           e.target.getCanvas().style.cursor = "";
         }}
@@ -69,7 +83,7 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
           e.target.getCanvas().style.cursor = "pointer";
         }}
         onClick={(e) => {
-          const features = e.target.queryRenderedFeatures(e.point, { layers: ["hotspots"] });
+          const features = e.target.queryRenderedFeatures(e.point, { layers: activeLayers });
           if (features.length) {
             onHotspotClick(features?.[0]?.properties?.id);
           }
@@ -94,6 +108,12 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
           <Source id="my-data" type="geojson" data={hotspotLayer}>
             {/* @ts-ignore */}
             <Layer {...hsLayerStyle} />
+          </Source>
+        )}
+        {obsLayer && (
+          <Source id="my-data" type="geojson" data={obsLayer}>
+            {/* @ts-ignore */}
+            <Layer {...obsLayerStyle} />
           </Source>
         )}
       </Map>

@@ -9,14 +9,22 @@ import { Dialog } from "@headlessui/react";
 
 // modals
 import Hotspot from "modals/Hotspot";
+import PersonalLocation from "modals/PersonalLocation";
 
 const modals = [
   {
     id: "hotspot",
-    title: "About This Website",
     maxWidth: "400px",
     hideBg: true,
+    title: "",
     Component: Hotspot,
+  },
+  {
+    id: "personalLocation",
+    maxWidth: "400px",
+    hideBg: true,
+    title: "",
+    Component: PersonalLocation,
   },
 ];
 
@@ -84,7 +92,7 @@ const Footer = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Header = ({ children }: { children: React.ReactNode }) => (
-  <Dialog.Title as="h3" className="pl-4 sm:pl-6 pr-12 py-4 border-b flex bg-gray-50 text-lg font-medium">
+  <Dialog.Title as="h3" className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">
     {children}
   </Dialog.Title>
 );

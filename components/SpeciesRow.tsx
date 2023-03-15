@@ -13,6 +13,7 @@ export default function SpeciesRow({ name, selected, ...props }: Props) {
   return (
     <li
       className={clsx("flex items-center gap-2 text-sm text-gray-200 py-1.5", !selected && "cursor-pointer")}
+      title="Click to show on map"
       {...props}
     >
       {selected ? <CircleFilled className="text-xs text-sky-600" /> : <Circle className="text-xs text-gray-700" />}
