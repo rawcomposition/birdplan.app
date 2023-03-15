@@ -3,8 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const sciNames = req.body;
-    console.log(sciNames);
-
     const response = await fetch(`https://api.ebird.org/v2/ref/taxonomy/ebird?fmt=json&cat=species`);
     const taxonomy = await response.json();
 

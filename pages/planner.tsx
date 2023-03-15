@@ -58,7 +58,6 @@ export default function Planner({ isNew }: any) {
 
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
-    console.log(observation);
     if (!observation) return toast.error("Observation not found");
     open(observation.isPersonal ? "personalLocation" : "hotspot", {
       hotspot: observation,
