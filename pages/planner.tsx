@@ -4,13 +4,15 @@ import Header from "components/Header";
 import Head from "next/head";
 import { useProfile } from "providers/profile";
 import MapBox from "components/Mapbox";
-import { Marker, Bounds } from "lib/types";
 import { useModal } from "providers/modals";
 import Expand from "components/Expand";
 import useFetchHotspots from "hooks/useFetchHotspots";
+import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
 import { GetServerSideProps } from "next";
+import LifelistUpload from "components/LifelistUpload";
+import SpeciesRow from "components/SpeciesRow";
 
 //TODO
 const initialLat = 20.652816318357367;
@@ -22,10 +24,12 @@ export default function Planner({ isNew }: any) {
   const { open } = useModal();
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
+  const [selectedSpecies, setSelectedSpecies] = React.useState<string>();
 
-  const { hotspots: savedHotspots } = useProfile();
+  const { hotspots: savedHotspots, lifelist } = useProfile();
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
-  const { hotspots, layer, call } = useFetchHotspots({ region, fetchImmediately: isNew, savedIdStr });
+  const { hotspots, hotspotLayer, call } = useFetchHotspots({ region, fetchImmediately: isNew, savedIdStr });
+  const { recentSpecies } = useFetchRecentSpecies(region);
 
   const markers = savedHotspots.map((it) => ({
     lat: it.lat,
@@ -68,8 +72,20 @@ export default function Planner({ isNew }: any) {
             <Expand heading="Target Species" className="text-white">
               Hola!
             </Expand>
-            <Expand heading="Recent Species" className="text-white">
-              Hola!
+            <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
+              <ul className="divide-y divide-gray-800">
+                {recentSpecies.map(({ code, name }) => (
+                  <SpeciesRow
+                    key={code}
+                    name={name}
+                    selected={selectedSpecies === code}
+                    onClick={() => setSelectedSpecies(code)}
+                  />
+                ))}
+              </ul>
+            </Expand>
+            <Expand heading="My Life List" count={lifelist?.length} className="text-white">
+              <LifelistUpload />
             </Expand>
           </div>
         </Sidebar>
@@ -81,7 +97,7 @@ export default function Planner({ isNew }: any) {
               lng={initialLng}
               onHotspotClick={handleHotspotClick}
               markers={markers}
-              layer={layer}
+              hotspotLayer={hotspotLayer}
             />
           </div>
         </div>

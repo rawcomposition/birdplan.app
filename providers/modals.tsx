@@ -15,6 +15,7 @@ const modals = [
     id: "hotspot",
     title: "About This Website",
     maxWidth: "400px",
+    hideBg: true,
     Component: Hotspot,
   },
 ];

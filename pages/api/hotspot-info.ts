@@ -9,6 +9,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json(json);
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ error: "Error getting checklist count" });
   }
 }

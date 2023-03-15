@@ -8,14 +8,14 @@ type Props = {
   lat?: number;
   lng?: number;
   markers: MarkerT[];
-  layer: any;
+  hotspotLayer: any;
   onHotspotClick: (id: string) => void;
 };
 
-export default function Mapbox({ lat, lng, markers, onHotspotClick, layer }: Props) {
+export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer }: Props) {
   const [satellite, setSatellite] = React.useState(false);
 
-  const layerStyle = {
+  const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
     paint: {
@@ -61,7 +61,7 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, layer }: Pro
         style={{ width: "100%", height: "100%" }}
         mapStyle={satellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
-        interactiveLayerIds={layer && ["hotspots"]}
+        interactiveLayerIds={hotspotLayer && ["hotspots"]}
         onMouseLeave={(e) => {
           e.target.getCanvas().style.cursor = "";
         }}
@@ -90,10 +90,10 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, layer }: Pro
             />
           </Marker>
         ))}
-        {layer && (
-          <Source id="my-data" type="geojson" data={layer}>
+        {hotspotLayer && (
+          <Source id="my-data" type="geojson" data={hotspotLayer}>
             {/* @ts-ignore */}
-            <Layer {...layerStyle} />
+            <Layer {...hsLayerStyle} />
           </Source>
         )}
       </Map>

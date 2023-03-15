@@ -1,7 +1,7 @@
 import React from "react";
-import dayjs from "dayjs";
 import { Hotspot } from "lib/types";
 import { getMarkerColorIndex } from "lib/helpers";
+import toast from "react-hot-toast";
 
 interface State {
   error: boolean;
@@ -34,6 +34,7 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
       setState({ loading: false, error: false, hotspots: data });
     } catch (error) {
       setState((current) => ({ ...current, loading: false, error: true, hotspots: [] }));
+      toast.error("Failed to fetch hotspots");
     }
   }, [region]);
 
@@ -66,5 +67,5 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
     };
   }, [savedIdStr, hasFetched]);
 
-  return { ...state, layer, call };
+  return { ...state, hotspotLayer: layer, call };
 }
