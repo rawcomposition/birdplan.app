@@ -75,6 +75,7 @@ const ModalProvider = ({ children }: Props) => {
         title={modal?.title || ""}
         open={!!modal && !closing}
         onClose={handleDismiss}
+        hideBg={modal?.hideBg}
       >
         {modal && <Component {...modalProps} />}
       </ModalWrapper>
