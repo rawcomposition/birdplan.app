@@ -5,6 +5,7 @@ type Obs = {
   id: string;
   lat: number;
   lng: number;
+  name: string; // Hotspot name
   isPersonal: boolean;
 };
 

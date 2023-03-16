@@ -19,6 +19,7 @@ import Bullseye from "icons/Bullseye";
 import CloseButton from "components/CloseButton";
 import clsx from "clsx";
 import toast from "react-hot-toast";
+import { useTrip } from "providers/trip";
 
 //TODO
 const initialLat = 20.652816318357367;
@@ -26,13 +27,20 @@ const initialLng = -87.67056139518648;
 const title = "Playa del Carmen";
 const region = "MX-ROO";
 
-export default function Planner({ isNew }: any) {
+type Props = {
+  isNew: boolean;
+  tripId: string;
+};
+
+export default function Trip({ isNew, tripId }: Props) {
   const { open } = useModal();
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
 
-  const { hotspots: savedHotspots, lifelist } = useProfile();
+  const { lifelist } = useProfile();
+  const { trip } = useTrip();
+  const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
   const { hotspots, hotspotLayer, call } = useFetchHotspots({ region, fetchImmediately: isNew, savedIdStr });
   const { recentSpecies } = useFetchRecentSpecies(region);
@@ -59,11 +67,13 @@ export default function Planner({ isNew }: any) {
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
     if (!observation) return toast.error("Observation not found");
-    open(observation.isPersonal ? "personalLocation" : "hotspot", {
-      hotspot: observation,
-      speciesCode: selectedSpeciesCode,
-      speciesName: selectedSpecies?.name,
-    });
+    observation.isPersonal
+      ? open(observation.isPersonal ? "personalLocation" : "hotspot", {
+          hotspot: observation,
+          speciesCode: selectedSpeciesCode,
+          speciesName: selectedSpecies?.name,
+        })
+      : open("hotspot", { hotspot: observation, speciesCode: selectedSpeciesCode });
   };
 
   const handleToggleShowAll = () => {
@@ -143,5 +153,6 @@ export default function Planner({ isNew }: any) {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const isNew = query.new === "true";
-  return { props: { isNew } };
+  const tripId = query.tripId;
+  return { props: { isNew, tripId } };
 };

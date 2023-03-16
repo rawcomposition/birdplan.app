@@ -10,21 +10,25 @@ import { Dialog } from "@headlessui/react";
 // modals
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
+import CreateTrip from "modals/CreateTrip";
 
 const modals = [
   {
     id: "hotspot",
     maxWidth: "400px",
     hideBg: true,
-    title: "",
     Component: Hotspot,
   },
   {
     id: "personalLocation",
     maxWidth: "400px",
     hideBg: true,
-    title: "",
     Component: PersonalLocation,
+  },
+  {
+    id: "createTrip",
+    maxWidth: "400px",
+    Component: CreateTrip,
   },
 ];
 
@@ -72,7 +76,6 @@ const ModalProvider = ({ children }: Props) => {
       {children}
       <ModalWrapper
         maxWidth={modal?.maxWidth}
-        title={modal?.title || ""}
         open={!!modal && !closing}
         onClose={handleDismiss}
         hideBg={modal?.hideBg}

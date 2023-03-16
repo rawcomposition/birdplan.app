@@ -67,3 +67,12 @@ export const radiusOptions = [
   { label: "350 mi", value: 350 },
   { label: "500 mi", value: 500 },
 ];
+
+export const getBounds = async (region: string) => {
+  const res = await fetch(
+    `https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+  );
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.bounds;
+};

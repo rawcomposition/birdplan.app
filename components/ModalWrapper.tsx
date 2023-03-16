@@ -4,7 +4,6 @@ import XMark from "icons/XMark";
 import CloseButton from "components/CloseButton";
 
 type Props = {
-  title: string;
   open: boolean;
   maxWidth?: string;
   hideBg?: boolean;

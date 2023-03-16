@@ -7,7 +7,7 @@ import Directions from "icons/Directions";
 import Star from "icons/Star";
 import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
-import { useProfile } from "providers/profile";
+import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 
 type Props = {
@@ -22,10 +22,10 @@ type Info = {
 };
 
 export default function Hotspot({ hotspot, speciesCode, speciesName }: Props) {
-  const { hotspots, appendHotspot, removeHotspot } = useProfile();
+  const { trip, appendHotspot, removeHotspot } = useTrip();
   const [info, setInfo] = React.useState<Info>();
   const { id, name, lat, lng } = hotspot;
-  const isSaved = hotspots.some((it) => it.id === id);
+  const isSaved = trip?.hotspots.some((it) => it.id === id);
 
   const handleSave = async () => {
     if (isSaved) {

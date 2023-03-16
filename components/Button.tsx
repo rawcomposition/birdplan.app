@@ -33,8 +33,8 @@ export default function Button({
   const baseClasses = "font-semibold rounded";
 
   const sizes: SizeTypes = {
-    lg: "text-md py-[0.625rem] px-[1.125rem]",
-    md: "text-sm py-[0.625rem] px-4",
+    lg: "text-lg py-[0.625rem] px-[1.125rem]",
+    md: "text-md py-2 px-5",
     sm: "text-[13px] py-1 px-2",
     xs: "text-[12px] py-0.5 px-1.5",
   };
@@ -42,6 +42,8 @@ export default function Button({
   const colors: ColorTypes = {
     default: "bg-gray-300 text-gray-700",
     gray: "text-gray-600 bg-gray-100",
+    primary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors",
+    pillPrimary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full",
   };
 
   const colorClasses = colors[color];

@@ -3,6 +3,7 @@ import "styles/globals.css";
 import { UserProvider } from "providers/user";
 import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
+import { TripProvider } from "providers/trip";
 import { Toaster } from "react-hot-toast";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -10,9 +11,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     <UserProvider>
       <Toaster containerStyle={{ zIndex: 10001 }} />
       <ProfileProvider>
-        <ModalProvider>
-          <Component {...pageProps} />
-        </ModalProvider>
+        <TripProvider>
+          <ModalProvider>
+            <Component {...pageProps} />
+          </ModalProvider>
+        </TripProvider>
       </ProfileProvider>
     </UserProvider>
   );

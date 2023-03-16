@@ -1,7 +1,6 @@
 export type Profile = {
   lifelist: string[];
   radius: number;
-  hotspots: Hotspot[];
   address?: Address;
 };
 
@@ -91,13 +90,31 @@ export type Bounds = {
 
 export type Trip = {
   id: string;
+  userId: string;
   name: string;
   region: string;
+  regionName: string;
+  parentRegion?: string;
+  parentRegionName?: string;
+  bounds: {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+  };
+  hotspots: Hotspot[];
 };
+
+export type TripInput = Omit<Trip, "id" | "userId">;
 
 export type Observation = {
   checklistId: string;
   count: number;
   date: string;
   evidence: "N";
+};
+
+export type Option = {
+  value: string;
+  label: string;
 };

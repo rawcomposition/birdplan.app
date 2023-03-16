@@ -1,13 +1,7 @@
 import React from "react";
 import { useUser } from "providers/user";
-import { Address, Profile, Hotspot } from "lib/types";
-import {
-  fetchProfile,
-  setProfileValue,
-  appendProfileLifelist,
-  removeProfileLifelist,
-  updateProfileHotspots,
-} from "lib/firebase";
+import { Address, Profile } from "lib/types";
+import { fetchProfile, setProfileValue, appendProfileLifelist, removeProfileLifelist } from "lib/firebase";
 
 interface ContextT extends Profile {
   setLifelist: (lifelist: string[]) => Promise<void>;
@@ -15,14 +9,11 @@ interface ContextT extends Profile {
   removeLifelist: (speciesCode: string) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
   setAddress: (address: Address) => Promise<void>;
-  appendHotspot: (hotspot: Hotspot) => Promise<void>;
-  removeHotspot: (id: string) => Promise<void>;
   initialized: boolean;
 }
 
 const initialState: Profile = {
   lifelist: [],
-  hotspots: [],
   radius: 50,
   address: undefined,
 };
@@ -34,8 +25,6 @@ export const ProfileContext = React.createContext<ContextT>({
   removeLifelist: async () => {},
   setRadius: async () => {},
   setAddress: async () => {},
-  appendHotspot: async () => {},
-  removeHotspot: async () => {},
   initialized: false,
 });
 
@@ -85,33 +74,17 @@ const ProfileProvider = ({ children }: Props) => {
     await setProfileValue("address", address);
   };
 
-  const appendHotspot = async (hotspot: Hotspot) => {
-    const alreadyExists = state.hotspots.find((it) => it.id === hotspot.id);
-    const newHotspots = alreadyExists ? state.hotspots : [...state.hotspots, hotspot];
-    setState((state) => ({ ...state, hotspots: newHotspots }));
-    await updateProfileHotspots(newHotspots);
-  };
-
-  const removeHotspot = async (id: string) => {
-    const newHotspots = state.hotspots.filter((it) => it.id !== id);
-    setState((state) => ({ ...state, hotspots: newHotspots }));
-    await updateProfileHotspots(newHotspots);
-  };
-
   return (
     <ProfileContext.Provider
       value={{
         lifelist: state.lifelist || [],
         radius: state.radius || 50,
         address: state.address,
-        hotspots: state.hotspots || [],
         setLifelist,
         appendLifelist,
         removeLifelist,
         setRadius,
         setAddress,
-        appendHotspot,
-        removeHotspot,
         initialized,
       }}
     >

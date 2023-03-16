@@ -6,7 +6,7 @@ import { Menu } from "@headlessui/react";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
 
 type Props = {
-  title: string;
+  title?: string;
   parent?: {
     title: string;
     href: string;
@@ -24,7 +24,7 @@ export default function Header({ title, parent }: Props) {
         <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
       </div>
       <div className="mr-auto">
-        {
+        {title && (
           <nav className="text-lg flex items-center">
             {parent && (
               <>
@@ -36,7 +36,7 @@ export default function Header({ title, parent }: Props) {
             )}
             <h1 className="text-gray-400 px-5 py-1.5 flex items-center">{title}</h1>
           </nav>
-        }
+        )}
       </div>
       {user && (
         <div className="relative inline-block mr-8">
