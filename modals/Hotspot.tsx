@@ -8,9 +8,12 @@ import Star from "icons/Star";
 import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useProfile } from "providers/profile";
+import ObsList from "components/ObsList";
 
 type Props = {
   hotspot: HotspotT;
+  speciesCode?: string;
+  speciesName?: string;
 };
 
 type Info = {
@@ -18,7 +21,7 @@ type Info = {
   species: number;
 };
 
-export default function Hotspot({ hotspot }: Props) {
+export default function Hotspot({ hotspot, speciesCode, speciesName }: Props) {
   const { hotspots, appendHotspot, removeHotspot } = useProfile();
   const [info, setInfo] = React.useState<Info>();
   const { id, name, lat, lng } = hotspot;
@@ -37,6 +40,7 @@ export default function Hotspot({ hotspot }: Props) {
     (async () => {
       try {
         const res = await fetch(`/api/hotspot-info?id=${id}`);
+        if (!res.ok) throw new Error();
         const json = await res.json();
         setInfo({ checklists: json.numChecklists, species: json.numSpecies });
       } catch (err) {
@@ -88,6 +92,7 @@ export default function Hotspot({ hotspot }: Props) {
             )}
           </Button>
         </div>
+        {speciesCode && <ObsList locId={id} speciesCode={speciesCode} speciesName={speciesName} />}
       </Body>
     </>
   );

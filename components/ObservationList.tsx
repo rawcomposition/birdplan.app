@@ -1,10 +1,10 @@
 import { truncate } from "lib/helpers";
 import Timeago from "components/Timeago";
 import CameraIcon from "icons/camera";
-import { Observation } from "lib/types";
+import { RareObservation } from "lib/types";
 
 type Props = {
-  items: Observation[];
+  items: RareObservation[];
   userLat: number;
   userLng: number;
 };

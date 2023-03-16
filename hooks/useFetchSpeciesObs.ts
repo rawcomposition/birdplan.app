@@ -37,6 +37,7 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
         const res = await fetch(
           `https://api.ebird.org/v2/data/obs/${region}/recent/${code}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}&back=30&includeProvisional=true`
         );
+        if (!res.ok) throw new Error();
         const data = await res.json();
         const obs: Obs[] = data.map(({ lat, lng, locId, locationPrivate, locName }: any) => ({
           lat,

@@ -53,7 +53,7 @@ export default function Planner({ isNew }: any) {
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
     const hotspot = allHotspots.find((it) => it.id === id);
     if (!hotspot) return toast.error("Hotspot not found");
-    open("hotspot", { hotspot });
+    open("hotspot", { hotspot, speciesCode: selectedSpeciesCode });
   };
 
   const obsClick = (id: string) => {
@@ -62,6 +62,7 @@ export default function Planner({ isNew }: any) {
     open(observation.isPersonal ? "personalLocation" : "hotspot", {
       hotspot: observation,
       speciesCode: selectedSpeciesCode,
+      speciesName: selectedSpecies?.name,
     });
   };
 
@@ -100,6 +101,7 @@ export default function Planner({ isNew }: any) {
                     name={name}
                     selected={selectedSpeciesCode === code}
                     onClick={() => setSelectedSpeciesCode(code)}
+                    onClear={() => setSelectedSpeciesCode(undefined)}
                   />
                 ))}
               </ul>

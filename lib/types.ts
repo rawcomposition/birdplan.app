@@ -5,7 +5,7 @@ export type Profile = {
   address?: Address;
 };
 
-export type Observation = {
+export type RareObservation = {
   locName: string;
   subnational2Name: string;
   subnational1Name: string;
@@ -93,4 +93,11 @@ export type Trip = {
   id: string;
   name: string;
   region: string;
+};
+
+export type Observation = {
+  checklistId: string;
+  count: number;
+  date: string;
+  evidence: "N";
 };

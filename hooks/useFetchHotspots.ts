@@ -29,6 +29,7 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
     setState((current) => ({ ...current, loading: true, error: false, species: [] }));
     try {
       const res = await fetch(`/api/hotspots/${region}`);
+      if (!res.ok) throw new Error();
       const data: Hotspot[] = await res.json();
 
       setState({ loading: false, error: false, hotspots: data });
@@ -50,7 +51,7 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
       type: "FeatureCollection",
       features: [
         ...layerHotspots.map((hotspot) => {
-          const colorIndex = getMarkerColorIndex(hotspot.species);
+          const colorIndex = getMarkerColorIndex(hotspot.species || 0);
           return {
             type: "Feature",
             geometry: {

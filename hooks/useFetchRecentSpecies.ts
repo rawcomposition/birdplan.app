@@ -16,6 +16,7 @@ export default function useFetchRecentSpecies(region: string) {
     (async () => {
       try {
         const res = await fetch(`/api/region-species?region=${region}`);
+        if (!res.ok) throw new Error();
         const data: Item[] = await res.json();
         setItems(data);
       } catch (error) {

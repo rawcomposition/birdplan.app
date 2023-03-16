@@ -15,7 +15,7 @@ export default function HotspotList() {
           className="flex items-center gap-2 text-sm text-gray-200 cursor-pointer"
           onClick={() => open("hotspot", { hotspot: it })}
         >
-          <Marker className="w-3 shrink-0" color={getMarkerColor(it.species)} />
+          <Marker className="w-3 shrink-0" color={getMarkerColor(it.species || 0)} />
           <span className="truncate">{it.name}</span>
         </li>
       ))}

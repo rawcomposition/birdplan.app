@@ -3,14 +3,16 @@ import { Header, Body } from "providers/modals";
 import Button from "components/Button";
 import Directions from "icons/Directions";
 import { Hotspot as HotspotT } from "lib/types";
+import ObsList from "components/ObsList";
 
 type Props = {
   hotspot: HotspotT;
   speciesCode: string;
+  speciesName: string;
 };
 
-export default function PersonalLocation({ hotspot, speciesCode }: Props) {
-  const { name, lat, lng } = hotspot;
+export default function PersonalLocation({ hotspot, speciesCode, speciesName }: Props) {
+  const { id, name, lat, lng } = hotspot;
   return (
     <>
       <Header>
@@ -29,6 +31,7 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
             <Directions className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
           </Button>
         </div>
+        {speciesCode && <ObsList locId={id} speciesCode={speciesCode} speciesName={speciesName} />}
       </Body>
     </>
   );
