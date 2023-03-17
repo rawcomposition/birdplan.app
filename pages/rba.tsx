@@ -12,7 +12,7 @@ import FetchError from "components/FetchError";
 import ResultsInfo from "components/ResultsInfo";
 import Head from "next/head";
 import { useProfile } from "providers/profile";
-import Select from "react-select";
+import Select from "components/ReactSelectStyled";
 import { radiusOptions } from "lib/helpers";
 
 export default function Rba() {
@@ -70,7 +70,7 @@ export default function Rba() {
               instanceId="radius-select"
               options={radiusOptions}
               value={selectedRadius}
-              onChange={(option) => setRadius(option?.value || radiusOptions[4].value)}
+              onChange={(option: any) => setRadius(option?.value || radiusOptions[4].value)}
               defaultValue={radiusOptions[3]}
               placeholder="Select radius..."
             />

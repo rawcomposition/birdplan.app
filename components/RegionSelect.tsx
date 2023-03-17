@@ -1,5 +1,5 @@
 import React from "react";
-import Select from "react-select";
+import Select from "components/ReactSelectStyled";
 import toast from "react-hot-toast";
 import { Option } from "lib/types";
 

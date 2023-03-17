@@ -16,7 +16,7 @@ type State = {
 };
 
 type Props = {
-  region: string;
+  region?: string;
   code?: string;
 };
 

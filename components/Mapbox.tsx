@@ -1,19 +1,18 @@
 import React from "react";
 import Map, { NavigationControl, Marker, Source, Layer } from "react-map-gl";
-import { Marker as MarkerT } from "lib/types";
-import { markerColors } from "lib/helpers";
+import { Marker as MarkerT, Trip } from "lib/types";
+import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerIcon from "icons/Marker";
 
 type Props = {
-  lat?: number;
-  lng?: number;
+  bounds: Trip["bounds"];
   markers: MarkerT[];
   hotspotLayer: any;
   obsLayer: any;
   onHotspotClick: (id: string) => void;
 };
 
-export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer, obsLayer }: Props) {
+export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, obsLayer }: Props) {
   const [satellite, setSatellite] = React.useState(false);
 
   const hsLayerStyle = {
@@ -63,6 +62,8 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
   };
 
   const activeLayers = [hotspotLayer && "hotspots", obsLayer && "obs"].filter(Boolean);
+  const { lat, lng } = getLatLngFromBounds(bounds);
+  if (!lat || !lng) return null;
 
   return (
     <div className="relative w-full h-full">
@@ -70,7 +71,6 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
         initialViewState={{
           longitude: lng,
           latitude: lat,
-          zoom: 8,
         }}
         style={{ width: "100%", height: "100%" }}
         mapStyle={satellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"}
@@ -88,6 +88,11 @@ export default function Mapbox({ lat, lng, markers, onHotspotClick, hotspotLayer
             onHotspotClick(features?.[0]?.properties?.id);
           }
         }}
+        // @ts-ignore
+        bounds={[
+          [bounds.minX, bounds.minY],
+          [bounds.maxX, bounds.maxY],
+        ]}
       >
         <NavigationControl showCompass={false} />
         {markers.map((marker) => (

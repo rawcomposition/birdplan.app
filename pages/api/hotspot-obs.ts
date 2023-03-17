@@ -4,16 +4,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { locId, speciesCode } = req.query;
 
-    const response = await fetch(
-      `https://ebird.org/mapServices/getLocInfo.do?fmt=json&locID=${locId}&speciesCodes=${speciesCode}&evidSort=false&excludeExX=false&excludeExAll=false&byr=1900&eyr=2023&yr=all&bmo=1&emo=12`,
-      {
-        headers: {
-          Cookie: `EBIRD_SESSIONID=${process.env.EBIRD_SESSIONID}`,
-        },
-      }
-    );
+    const url = `https://ebird.org/mapServices/getLocInfo.do?fmt=json&locID=${locId}&speciesCodes=${speciesCode}&evidSort=false&excludeExX=false&excludeExAll=false&byr=1900&eyr=2023&yr=all&bmo=1&emo=12`;
 
-    const json = await response.json();
+    // Get cookie
+    const res1 = await fetch(url, { redirect: "manual" });
+    // Get response cookies
+    const cookies = res1.headers.get("set-cookie");
+    const cookie = cookies?.split(";")[0];
+
+    if (!cookie) throw new Error("Error fetching observations");
+
+    const res2 = await fetch(url, {
+      headers: { cookie },
+    });
+    const json = await res2.json();
 
     const formatted = json.infoList.map((info: any) => {
       return {
@@ -23,6 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         evidence: info.evidence && info.evidence !== "N",
       };
     });
+
+    // Set cache to 1 day
+    res.setHeader("Cache-Control", "s-maxage=86400");
 
     res.status(200).json(formatted);
   } catch (error) {

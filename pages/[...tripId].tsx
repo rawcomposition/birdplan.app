@@ -21,12 +21,6 @@ import clsx from "clsx";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 
-//TODO
-const initialLat = 20.652816318357367;
-const initialLng = -87.67056139518648;
-const title = "Playa del Carmen";
-const region = "MX-ROO";
-
 type Props = {
   isNew: boolean;
   tripId: string;
@@ -37,15 +31,19 @@ export default function Trip({ isNew, tripId }: Props) {
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
-
   const { lifelist } = useProfile();
   const { trip } = useTrip();
+
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
-  const { hotspots, hotspotLayer, call } = useFetchHotspots({ region, fetchImmediately: isNew, savedIdStr });
-  const { recentSpecies } = useFetchRecentSpecies(region);
+  const { hotspots, hotspotLayer, call } = useFetchHotspots({
+    region: trip?.region,
+    fetchImmediately: isNew,
+    savedIdStr,
+  });
+  const { recentSpecies } = useFetchRecentSpecies(trip?.region);
   const selectedSpecies = recentSpecies.find((it) => it.code === selectedSpeciesCode);
-  const { obs, obsLayer } = useFetchSpeciesObs({ region, code: selectedSpeciesCode });
+  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,
@@ -83,11 +81,13 @@ export default function Trip({ isNew, tripId }: Props) {
 
   return (
     <div className="flex flex-col h-screen">
-      <Head>
-        <title>{`${title} | bird planner`}</title>
-      </Head>
+      {trip && (
+        <Head>
+          <title>{`${trip.name} | bird planner`}</title>
+        </Head>
+      )}
 
-      <Header title={title} parent={{ title: "Trips", href: "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/" }} />
       <main className="flex">
         <Sidebar open={showSidebar}>
           <div className={clsx("mb-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
@@ -124,14 +124,15 @@ export default function Trip({ isNew, tripId }: Props) {
 
         <div className="h-[calc(100vh_-_60px)] grow" onClick={() => setShowSidebar(false)}>
           <div className="w-full h-full relative">
-            <MapBox
-              lat={initialLat}
-              lng={initialLng}
-              onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
-              markers={markers}
-              hotspotLayer={hotspotLayer}
-              obsLayer={selectedSpeciesCode && obsLayer}
-            />
+            {trip?.bounds && (
+              <MapBox
+                onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
+                markers={markers}
+                hotspotLayer={showAll && !selectedSpeciesCode && hotspotLayer}
+                obsLayer={selectedSpeciesCode && obsLayer}
+                bounds={trip.bounds}
+              />
+            )}
             {selectedSpecies && (
               <div className="absolute top-0 left-1/2 bg-white px-4 py-3 -translate-x-1/2 rounded-b-lg w-full max-w-md">
                 <div className="flex items-center gap-2">

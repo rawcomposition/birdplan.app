@@ -3,6 +3,7 @@ import { Hotspot, Trip } from "lib/types";
 import { getTrip, updateHotspots } from "lib/firebase";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { useUser } from "providers/user";
 
 type ContextT = {
   trip: Trip | null;
@@ -30,9 +31,11 @@ const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
   const [loading, setLoading] = React.useState(false);
   const id = useRouter().query.tripId?.toString();
+  const { user } = useUser();
+  const uid = user?.uid;
 
   React.useEffect(() => {
-    if (!id) return;
+    if (!id || !uid) return;
     (async () => {
       setLoading(true);
       setTrip(null);
@@ -45,7 +48,7 @@ const TripProvider = ({ children }: Props) => {
         toast.error("Failed to fetch trip");
       }
     })();
-  }, [id]);
+  }, [id, uid]);
 
   const appendHotspot = async (hotspot: Hotspot) => {
     if (!trip) return;

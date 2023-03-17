@@ -8,11 +8,12 @@ type Item = {
   date: string;
 };
 
-export default function useFetchRecentSpecies(region: string) {
+export default function useFetchRecentSpecies(region?: string) {
   const [items, setItems] = React.useState<Item[]>([]);
   const { lifelist } = useProfile();
 
   React.useEffect(() => {
+    if (!region) return;
     (async () => {
       try {
         const res = await fetch(`/api/region-species?region=${region}`);

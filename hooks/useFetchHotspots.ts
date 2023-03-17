@@ -10,7 +10,7 @@ type State = {
 };
 
 type Props = {
-  region: string;
+  region?: string;
   fetchImmediately?: boolean;
   savedIdStr: string;
 };
@@ -26,6 +26,7 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
   const hasFetched = state.hotspots.length > 0;
 
   const call = React.useCallback(async () => {
+    if (!region) return;
     setState((current) => ({ ...current, loading: true, error: false, species: [] }));
     try {
       const res = await fetch(`/api/hotspots/${region}`);

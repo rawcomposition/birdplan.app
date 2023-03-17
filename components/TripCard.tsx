@@ -52,7 +52,7 @@ export default function TripCard({ trip, onDelete }: Props) {
                     onClick={handleDelete}
                     className="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 hover:text-gray-900"
                   >
-                    <Trash className="mr-2 text-red-800 text-[16px]" aria-hidden="true" />
+                    <Trash className="mr-2 text-[#fd1544] text-[16px]" aria-hidden="true" />
                     <span>Delete Trip</span>
                   </button>
                 </Menu.Item>

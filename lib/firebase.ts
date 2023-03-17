@@ -73,7 +73,7 @@ export const getTrip = async (id: string): Promise<Trip | null> => {
   if (!user) return null;
   const snapshot = await fs.getDoc(fs.doc(db, "trip", id));
   if (snapshot.exists()) {
-    return snapshot.data() as Trip;
+    return { ...snapshot.data(), id: snapshot.id } as Trip;
   }
   return null;
 };

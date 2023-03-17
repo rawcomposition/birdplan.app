@@ -1,3 +1,5 @@
+import { Trip } from "lib/types";
+
 export function truncate(string: string, length: number): string {
   return string.length > length ? `${string.substring(0, length)}...` : string;
 }
@@ -75,4 +77,12 @@ export const getBounds = async (region: string) => {
   if (!res.ok) return null;
   const data = await res.json();
   return data.bounds;
+};
+
+export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
+  if (!bounds) return { lat: null, lng: null };
+  const { minX, minY, maxX, maxY } = bounds;
+  const lat = (minY + maxY) / 2;
+  const lng = (minX + maxX) / 2;
+  return { lat, lng };
 };
