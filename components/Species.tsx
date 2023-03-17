@@ -1,9 +1,9 @@
 import ObservationList from "components/ObservationList";
-import { Observation } from "lib/types";
+import { RareObservation } from "lib/types";
 
 type Props = {
   isExpanded: boolean;
-  reports: Observation[];
+  reports: RareObservation[];
   userLat: number;
   userLng: number;
   isFadingOut: boolean;
