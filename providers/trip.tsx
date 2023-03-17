@@ -8,6 +8,8 @@ import { useUser } from "providers/user";
 type ContextT = {
   trip: Trip | null;
   loading: boolean;
+  selectedSpeciesCode?: string;
+  setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
 };
@@ -19,6 +21,7 @@ const initialState = {
 
 export const TripContext = React.createContext<ContextT>({
   ...initialState,
+  setSelectedSpeciesCode: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
 });
@@ -30,6 +33,7 @@ type Props = {
 const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
   const { user } = useUser();
   const uid = user?.uid;
@@ -70,6 +74,8 @@ const TripProvider = ({ children }: Props) => {
       value={{
         trip,
         loading,
+        selectedSpeciesCode,
+        setSelectedSpeciesCode,
         appendHotspot,
         removeHotspot,
       }}

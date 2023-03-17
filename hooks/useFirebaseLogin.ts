@@ -1,23 +1,23 @@
 import React from "react";
 import { auth } from "lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import toast from "react-hot-toast";
 
 export default function useFirebaseLogin() {
-  const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState(false);
 
-  const login = async (email: string, password: string) => {
+  const login = async () => {
     setLoading(true);
-    setError(false);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
     } catch (error) {
-      setError(true);
+      toast.error("Login failed");
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  return { login, loading, error };
+  return { login, loading };
 }

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useUser } from "providers/user";
-import Avatar from "components/Avatar";
 import BreadcrumbArrow from "icons/breadcrumb-arrow";
 import { Menu } from "@headlessui/react";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
@@ -21,7 +20,7 @@ export default function Header({ title, parent }: Props) {
     <header className="bg-slate-900 h-[60px] shrink-0 flex items-center">
       <div className="w-80 flex items-center">
         <img src="/icon.png" className="w-[50px] mx-4" width="50" height="50" />
-        <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
+        <h1 className="text-center text-[#757c8c] font-logo text-2xl">toucan plan</h1>
       </div>
       <div className="mr-auto">
         {title && (
@@ -42,7 +41,9 @@ export default function Header({ title, parent }: Props) {
         <div className="relative inline-block mr-8">
           <Menu>
             <Menu.Button className="text-gray-400 gap-3 flex items-center">
-              <Avatar />
+              {user.photoURL && (
+                <img src={user.photoURL} className="w-[32px] h-[32px] object-cover rounded-full opacity-85" />
+              )}
               <span className="font-bold">{user.displayName}</span>
             </Menu.Button>
             <Menu.Items className="absolute -right-4 top-10 rounded bg-white shadow-lg w-[150px] py-1 ring-1 ring-black ring-opacity-5 flex flex-col gap-1 z-10">

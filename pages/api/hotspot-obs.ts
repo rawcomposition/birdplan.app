@@ -8,7 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Get cookie
     const res1 = await fetch(url, { redirect: "manual" });
-    // Get response cookies
     const cookies = res1.headers.get("set-cookie");
     const cookie = cookies?.split(";")[0];
 

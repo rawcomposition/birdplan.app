@@ -12,7 +12,6 @@ import ObsList from "components/ObsList";
 
 type Props = {
   hotspot: HotspotT;
-  speciesCode?: string;
   speciesName?: string;
 };
 
@@ -21,8 +20,8 @@ type Info = {
   species: number;
 };
 
-export default function Hotspot({ hotspot, speciesCode, speciesName }: Props) {
-  const { trip, appendHotspot, removeHotspot } = useTrip();
+export default function Hotspot({ hotspot, speciesName }: Props) {
+  const { trip, appendHotspot, removeHotspot, selectedSpeciesCode } = useTrip();
   const [info, setInfo] = React.useState<Info>();
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
@@ -92,7 +91,7 @@ export default function Hotspot({ hotspot, speciesCode, speciesName }: Props) {
             )}
           </Button>
         </div>
-        {speciesCode && <ObsList locId={id} speciesCode={speciesCode} speciesName={speciesName} />}
+        {selectedSpeciesCode && <ObsList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />}
       </Body>
     </>
   );

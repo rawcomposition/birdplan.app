@@ -30,9 +30,8 @@ export default function Trip({ isNew, tripId }: Props) {
   const { open } = useModal();
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
-  const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const { lifelist } = useProfile();
-  const { trip } = useTrip();
+  const { trip, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
@@ -106,13 +105,7 @@ export default function Trip({ isNew, tripId }: Props) {
             <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
               <ul className="divide-y divide-gray-800">
                 {recentSpecies.map(({ code, name }) => (
-                  <SpeciesRow
-                    key={code}
-                    name={name}
-                    selected={selectedSpeciesCode === code}
-                    onClick={() => setSelectedSpeciesCode(code)}
-                    onClear={() => setSelectedSpeciesCode(undefined)}
-                  />
+                  <SpeciesRow key={code} name={name} code={code} />
                 ))}
               </ul>
             </Expand>
