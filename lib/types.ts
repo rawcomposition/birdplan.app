@@ -23,7 +23,7 @@ export type Species = {
   name: string;
   sciName: string;
   code: string;
-  reports: Observation[];
+  reports: RareObservation[];
 };
 
 export type Address = {
