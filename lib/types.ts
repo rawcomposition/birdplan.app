@@ -60,7 +60,7 @@ export type Marker = {
 export type EbirdHotspot = {
   locId: string;
   locName: string;
-  countryCode: "MX";
+  countryCode: string;
   subnational1Code: string;
   subnational2Code: string;
   lat: number;
