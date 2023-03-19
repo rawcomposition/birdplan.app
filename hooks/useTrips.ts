@@ -5,13 +5,17 @@ import toast from "react-hot-toast";
 import { useUser } from "providers/user";
 
 export default function useTrip() {
+  const [loading, setLoading] = React.useState(true);
   const [trips, setTrips] = React.useState<Trip[]>([]);
   const { user } = useUser();
   const uid = user?.uid;
 
   React.useEffect(() => {
     if (!uid) return;
-    const unsubscribe = subscribeToTrips((trips) => setTrips(trips));
+    const unsubscribe = subscribeToTrips((trips) => {
+      setTrips(trips);
+      setLoading(false);
+    });
     return () => unsubscribe();
   }, [uid]);
 
@@ -27,5 +31,5 @@ export default function useTrip() {
     }
   };
 
-  return { trips, deleteTrip };
+  return { trips, loading, deleteTrip };
 }

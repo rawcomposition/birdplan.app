@@ -5,9 +5,8 @@ import { Profile, Hotspot, Trip, TripInput } from "lib/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
-  authDomain: "rare-birds.firebaseapp.com",
-  projectId: "rare-birds",
-  storageBucket: "rare-birds.appspot.com",
+  authDomain: "bird-planner.firebaseapp.com",
+  projectId: "bird-planner",
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
