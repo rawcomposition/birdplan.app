@@ -59,14 +59,22 @@ const TripProvider = ({ children }: Props) => {
     const alreadyExists = trip.hotspots.find((it) => it.id === hotspot.id);
     const newHotspots = alreadyExists ? trip.hotspots : [...trip.hotspots, hotspot];
     setTrip((prev) => prev && { ...prev, hotspots: newHotspots });
-    await updateHotspots(trip.id, newHotspots);
+    try {
+      await updateHotspots(trip.id, newHotspots);
+    } catch (error) {
+      toast.error("Error saving changes");
+    }
   };
 
   const removeHotspot = async (id: string) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.filter((it) => it.id !== id);
     setTrip((prev) => prev && { ...prev, hotspots: newHotspots });
-    await updateHotspots(trip.id, newHotspots);
+    try {
+      await updateHotspots(trip.id, newHotspots);
+    } catch (error) {
+      toast.error("Error saving changes");
+    }
   };
 
   return (

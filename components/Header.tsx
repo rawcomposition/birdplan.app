@@ -18,10 +18,10 @@ export default function Header({ title, parent }: Props) {
 
   return (
     <header className="bg-slate-900 h-[60px] shrink-0 flex items-center">
-      <div className="w-80 flex items-center">
+      <Link href="/" className="w-80 flex items-center">
         <img src="/icon.png" className="w-[50px] mx-4" width="50" height="50" />
         <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
-      </div>
+      </Link>
       <div className="mr-auto">
         {title && (
           <nav className="text-lg flex items-center">
