@@ -7,7 +7,7 @@ import Button from "components/Button";
 import TripCard from "components/TripCard";
 
 export default function Planner() {
-  const { trips, loading, deleteTrip } = useTrips();
+  const { trips, deleteTrip } = useTrips();
   const { open } = useModal();
 
   return (
@@ -29,8 +29,7 @@ export default function Planner() {
             <TripCard key={trip.id} trip={trip} onDelete={deleteTrip} />
           ))}
         </div>
-        {loading && <p className="text-gray-500 text-lg">Loading...</p>}
-        {!loading && trips.length === 0 && (
+        {trips.length === 0 && (
           <p className="text-gray-500 text-lg">
             You don&apos;t have any trips yet.{" "}
             <button type="button" className="text-blue-600 font-bold" onClick={() => open("createTrip")}>

@@ -16,16 +16,6 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = fs.getFirestore(app);
 
-export const fetchProfile = async (): Promise<Profile | null> => {
-  const user = auth.currentUser;
-  if (!user) return null;
-  const snapshot = await fs.getDoc(fs.doc(db, "profile", user.uid));
-  if (snapshot.exists()) {
-    return snapshot.data() as Profile;
-  }
-  return null;
-};
-
 export const setProfileValue = async (key: string, value: Profile[keyof Profile]) => {
   const user = auth.currentUser;
   if (!user) return;
@@ -68,24 +58,6 @@ export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
   await fs.setDoc(fs.doc(db, "trip", tripId), { hotspots }, { merge: true });
 };
 
-export const getTrip = async (id: string): Promise<Trip | null> => {
-  const user = auth.currentUser;
-  if (!user) return null;
-  const snapshot = await fs.getDoc(fs.doc(db, "trip", id));
-  if (snapshot.exists()) {
-    return { ...snapshot.data(), id: snapshot.id } as Trip;
-  }
-  return null;
-};
-
-export const getTrips = async (): Promise<Trip[]> => {
-  const user = auth.currentUser;
-  if (!user) return [];
-  const q = fs.query(fs.collection(db, "trip"), fs.where("userId", "==", user.uid));
-  const snapshot = await fs.getDocs(q);
-  return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Trip));
-};
-
 export const createTrip = async (trip: TripInput): Promise<Trip | null> => {
   const user = auth.currentUser;
   if (!user) return null;
@@ -97,4 +69,31 @@ export const deleteTrip = async (id: string) => {
   const user = auth.currentUser;
   if (!user) return;
   await fs.deleteDoc(fs.doc(db, "trip", id));
+};
+
+export const subscribeToTrip = (id: string, callback: (trip: Trip) => void): (() => void) => {
+  return fs.onSnapshot(fs.doc(db, "trip", id), (doc) => {
+    if (doc.exists()) {
+      callback({ ...doc.data(), id: doc.id } as Trip);
+    }
+  });
+};
+
+export const subscribeToTrips = (callback: (trips: Trip[]) => void): (() => void) => {
+  const user = auth.currentUser;
+  if (!user) return () => {};
+  const q = fs.query(fs.collection(db, "trip"), fs.where("userId", "==", user.uid));
+  return fs.onSnapshot(q, (snapshot) => {
+    callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Trip)));
+  });
+};
+
+export const subscribeToProfile = (callback: (profile: Profile) => void): (() => void) => {
+  const user = auth.currentUser;
+  if (!user) return () => {};
+  return fs.onSnapshot(fs.doc(db, "profile", user.uid), (doc) => {
+    if (doc.exists()) {
+      callback(doc.data() as Profile);
+    }
+  });
 };

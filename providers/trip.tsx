@@ -1,22 +1,22 @@
 import React from "react";
 import { Hotspot, Trip } from "lib/types";
-import { getTrip, updateHotspots } from "lib/firebase";
+import { subscribeToTrip, updateHotspots } from "lib/firebase";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useUser } from "providers/user";
+import * as fs from "firebase/firestore";
 
 type ContextT = {
   trip: Trip | null;
-  loading: boolean;
   selectedSpeciesCode?: string;
   setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
+  reset: () => void;
 };
 
 const initialState = {
   trip: null,
-  loading: false,
 };
 
 export const TripContext = React.createContext<ContextT>({
@@ -24,6 +24,7 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpeciesCode: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
+  reset: () => {},
 });
 
 type Props = {
@@ -32,7 +33,6 @@ type Props = {
 
 const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
-  const [loading, setLoading] = React.useState(false);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
   const { user } = useUser();
@@ -40,25 +40,14 @@ const TripProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (!id || !uid) return;
-    (async () => {
-      setLoading(true);
-      setTrip(null);
-      try {
-        const trip = await getTrip(id);
-        setTrip(trip || null);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to fetch trip");
-      }
-    })();
+    const unsubscribe = subscribeToTrip(id, (trip) => setTrip(trip));
+    return () => unsubscribe();
   }, [id, uid]);
 
   const appendHotspot = async (hotspot: Hotspot) => {
     if (!trip) return;
     const alreadyExists = trip.hotspots.find((it) => it.id === hotspot.id);
     const newHotspots = alreadyExists ? trip.hotspots : [...trip.hotspots, hotspot];
-    setTrip((prev) => prev && { ...prev, hotspots: newHotspots });
     try {
       await updateHotspots(trip.id, newHotspots);
     } catch (error) {
@@ -69,7 +58,6 @@ const TripProvider = ({ children }: Props) => {
   const removeHotspot = async (id: string) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.filter((it) => it.id !== id);
-    setTrip((prev) => prev && { ...prev, hotspots: newHotspots });
     try {
       await updateHotspots(trip.id, newHotspots);
     } catch (error) {
@@ -77,15 +65,20 @@ const TripProvider = ({ children }: Props) => {
     }
   };
 
+  const reset = () => {
+    setTrip(null);
+    setSelectedSpeciesCode(undefined);
+  };
+
   return (
     <TripContext.Provider
       value={{
         trip,
-        loading,
         selectedSpeciesCode,
         setSelectedSpeciesCode,
         appendHotspot,
         removeHotspot,
+        reset,
       }}
     >
       {children}

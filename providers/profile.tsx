@@ -1,7 +1,7 @@
 import React from "react";
 import { useUser } from "providers/user";
 import { Address, Profile } from "lib/types";
-import { fetchProfile, setProfileValue, appendProfileLifelist, removeProfileLifelist } from "lib/firebase";
+import { subscribeToProfile, setProfileValue, appendProfileLifelist, removeProfileLifelist } from "lib/firebase";
 import toast from "react-hot-toast";
 
 interface ContextT extends Profile {
@@ -10,7 +10,7 @@ interface ContextT extends Profile {
   removeLifelist: (speciesCode: string) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
   setAddress: (address: Address) => Promise<void>;
-  initialized: boolean;
+  reset: () => void;
 }
 
 const initialState: Profile = {
@@ -26,7 +26,7 @@ export const ProfileContext = React.createContext<ContextT>({
   removeLifelist: async () => {},
   setRadius: async () => {},
   setAddress: async () => {},
-  initialized: false,
+  reset: () => {},
 });
 
 type Props = {
@@ -35,19 +35,13 @@ type Props = {
 
 const ProfileProvider = ({ children }: Props) => {
   const [state, setState] = React.useState<Profile>(initialState);
-  const [initialized, setInitialized] = React.useState(false);
   const { user } = useUser();
   const uid = user?.uid;
 
   React.useEffect(() => {
-    if (uid) {
-      setInitialized(true);
-      fetchProfile().then((profile) => {
-        if (profile) {
-          setState((prev) => ({ ...prev, ...profile }));
-        }
-      });
-    }
+    if (!uid) return;
+    const unsubscribe = subscribeToProfile((profile) => setState(profile));
+    return () => unsubscribe();
   }, [uid]);
 
   const setLifelist = async (lifelist: string[]) => {
@@ -91,6 +85,10 @@ const ProfileProvider = ({ children }: Props) => {
     } catch (error) {}
   };
 
+  const reset = () => {
+    setState(initialState);
+  };
+
   return (
     <ProfileContext.Provider
       value={{
@@ -102,7 +100,7 @@ const ProfileProvider = ({ children }: Props) => {
         removeLifelist,
         setRadius,
         setAddress,
-        initialized,
+        reset,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import { useUser } from "providers/user";
 import BreadcrumbArrow from "icons/breadcrumb-arrow";
 import { Menu } from "@headlessui/react";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
+import useRealtimeStatus from "hooks/useRealtimeStatus";
 
 type Props = {
   title?: string;
@@ -15,6 +16,7 @@ type Props = {
 export default function Header({ title, parent }: Props) {
   const { user } = useUser();
   const { logout } = useFirebaseLogout();
+  const { isOnline } = useRealtimeStatus();
 
   return (
     <header className="bg-slate-900 h-[60px] shrink-0 flex items-center">
@@ -22,7 +24,7 @@ export default function Header({ title, parent }: Props) {
         <img src="/icon.png" className="w-[50px] mx-4" width="50" height="50" />
         <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
       </Link>
-      <div className="mr-auto">
+      <div className="mr-auto flex gap-8 items-center">
         {title && (
           <nav className="text-lg flex items-center">
             {parent && (
@@ -36,6 +38,7 @@ export default function Header({ title, parent }: Props) {
             <h1 className="text-gray-400 px-5 py-1.5 flex items-center">{title}</h1>
           </nav>
         )}
+        {!isOnline && <div className="bg-red-500 text-white px-2 py-1 rounded text-xs">No Internet Connection</div>}
       </div>
       {user && (
         <div className="relative inline-block mr-8">

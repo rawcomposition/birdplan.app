@@ -1,28 +1,18 @@
 import React from "react";
-import dayjs from "dayjs";
 import { Trip } from "lib/types";
-import { getTrips, deleteTrip as deleteDbTrip } from "lib/firebase";
+import { subscribeToTrips, deleteTrip as deleteDbTrip } from "lib/firebase";
 import toast from "react-hot-toast";
 import { useUser } from "providers/user";
 
 export default function useTrip() {
   const [trips, setTrips] = React.useState<Trip[]>([]);
-  const [loading, setLoading] = React.useState(true);
   const { user } = useUser();
   const uid = user?.uid;
 
   React.useEffect(() => {
     if (!uid) return;
-    (async () => {
-      try {
-        const results = await getTrips();
-        setTrips(results);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to fetch trips");
-      }
-    })();
+    const unsubscribe = subscribeToTrips((trips) => setTrips(trips));
+    return () => unsubscribe();
   }, [uid]);
 
   const deleteTrip = async (id: string) => {
@@ -37,5 +27,5 @@ export default function useTrip() {
     }
   };
 
-  return { trips, loading, deleteTrip };
+  return { trips, deleteTrip };
 }
