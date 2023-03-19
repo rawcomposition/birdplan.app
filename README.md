@@ -1,5 +1,7 @@
 <img width="1306" alt="Screen Shot 2022-03-20 at 5 24 49 PM" src="https://user-images.githubusercontent.com/740090/159186629-fe733c42-677f-4878-a5c6-99fb94cd2220.png">
 
+## -- Rebuild in Progress --
+
 ## Welcome to BirdyAlert! 🦆
 
 This is a little project I put together to make finding rare eBird reports within a large radius easier. The eBird app already does this but only up to 30 miles. BirdsEye also does this up to 50 miles, but you have to pay if you want a larger radius. With this app you can check off the birds you've seen either in the US or in the world, depending on whether you're trying to build or US or world list.
