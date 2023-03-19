@@ -135,7 +135,16 @@ export default function Trip({ isNew, tripId }: Props) {
                   </Button>
                   <CloseButton onClick={() => setSelectedSpeciesCode(undefined)} className="ml-auto" />
                 </div>
-                <p className="text-xs text-gray-500 mt-1.5">Showing reports over the last 30 days</p>
+                <p className="text-xs text-gray-500 mt-1.5">
+                  Showing reports over the last 30 days.{" "}
+                  <a
+                    href={`https://ebird.org/map/${selectedSpeciesCode}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
+                    className="text-sky-700"
+                    target="_blank"
+                  >
+                    View on eBird
+                  </a>
+                </p>
               </div>
             )}
           </div>
