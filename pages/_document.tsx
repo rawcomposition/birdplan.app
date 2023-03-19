@@ -7,7 +7,7 @@ class MyDocument extends Document {
         <Head>
           <meta
             name="description"
-            content="Explore rare birds nearby you and filter out species you have already seen."
+            content="Plan your next birding adventure with ease using our interactive map tool. The user-friendly interface lets you customize your trip and stay organized along the way."
           />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
