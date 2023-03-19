@@ -18,6 +18,13 @@ const ReactSelectStyled = (props: any) => {
           ...base,
           fontSize: "0.875rem",
         }),
+        control: (base, state) => ({
+          ...base,
+          borderColor: state.isFocused ? "#3b82f6" : "#d1d5db",
+          "&:hover": {
+            borderColor: state.isFocused ? "#3b82f6" : "##9ca3af",
+          },
+        }),
         menu: (base) => ({ ...base, fontSize: "0.875rem" }),
         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
       }}
