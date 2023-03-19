@@ -73,7 +73,7 @@ export default function CreateTrip() {
         <div className="flex gap-2 mb-2">
           <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
             <Field label="Name">
-              <Input type="text" name="name" />
+              <Input type="text" name="name" autoFocus />
             </Field>
             <Field label="Region">
               <RegionSelect
