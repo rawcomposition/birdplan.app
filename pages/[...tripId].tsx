@@ -40,6 +40,7 @@ export default function Trip({ isNew, tripId }: Props) {
     fetchImmediately: isNew,
     savedIdStr,
   });
+
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
   const selectedSpecies = recentSpecies.find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
