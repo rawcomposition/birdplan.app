@@ -9,6 +9,7 @@ import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
+import Input from "components/Input";
 
 type Props = {
   hotspot: HotspotT;
@@ -21,10 +22,11 @@ type Info = {
 };
 
 export default function Hotspot({ hotspot, speciesName }: Props) {
-  const { trip, appendHotspot, removeHotspot, selectedSpeciesCode } = useTrip();
+  const { trip, appendHotspot, removeHotspot, saveNotes, selectedSpeciesCode } = useTrip();
   const [info, setInfo] = React.useState<Info>();
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
+  const notes = trip?.hotspots.find((it) => it.id === id)?.notes;
 
   const handleSave = async () => {
     if (isSaved) {
@@ -48,21 +50,15 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     })();
   }, [id]);
 
+  const handleSaveNotes = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    saveNotes(id, e.target.value);
+  };
+
   return (
     <>
       <Header>{name}</Header>
       <Body>
-        <div className="flex gap-10 text-gray-500">
-          <div className="flex flex-col text-[#1c6900]">
-            <span className="text-3xl font-bold">{hotspot.species || info?.species || "--"}</span>
-            <span className="text-xs">Species</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl font-bold">{info?.checklists?.toLocaleString() || "--"}</span>
-            <span className="text-xs">Checklists</span>
-          </div>
-        </div>
-        <div className="flex gap-2 mt-4 mb-2">
+        <div className="flex gap-2 mb-4">
           <Button
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
@@ -91,6 +87,19 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             )}
           </Button>
         </div>
+        <div className="flex gap-10 text-gray-500">
+          <div className="flex flex-col text-[#1c6900]">
+            <span className="text-3xl font-bold">{hotspot.species || info?.species || "--"}</span>
+            <span className="text-xs">Species</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-3xl font-bold">{info?.checklists?.toLocaleString() || "--"}</span>
+            <span className="text-xs">Checklists</span>
+          </div>
+        </div>
+        {isSaved && (
+          <Input isTextarea placeholder="Notes" className="mt-4" defaultValue={notes} onBlur={handleSaveNotes} />
+        )}
         {selectedSpeciesCode && <ObsList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />}
       </Body>
     </>

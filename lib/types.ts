@@ -75,6 +75,7 @@ export type Hotspot = {
   lat: number;
   lng: number;
   species?: number;
+  notes?: string;
 };
 
 export type KeyValue = {

@@ -2,9 +2,7 @@ import React from "react";
 import { Hotspot, Trip } from "lib/types";
 import { subscribeToTrip, updateHotspots } from "lib/firebase";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
 import { useUser } from "providers/user";
-import * as fs from "firebase/firestore";
 
 type ContextT = {
   trip: Trip | null;
@@ -12,6 +10,7 @@ type ContextT = {
   setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
+  saveNotes: (id: string, notes: string) => Promise<void>;
   reset: () => void;
 };
 
@@ -24,6 +23,7 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpeciesCode: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
+  saveNotes: async () => {},
   reset: () => {},
 });
 
@@ -48,21 +48,22 @@ const TripProvider = ({ children }: Props) => {
     if (!trip) return;
     const alreadyExists = trip.hotspots.find((it) => it.id === hotspot.id);
     const newHotspots = alreadyExists ? trip.hotspots : [...trip.hotspots, hotspot];
-    try {
-      await updateHotspots(trip.id, newHotspots);
-    } catch (error) {
-      toast.error("Error saving changes");
-    }
+    await updateHotspots(trip.id, newHotspots);
   };
 
   const removeHotspot = async (id: string) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.filter((it) => it.id !== id);
-    try {
-      await updateHotspots(trip.id, newHotspots);
-    } catch (error) {
-      toast.error("Error saving changes");
-    }
+    await updateHotspots(trip.id, newHotspots);
+  };
+
+  const saveNotes = async (id: string, notes: string) => {
+    if (!trip) return;
+    const newHotspots = trip.hotspots.map((it) => {
+      if (it.id === id) return { ...it, notes };
+      return it;
+    });
+    await updateHotspots(trip.id, newHotspots);
   };
 
   const reset = () => {
@@ -78,6 +79,7 @@ const TripProvider = ({ children }: Props) => {
         setSelectedSpeciesCode,
         appendHotspot,
         removeHotspot,
+        saveNotes,
         reset,
       }}
     >

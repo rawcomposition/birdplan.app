@@ -2,7 +2,6 @@ import React from "react";
 import { useUser } from "providers/user";
 import { Address, Profile } from "lib/types";
 import { subscribeToProfile, setProfileValue, appendProfileLifelist, removeProfileLifelist } from "lib/firebase";
-import toast from "react-hot-toast";
 
 interface ContextT extends Profile {
   setLifelist: (lifelist: string[]) => Promise<void>;
@@ -46,43 +45,27 @@ const ProfileProvider = ({ children }: Props) => {
 
   const setLifelist = async (lifelist: string[]) => {
     setState((state) => ({ ...state, lifelist }));
-    try {
-      await setProfileValue("lifelist", lifelist);
-    } catch (error) {
-      toast.error("Error saving life list");
-    }
+    await setProfileValue("lifelist", lifelist);
   };
 
   const appendLifelist = async (speciesCode: string) => {
     setState((state) => ({ ...state, lifelist: [...state.lifelist, speciesCode] }));
-    try {
-      await appendProfileLifelist(speciesCode);
-    } catch (error) {
-      toast.error("Error saving changes");
-    }
+    await appendProfileLifelist(speciesCode);
   };
 
   const removeLifelist = async (speciesCode: string) => {
     setState((state) => ({ ...state, lifelist: state.lifelist.filter((code) => code !== speciesCode) }));
-    try {
-      await removeProfileLifelist(speciesCode);
-    } catch (error) {
-      toast.error("Error saving changes");
-    }
+    await removeProfileLifelist(speciesCode);
   };
 
   const setRadius = async (radius: number) => {
     setState((state) => ({ ...state, radius }));
-    try {
-      await setProfileValue("radius", radius);
-    } catch (error) {}
+    await setProfileValue("radius", radius);
   };
 
   const setAddress = async (address: Address) => {
     setState((state) => ({ ...state, address }));
-    try {
-      await setProfileValue("address", address);
-    } catch (error) {}
+    await setProfileValue("address", address);
   };
 
   const reset = () => {
