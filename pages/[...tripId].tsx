@@ -148,6 +148,7 @@ export default function Trip({ isNew, tripId }: Props) {
           <div className="w-full h-full relative">
             {trip?.bounds && (
               <MapBox
+                key={trip.id}
                 onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
                 markers={markers}
                 hotspotLayer={showAll && !selectedSpeciesCode && hotspotLayer}
