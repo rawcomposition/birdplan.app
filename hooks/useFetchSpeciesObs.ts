@@ -69,6 +69,7 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
               },
               properties: {
                 id: it.id,
+                isPersonal: it.isPersonal ? "true" : "false",
               },
             };
           }),

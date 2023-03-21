@@ -31,7 +31,7 @@ export default function UploadTargets() {
           const endWeek = endMonth * 4;
           const data = results.data.filter((it: any) => it[""] !== "");
           const species = data.slice(4).map((it: any) => {
-            const name = it[""];
+            const name = it[""].split(" (")[0];
             const abundance = it.__parsed_extra.slice(0, 48).map((it: string) => Number(it));
             const abundanceInRange = getDataInRange(abundance, startWeek, endWeek);
             const sum = abundanceInRange.reduce((acc, it) => acc + it, 0);

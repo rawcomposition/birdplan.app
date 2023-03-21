@@ -57,7 +57,7 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
       "circle-radius": 5,
       "circle-stroke-width": 0.75,
       "circle-stroke-color": "#555",
-      "circle-color": "#ce0d02",
+      "circle-color": ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
     },
   };
 
