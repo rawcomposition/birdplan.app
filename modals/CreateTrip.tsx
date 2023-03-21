@@ -9,14 +9,23 @@ import toast from "react-hot-toast";
 import { getBounds } from "lib/helpers";
 import { useRouter } from "next/router";
 import RegionSelect from "components/RegionSelect";
+import MonthSelect from "components/MonthSelect";
 import { useModal } from "providers/modals";
+import dayjs from "dayjs";
 
 const largeRegions = ["MX", "US", "CA", "AU"];
+
+const defaultMonth = {
+  value: (dayjs().month() + 2).toString(),
+  label: dayjs().format("MMM"),
+};
 
 export default function CreateTrip() {
   const [country, setCountry] = React.useState<Option>();
   const [subregion, setSubregion] = React.useState<Option>();
   const [submitting, setSubmitting] = React.useState(false);
+  const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
+  const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
   const router = useRouter();
   const { close } = useModal();
 
@@ -42,7 +51,10 @@ export default function CreateTrip() {
         region: region.value,
         regionName: region.label,
         hotspots: [],
+        targets: [],
         bounds,
+        startMonth: Number(startMonth.value),
+        endMonth: Number(endMonth.value),
       };
 
       if (parent) {
@@ -75,6 +87,26 @@ export default function CreateTrip() {
             <Field label="Name">
               <Input type="text" name="name" autoFocus />
             </Field>
+            <div>
+              <label className="mb-1 block">Trip Timeframe</label>
+              <div className="flex gap-2 items-center">
+                <MonthSelect
+                  onChange={setStartMonth}
+                  value={startMonth}
+                  instanceId="startMonth"
+                  className="flex-grow"
+                  menuPortalTarget={document.body}
+                />
+                <span className="text-gray-500 px-2">to</span>
+                <MonthSelect
+                  onChange={setEndMonth}
+                  value={endMonth}
+                  instanceId="endMonth"
+                  className="flex-grow"
+                  menuPortalTarget={document.body}
+                />
+              </div>
+            </div>
             <Field label="Region">
               <RegionSelect
                 type="country"

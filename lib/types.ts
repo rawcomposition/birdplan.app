@@ -104,6 +104,9 @@ export type Trip = {
     maxY: number;
   };
   hotspots: Hotspot[];
+  targets: Target[];
+  startMonth: number;
+  endMonth: number;
 };
 
 export type TripInput = Omit<Trip, "id" | "userId">;
@@ -113,6 +116,12 @@ export type Observation = {
   count: number;
   date: string;
   evidence: "N";
+};
+
+export type Target = {
+  code: string;
+  name: string;
+  percent: number;
 };
 
 export type Option = {

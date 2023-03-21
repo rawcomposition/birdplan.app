@@ -30,6 +30,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
 
   const handleSave = async () => {
     if (isSaved) {
+      if (notes && !confirm("Are you sure you want to unsave this hotspot? Your notes will be lost.")) return;
       removeHotspot(id);
     } else {
       toast.success("Hotspot saved!");

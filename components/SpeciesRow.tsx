@@ -7,10 +7,11 @@ import { useTrip } from "providers/trip";
 type Props = {
   name: string;
   code: string;
+  percent?: number;
   [key: string]: any;
 };
 
-export default function SpeciesRow({ name, code, ...props }: Props) {
+export default function SpeciesRow({ name, code, percent, ...props }: Props) {
   const { selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const selected = selectedSpeciesCode === code;
 
@@ -23,15 +24,15 @@ export default function SpeciesRow({ name, code, ...props }: Props) {
     >
       {selected ? <CircleFilled className="text-xs text-sky-600" /> : <Circle className="text-xs text-gray-700" />}
       <span className="truncate">{name}</span>
-      {selected && (
-        <button
-          type="button"
-          className="text-xs text-gray-500 ml-auto"
-          onClick={() => setSelectedSpeciesCode(undefined)}
-        >
-          Clear
-        </button>
-      )}
+      <span className="text-gray-500 ml-auto text-xs">
+        {selected && (
+          <button type="button" onClick={() => setSelectedSpeciesCode(undefined)} title="Reset map to hotspot view">
+            Clear
+          </button>
+        )}
+        {percent && selected && <span className="mx-1.5" />}
+        {percent && <span>{percent}%</span>}
+      </span>
     </li>
   );
 }

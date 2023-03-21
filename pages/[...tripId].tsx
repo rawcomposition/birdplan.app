@@ -12,14 +12,14 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
 import { GetServerSideProps } from "next";
-import LifelistUpload from "components/LifelistUpload";
 import SpeciesRow from "components/SpeciesRow";
-import Button from "components/Button";
-import Bullseye from "icons/Bullseye";
-import CloseButton from "components/CloseButton";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
+import SpeciesCard from "components/SpeciesCard";
+import Button from "components/Button";
+import ExternalIcon from "icons/External";
+import Link from "next/link";
 
 type Props = {
   isNew: boolean;
@@ -31,7 +31,7 @@ export default function Trip({ isNew, tripId }: Props) {
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
   const { lifelist } = useProfile();
-  const { trip, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
+  const { trip, selectedSpeciesCode } = useTrip();
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
@@ -41,8 +41,9 @@ export default function Trip({ isNew, tripId }: Props) {
     savedIdStr,
   });
 
+  const targetSpecies = trip?.targets.filter((it) => !lifelist.includes(it.code)) || [];
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const selectedSpecies = recentSpecies.find((it) => it.code === selectedSpeciesCode);
+  const selectedSpecies = [...recentSpecies, ...targetSpecies].find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
@@ -100,8 +101,15 @@ export default function Trip({ isNew, tripId }: Props) {
             <Expand heading="Saved Hotspots" className="text-white" defaultOpen count={savedHotspots.length}>
               <HotspotList />
             </Expand>
-            <Expand heading="Target Species" className="text-white">
-              Hola!
+            <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
+              <ul className="divide-y divide-gray-800 mb-2">
+                {targetSpecies.map((target) => (
+                  <SpeciesRow key={target.code} {...target} />
+                ))}
+              </ul>
+              <Button size="sm" color="primary" onClick={() => open("uploadTargets")}>
+                Import Targets
+              </Button>
             </Expand>
             <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
               <ul className="divide-y divide-gray-800">
@@ -111,9 +119,29 @@ export default function Trip({ isNew, tripId }: Props) {
               </ul>
             </Expand>
             <Expand heading="My Life List" count={lifelist?.length} className="text-white">
-              <LifelistUpload />
+              <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
+                Import Life List
+              </Button>
             </Expand>
           </div>
+          {trip && (
+            <div className="mt-4 text-sm text-gray-400 flex flex-col gap-2">
+              <Link
+                href={`https://ebird.org/targets?region=&r1=${trip.region}&bmo=${trip.startMonth}&emo=${trip.endMonth}&r2=world&t2=life&mediaType=`}
+                className="text-gray-400 inline-flex items-center gap-1"
+                target="_blank"
+              >
+                <ExternalIcon className="text-xs" /> eBird Targets
+              </Link>
+              <Link
+                href={`https://ebird.org/region/${trip.region}/media?yr=all&m=`}
+                className="text-gray-400 inline-flex items-center gap-1"
+                target="_blank"
+              >
+                <ExternalIcon className="text-xs" /> Illustrated Checklist
+              </Link>
+            </div>
+          )}
         </Sidebar>
 
         <div className="h-[calc(100vh_-_60px)] grow" onClick={() => setShowSidebar(false)}>
@@ -127,27 +155,7 @@ export default function Trip({ isNew, tripId }: Props) {
                 bounds={trip.bounds}
               />
             )}
-            {selectedSpecies && (
-              <div className="absolute top-0 left-1/2 bg-white px-4 py-3 -translate-x-1/2 rounded-b-lg w-full max-w-md">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold">{selectedSpecies.name}</h2>
-                  <Button color="gray" size="xs">
-                    <Bullseye className="mr-1 -mt-[3px] text-[#c2410d]" /> Add Target
-                  </Button>
-                  <CloseButton onClick={() => setSelectedSpeciesCode(undefined)} className="ml-auto" />
-                </div>
-                <p className="text-xs text-gray-500 mt-1.5">
-                  Showing reports over the last 30 days.{" "}
-                  <a
-                    href={`https://ebird.org/map/${selectedSpeciesCode}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
-                    className="text-sky-700"
-                    target="_blank"
-                  >
-                    View on eBird
-                  </a>
-                </p>
-              </div>
-            )}
+            {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
           </div>
         </div>
       </main>

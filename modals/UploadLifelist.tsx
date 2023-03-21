@@ -1,12 +1,15 @@
 import React from "react";
+import { Header, Body } from "providers/modals";
 import { useProfile } from "providers/profile";
 import Papa from "papaparse";
 import toast from "react-hot-toast";
+import { useModal } from "providers/modals";
 
-export default function LifelistUpload() {
+export default function UploadLifelist() {
   const [loading, setLoading] = React.useState(false);
   const { setLifelist } = useProfile();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { close } = useModal();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -33,6 +36,7 @@ export default function LifelistUpload() {
           const codes = await res.json();
           if (Array.isArray(codes)) setLifelist(codes);
           toast.success("Lifelist uploaded");
+          close();
         },
       });
     } catch (error) {
@@ -45,18 +49,21 @@ export default function LifelistUpload() {
 
   return (
     <>
-      <p className="text-sm text-gray-200 mb-2">
-        <a
-          href="https://ebird.org/lifelist?r=world&time=life&fmt=csv"
-          className="text-sky-600"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Click here
-        </a>{" "}
-        to download your life list as a CSV file. Upload the file below.
-      </p>
-      <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
+      <Header>Import Life List</Header>
+      <Body>
+        <p className="text-sm mb-2">
+          <a
+            href="https://ebird.org/lifelist?r=world&time=life&fmt=csv"
+            className="text-sky-600"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Click here
+          </a>{" "}
+          to download your life list as a CSV file. Upload the file below.
+        </p>
+        <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
+      </Body>
     </>
   );
 }

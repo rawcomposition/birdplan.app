@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import * as fs from "firebase/firestore";
-import { Profile, Hotspot, Trip, TripInput } from "lib/types";
+import { Profile, Hotspot, Trip, TripInput, Target } from "lib/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
@@ -55,6 +55,12 @@ export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
   const user = auth.currentUser;
   if (!user) return;
   await fs.setDoc(fs.doc(db, "trip", tripId), { hotspots }, { merge: true });
+};
+
+export const updateTargets = async (tripId: string, targets: Target[]) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.setDoc(fs.doc(db, "trip", tripId), { targets }, { merge: true });
 };
 
 export const createTrip = async (trip: TripInput): Promise<Trip | null> => {

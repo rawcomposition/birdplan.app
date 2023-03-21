@@ -1,6 +1,6 @@
 import React from "react";
-import { Hotspot, Trip } from "lib/types";
-import { subscribeToTrip, updateHotspots } from "lib/firebase";
+import { Hotspot, Trip, Target } from "lib/types";
+import { subscribeToTrip, updateHotspots, updateTargets } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
 
@@ -10,6 +10,8 @@ type ContextT = {
   setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
+  setTargets: (target: Target[]) => Promise<void>;
+  removeTarget: (code: string) => Promise<void>;
   saveNotes: (id: string, notes: string) => Promise<void>;
   reset: () => void;
 };
@@ -23,6 +25,8 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpeciesCode: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
+  setTargets: async () => {},
+  removeTarget: async () => {},
   saveNotes: async () => {},
   reset: () => {},
 });
@@ -57,6 +61,17 @@ const TripProvider = ({ children }: Props) => {
     await updateHotspots(trip.id, newHotspots);
   };
 
+  const setTargets = async (targets: Target[]) => {
+    if (!trip) return;
+    await updateTargets(trip.id, targets);
+  };
+
+  const removeTarget = async (code: string) => {
+    if (!trip) return;
+    const newTargets = trip.targets.filter((it) => it.code !== code);
+    await updateTargets(trip.id, newTargets);
+  };
+
   const saveNotes = async (id: string, notes: string) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.map((it) => {
@@ -79,6 +94,8 @@ const TripProvider = ({ children }: Props) => {
         setSelectedSpeciesCode,
         appendHotspot,
         removeHotspot,
+        setTargets,
+        removeTarget,
         saveNotes,
         reset,
       }}

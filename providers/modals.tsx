@@ -11,6 +11,8 @@ import { Dialog } from "@headlessui/react";
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import CreateTrip from "modals/CreateTrip";
+import UploadLifelist from "modals/UploadLifelist";
+import UploadTargets from "modals/UploadTargets";
 
 const modals = [
   {
@@ -29,6 +31,16 @@ const modals = [
     id: "createTrip",
     maxWidth: "400px",
     Component: CreateTrip,
+  },
+  {
+    id: "uploadLifelist",
+    maxWidth: "320px",
+    Component: UploadLifelist,
+  },
+  {
+    id: "uploadTargets",
+    maxWidth: "320px",
+    Component: UploadTargets,
   },
 ];
 

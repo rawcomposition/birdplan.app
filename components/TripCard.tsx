@@ -11,15 +11,17 @@ type Props = {
 };
 
 export default function TripCard({ trip, onDelete }: Props) {
-  const { id, name, regionName, parentRegionName } = trip;
+  const { id, name, regionName, parentRegionName, hotspots } = trip;
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     onDelete(trip.id);
   };
 
+  const url = hotspots.length === 0 ? `/${id}?new=true` : `/${id}`;
+
   return (
-    <Link href={`/${id}`}>
+    <Link href={url}>
       <div className="bg-white rounded-lg shadow p-4 pt-3.5 relative">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold text-gray-800 mb-2">{name}</h2>
