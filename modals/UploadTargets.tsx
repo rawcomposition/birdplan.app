@@ -4,6 +4,7 @@ import Papa from "papaparse";
 import toast from "react-hot-toast";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
+import { useProfile } from "providers/profile";
 import { Target, Option } from "lib/types";
 import Select from "components/ReactSelectStyled";
 
@@ -13,6 +14,7 @@ export default function UploadTargets() {
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const [loading, setLoading] = React.useState(false);
   const { trip, setTargets } = useTrip();
+  const { lifelist } = useProfile();
   const region = trip?.region;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { close } = useModal();
@@ -59,7 +61,8 @@ export default function UploadTargets() {
             body: JSON.stringify(filtered),
           });
           const withCodes = await res.json();
-          if (Array.isArray(withCodes)) setTargets(withCodes);
+          const filteredCodes = withCodes.filter((it: Target) => !lifelist.includes(it.code));
+          setTargets(filteredCodes);
           toast.success("Targets imported");
           close();
         },
