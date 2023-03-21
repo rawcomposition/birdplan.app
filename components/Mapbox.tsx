@@ -131,6 +131,16 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
           {satellite ? "Terrain" : "Satellite"}
         </button>
       </div>
+      {obsLayer && (
+        <div className="flex absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-2 z-50 rounded-tr-sm">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#555]" /> Personal Location
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ce0d02]" /> Hotspot
+          </span>
+        </div>
+      )}
     </div>
   );
 }
