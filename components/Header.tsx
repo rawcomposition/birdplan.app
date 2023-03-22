@@ -4,16 +4,18 @@ import useRealtimeStatus from "hooks/useRealtimeStatus";
 import Account from "components/Account";
 import Bars from "icons/Bars";
 import { useUI } from "providers/ui";
+import clsx from "clsx";
 
 type Props = {
   title?: string;
+  showAccountOnSmScreens?: boolean;
   parent?: {
     title: string;
     href: string;
   };
 };
 
-export default function Header({ title, parent }: Props) {
+export default function Header({ title, parent, showAccountOnSmScreens }: Props) {
   const { isOnline } = useRealtimeStatus();
   const { toggleSidebar, closeSidebar } = useUI();
 
@@ -39,8 +41,14 @@ export default function Header({ title, parent }: Props) {
         )}
         {!isOnline && <div className="bg-red-500 text-white px-2 py-1 rounded text-xs">No Internet Connection</div>}
       </div>
-      <Account className="lg:inline-block hidden" />
-      <button className="lg:hidden text-gray-500 text-2xl ml-auto mr-5 flex items-center" onClick={toggleSidebar}>
+      <Account className={clsx("ml-auto hidden", showAccountOnSmScreens ? "sm:inline-block" : "lg:inline-block")} />
+      <button
+        className={clsx(
+          showAccountOnSmScreens ? "sm:hidden" : "md:hidden",
+          "text-gray-500 text-2xl ml-auto mr-5 flex items-center"
+        )}
+        onClick={toggleSidebar}
+      >
         <Bars />
       </button>
     </header>

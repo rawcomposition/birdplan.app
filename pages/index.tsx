@@ -19,9 +19,9 @@ export default function Planner() {
         <title>Bird Planner</title>
       </Head>
 
-      <Header />
+      <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto">
-        <Sidebar />
+        <Sidebar className="sm:hidden" />
         <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
           <div className="flex gap-8 items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-700">Your trips</h1>
