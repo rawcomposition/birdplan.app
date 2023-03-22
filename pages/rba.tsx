@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "components/sidebar";
+import Sidebar from "components/Sidebar";
 import Header from "components/Header";
 import SpeciesList from "components/SpeciesList";
 import Skeleton from "components/Skeleton";
@@ -14,8 +14,10 @@ import Head from "next/head";
 import { useProfile } from "providers/profile";
 import Select from "components/ReactSelectStyled";
 import { radiusOptions } from "lib/helpers";
+import { useUI } from "providers/ui";
 
 export default function Rba() {
+  const { closeSidebar } = useUI();
   const { lifelist, radius, address, setRadius, setAddress, appendLifelist, removeLifelist } = useProfile();
   const { lat, lng } = address || {};
 
@@ -27,7 +29,6 @@ export default function Rba() {
 
   const [expanded, setExpanded] = React.useState<string[]>([]);
   const [fading, setFading] = React.useState<string[]>([]);
-  const [showSidebar, setShowSidebar] = React.useState(false);
   const [showSeen, setShowSeen] = React.useState(false);
 
   React.useEffect(() => {
@@ -61,7 +62,7 @@ export default function Rba() {
 
       <Header title="rare bird alert" />
       <main className="flex">
-        <Sidebar open={showSidebar}>
+        <Sidebar>
           <div className="mt-4">
             <label htmlFor="radius" className="text-white text-sm">
               Radius
@@ -83,14 +84,11 @@ export default function Rba() {
           </div>
         </Sidebar>
 
-        <div className="h-screen overflow-auto grow pt-6 px-4" onClick={() => setShowSidebar(false)}>
+        <div className="h-screen overflow-auto grow pt-6 px-4" onClick={closeSidebar}>
           <div className="container mx-auto max-w-xl">
             {(!lat || !lng) && <WelcomeMessage />}
 
-            <div className="flex mb-4">
-              <LocationSelect className="w-full mt-6" value={address} onChange={setAddress} />
-              <SidebarToggle onClick={() => setShowSidebar(!showSidebar)} />
-            </div>
+            <LocationSelect className="w-full mt-6 mb-4" value={address} onChange={setAddress} />
 
             {error && <FetchError reload={call} />}
 

@@ -13,26 +13,28 @@ const LoginModal = ({}: Props) => {
   return (
     <>
       <div className="fixed inset-0 z-20 bg-white bg-opacity-70" />
-      <div className="fixed w-full max-w-sm sm:max-w-md z-20 shadow rounded-lg bg-white border p-8 pt-6 left-1/2 top-1/3 -translate-y-1/2 -translate-x-1/2">
-        {loading || authLoading ? (
-          <div className="text-center">
-            <Loading className="animate-spin text-4xl text-slate-500" />
-          </div>
-        ) : (
-          <>
-            <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Let&apos;s get started</h2>
-            <p className="text-sm text-gray-500 text-center mb-6">Connect your Google account to start planning</p>
+      <div className="px-4 w-full fixed left-1/2 top-1/3 -translate-y-1/2 -translate-x-1/2 z-20">
+        <div className="max-w-sm mx-auto sm:max-w-md shadow rounded-lg bg-white border p-8 pt-6">
+          {loading || authLoading ? (
             <div className="text-center">
-              <button
-                type="button"
-                onClick={login}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-              >
-                Sign in with Google
-              </button>
+              <Loading className="animate-spin text-4xl text-slate-500" />
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Let&apos;s get started</h2>
+              <p className="text-sm text-gray-500 text-center mb-6">Connect your Google account to start planning</p>
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={login}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                >
+                  Sign in with Google
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

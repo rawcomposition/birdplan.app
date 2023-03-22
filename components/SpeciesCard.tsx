@@ -19,7 +19,7 @@ export default function Trip({ name, code }: Props) {
   };
 
   return (
-    <div className="absolute top-0 left-1/2 bg-white px-4 py-3 -translate-x-1/2 rounded-b-lg w-full max-w-md">
+    <div className="absolute top-0 left-1/2 bg-white px-4 py-3 -translate-x-1/2 rounded-b-lg w-full max-w-md z-10">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold inline-flex gap-1.5 items-center">
           {isTarget && <Bullseye className="text-[#c2410d] text-sm" />}

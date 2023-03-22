@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "components/sidebar";
+import Sidebar from "components/Sidebar";
 import Header from "components/Header";
 import Head from "next/head";
 import { useProfile } from "providers/profile";
@@ -20,6 +20,7 @@ import SpeciesCard from "components/SpeciesCard";
 import Button from "components/Button";
 import ExternalIcon from "icons/External";
 import Link from "next/link";
+import { useUI } from "providers/ui";
 
 type Props = {
   isNew: boolean;
@@ -28,10 +29,10 @@ type Props = {
 
 export default function Trip({ isNew, tripId }: Props) {
   const { open } = useModal();
-  const [showSidebar, setShowSidebar] = React.useState(false);
   const [showAll, setShowAll] = React.useState(isNew);
   const { lifelist } = useProfile();
   const { trip, selectedSpeciesCode } = useTrip();
+  const { closeSidebar } = useUI();
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
@@ -90,7 +91,7 @@ export default function Trip({ isNew, tripId }: Props) {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/" }} />
       <main className="flex">
-        <Sidebar open={showSidebar}>
+        <Sidebar>
           <div className={clsx("mb-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={handleToggleShowAll} />
@@ -144,7 +145,7 @@ export default function Trip({ isNew, tripId }: Props) {
           )}
         </Sidebar>
 
-        <div className="h-[calc(100vh_-_60px)] grow" onClick={() => setShowSidebar(false)}>
+        <div className="h-[calc(100vh_-_60px)] grow" onClick={closeSidebar}>
           <div className="w-full h-full relative">
             {trip?.bounds && (
               <MapBox

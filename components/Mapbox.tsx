@@ -106,7 +106,7 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
               className="w-[24px] h-[32px] -mt-[10px] cursor-pointer"
               color={markerColors[marker.shade || 0]}
               showStroke
-              lightIcon={!!marker?.shade && marker?.shade > 5}
+              lightIcon={!!marker?.shade && (marker?.shade > 5 || marker?.shade < 2)}
             />
           </Marker>
         ))}
