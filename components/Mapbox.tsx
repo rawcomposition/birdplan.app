@@ -2,7 +2,7 @@ import React from "react";
 import Map, { NavigationControl, Marker, Source, Layer } from "react-map-gl";
 import { Marker as MarkerT, Trip } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
-import MarkerIcon from "icons/Marker";
+import MarkerIcon from "icons/HotspotMarker";
 
 type Props = {
   bounds: Trip["bounds"];
@@ -103,9 +103,10 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
             onClick={() => onHotspotClick(marker.id)}
           >
             <MarkerIcon
-              className="w-[15px] h-[20px] -mt-[10px] cursor-pointer"
+              className="w-[24px] h-[32px] -mt-[10px] cursor-pointer"
               color={markerColors[marker.shade || 0]}
               showStroke
+              lightIcon={!!marker?.shade && marker?.shade > 5}
             />
           </Marker>
         ))}
