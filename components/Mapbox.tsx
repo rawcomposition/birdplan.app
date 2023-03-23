@@ -130,7 +130,12 @@ export default function Mapbox({
           </Marker>
         ))}
         {customMarkers.map((marker) => (
-          <Marker key={marker.id} latitude={marker.lat} longitude={marker.lng} onClick={console.log}>
+          <Marker
+            key={marker.id}
+            latitude={marker.lat}
+            longitude={marker.lng}
+            onClick={() => open("viewMarker", { marker })}
+          >
             <MarkerWithIcon icon={marker.icon} />
           </Marker>
         ))}

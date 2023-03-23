@@ -14,6 +14,7 @@ import CreateTrip from "modals/CreateTrip";
 import UploadLifelist from "modals/UploadLifelist";
 import UploadTargets from "modals/UploadTargets";
 import AddMarker from "modals/AddMarker";
+import ViewMarker from "modals/ViewMarker";
 
 const modals = [
   {
@@ -47,6 +48,11 @@ const modals = [
     id: "addMarker",
     maxWidth: "400px",
     Component: AddMarker,
+  },
+  {
+    id: "viewMarker",
+    maxWidth: "400px",
+    Component: ViewMarker,
   },
 ];
 

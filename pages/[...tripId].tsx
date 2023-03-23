@@ -22,6 +22,7 @@ import Button from "components/Button";
 import ExternalIcon from "icons/External";
 import Link from "next/link";
 import { useUI } from "providers/ui";
+import CloseButton from "components/CloseButton";
 
 type Props = {
   isNew: boolean;
@@ -116,9 +117,15 @@ export default function Trip({ isNew, tripId }: Props) {
                   <CustomMarkerRow key={marker.id} {...marker} />
                 ))}
               </ul>
-              <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
-                + Add Marker
-              </Button>
+              {isAddingMarker ? (
+                <Button size="sm" color="gray" onClick={() => setIsAddingMarker(false)}>
+                  Cancel Adding Marker
+                </Button>
+              ) : (
+                <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
+                  + Add Marker
+                </Button>
+              )}
             </Expand>
             <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
               <ul className="divide-y divide-gray-800 mb-2">
@@ -180,8 +187,9 @@ export default function Trip({ isNew, tripId }: Props) {
             )}
             {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
             {isAddingMarker && (
-              <div className="absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
+              <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
                 Click anywhere on map to add marker
+                <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
               </div>
             )}
           </div>

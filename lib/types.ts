@@ -129,6 +129,7 @@ export enum MarkerIcon {
   TENT = "tent",
   HOUSE = "house",
   AIRBNB = "airbnb",
+  BINS = "bins",
 }
 
 export type CustomMarker = {
