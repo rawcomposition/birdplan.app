@@ -14,6 +14,8 @@ export default function Trip({ name, code }: Props) {
   const isTarget = trip?.targets?.findIndex((it) => it.code === code) !== -1;
 
   const handleRemoveTarget = () => {
+    if (!confirm("Are you sure you want to remove this target? You can only add it back by re-importing your targets."))
+      return;
     removeTarget(code);
     setSelectedSpeciesCode(undefined);
   };
