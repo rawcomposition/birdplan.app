@@ -52,6 +52,7 @@ export default function CreateTrip() {
         regionName: region.label,
         hotspots: [],
         targets: [],
+        markers: [],
         bounds,
         startMonth: Number(startMonth.value),
         endMonth: Number(endMonth.value),
@@ -85,7 +86,7 @@ export default function CreateTrip() {
         <div className="flex gap-2 mb-2">
           <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
             <Field label="Name">
-              <Input type="text" name="name" autoFocus />
+              <Input type="text" name="name" />
             </Field>
             <div>
               <label className="mb-1 block">Trip Timeframe</label>

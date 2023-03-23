@@ -52,7 +52,6 @@ export type DispatchAction = {
 export type Marker = {
   lat: number;
   lng: number;
-  type: string;
   id: string;
   shade?: number;
 };
@@ -105,6 +104,7 @@ export type Trip = {
   };
   hotspots: Hotspot[];
   targets: Target[];
+  markers: CustomMarker[];
   startMonth: number;
   endMonth: number;
 };
@@ -122,6 +122,21 @@ export type Target = {
   code: string;
   name: string;
   percent: number;
+};
+
+export enum MarkerIcon {
+  HOTSPOT = "hotspot",
+  TENT = "tent",
+  HOUSE = "house",
+  AIRBNB = "airbnb",
+}
+
+export type CustomMarker = {
+  name: string;
+  lat: number;
+  lng: number;
+  icon: MarkerIcon;
+  id: string;
 };
 
 export type Option = {

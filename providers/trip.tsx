@@ -1,6 +1,6 @@
 import React from "react";
-import { Hotspot, Trip, Target } from "lib/types";
-import { subscribeToTrip, updateHotspots, updateTargets } from "lib/firebase";
+import { Hotspot, Trip, Target, CustomMarker } from "lib/types";
+import { subscribeToTrip, updateHotspots, updateTargets, updateMarkers } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
 
@@ -10,6 +10,8 @@ type ContextT = {
   setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
+  appendMarker: (marker: CustomMarker) => Promise<void>;
+  removeMarker: (id: string) => Promise<void>;
   setTargets: (target: Target[]) => Promise<void>;
   removeTarget: (code: string) => Promise<void>;
   saveNotes: (id: string, notes: string) => Promise<void>;
@@ -25,6 +27,8 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpeciesCode: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
+  appendMarker: async () => {},
+  removeMarker: async () => {},
   setTargets: async () => {},
   removeTarget: async () => {},
   saveNotes: async () => {},
@@ -61,6 +65,19 @@ const TripProvider = ({ children }: Props) => {
     await updateHotspots(trip.id, newHotspots);
   };
 
+  const appendMarker = async (marker: CustomMarker) => {
+    if (!trip) return;
+    const alreadyExists = trip.markers.find((it) => it.id === marker.id);
+    const newMarkers = alreadyExists ? trip.markers : [...trip.markers, marker];
+    await updateMarkers(trip.id, newMarkers);
+  };
+
+  const removeMarker = async (id: string) => {
+    if (!trip) return;
+    const newMarkers = trip.markers.filter((it) => it.id !== id);
+    await updateMarkers(trip.id, newMarkers);
+  };
+
   const setTargets = async (targets: Target[]) => {
     if (!trip) return;
     await updateTargets(trip.id, targets);
@@ -94,6 +111,8 @@ const TripProvider = ({ children }: Props) => {
         setSelectedSpeciesCode,
         appendHotspot,
         removeHotspot,
+        appendMarker,
+        removeMarker,
         setTargets,
         removeTarget,
         saveNotes,

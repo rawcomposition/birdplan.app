@@ -92,3 +92,13 @@ export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
   const lng = (minX + maxX) / 2;
   return { lat, lng };
 };
+
+export const randomId = (length: number) => {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};

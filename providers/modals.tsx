@@ -13,6 +13,7 @@ import PersonalLocation from "modals/PersonalLocation";
 import CreateTrip from "modals/CreateTrip";
 import UploadLifelist from "modals/UploadLifelist";
 import UploadTargets from "modals/UploadTargets";
+import AddMarker from "modals/AddMarker";
 
 const modals = [
   {
@@ -41,6 +42,11 @@ const modals = [
     id: "uploadTargets",
     maxWidth: "320px",
     Component: UploadTargets,
+  },
+  {
+    id: "addMarker",
+    maxWidth: "400px",
+    Component: AddMarker,
   },
 ];
 

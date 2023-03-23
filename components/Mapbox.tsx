@@ -1,19 +1,34 @@
 import React from "react";
 import Map, { NavigationControl, Marker, Source, Layer } from "react-map-gl";
-import { Marker as MarkerT, Trip } from "lib/types";
+import { Marker as MarkerT, Trip, MarkerIcon, CustomMarker } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
-import MarkerIcon from "icons/HotspotMarker";
+import MarkerWithIcon from "components/MarkerWithIcon";
+import clsx from "clsx";
+import { useModal } from "providers/modals";
 
 type Props = {
   bounds: Trip["bounds"];
   markers: MarkerT[];
+  customMarkers: CustomMarker[];
   hotspotLayer: any;
   obsLayer: any;
+  addingMarker: boolean;
   onHotspotClick: (id: string) => void;
+  onDisableAddingMarker: () => void;
 };
 
-export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, obsLayer }: Props) {
+export default function Mapbox({
+  bounds,
+  markers,
+  customMarkers,
+  onHotspotClick,
+  hotspotLayer,
+  obsLayer,
+  addingMarker,
+  onDisableAddingMarker,
+}: Props) {
   const [satellite, setSatellite] = React.useState(false);
+  const { open } = useModal();
 
   const hsLayerStyle = {
     id: "hotspots",
@@ -66,7 +81,7 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
   if (!lat || !lng) return null;
 
   return (
-    <div className="relative w-full h-full">
+    <div className={clsx("relative w-full h-full", addingMarker && "mapboxAddMarkerMode")}>
       <Map
         initialViewState={{
           longitude: lng,
@@ -83,6 +98,11 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
           e.target.getCanvas().style.cursor = "pointer";
         }}
         onClick={(e) => {
+          if (addingMarker) {
+            open("addMarker", { lat: e.lngLat.lat, lng: e.lngLat.lng });
+            onDisableAddingMarker();
+            return;
+          }
           const features = e.target.queryRenderedFeatures(e.point, { layers: activeLayers });
           if (features.length) {
             onHotspotClick(features?.[0]?.properties?.id);
@@ -102,12 +122,16 @@ export default function Mapbox({ bounds, markers, onHotspotClick, hotspotLayer, 
             longitude={marker.lng}
             onClick={() => onHotspotClick(marker.id)}
           >
-            <MarkerIcon
-              className="w-[24px] h-[32px] -mt-[10px] cursor-pointer"
+            <MarkerWithIcon
+              icon={MarkerIcon.HOTSPOT}
               color={markerColors[marker.shade || 0]}
-              showStroke
-              lightIcon={!!marker?.shade && (marker?.shade > 5 || marker?.shade < 2)}
+              darkIcon={!!marker?.shade && marker?.shade > 1 && marker?.shade < 5}
             />
+          </Marker>
+        ))}
+        {customMarkers.map((marker) => (
+          <Marker key={marker.id} latitude={marker.lat} longitude={marker.lng} onClick={console.log}>
+            <MarkerWithIcon icon={marker.icon} />
           </Marker>
         ))}
         {hotspotLayer && (
