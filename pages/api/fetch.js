@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   const country = "US";
 
   const response = await fetch(
-    `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&key=${process.env.EBIRD_KEY}`
+    `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
   );
   let reports = await response.json();
 

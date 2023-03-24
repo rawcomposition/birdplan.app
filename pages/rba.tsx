@@ -60,7 +60,7 @@ export default function Rba() {
         <title>Find rare birds near you</title>
       </Head>
 
-      <Header title="rare bird alert" />
+      <Header title="Rare Bird Alert" />
       <main className="flex">
         <Sidebar>
           <div className="mt-4">
