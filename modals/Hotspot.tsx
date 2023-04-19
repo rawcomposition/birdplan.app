@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 import Input from "components/Input";
+import { useUser } from "providers/user";
 
 type Props = {
   hotspot: HotspotT;
@@ -24,6 +25,8 @@ type Info = {
 export default function Hotspot({ hotspot, speciesName }: Props) {
   const { trip, appendHotspot, removeHotspot, saveNotes, selectedSpeciesCode } = useTrip();
   const [info, setInfo] = React.useState<Info>();
+  const { user } = useUser();
+  const canEdit = user?.uid && trip?.userId === user.uid;
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
   const notes = trip?.hotspots.find((it) => it.id === id)?.notes;
@@ -98,8 +101,11 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             <span className="text-xs">Checklists</span>
           </div>
         </div>
-        {isSaved && (
+        {isSaved && canEdit && (
           <Input isTextarea placeholder="Notes" className="mt-4" defaultValue={notes} onBlur={handleSaveNotes} />
+        )}
+        {isSaved && !canEdit && notes && (
+          <div className="mt-4 p-4 bg-gray-100 rounded-md text-sm whitespace-pre-wrap">{notes}</div>
         )}
         {selectedSpeciesCode && <ObsList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />}
       </Body>

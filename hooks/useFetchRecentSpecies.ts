@@ -1,6 +1,5 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useProfile } from "providers/profile";
 
 type Item = {
   code: string;
@@ -8,9 +7,8 @@ type Item = {
   date: string;
 };
 
-export default function useFetchRecentSpecies(region?: string) {
+export default function useFetchRecentSpecies(lifelist: string[], region?: string) {
   const [items, setItems] = React.useState<Item[]>([]);
-  const { lifelist } = useProfile();
 
   React.useEffect(() => {
     if (!region) return;

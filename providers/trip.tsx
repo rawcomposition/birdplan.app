@@ -2,7 +2,6 @@ import React from "react";
 import { Hotspot, Trip, Target, CustomMarker } from "lib/types";
 import { subscribeToTrip, updateHotspots, updateTargets, updateMarkers } from "lib/firebase";
 import { useRouter } from "next/router";
-import { useUser } from "providers/user";
 
 type ContextT = {
   trip: Trip | null;
@@ -43,14 +42,12 @@ const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
-  const { user } = useUser();
-  const uid = user?.uid;
 
   React.useEffect(() => {
-    if (!id || !uid) return;
+    if (!id) return;
     const unsubscribe = subscribeToTrip(id, (trip) => setTrip(trip));
     return () => unsubscribe();
-  }, [id, uid]);
+  }, [id]);
 
   const appendHotspot = async (hotspot: Hotspot) => {
     if (!trip) return;

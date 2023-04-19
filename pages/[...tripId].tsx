@@ -3,7 +3,7 @@ import Sidebar from "components/Sidebar";
 import Header from "components/Header";
 import Head from "next/head";
 import LoginModal from "components/LoginModal";
-import { useProfile } from "providers/profile";
+import { useUser } from "providers/user";
 import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
 import Expand from "components/Expand";
@@ -33,11 +33,13 @@ type Props = {
 
 export default function Trip({ isNew, isShared, tripId }: Props) {
   const { open } = useModal();
+  const { user } = useUser();
   const [showAll, setShowAll] = React.useState(isNew);
   const { trip, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const { lifelist } = useTripLifelist({ isShared, tripUid: trip?.userId });
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
+  const canEdit = user?.uid && trip?.userId === user.uid;
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
@@ -48,7 +50,7 @@ export default function Trip({ isNew, isShared, tripId }: Props) {
   });
 
   const targetSpecies = trip?.targets.filter((it) => !lifelist.includes(it.code)) || [];
-  const { recentSpecies } = useFetchRecentSpecies(trip?.region);
+  const { recentSpecies } = useFetchRecentSpecies(lifelist, trip?.region);
   const selectedSpecies = [...recentSpecies, ...targetSpecies].find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
 
@@ -119,14 +121,18 @@ export default function Trip({ isNew, isShared, tripId }: Props) {
                   <CustomMarkerRow key={marker.id} {...marker} />
                 ))}
               </ul>
-              {isAddingMarker ? (
-                <Button size="sm" color="gray" onClick={() => setIsAddingMarker(false)}>
-                  Cancel Adding Marker
-                </Button>
-              ) : (
-                <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
-                  + Add Marker
-                </Button>
+              {canEdit && (
+                <>
+                  {isAddingMarker ? (
+                    <Button size="sm" color="gray" onClick={() => setIsAddingMarker(false)}>
+                      Cancel Adding Marker
+                    </Button>
+                  ) : (
+                    <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
+                      + Add Marker
+                    </Button>
+                  )}
+                </>
               )}
             </Expand>
             <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
@@ -135,9 +141,11 @@ export default function Trip({ isNew, isShared, tripId }: Props) {
                   <SpeciesRow key={target.code} {...target} />
                 ))}
               </ul>
-              <Button size="sm" color="primary" onClick={() => open("uploadTargets")}>
-                Import Targets
-              </Button>
+              {canEdit && (
+                <Button size="sm" color="primary" onClick={() => open("uploadTargets")}>
+                  Import Targets
+                </Button>
+              )}
             </Expand>
             <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
               <ul className="divide-y divide-gray-800">
@@ -146,11 +154,13 @@ export default function Trip({ isNew, isShared, tripId }: Props) {
                 ))}
               </ul>
             </Expand>
-            <Expand heading="My Life List" count={lifelist?.length} className="text-white">
-              <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
-                Import Life List
-              </Button>
-            </Expand>
+            {canEdit && (
+              <Expand heading="My Life List" count={lifelist?.length} className="text-white">
+                <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
+                  Import Life List
+                </Button>
+              </Expand>
+            )}
           </div>
           {trip && <EbirdLinks trip={trip} />}
         </Sidebar>
@@ -171,7 +181,7 @@ export default function Trip({ isNew, isShared, tripId }: Props) {
               />
             )}
             {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
-            {isAddingMarker && (
+            {canEdit && isAddingMarker && (
               <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
                 Click anywhere on map to add marker
                 <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
@@ -180,7 +190,7 @@ export default function Trip({ isNew, isShared, tripId }: Props) {
           </div>
         </div>
       </main>
-      <LoginModal />
+      {!isShared && <LoginModal />}
     </div>
   );
 }
