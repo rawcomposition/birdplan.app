@@ -39,7 +39,7 @@ const ProfileProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (!uid) return;
-    const unsubscribe = subscribeToProfile((profile) => setState(profile));
+    const unsubscribe = subscribeToProfile(uid, (profile) => setState(profile));
     return () => unsubscribe();
   }, [uid]);
 

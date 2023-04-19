@@ -99,10 +99,8 @@ export const subscribeToTrips = (callback: (trips: Trip[]) => void): (() => void
   });
 };
 
-export const subscribeToProfile = (callback: (profile: Profile) => void): (() => void) => {
-  const user = auth.currentUser;
-  if (!user) return () => {};
-  return fs.onSnapshot(fs.doc(db, "profile", user.uid), (doc) => {
+export const subscribeToProfile = (uid: string, callback: (profile: Profile) => void): (() => void) => {
+  return fs.onSnapshot(fs.doc(db, "profile", uid), (doc) => {
     if (doc.exists()) {
       callback(doc.data() as Profile);
     }

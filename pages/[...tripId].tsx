@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "components/Sidebar";
 import Header from "components/Header";
 import Head from "next/head";
+import LoginModal from "components/LoginModal";
 import { useProfile } from "providers/profile";
 import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
@@ -19,21 +20,22 @@ import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
 import Button from "components/Button";
-import ExternalIcon from "icons/External";
-import Link from "next/link";
+import EbirdLinks from "components/EbirdLinks";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
+import useTripLifelist from "hooks/useTripLifelist";
 
 type Props = {
   isNew: boolean;
+  isShared: boolean;
   tripId: string;
 };
 
-export default function Trip({ isNew, tripId }: Props) {
+export default function Trip({ isNew, isShared, tripId }: Props) {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(isNew);
-  const { lifelist } = useProfile();
   const { trip, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
+  const { lifelist } = useTripLifelist({ isShared, tripUid: trip?.userId });
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
@@ -150,24 +152,7 @@ export default function Trip({ isNew, tripId }: Props) {
               </Button>
             </Expand>
           </div>
-          {trip && (
-            <div className="mt-4 text-sm text-gray-400 flex flex-col gap-2">
-              <Link
-                href={`https://ebird.org/targets?region=&r1=${trip.region}&bmo=${trip.startMonth}&emo=${trip.endMonth}&r2=world&t2=life&mediaType=`}
-                className="text-gray-400 inline-flex items-center gap-1"
-                target="_blank"
-              >
-                <ExternalIcon className="text-xs" /> eBird Targets
-              </Link>
-              <Link
-                href={`https://ebird.org/region/${trip.region}/media?yr=all&m=`}
-                className="text-gray-400 inline-flex items-center gap-1"
-                target="_blank"
-              >
-                <ExternalIcon className="text-xs" /> Illustrated Checklist
-              </Link>
-            </div>
-          )}
+          {trip && <EbirdLinks trip={trip} />}
         </Sidebar>
 
         <div className="h-[calc(100vh_-_60px)] grow" onClick={closeSidebar}>
@@ -195,12 +180,14 @@ export default function Trip({ isNew, tripId }: Props) {
           </div>
         </div>
       </main>
+      <LoginModal />
     </div>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const isNew = query.new === "true";
+  const isShared = query.shared === "true";
   const tripId = query.tripId;
-  return { props: { isNew, tripId } };
+  return { props: { isNew, tripId, isShared } };
 };
