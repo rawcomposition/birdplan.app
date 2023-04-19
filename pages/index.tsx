@@ -7,6 +7,7 @@ import Button from "components/Button";
 import TripCard from "components/TripCard";
 import Sidebar from "components/Sidebar";
 import { useUI } from "providers/ui";
+import LoginModal from "components/LoginModal";
 
 export default function Planner() {
   const { trips, loading, deleteTrip } = useTrips();
@@ -45,6 +46,7 @@ export default function Planner() {
           )}
         </div>
       </main>
+      <LoginModal />
     </div>
   );
 }

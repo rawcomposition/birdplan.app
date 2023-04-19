@@ -5,7 +5,6 @@ import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";
 import { Toaster } from "react-hot-toast";
-import LoginModal from "components/LoginModal";
 import { UIProvider } from "providers/ui";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -17,7 +16,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           <UIProvider>
             <ModalProvider>
               <Component {...pageProps} />
-              <LoginModal />
             </ModalProvider>
           </UIProvider>
         </TripProvider>

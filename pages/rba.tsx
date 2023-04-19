@@ -15,6 +15,7 @@ import { useProfile } from "providers/profile";
 import Select from "components/ReactSelectStyled";
 import { radiusOptions } from "lib/helpers";
 import { useUI } from "providers/ui";
+import LoginModal from "components/LoginModal";
 
 export default function Rba() {
   const { closeSidebar } = useUI();
@@ -121,6 +122,7 @@ export default function Rba() {
           </div>
         </div>
       </main>
+      <LoginModal />
     </div>
   );
 }
