@@ -125,7 +125,7 @@ export default function Mapbox({
             <MarkerWithIcon
               icon={MarkerIcon.HOTSPOT}
               color={markerColors[marker.shade || 0]}
-              darkIcon={!!marker?.shade && marker?.shade > 1 && marker?.shade < 5}
+              darkIcon={!!marker?.shade && marker?.shade > 1 && marker?.shade < 6}
             />
           </Marker>
         ))}
