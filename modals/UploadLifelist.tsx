@@ -5,9 +5,13 @@ import Papa from "papaparse";
 import toast from "react-hot-toast";
 import { useModal } from "providers/modals";
 
-export default function UploadLifelist() {
+type Props = {
+  isCountry?: string;
+};
+
+export default function UploadLifelist({ isCountry }: Props) {
   const [loading, setLoading] = React.useState(false);
-  const { setLifelist } = useProfile();
+  const { setCountryLifelist, setLifelist } = useProfile();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { close } = useModal();
 
@@ -34,8 +38,12 @@ export default function UploadLifelist() {
             body: JSON.stringify(sciNames),
           });
           const codes = await res.json();
-          if (Array.isArray(codes)) setLifelist(codes);
-          toast.success("Lifelist uploaded");
+          if (Array.isArray(codes)) {
+            isCountry ? setCountryLifelist(codes) : setLifelist(codes);
+            toast.success("Life list uploaded");
+          } else {
+            toast.error("Error uploading life list");
+          }
           close();
         },
       });
@@ -49,11 +57,11 @@ export default function UploadLifelist() {
 
   return (
     <>
-      <Header>Import Life List</Header>
+      <Header>{isCountry ? "Import US Life List" : "Import Life List"}</Header>
       <Body>
         <p className="text-sm mb-2">
           <a
-            href="https://ebird.org/lifelist?r=world&time=life&fmt=csv"
+            href={`https://ebird.org/lifelist?r=${isCountry ? "US" : "world"}&time=life&fmt=csv`}
             className="text-sky-600"
             target="_blank"
             rel="noreferrer"
