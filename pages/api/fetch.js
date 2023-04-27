@@ -1,4 +1,5 @@
 import { distanceBetween } from "lib/helpers";
+import taxonomy from "../../taxonomy.json";
 
 export default async function handler(req, res) {
   const { lat, lng, radius = 50 } = req.query;
@@ -18,7 +19,14 @@ export default async function handler(req, res) {
     .filter((value, index, array) => array.findIndex((searchItem) => searchItem.obsId === value.obsId) === index)
     .map((item) => {
       const distance = parseFloat(distanceBetween(lat, lng, item.lat, item.lng, false).toFixed(2));
-      return { ...item, distance };
+      const { comName, sciName, speciesCode } = item;
+      const taxon = taxonomy.find((item) => item.sci === sciName);
+      return {
+        ...item,
+        distance,
+        comName: taxon?.com || comName,
+        speciesCode: taxon?.code || speciesCode,
+      };
     })
     .filter(({ distance, comName }) => distance <= parseInt(radius) && !comName.includes("(hybrid)"))
     .map((item) => ({ ...item, distance: parseInt(item.distance) }));
