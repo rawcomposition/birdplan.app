@@ -98,10 +98,10 @@ const TripProvider = ({ children }: Props) => {
     await updateHotspots(trip.id, newHotspots);
   };
 
-  const reset = () => {
+  const reset = React.useCallback(() => {
     setTrip(null);
     setSelectedSpeciesCode(undefined);
-  };
+  }, []);
 
   return (
     <TripContext.Provider

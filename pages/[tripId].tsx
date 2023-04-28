@@ -27,7 +27,7 @@ export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
   const { lifelist } = useProfile();
-  const { trip, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
+  const { trip, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
@@ -84,12 +84,17 @@ export default function Trip() {
 
   const tripIsLoaded = !!trip;
   const tripIsNew = trip?.hotspots.length === 0;
+
   React.useEffect(() => {
     if (tripIsLoaded && tripIsNew) {
       setShowAll(true);
       call();
     }
   }, [tripIsLoaded, tripIsNew, call]);
+
+  React.useEffect(() => {
+    return () => reset();
+  }, [reset]);
 
   return (
     <div className="flex flex-col h-screen">
