@@ -9,7 +9,7 @@ import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
-import Input from "components/Input";
+import TextareaAutosize from "react-textarea-autosize";
 
 type Props = {
   hotspot: HotspotT;
@@ -27,6 +27,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
   const notes = trip?.hotspots.find((it) => it.id === id)?.notes;
+  const [isEditing, setIsEditing] = React.useState(isSaved && !notes);
 
   const handleSave = async () => {
     if (isSaved) {
@@ -51,7 +52,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     })();
   }, [id]);
 
-  const handleSaveNotes = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSaveNotes = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     saveNotes(id, e.target.value);
   };
 
@@ -99,7 +100,32 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </div>
         </div>
         {isSaved && (
-          <Input isTextarea placeholder="Notes" className="mt-4" defaultValue={notes} onBlur={handleSaveNotes} />
+          <>
+            <div className="flex items-center gap-3 mt-4">
+              <h3 className="text-gray-700 font-bold">Notes</h3>
+              {notes && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditing((isEditing) => !isEditing)}
+                  className="text-sky-600 text-[13px] font-bold px-2 border border-sky-600 rounded hover:text-sky-700 hover:border-sky-700 transition-colors"
+                >
+                  {isEditing ? "Done" : "Edit"}
+                </button>
+              )}
+            </div>
+            {isEditing ? (
+              <TextareaAutosize
+                placeholder="Notes"
+                className="mt-1 input -mx-2"
+                defaultValue={notes}
+                onBlur={handleSaveNotes}
+                minRows={2}
+                maxRows={15}
+              />
+            ) : (
+              <div className="mt-1 text-gray-700 text-sm relative group">{notes}</div>
+            )}
+          </>
         )}
         {selectedSpeciesCode && <ObsList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />}
       </Body>

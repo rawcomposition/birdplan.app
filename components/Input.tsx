@@ -19,14 +19,7 @@ const Input = React.forwardRef(({ type = "text", isTextarea, className, autoFocu
   const Tag = isTextarea ? "textarea" : "input";
 
   return (
-    <Tag
-      ref={ref || thisRef}
-      type={isTextarea ? undefined : type}
-      className={`py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 outline-blue-500 block w-full shadow-sm sm:text-sm rounded-md outline-offset-0 ${
-        className || ""
-      }`}
-      {...props}
-    />
+    <Tag ref={ref || thisRef} type={isTextarea ? undefined : type} className={`input ${className || ""}`} {...props} />
   );
 });
 
