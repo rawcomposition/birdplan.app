@@ -11,11 +11,10 @@ type State = {
 
 type Props = {
   region?: string;
-  fetchImmediately?: boolean;
   savedIdStr: string;
 };
 
-export default function useFetchHotspots({ region, savedIdStr, fetchImmediately = true }: Props) {
+export default function useFetchHotspots({ region, savedIdStr }: Props) {
   const [state, setState] = React.useState<State>({
     error: false,
     loading: false,
@@ -28,6 +27,7 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
   const call = React.useCallback(async () => {
     if (!region) return;
     setState((current) => ({ ...current, loading: true, error: false, species: [] }));
+    const toastId = toast.loading("Fetching hotspots...");
     try {
       const res = await fetch(`/api/hotspots/${region}`);
       if (!res.ok) throw new Error();
@@ -38,11 +38,8 @@ export default function useFetchHotspots({ region, savedIdStr, fetchImmediately 
       setState((current) => ({ ...current, loading: false, error: true, hotspots: [] }));
       toast.error("Failed to fetch hotspots");
     }
+    toast.dismiss(toastId);
   }, [region]);
-
-  React.useEffect(() => {
-    if (fetchImmediately) call();
-  }, [call, fetchImmediately]);
 
   const layer = React.useMemo(() => {
     if (!hasFetched) return null;

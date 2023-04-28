@@ -68,8 +68,7 @@ export default function CreateTrip() {
 
       const trip = await createTrip(data);
       if (trip) {
-        toast.success("Trip created");
-        router.push(`/${trip.id}?new=true`);
+        router.push(`/${trip.id}`);
         close();
       }
     } catch (error) {

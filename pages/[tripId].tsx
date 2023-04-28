@@ -11,7 +11,6 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
-import { GetServerSideProps } from "next";
 import SpeciesRow from "components/SpeciesRow";
 import CustomMarkerRow from "components/CustomMarkerRow";
 import clsx from "clsx";
@@ -24,14 +23,9 @@ import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
 
-type Props = {
-  isNew: boolean;
-  tripId: string;
-};
-
-export default function Trip({ isNew, tripId }: Props) {
+export default function Trip() {
   const { open } = useModal();
-  const [showAll, setShowAll] = React.useState(isNew);
+  const [showAll, setShowAll] = React.useState(false);
   const { lifelist } = useProfile();
   const { trip, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const { closeSidebar } = useUI();
@@ -41,7 +35,6 @@ export default function Trip({ isNew, tripId }: Props) {
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
   const { hotspots, hotspotLayer, call } = useFetchHotspots({
     region: trip?.region,
-    fetchImmediately: isNew,
     savedIdStr,
   });
 
@@ -88,6 +81,15 @@ export default function Trip({ isNew, tripId }: Props) {
     setIsAddingMarker(true);
     setSelectedSpeciesCode(undefined);
   };
+
+  const tripIsLoaded = !!trip;
+  const tripIsNew = trip?.hotspots.length === 0;
+  React.useEffect(() => {
+    if (tripIsLoaded && tripIsNew) {
+      setShowAll(true);
+      call();
+    }
+  }, [tripIsLoaded, tripIsNew, call]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -198,9 +200,3 @@ export default function Trip({ isNew, tripId }: Props) {
     </div>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const isNew = query.new === "true";
-  const tripId = query.tripId;
-  return { props: { isNew, tripId } };
-};

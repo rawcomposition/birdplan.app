@@ -18,10 +18,8 @@ export default function TripCard({ trip, onDelete }: Props) {
     onDelete(trip.id);
   };
 
-  const url = hotspots.length === 0 ? `/${id}?new=true` : `/${id}`;
-
   return (
-    <Link href={url}>
+    <Link href={`/${id}`}>
       <div className="bg-white rounded-lg shadow p-4 pt-3.5 relative">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold text-gray-800 mb-2">{name}</h2>
