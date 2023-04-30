@@ -17,19 +17,17 @@ export default function ColModal({ hideBg, open, onClose, maxWidth, children }: 
   return (
     <Transition.Root show={open} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" initialFocus={cancelButtonRef} onClose={onClose}>
-        {!hideBg && (
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
-        )}
+        <Transition.Child
+          as={React.Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className={clsx("fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity", hideBg && "sm:hidden")} />
+        </Transition.Child>
 
         <div className="fixed bottom-0 left-0 right-0 sm:inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center text-center">
