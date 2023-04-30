@@ -1,35 +1,9 @@
-<img width="1306" alt="Screen Shot 2022-03-20 at 5 24 49 PM" src="https://user-images.githubusercontent.com/740090/159186629-fe733c42-677f-4878-a5c6-99fb94cd2220.png">
 
-## -- Rebuild in Progress --
+![localhost_3000_](https://user-images.githubusercontent.com/740090/235351896-42f72d4d-fd27-4b73-bf0a-a67dc91146c6.png)
 
-## Welcome to BirdyAlert! 🦆
+## Welcome to BirdPlanner! 🦆
 
-This is a little project I put together to make finding rare eBird reports within a large radius easier. The eBird app already does this but only up to 30 miles. BirdsEye also does this up to 50 miles, but you have to pay if you want a larger radius. With this app you can check off the birds you've seen either in the US or in the world, depending on whether you're trying to build or US or world list.
+This is a little project I put together to make make planning for birding trips a lot easier. It allows you to save hotspots, add notes, view world targets at a hotspot with one click, save custom markers, view targets in the region, and view recent reports of your targets.
 
-Try it out at [https://rba.rawcomposition.com](https://rba.rawcomposition.com)
+Try it out at [https://birdplanner.rawcomposition.com](https://birdplanner.rawcomposition.com)
 
-## Setup localhost
-
-1. Change `.env.example` to `.env` and add your API keys
-2. Make sure your google maps API key has Google Places enabled
-3. Run `npm install`
-4. Run `npm run dev` in terminal
-5. Open [http://localhost:3000](http://localhost:3000) with your browser
-
-## Roadmap
-
-- [ ] Enable anonymous users so it works without logging in
-- [ ] Remove subspecies and hybrids (group reports based on scientific name)
-- [ ] Allow uploading eBird lifelist .csv file
-- [ ] Get location from device
-- [ ] Expand thumbnail coverage, consider Cloudinary
-- [ ] Add link from app to Github
-- [ ] Cache eBird API response for several minutes (or do all processing on the client side and cache results client side)
-- [ ] Setup error boundaries
-- [ ] Add time period picker to allow showing results between 1 and 30 days
-- [ ] Show Google map of reports
-- [ ] Play sound when new species found
-- [ ] Show alert when new species found
-- [ ] Setup Google login
-
-If you would like to contribute to any of the features above, feel free to open a pull request.
