@@ -19,7 +19,7 @@ import ViewMarker from "modals/ViewMarker";
 const modals = [
   {
     id: "hotspot",
-    maxWidth: "400px",
+    maxWidth: "450px",
     hideBg: true,
     Component: Hotspot,
   },
