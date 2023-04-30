@@ -1,5 +1,5 @@
 import React from "react";
-import Map, { NavigationControl, Marker, Source, Layer } from "react-map-gl";
+import Map, { NavigationControl, Marker, Source, Layer, GeolocateControl } from "react-map-gl";
 import { Marker as MarkerT, Trip, MarkerIcon, CustomMarker } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
@@ -115,6 +115,7 @@ export default function Mapbox({
         ]}
       >
         <NavigationControl showCompass={false} />
+        <GeolocateControl positionOptions={{ enableHighAccuracy: true }} trackUserLocation={true} />
         {markers.map((marker) => (
           <Marker
             key={marker.id}
