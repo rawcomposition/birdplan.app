@@ -20,7 +20,7 @@ export default function Sidebar({ children, className }: Props) {
     >
       <div className="flex flex-col p-6 h-full">
         {children}
-        <Account className={clsx(children && "mt-auto", "lg:hidden")} />
+        <Account className={clsx(children && "mt-auto", "lg:hidden")} inSidebar />
       </div>
     </aside>
   );

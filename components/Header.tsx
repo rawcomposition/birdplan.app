@@ -41,7 +41,9 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
         )}
         {!isOnline && <div className="bg-red-500 text-white px-2 py-1 rounded text-xs">No Internet Connection</div>}
       </div>
-      <Account className={clsx("ml-auto hidden", showAccountOnSmScreens ? "sm:inline-block" : "lg:inline-block")} />
+      <Account
+        className={clsx("ml-auto hidden mr-8", showAccountOnSmScreens ? "sm:inline-block" : "lg:inline-block")}
+      />
       <button
         className={clsx(
           showAccountOnSmScreens ? "sm:hidden" : "md:hidden",
