@@ -47,7 +47,7 @@ export default function Planner() {
           )}
           <h2 className="text-xl mt-16 mb-1 font-bold text-gray-700">Rare Bird Alert</h2>
           <Link href="/rba" className="font-bold">
-            View rare bird near me <ArrowRight className="inline-block" />
+            View rare birds near me <ArrowRight className="inline-block" />
           </Link>
         </div>
       </main>
