@@ -7,6 +7,8 @@ import Button from "components/Button";
 import TripCard from "components/TripCard";
 import Sidebar from "components/Sidebar";
 import { useUI } from "providers/ui";
+import Link from "next/link";
+import ArrowRight from "icons/ArrowRight";
 
 export default function Planner() {
   const { trips, loading, deleteTrip } = useTrips();
@@ -43,6 +45,10 @@ export default function Planner() {
               </button>
             </p>
           )}
+          <h2 className="text-xl mt-16 mb-1 font-bold text-gray-700">Rare Bird Alert</h2>
+          <Link href="/rba" className="font-bold">
+            View rare bird near me <ArrowRight className="inline-block" />
+          </Link>
         </div>
       </main>
     </div>
