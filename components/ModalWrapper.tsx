@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import XMark from "icons/XMark";
+import clsx from "clsx";
 import CloseButton from "components/CloseButton";
 
 type Props = {
@@ -31,8 +31,8 @@ export default function ColModal({ hideBg, open, onClose, maxWidth, children }: 
           </Transition.Child>
         )}
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div className="fixed bottom-0 left-0 right-0 sm:inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center text-center">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -43,7 +43,7 @@ export default function ColModal({ hideBg, open, onClose, maxWidth, children }: 
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full"
+                className="relative transform overflow-hidden rounded-t-lg sm:rounded-b-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full"
                 style={{ maxWidth: maxWidth || "700px" }}
               >
                 <CloseButton className="absolute top-4 right-5" onClick={onClose} />

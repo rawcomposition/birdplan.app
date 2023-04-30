@@ -62,7 +62,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   return (
     <>
       <Header>{name}</Header>
-      <Body>
+      <Body className="max-h-[65vh] sm:max-h-full overflow-auto">
         <div className="flex gap-2 mb-4">
           <Button
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}

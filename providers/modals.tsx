@@ -5,7 +5,7 @@ import { KeyValue } from "lib/types";
 
 // components
 import ModalWrapper from "components/ModalWrapper";
-import { Dialog } from "@headlessui/react";
+import clsx from "clsx";
 
 // modals
 import Hotspot from "modals/Hotspot";
@@ -120,11 +120,11 @@ const Footer = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Header = ({ children }: { children: React.ReactNode }) => (
-  <Dialog.Title as="h3" className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">
-    {children}
-  </Dialog.Title>
+  <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
 );
 
-const Body = ({ children }: { children: React.ReactNode }) => <div className="px-4 sm:px-6 py-4">{children}</div>;
+const Body = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={clsx("px-4 sm:px-6 py-4", className)}>{children}</div>
+);
 
 export { ModalProvider, useModal, Footer, Header, Body };
