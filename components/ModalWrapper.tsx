@@ -46,7 +46,7 @@ export default function ColModal({ hideBg, open, onClose, maxWidth, children }: 
                 className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full"
                 style={{ maxWidth: maxWidth || "700px" }}
               >
-                <CloseButton className="absolute top-5 right-5" onClick={onClose} />
+                <CloseButton className="absolute top-4 right-5" onClick={onClose} />
                 {children}
               </Dialog.Panel>
             </Transition.Child>

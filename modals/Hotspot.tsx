@@ -26,7 +26,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const [info, setInfo] = React.useState<Info>();
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
-  const notes = trip?.hotspots.find((it) => it.id === id)?.notes;
+  const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
   const [isEditing, setIsEditing] = React.useState(isSaved && !notes);
 
   const handleSave = async () => {
@@ -36,6 +36,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     } else {
       toast.success("Hotspot saved!");
       appendHotspot({ ...hotspot, species: hotspot.species || info?.species || 0 });
+      if (!notes) setIsEditing(true);
     }
   };
 
@@ -55,6 +56,8 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const handleSaveNotes = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     saveNotes(id, e.target.value);
   };
+
+  const showToggleBtn = (isEditing && !!notes) || !isEditing;
 
   return (
     <>
@@ -103,7 +106,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           <>
             <div className="flex items-center gap-3 mt-4">
               <h3 className="text-gray-700 font-bold">Notes</h3>
-              {notes && (
+              {showToggleBtn && (
                 <button
                   type="button"
                   onClick={() => setIsEditing((isEditing) => !isEditing)}
@@ -115,15 +118,15 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             </div>
             {isEditing ? (
               <TextareaAutosize
-                placeholder="Notes"
                 className="mt-1 input -mx-2"
-                defaultValue={notes}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 onBlur={handleSaveNotes}
                 minRows={2}
                 maxRows={15}
               />
             ) : (
-              <div className="mt-1 text-gray-700 text-sm relative group">{notes}</div>
+              <div className="mt-1 text-gray-700 text-sm relative group">{notes || "No notes"}</div>
             )}
           </>
         )}
