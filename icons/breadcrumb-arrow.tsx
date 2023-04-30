@@ -1,7 +1,13 @@
-export default function BreadcrumbArrow() {
+import clsx from "clsx";
+
+type Props = {
+  className?: string;
+};
+
+export default function BreadcrumbArrow({ className }: Props) {
   return (
     <svg
-      className="w-2 h-4 text-white/60"
+      className={clsx("w-2 h-4 text-white/60", className)}
       viewBox="0 0 24 44"
       preserveAspectRatio="none"
       fill="currentColor"

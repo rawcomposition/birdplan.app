@@ -34,7 +34,7 @@ export default function Header({ inSidebar, className }: Props) {
       {inSidebar && (
         <button
           type="button"
-          className="lg:hidden text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full my-4"
+          className="lg:hidden text-sm font-bold text-gray-400 border-2 border-gray-400 rounded-md p-1 w-full mt-4"
           onClick={logout}
         >
           Logout

@@ -66,7 +66,7 @@ export default function Rba() {
       <Header title="Rare Bird Alert" />
       <main className="flex h-[calc(100vh-60px)]">
         <Sidebar>
-          <div className="mt-4">
+          <div>
             <label htmlFor="radius" className="text-white text-sm">
               Radius
             </label>
@@ -85,7 +85,7 @@ export default function Rba() {
               &nbsp; Hide species I&apos;ve seen
             </label>
           </div>
-          <div className="-mx-6 mt-6">
+          <div className="-mx-6 mt-6 mb-8">
             <Expand heading="US Life List" count={countryLifelist?.length} className="text-white">
               <Button size="sm" color="primary" onClick={() => open("uploadLifelist", { isCountry: true })}>
                 Import Life List
