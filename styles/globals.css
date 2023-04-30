@@ -5,7 +5,7 @@
 @layer base {
   body {
     background-color: #f3f5f9;
-    @apply font-body;
+    @apply font-body antialiased;
   }
 
   a {
