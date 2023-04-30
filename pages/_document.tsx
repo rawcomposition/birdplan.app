@@ -19,7 +19,7 @@ class MyDocument extends Document {
           />
           <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet" />
           <link rel="icon" href="/favicon.png" />
-          <link rel="apple-touch-icon" href="/placeholder.png" />
+          <link rel="apple-touch-icon" href="/apple-icon.png" />
           <script
             src={`https://maps.googleapis.com/maps/api/js?v=3.exp&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&sensor=false&libraries=places`}
             async
