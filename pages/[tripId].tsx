@@ -69,7 +69,7 @@ export default function Trip() {
           speciesCode: selectedSpeciesCode,
           speciesName: selectedSpecies?.name,
         })
-      : open("hotspot", { hotspot: observation, speciesCode: selectedSpeciesCode });
+      : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
   };
 
   const handleToggleShowAll = () => {
