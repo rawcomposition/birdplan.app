@@ -4,11 +4,11 @@ import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 
 export default function CustomMarkerRow(marker: CustomMarker) {
-  const { id, name } = marker;
+  const { name } = marker;
   const { open } = useModal();
   return (
     <li
-      className={"flex items-center gap-2 text-sm text-gray-200 cursor-pointer"}
+      className={"flex items-center gap-2 text-sm cursor-pointer"}
       title="Click to show on map"
       onClick={() => open("viewMarker", { marker })}
     >

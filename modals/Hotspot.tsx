@@ -3,13 +3,13 @@ import { Header, Body } from "providers/modals";
 import { Hotspot as HotspotT } from "lib/types";
 import Button from "components/Button";
 import Feather from "icons/Feather";
-import Directions from "icons/Directions";
 import Star from "icons/Star";
 import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 import TextareaAutosize from "react-textarea-autosize";
+import DirectionsButton from "components/DirectionsButton";
 
 type Props = {
   hotspot: HotspotT;
@@ -62,7 +62,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   return (
     <>
       <Header>{name}</Header>
-      <Body className="max-h-[65vh] sm:max-h-full overflow-auto pb-10 sm:pb-4">
+      <Body className="max-h-[65vh] sm:max-h-full pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-4">
           <Button
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
@@ -72,14 +72,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           >
             <Feather className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
           </Button>
-          <Button
-            href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
-            target="_blank"
-            color="gray"
-            size="sm"
-          >
-            <Directions className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
-          </Button>
+          <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button color="gray" size="sm" onClick={handleSave}>
             {isSaved ? (
               <>

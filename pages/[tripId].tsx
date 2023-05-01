@@ -119,7 +119,7 @@ export default function Trip() {
             </Expand>
 
             <Expand heading="Custom Markers" className="text-white" count={trip?.markers?.length}>
-              <ul className="space-y-2 mb-4">
+              <ul className="space-y-2 mb-4 text-gray-200">
                 {trip?.markers?.map((marker) => (
                   <CustomMarkerRow key={marker.id} {...marker} />
                 ))}
