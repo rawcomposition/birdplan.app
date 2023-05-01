@@ -9,6 +9,7 @@ import { randomId } from "lib/helpers";
 import { MarkerIcon } from "lib/types";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 
 type Props = {
   lat: number;
@@ -16,13 +17,14 @@ type Props = {
 };
 
 export default function AddMarker({ lat, lng }: Props) {
-  const [icon, setIcon] = React.useState(MarkerIcon.HOUSE);
+  const [icon, setIcon] = React.useState<MarkerIcon>();
   const [name, setName] = React.useState("");
   const { close } = useModal();
   const { appendMarker } = useTrip();
 
   const handleAddMarker = () => {
-    appendMarker({ lat, lng, name, icon: MarkerIcon.HOUSE, id: randomId(6) });
+    if (!icon) return toast.error("Please choose an icon");
+    appendMarker({ lat, lng, name, icon, id: randomId(6) });
     close();
   };
 
