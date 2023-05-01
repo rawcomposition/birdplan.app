@@ -28,7 +28,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
         <Directions className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
-        <h3 className="font-bold mb-2">Directions from...</h3>
+        <h3 className="font-bold mb-1 -mt-1.5 text-sm">Directions from...</h3>
         <ul className="flex flex-col pl-2">
           <li>
             <Link

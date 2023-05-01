@@ -21,7 +21,7 @@ export default function PersonalLocation({ hotspot, speciesCode, speciesName }: 
         <br />
         <span className="text-xs text-gray-500">Personal Location</span>
       </Header>
-      <Body className="relative">
+      <Body className="relative min-h-[240px]">
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} />
         </div>

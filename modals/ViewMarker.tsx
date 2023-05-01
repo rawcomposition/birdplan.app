@@ -30,7 +30,7 @@ export default function ViewMarker({ marker }: Props) {
         <MarkerWithIcon offset={false} icon={marker.icon} className="inline-block scale-90 -mb-2 mr-2 -ml-1" />
         {name}
       </Header>
-      <Body className="relative">
+      <Body className="relative min-h-[200px]">
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} markerId={id} />
           <Button color="gray" size="sm" onClick={handleRemoveMarker}>
