@@ -5,6 +5,7 @@ import House from "icons/House";
 import Airbnb from "icons/Airbnb";
 import Campground from "icons/Campground";
 import Bins from "icons/Bins";
+import Airplane from "icons/Airplane";
 import clsx from "clsx";
 
 type Props = {
@@ -22,6 +23,7 @@ const iconMap: Record<MarkerIcon, any> = {
   [MarkerIcon.TENT]: Campground,
   [MarkerIcon.AIRBNB]: Airbnb,
   [MarkerIcon.BINS]: Bins,
+  [MarkerIcon.AIRPORT]: Airplane,
 };
 
 const defaultColors: Record<MarkerIcon, string> = {
@@ -30,6 +32,7 @@ const defaultColors: Record<MarkerIcon, string> = {
   [MarkerIcon.TENT]: "#65a30d",
   [MarkerIcon.AIRBNB]: "#ff385b",
   [MarkerIcon.BINS]: "#b45309",
+  [MarkerIcon.AIRPORT]: "#64748b",
 };
 
 export default function MarkerWithIcon({ icon, darkIcon, color, offset = true, showStroke = true, className }: Props) {

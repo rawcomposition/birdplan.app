@@ -12,11 +12,9 @@ type Props = {
 };
 
 export default function ColModal({ hideBg, open, onClose, maxWidth, children }: Props) {
-  const cancelButtonRef = React.useRef(null);
-
   return (
     <Transition.Root show={open} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" initialFocus={cancelButtonRef} onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"

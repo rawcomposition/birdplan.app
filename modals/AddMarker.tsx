@@ -33,7 +33,7 @@ export default function AddMarker({ lat, lng }: Props) {
         <div className="flex gap-2 mb-2">
           <div className="flex flex-col gap-5 w-full">
             <Field label="Name">
-              <Input type="text" name="name" value={name} onChange={(e: any) => setName(e.target.value)} />
+              <Input type="text" name="name" value={name} autoFocus onChange={(e: any) => setName(e.target.value)} />
             </Field>
             <label>Choose icon</label>
             <div className="flex gap-2 mt-1 flex-wrap">
