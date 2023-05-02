@@ -60,7 +60,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     saveNotes(id, e.target.value);
   };
 
-  const showNotes = isEditing || notes || canEdit;
+  const showNotes = isSaved && (isEditing || notes || canEdit);
   const showToggleBtn = canEdit && ((isEditing && !!notes) || !isEditing);
 
   return (

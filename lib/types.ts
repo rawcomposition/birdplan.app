@@ -94,9 +94,6 @@ export type Trip = {
   userId: string;
   name: string;
   region: string;
-  regionName: string;
-  parentRegion?: string;
-  parentRegionName?: string;
   bounds: {
     minX: number;
     maxX: number;

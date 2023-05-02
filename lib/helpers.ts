@@ -71,14 +71,27 @@ export const radiusOptions = [
   { label: "500 mi", value: 500 },
 ];
 
-export const getBounds = async (region: string) => {
+export const getBounds = async (regionString: string) => {
   try {
-    const res = await fetch(
-      `https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    const regions = regionString.split(",");
+    const boundsPromises = regions.map((region) =>
+      fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
+        res.json()
+      )
     );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.bounds;
+    const boundsResults = await Promise.all(boundsPromises);
+    const combinedBounds = boundsResults.reduce(
+      (acc, bounds) => {
+        return {
+          minX: Math.min(acc.minX, bounds.bounds.minX),
+          maxX: Math.max(acc.maxX, bounds.bounds.maxX),
+          minY: Math.min(acc.minY, bounds.bounds.minY),
+          maxY: Math.max(acc.maxY, bounds.bounds.maxY),
+        };
+      },
+      { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
+    );
+    return combinedBounds;
   } catch (error) {
     toast.error("Error getting region info");
     return null;

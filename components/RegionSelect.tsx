@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { Option } from "lib/types";
 
 type Props = {
-  type: "country" | "subnational1";
+  type: "country" | "subnational1" | "subnational2";
   parent?: string;
   [key: string]: any;
 };
@@ -30,9 +30,10 @@ export default function RegionSelect({ type, parent, ...props }: Props) {
   return (
     <Select
       instanceId={`region-select-${type}`}
-      placeholder={type == "country" ? "Select country..." : "Select subregion..."}
+      placeholder="Select..."
       options={options}
       isLoading={loading}
+      isDisabled={!loading && !options.length}
       {...props}
     />
   );

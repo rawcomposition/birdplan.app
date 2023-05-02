@@ -22,7 +22,8 @@ const defaultMonth = {
 
 export default function CreateTrip() {
   const [country, setCountry] = React.useState<Option>();
-  const [subregion, setSubregion] = React.useState<Option>();
+  const [state, setState] = React.useState<Option[]>();
+  const [county, setCounty] = React.useState<Option[]>();
   const [submitting, setSubmitting] = React.useState(false);
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
@@ -31,25 +32,31 @@ export default function CreateTrip() {
 
   const requireSubregion = largeRegions.includes(country?.value || "");
 
+  const getRegionCode = () => {
+    if (county) return county.map((it) => it.value).join(",");
+    if (state) return state.map((it) => it.value).join(",");
+    if (country) return country.value;
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const region = subregion || country;
+    const region = getRegionCode();
     if (!region) return toast.error("Please select a region");
-    if (requireSubregion && !subregion) return toast.error("Please select a subregion");
-    const parent = subregion ? country : null;
+    if (requireSubregion && !state) return toast.error("Please select a state/province");
     setSubmitting(true);
     const form = e.currentTarget;
     // @ts-ignore
     const name = form.name.value;
 
-    const bounds = await getBounds(region.value);
+    const bounds = await getBounds(region);
     if (!bounds) return toast.error("Failed to fetch region info");
+    console.log(bounds);
 
     try {
       let data: TripInput = {
         name,
-        region: region.value,
-        regionName: region.label,
+        region: region,
         hotspots: [],
         targets: [],
         markers: [],
@@ -57,14 +64,6 @@ export default function CreateTrip() {
         startMonth: Number(startMonth.value),
         endMonth: Number(endMonth.value),
       };
-
-      if (parent) {
-        data = {
-          ...data,
-          parentRegion: parent.value,
-          parentRegionName: parent.label,
-        };
-      }
 
       const trip = await createTrip(data);
       if (trip) {
@@ -107,7 +106,7 @@ export default function CreateTrip() {
                 />
               </div>
             </div>
-            <Field label="Region">
+            <Field label="Country">
               <RegionSelect
                 type="country"
                 parent="world"
@@ -116,16 +115,30 @@ export default function CreateTrip() {
                 menuPortalTarget={document.body}
               />
             </Field>
-            <Field label={requireSubregion ? "Subregion (required)" : "Subregion"}>
+            <Field label={requireSubregion ? "State/Province" : "State/Province"} isOptional={!requireSubregion}>
               <RegionSelect
                 type="subnational1"
                 parent={country?.value}
-                onChange={setSubregion}
-                value={subregion}
+                onChange={setState}
+                value={state}
                 menuPortalTarget={document.body}
                 isClearable={!requireSubregion}
+                isMulti
               />
             </Field>
+            {state?.length === 1 && (
+              <Field label="County" isOptional>
+                <RegionSelect
+                  type="subnational2"
+                  parent={state?.[0].value}
+                  onChange={setCounty}
+                  value={county}
+                  menuPortalTarget={document.body}
+                  isClearable
+                  isMulti
+                />
+              </Field>
+            )}
             <Button type="submit" color="primary" className="mt-2" disabled={submitting}>
               {submitting ? "Creating..." : "Create"}
             </Button>

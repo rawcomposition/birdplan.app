@@ -8,11 +8,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `https://api.ebird.org/v2/data/obs/${region}/recent?fmt=json&cat=species&includeProvisional=true&back=30&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
     );
     const json = await response.json();
-    const formatted = json.map((it: any) => ({
-      code: it.speciesCode,
-      name: it.comName,
-      date: it.obsDt,
-    }));
+    const formatted = json.reduce((acc: any[], it: any) => {
+      const code = it.speciesCode;
+      if (!acc.some((item) => item.code === code)) {
+        acc.push({
+          code: code,
+          name: it.comName,
+          date: it.obsDt,
+        });
+      }
+      return acc;
+    }, []);
 
     res.status(200).json(formatted);
   } catch (error) {

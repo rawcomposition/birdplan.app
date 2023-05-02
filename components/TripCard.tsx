@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function TripCard({ trip, onDelete }: Props) {
-  const { id, name, regionName, parentRegionName, hotspots } = trip;
+  const { id, name, hotspots } = trip;
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -25,8 +25,7 @@ export default function TripCard({ trip, onDelete }: Props) {
           <h2 className="text-lg font-bold text-gray-800 mb-2">{name}</h2>
         </div>
         <p className="text-sm text-gray-500">
-          {regionName}
-          {parentRegionName && `, ${parentRegionName}`}
+          {hotspots.length} {hotspots.length === 1 ? "hotspot" : "hotspots"}
         </p>
         <Menu as="div" className="absolute top-1.5 right-1 inline-block text-left">
           <div>
