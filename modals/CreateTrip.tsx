@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 const largeRegions = ["MX", "US", "CA", "AU"];
 
 const defaultMonth = {
-  value: (dayjs().month() + 2).toString(),
+  value: (dayjs().month() + 1).toString(),
   label: dayjs().format("MMM"),
 };
 

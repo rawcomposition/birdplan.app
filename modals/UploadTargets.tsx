@@ -81,7 +81,7 @@ export default function UploadTargets() {
       <Body>
         <p className="text-sm mb-2">
           <a
-            href={`https://ebird.org/barchartData?r=${region}&bmo=1&emo=12&byr=1900&eyr=2023&fmt=tsv`}
+            href={`https://ebird.org/barchartData?r=${region}&bmo=${startMonth}&emo=${endMonth}&byr=1900&eyr=2023&fmt=tsv`}
             className="text-sky-600"
             target="_blank"
             rel="noreferrer"
