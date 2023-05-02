@@ -9,6 +9,7 @@ import Sidebar from "components/Sidebar";
 import { useUI } from "providers/ui";
 import Link from "next/link";
 import ArrowRight from "icons/ArrowRight";
+import LoginModal from "components/LoginModal";
 
 export default function Planner() {
   const { trips, loading, deleteTrip } = useTrips();
@@ -51,6 +52,7 @@ export default function Planner() {
           </Link>
         </div>
       </main>
+      <LoginModal />
     </div>
   );
 }

@@ -22,14 +22,17 @@ import ExternalIcon from "icons/External";
 import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
+import { useUser } from "providers/user";
 
 export default function Trip() {
   const { open } = useModal();
+  const { user } = useUser();
   const [showAll, setShowAll] = React.useState(false);
   const { lifelist } = useProfile();
   const { trip, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
+  const canEdit = user?.uid && user?.uid === trip?.userId;
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
@@ -124,38 +127,48 @@ export default function Trip() {
                   <CustomMarkerRow key={marker.id} {...marker} />
                 ))}
               </ul>
-              {isAddingMarker ? (
-                <Button size="sm" color="gray" onClick={() => setIsAddingMarker(false)}>
-                  Cancel Adding Marker
-                </Button>
-              ) : (
-                <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
-                  + Add Marker
-                </Button>
+              {canEdit && (
+                <>
+                  {isAddingMarker ? (
+                    <Button size="sm" color="gray" onClick={() => setIsAddingMarker(false)}>
+                      Cancel Adding Marker
+                    </Button>
+                  ) : (
+                    <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
+                      + Add Marker
+                    </Button>
+                  )}
+                </>
               )}
             </Expand>
-            <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
-              <ul className="divide-y divide-gray-800 mb-2">
-                {targetSpecies.map((target) => (
-                  <SpeciesRow key={target.code} {...target} />
-                ))}
-              </ul>
-              <Button size="sm" color="primary" onClick={() => open("uploadTargets")}>
-                Import Targets
-              </Button>
-            </Expand>
-            <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
-              <ul className="divide-y divide-gray-800">
-                {recentSpecies.map(({ code, name }) => (
-                  <SpeciesRow key={code} name={name} code={code} />
-                ))}
-              </ul>
-            </Expand>
-            <Expand heading="My Life List" count={lifelist?.length} className="text-white">
-              <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
-                Import Life List
-              </Button>
-            </Expand>
+            {canEdit && (
+              <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
+                <ul className="divide-y divide-gray-800 mb-2">
+                  {targetSpecies.map((target) => (
+                    <SpeciesRow key={target.code} {...target} />
+                  ))}
+                </ul>
+                <Button size="sm" color="primary" onClick={() => open("uploadTargets")}>
+                  Import Targets
+                </Button>
+              </Expand>
+            )}
+            {canEdit && (
+              <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
+                <ul className="divide-y divide-gray-800">
+                  {recentSpecies.map(({ code, name }) => (
+                    <SpeciesRow key={code} name={name} code={code} />
+                  ))}
+                </ul>
+              </Expand>
+            )}
+            {canEdit && (
+              <Expand heading="My Life List" count={lifelist?.length} className="text-white">
+                <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
+                  Import Life List
+                </Button>
+              </Expand>
+            )}
           </div>
           {trip && (
             <div className="mt-4 mb-8 text-sm text-gray-400 flex flex-col gap-2">

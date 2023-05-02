@@ -10,6 +10,7 @@ import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 import TextareaAutosize from "react-textarea-autosize";
 import DirectionsButton from "components/DirectionsButton";
+import { useUser } from "providers/user";
 
 type Props = {
   hotspot: HotspotT;
@@ -27,7 +28,9 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
   const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
-  const [isEditing, setIsEditing] = React.useState(isSaved && !notes);
+  const { user } = useUser();
+  const canEdit = user?.uid && user?.uid === trip?.userId;
+  const [isEditing, setIsEditing] = React.useState(isSaved && !notes && canEdit);
 
   const handleSave = async () => {
     if (isSaved) {
@@ -57,7 +60,8 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     saveNotes(id, e.target.value);
   };
 
-  const showToggleBtn = (isEditing && !!notes) || !isEditing;
+  const showNotes = isEditing || notes || canEdit;
+  const showToggleBtn = canEdit && ((isEditing && !!notes) || !isEditing);
 
   return (
     <>
@@ -95,7 +99,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             <span className="text-xs">Checklists</span>
           </div>
         </div>
-        {isSaved && (
+        {showNotes && (
           <>
             <div className="flex items-center gap-3 mt-4">
               <h3 className="text-gray-700 font-bold">Notes</h3>
