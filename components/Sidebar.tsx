@@ -19,7 +19,7 @@ export default function Sidebar({ children, className }: Props) {
       )}
     >
       {children}
-      <Account className={clsx(children && "mt-auto", "lg:hidden")} inSidebar />
+      <Account className={clsx(children && "mt-auto pt-4", "lg:hidden")} inSidebar />
     </aside>
   );
 }
