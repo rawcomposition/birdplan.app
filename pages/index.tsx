@@ -52,7 +52,7 @@ export default function Planner() {
           </Link>
         </div>
       </main>
-      <footer className="mt-auto text-center text-sm text-gray-500 border-t mb-4 pt-4 hidden md:block">
+      <footer className="mt-auto text-center text-[12px] opacity-80 text-gray-500 border-t mb-4 pt-4 hidden md:block">
         Developed by{" "}
         <a href="https://rawcomposition.com" target="_blank">
           RawComposition
