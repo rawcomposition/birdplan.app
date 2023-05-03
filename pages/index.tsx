@@ -23,7 +23,7 @@ export default function Planner() {
       </Head>
 
       <Header showAccountOnSmScreens />
-      <main className="max-w-2xl w-full mx-auto">
+      <main className="max-w-2xl w-full mx-auto pb-12">
         <Sidebar className="sm:hidden" />
         <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
           <div className="flex gap-8 items-center mb-8">
@@ -52,6 +52,20 @@ export default function Planner() {
           </Link>
         </div>
       </main>
+      <footer className="mt-auto text-center text-sm text-gray-500 border-t mb-4 pt-4 hidden md:block">
+        Developed by{" "}
+        <a href="https://rawcomposition.com" target="_blank">
+          RawComposition
+        </a>
+        <span className="mx-2">•</span>
+        <a href="https://rawcomposition.com/about" target="_blank">
+          Contact
+        </a>
+        <span className="mx-2">•</span>
+        <a href="https://github.com/rawcomposition/bird-planner" target="_blank">
+          Github
+        </a>
+      </footer>
       <LoginModal />
     </div>
   );
