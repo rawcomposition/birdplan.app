@@ -88,7 +88,15 @@ export default function UploadTargets() {
           >
             Click here
           </a>{" "}
-          to download your life list as a CSV file. Upload the file below.
+          to download your regional targets as a CSV file. Upload the file below.
+        </p>
+        <p className="bg-amber-100 text-amber-800 p-2 rounded text-[12px] mb-4 mt-4">
+          <strong>Note:</strong> Your{" "}
+          <a href="https://ebird.org/prefs" className="text-sky-600" target="_blank" rel="noreferrer">
+            eBird Preferences
+          </a>{" "}
+          must be set to show species names in <strong>English</strong> or <strong>English (US)</strong> for this to
+          work.
         </p>
         <div className="my-4 flex flex-col gap-1">
           <label htmlFor="cutoff" className="text-sm">
