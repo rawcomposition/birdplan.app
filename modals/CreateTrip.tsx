@@ -44,16 +44,17 @@ export default function CreateTrip() {
     const region = getRegionCode();
     if (!region) return toast.error("Please select a region");
     if (requireSubregion && !state) return toast.error("Please select a state/province");
-    setSubmitting(true);
     const form = e.currentTarget;
     // @ts-ignore
     const name = form.name.value;
-
-    const bounds = await getBounds(region);
-    if (!bounds) return toast.error("Failed to fetch region info");
-    console.log(bounds);
+    if (!name) return toast.error("Please enter a name");
 
     try {
+      setSubmitting(true);
+
+      const bounds = await getBounds(region);
+      if (!bounds) return toast.error("Failed to fetch region info");
+
       let data: TripInput = {
         name,
         region: region,
