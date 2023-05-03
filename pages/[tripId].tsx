@@ -170,7 +170,7 @@ export default function Trip() {
               </Expand>
             )}
           </div>
-          {trip && (
+          {trip && !trip.region.includes(",") && (
             <div className="mt-4 mb-8 text-sm text-gray-400 flex flex-col gap-2">
               <Link
                 href={`https://ebird.org/targets?region=&r1=${trip.region}&bmo=${trip.startMonth}&emo=${trip.endMonth}&r2=world&t2=life&mediaType=`}
