@@ -17,7 +17,7 @@ export default function Planner() {
   const { closeSidebar } = useUI();
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <Head>
         <title>Bird Planner</title>
       </Head>

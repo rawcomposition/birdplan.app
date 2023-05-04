@@ -59,7 +59,7 @@ export default function Rba() {
   const selectedRadius = radius ? radiusOptions.find(({ value }) => value == radius) : null;
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <Head>
         <title>Find rare birds near you</title>
       </Head>
@@ -95,11 +95,11 @@ export default function Rba() {
           </div>
         </Sidebar>
 
-        <div className="h-full overflow-auto grow pt-6 px-4" onClick={closeSidebar}>
+        <div className="h-full overflow-auto grow pt-6 px-4 pb-6" onClick={closeSidebar}>
           <div className="container mx-auto max-w-xl">
             {(!lat || !lng) && <WelcomeMessage />}
 
-            <LocationSelect className="w-full mt-6 mb-4" value={address} onChange={setAddress} />
+            <LocationSelect className="w-full mb-6" value={address} onChange={setAddress} />
 
             {error && <FetchError reload={call} />}
 

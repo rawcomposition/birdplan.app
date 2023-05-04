@@ -100,7 +100,7 @@ export default function Trip() {
   }, [reset]);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       {trip && (
         <Head>
           <title>{`${trip.name} | bird planner`}</title>
