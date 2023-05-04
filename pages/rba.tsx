@@ -65,7 +65,7 @@ export default function Rba() {
       </Head>
 
       <Header title="Rare Bird Alert" />
-      <main className="flex h-[calc(100vh-60px)]">
+      <main className="flex h-[calc(100%-60px)]">
         <Sidebar>
           <div>
             <label htmlFor="radius" className="text-white text-sm">

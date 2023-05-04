@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body,
+  #__next {
+    height: 100%;
+  }
   body {
     background-color: #f3f5f9;
     @apply font-body antialiased;

@@ -108,15 +108,15 @@ export default function Trip() {
       )}
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/" }} />
-      <main className="flex">
-        <Sidebar>
-          <div className={clsx("mb-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
+      <main className="flex h-[calc(100%-60px)]">
+        <Sidebar noPadding>
+          <div className={clsx("mb-4 mt-6 mx-6", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={handleToggleShowAll} />
               Show all hotspots
             </label>
           </div>
-          <div className="-mx-6">
+          <div>
             <Expand heading="Saved Hotspots" className="text-white" defaultOpen count={savedHotspots.length}>
               <HotspotList />
             </Expand>
@@ -190,7 +190,7 @@ export default function Trip() {
           )}
         </Sidebar>
 
-        <div className="h-[calc(100vh_-_60px)] grow" onClick={closeSidebar}>
+        <div className="h-full grow" onClick={closeSidebar}>
           <div className="w-full h-full relative">
             {trip?.bounds && (
               <MapBox
