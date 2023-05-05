@@ -33,8 +33,16 @@ export default function CreateTrip() {
   const requireSubregion = largeRegions.includes(country?.value || "");
 
   const getRegionCode = () => {
-    if (county) return county.map((it) => it.value).join(",");
-    if (state) return state.map((it) => it.value).join(",");
+    if (county)
+      return county
+        .map((it) => it.value)
+        .sort()
+        .join(",");
+    if (state)
+      return state
+        .map((it) => it.value)
+        .sort()
+        .join(",");
     if (country) return country.value;
     return null;
   };
@@ -59,7 +67,6 @@ export default function CreateTrip() {
         name,
         region: region,
         hotspots: [],
-        targets: [],
         markers: [],
         bounds,
         startMonth: Number(startMonth.value),

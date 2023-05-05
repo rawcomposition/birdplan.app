@@ -61,8 +61,7 @@ export default function UploadTargets() {
             body: JSON.stringify(filtered),
           });
           const withCodes = await res.json();
-          const filteredCodes = withCodes.filter((it: Target) => !lifelist.includes(it.code));
-          setTargets(filteredCodes);
+          setTargets(withCodes);
           toast.success("Targets imported");
           close();
         },

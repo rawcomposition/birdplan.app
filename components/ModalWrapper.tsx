@@ -11,7 +11,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function ColModal({ hideBg, open, onClose, maxWidth, children }: Props) {
+export default function ModalWrapper({ hideBg, open, onClose, maxWidth, children }: Props) {
   return (
     <Transition.Root show={open} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={onClose}>

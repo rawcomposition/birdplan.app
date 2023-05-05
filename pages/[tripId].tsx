@@ -29,7 +29,7 @@ export default function Trip() {
   const { user } = useUser();
   const [showAll, setShowAll] = React.useState(false);
   const { lifelist } = useProfile();
-  const { trip, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
+  const { targets, trip, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const canEdit = user?.uid && user?.uid === trip?.userId;
@@ -41,7 +41,7 @@ export default function Trip() {
     savedIdStr,
   });
 
-  const targetSpecies = trip?.targets.filter((it) => !lifelist.includes(it.code)) || [];
+  const targetSpecies = targets.filter((it) => !lifelist.includes(it.code)) || [];
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
   const selectedSpecies = [...recentSpecies, ...targetSpecies].find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });

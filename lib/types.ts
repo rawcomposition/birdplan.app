@@ -101,7 +101,6 @@ export type Trip = {
     maxY: number;
   };
   hotspots: Hotspot[];
-  targets: Target[];
   markers: CustomMarker[];
   startMonth: number;
   endMonth: number;

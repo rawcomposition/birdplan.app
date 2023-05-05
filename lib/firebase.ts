@@ -60,7 +60,7 @@ export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
 export const updateTargets = async (tripId: string, targets: Target[]) => {
   const user = auth.currentUser;
   if (!user) return;
-  await fs.setDoc(fs.doc(db, "trip", tripId), { targets }, { merge: true });
+  await fs.setDoc(fs.doc(db, "targets", tripId), { items: targets, updatedAt: fs.serverTimestamp() });
 };
 
 export const updateMarkers = async (tripId: string, markers: CustomMarker[]) => {
@@ -86,6 +86,14 @@ export const subscribeToTrip = (id: string, callback: (trip: Trip) => void): (()
   return fs.onSnapshot(fs.doc(db, "trip", id), (doc) => {
     if (doc.exists()) {
       callback({ ...doc.data(), id: doc.id } as Trip);
+    }
+  });
+};
+
+export const subscribeToTripTargets = (tripId: string, callback: (trip: Target[]) => void): (() => void) => {
+  return fs.onSnapshot(fs.doc(db, "targets", tripId), (doc) => {
+    if (doc.exists()) {
+      callback(doc.data()?.items as Target[]);
     }
   });
 };

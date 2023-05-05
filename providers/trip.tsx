@@ -1,10 +1,11 @@
 import React from "react";
 import { Hotspot, Trip, Target, CustomMarker } from "lib/types";
-import { subscribeToTrip, updateHotspots, updateTargets, updateMarkers } from "lib/firebase";
+import { subscribeToTrip, subscribeToTripTargets, updateHotspots, updateTargets, updateMarkers } from "lib/firebase";
 import { useRouter } from "next/router";
 
 type ContextT = {
   trip: Trip | null;
+  targets: Target[];
   selectedSpeciesCode?: string;
   setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
@@ -19,6 +20,7 @@ type ContextT = {
 
 const initialState = {
   trip: null,
+  targets: [],
 };
 
 export const TripContext = React.createContext<ContextT>({
@@ -40,12 +42,19 @@ type Props = {
 
 const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
+  const [targets, setTripTargets] = React.useState<Target[]>([]);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
 
   React.useEffect(() => {
     if (!id) return;
     const unsubscribe = subscribeToTrip(id, (trip) => setTrip(trip));
+    return () => unsubscribe();
+  }, [id]);
+
+  React.useEffect(() => {
+    if (!id) return;
+    const unsubscribe = subscribeToTripTargets(id, (targets) => setTripTargets(targets));
     return () => unsubscribe();
   }, [id]);
 
@@ -82,7 +91,7 @@ const TripProvider = ({ children }: Props) => {
 
   const removeTarget = async (code: string) => {
     if (!trip) return;
-    const newTargets = trip.targets.filter((it) => it.code !== code);
+    const newTargets = targets.filter((it) => it.code !== code);
     await updateTargets(trip.id, newTargets);
   };
 
@@ -104,6 +113,7 @@ const TripProvider = ({ children }: Props) => {
     <TripContext.Provider
       value={{
         trip,
+        targets,
         selectedSpeciesCode,
         setSelectedSpeciesCode,
         appendHotspot,
