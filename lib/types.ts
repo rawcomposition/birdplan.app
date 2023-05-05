@@ -91,7 +91,7 @@ export type Bounds = {
 
 export type Trip = {
   id: string;
-  userId: string;
+  userIds: string[];
   name: string;
   region: string;
   bounds: {
@@ -106,7 +106,7 @@ export type Trip = {
   endMonth: number;
 };
 
-export type TripInput = Omit<Trip, "id" | "userId">;
+export type TripInput = Omit<Trip, "id" | "userIds">;
 
 export type Observation = {
   checklistId: string;

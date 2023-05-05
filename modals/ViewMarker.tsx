@@ -6,6 +6,7 @@ import { CustomMarker } from "lib/types";
 import { useTrip } from "providers/trip";
 import Trash from "icons/Trash";
 import { useModal } from "providers/modals";
+import { useUser } from "providers/user";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import DirectionsButton from "components/DirectionsButton";
 
@@ -15,8 +16,10 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { removeMarker } = useTrip();
+  const { user } = useUser();
+  const { trip, removeMarker } = useTrip();
   const { id, name, lat, lng } = marker;
+  const canEdit = user?.uid && trip?.userIds?.includes(user.uid);
 
   const handleRemoveMarker = () => {
     if (!confirm("Are you sure you want to delete this marker?")) return;
@@ -33,9 +36,11 @@ export default function ViewMarker({ marker }: Props) {
       <Body className="relative min-h-[200px]">
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} markerId={id} />
-          <Button color="gray" size="sm" onClick={handleRemoveMarker}>
-            <Trash className="mr-1 -mt-[3px] text-red-700" /> Delete
-          </Button>
+          {canEdit && (
+            <Button color="gray" size="sm" onClick={handleRemoveMarker}>
+              <Trash className="mr-1 -mt-[3px] text-red-700" /> Delete
+            </Button>
+          )}
         </div>
       </Body>
     </>

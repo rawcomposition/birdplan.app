@@ -29,7 +29,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const isSaved = trip?.hotspots.some((it) => it.id === id);
   const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
   const { user } = useUser();
-  const canEdit = user?.uid && user?.uid === trip?.userId;
+  const canEdit = user?.uid && trip?.userIds?.includes(user.uid);
   const [isEditing, setIsEditing] = React.useState(isSaved && !notes && canEdit);
 
   const handleSave = async () => {
@@ -77,17 +77,19 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             <Feather className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
-          <Button color="gray" size="sm" onClick={handleSave}>
-            {isSaved ? (
-              <>
-                <Star className="mr-1 -mt-[3px] text-sky-600" /> Saved
-              </>
-            ) : (
-              <>
-                <StarOutline className="mr-1 -mt-[3px] text-sky-600" /> Save
-              </>
-            )}
-          </Button>
+          {canEdit && (
+            <Button color="gray" size="sm" onClick={handleSave}>
+              {isSaved ? (
+                <>
+                  <Star className="mr-1 -mt-[3px] text-sky-600" /> Saved
+                </>
+              ) : (
+                <>
+                  <StarOutline className="mr-1 -mt-[3px] text-sky-600" /> Save
+                </>
+              )}
+            </Button>
+          )}
         </div>
         <div className="flex gap-10 text-gray-500">
           <div className="flex flex-col text-[#1c6900]">

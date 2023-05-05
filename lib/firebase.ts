@@ -69,11 +69,11 @@ export const updateMarkers = async (tripId: string, markers: CustomMarker[]) => 
   await fs.setDoc(fs.doc(db, "trip", tripId), { markers }, { merge: true });
 };
 
-export const createTrip = async (trip: TripInput): Promise<Trip | null> => {
+export const createTrip = async (trip: TripInput): Promise<string | null> => {
   const user = auth.currentUser;
   if (!user) return null;
-  const doc = await fs.addDoc(fs.collection(db, "trip"), { ...trip, userId: user.uid });
-  return { ...trip, id: doc.id, userId: user.uid };
+  const doc = await fs.addDoc(fs.collection(db, "trip"), { ...trip, userIds: [user.uid] });
+  return doc.id;
 };
 
 export const deleteTrip = async (id: string) => {
@@ -101,7 +101,7 @@ export const subscribeToTripTargets = (tripId: string, callback: (trip: Target[]
 export const subscribeToTrips = (callback: (trips: Trip[]) => void): (() => void) => {
   const user = auth.currentUser;
   if (!user) return () => {};
-  const q = fs.query(fs.collection(db, "trip"), fs.where("userId", "==", user.uid));
+  const q = fs.query(fs.collection(db, "trip"), fs.where("userIds", "array-contains", user.uid));
   return fs.onSnapshot(q, (snapshot) => {
     callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Trip)));
   });

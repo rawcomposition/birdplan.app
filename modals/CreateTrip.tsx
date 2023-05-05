@@ -73,9 +73,9 @@ export default function CreateTrip() {
         endMonth: Number(endMonth.value),
       };
 
-      const trip = await createTrip(data);
-      if (trip) {
-        router.push(`/${trip.id}`);
+      const tripId = await createTrip(data);
+      if (tripId) {
+        router.push(`/${tripId}`);
         close();
       }
     } catch (error) {

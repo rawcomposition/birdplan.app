@@ -32,7 +32,7 @@ export default function Trip() {
   const { targets, trip, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
-  const canEdit = user?.uid && user?.uid === trip?.userId;
+  const canEdit = user?.uid && trip?.userIds?.includes(user.uid);
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
