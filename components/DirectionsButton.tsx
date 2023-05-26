@@ -36,7 +36,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
           <Directions className="text-lg ml-3 mr-1.5 text-green-700" />
           View on Google Maps
         </Link>
-        {!!filteredHotspots?.length && !!filteredMarkers?.length && (
+        {(!!filteredHotspots?.length || !!filteredMarkers?.length) && (
           <>
             <h3 className="font-bold mb-1 -mt-1.5 text-sm">Directions from...</h3>
             <ul className="flex flex-col pl-2">
