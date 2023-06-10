@@ -4,7 +4,6 @@ import Papa from "papaparse";
 import toast from "react-hot-toast";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
-import { useProfile } from "providers/profile";
 import { Target, Option } from "lib/types";
 import Select from "components/ReactSelectStyled";
 
@@ -12,9 +11,7 @@ const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%"];
 
 export default function UploadTargets() {
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
-  const [loading, setLoading] = React.useState(false);
   const { trip, setTargets } = useTrip();
-  const { lifelist } = useProfile();
   const region = trip?.region;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { close } = useModal();
@@ -52,7 +49,7 @@ export default function UploadTargets() {
           const filtered = sorted.filter((it: Target) => it.percent >= Number(cutoff.value.replace("%", "")));
 
           // Fetch to species codes
-          setLoading(true);
+          const toastId = toast.loading("Importing...");
           const res = await fetch("/api/com-name-codes", {
             method: "POST",
             headers: {
@@ -64,13 +61,13 @@ export default function UploadTargets() {
           setTargets(withCodes);
           toast.success("Targets imported");
           close();
+          toast.dismiss(toastId);
         },
       });
     } catch (error) {
       console.error(error);
       toast.error("Error processing file");
       fileInputRef.current?.value && (fileInputRef.current.value = "");
-      setLoading(false);
     }
   };
 

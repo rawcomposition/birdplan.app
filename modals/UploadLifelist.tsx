@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function UploadLifelist({ isCountry }: Props) {
-  const [loading, setLoading] = React.useState(false);
   const { setCountryLifelist, setLifelist } = useProfile();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { close } = useModal();
@@ -29,7 +28,7 @@ export default function UploadLifelist({ isCountry }: Props) {
           fileInputRef.current?.value && (fileInputRef.current.value = "");
 
           // Convert to species codes
-          setLoading(true);
+          const toastId = toast.loading("Importing...");
           const res = await fetch("/api/lifelist-codes", {
             method: "POST",
             headers: {
@@ -45,13 +44,13 @@ export default function UploadLifelist({ isCountry }: Props) {
             toast.error("Error uploading life list");
           }
           close();
+          toast.dismiss(toastId);
         },
       });
     } catch (error) {
       console.error(error);
       toast.error("Error processing file");
       fileInputRef.current?.value && (fileInputRef.current.value = "");
-      setLoading(false);
     }
   };
 
