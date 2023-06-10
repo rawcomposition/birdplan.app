@@ -46,10 +46,6 @@ export default function Planner() {
               </button>
             </p>
           )}
-          <h2 className="text-xl mt-16 mb-1 font-bold text-gray-700">Rare Bird Alert</h2>
-          <Link href="/rba" className="font-bold">
-            View rare birds near me <ArrowRight className="inline-block" />
-          </Link>
         </div>
       </main>
       <footer className="mt-auto text-center text-[12px] opacity-80 text-gray-500 border-t mb-4 pt-4 hidden md:block">
