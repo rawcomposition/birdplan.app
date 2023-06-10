@@ -30,11 +30,16 @@ export default function Mapbox({
   const [satellite, setSatellite] = React.useState(false);
   const { open } = useModal();
 
+  const isMobile = React.useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768;
+  }, []);
+
   const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
     paint: {
-      "circle-radius": 5,
+      "circle-radius": isMobile ? 8 : 7,
       "circle-stroke-width": 0.75,
       "circle-stroke-color": "#555",
       "circle-color": [
