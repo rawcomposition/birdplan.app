@@ -92,6 +92,7 @@ export type Bounds = {
 export type Trip = {
   id: string;
   userIds: string[];
+  ownerId: string;
   name: string;
   region: string;
   bounds: {
@@ -106,7 +107,7 @@ export type Trip = {
   endMonth: number;
 };
 
-export type TripInput = Omit<Trip, "id" | "userIds">;
+export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId">;
 
 export type Observation = {
   checklistId: string;
@@ -141,4 +142,14 @@ export type CustomMarker = {
 export type Option = {
   value: string;
   label: string;
+};
+
+export type Invite = {
+  id: string;
+  email: string;
+  tripId: string;
+  ownerId: string;
+  accepted: boolean;
+  name?: string;
+  uid?: string;
 };

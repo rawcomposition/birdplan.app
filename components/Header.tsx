@@ -6,7 +6,9 @@ import Bars from "icons/Bars";
 import { useUI } from "providers/ui";
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { useTrip } from "providers/trip";
 import AngleLeft from "icons/AngleLeft";
+import { useModal } from "providers/modals";
 
 type Props = {
   title?: string;
@@ -20,6 +22,9 @@ type Props = {
 export default function Header({ title, parent, showAccountOnSmScreens }: Props) {
   const { isOnline } = useRealtimeStatus();
   const { toggleSidebar, closeSidebar } = useUI();
+  const { trip, isOwner } = useTrip();
+  const { open } = useModal();
+
   const router = useRouter();
   const isSubPage = router.pathname !== "/";
 
@@ -50,8 +55,17 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
         )}
         {!isOnline && <div className="bg-red-500 text-white px-2 py-1 rounded text-xs">No Internet Connection</div>}
       </div>
+      {isOwner && (
+        <button
+          type="button"
+          className="rounded-full border text-accent/90 border-accent/90 py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:border-accent hover:text-accent"
+          onClick={() => open("share")}
+        >
+          Share
+        </button>
+      )}
       <Account
-        className={clsx("ml-auto hidden mr-8", showAccountOnSmScreens ? "sm:inline-block" : "lg:inline-block")}
+        className={clsx("ml-auto md:ml-0 hidden mr-8", showAccountOnSmScreens ? "sm:inline-block" : "lg:inline-block")}
       />
       <button
         className={clsx(

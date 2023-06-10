@@ -10,7 +10,6 @@ import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 import TextareaAutosize from "react-textarea-autosize";
 import DirectionsButton from "components/DirectionsButton";
-import { useUser } from "providers/user";
 
 type Props = {
   hotspot: HotspotT;
@@ -23,13 +22,11 @@ type Info = {
 };
 
 export default function Hotspot({ hotspot, speciesName }: Props) {
-  const { trip, appendHotspot, removeHotspot, saveNotes, selectedSpeciesCode } = useTrip();
+  const { trip, canEdit, appendHotspot, removeHotspot, saveNotes, selectedSpeciesCode } = useTrip();
   const [info, setInfo] = React.useState<Info>();
   const { id, name, lat, lng } = hotspot;
   const isSaved = trip?.hotspots.some((it) => it.id === id);
   const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
-  const { user } = useUser();
-  const canEdit = user?.uid && trip?.userIds?.includes(user.uid);
   const [isEditing, setIsEditing] = React.useState(isSaved && !notes && canEdit);
 
   const handleSave = async () => {

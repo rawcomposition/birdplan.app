@@ -15,6 +15,7 @@ import UploadLifelist from "modals/UploadLifelist";
 import UploadTargets from "modals/UploadTargets";
 import AddMarker from "modals/AddMarker";
 import ViewMarker from "modals/ViewMarker";
+import Share from "modals/Share";
 
 const modals = [
   {
@@ -53,6 +54,11 @@ const modals = [
     id: "viewMarker",
     maxWidth: "400px",
     Component: ViewMarker,
+  },
+  {
+    id: "share",
+    maxWidth: "400px",
+    Component: Share,
   },
 ];
 

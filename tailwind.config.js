@@ -7,7 +7,11 @@ module.exports = {
     "./icons/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        accent: "#fdbf05",
+      },
+    },
     fontFamily: {
       body: ["Ubuntu", "sans-serif"],
       logo: ["Lobster", "cursive"],

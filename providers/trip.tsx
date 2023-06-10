@@ -1,12 +1,25 @@
 import React from "react";
-import { Hotspot, Trip, Target, CustomMarker } from "lib/types";
-import { subscribeToTrip, subscribeToTripTargets, updateHotspots, updateTargets, updateMarkers } from "lib/firebase";
+import { Hotspot, Trip, Target, CustomMarker, Invite } from "lib/types";
+import {
+  subscribeToTrip,
+  subscribeToTripTargets,
+  subscribeToTripInvites,
+  updateHotspots,
+  updateTargets,
+  updateMarkers,
+  deleteInvite,
+  removeUserFromTrip,
+} from "lib/firebase";
 import { useRouter } from "next/router";
+import { useUser } from "providers/user";
 
 type ContextT = {
   trip: Trip | null;
+  invites: Invite[];
   targets: Target[];
   selectedSpeciesCode?: string;
+  canEdit: boolean;
+  isOwner: boolean;
   setSelectedSpeciesCode: (code?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
@@ -16,11 +29,15 @@ type ContextT = {
   removeTarget: (code: string) => Promise<void>;
   saveNotes: (id: string, notes: string) => Promise<void>;
   reset: () => void;
+  removeInvite: (inviteId: string, uid?: string) => Promise<void>;
 };
 
 const initialState = {
   trip: null,
   targets: [],
+  canEdit: false,
+  isOwner: false,
+  invites: [],
 };
 
 export const TripContext = React.createContext<ContextT>({
@@ -34,6 +51,7 @@ export const TripContext = React.createContext<ContextT>({
   removeTarget: async () => {},
   saveNotes: async () => {},
   reset: () => {},
+  removeInvite: async () => {},
 });
 
 type Props = {
@@ -43,8 +61,12 @@ type Props = {
 const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
   const [targets, setTripTargets] = React.useState<Target[]>([]);
+  const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
+  const { user } = useUser();
+  const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
+  const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
   React.useEffect(() => {
     if (!id) return;
@@ -57,6 +79,12 @@ const TripProvider = ({ children }: Props) => {
     const unsubscribe = subscribeToTripTargets(id, (targets) => setTripTargets(targets));
     return () => unsubscribe();
   }, [id]);
+
+  React.useEffect(() => {
+    if (!id || !isOwner) return;
+    const unsubscribe = subscribeToTripInvites(id, (invites) => setInvites(invites));
+    return () => unsubscribe();
+  }, [id, isOwner]);
 
   const appendHotspot = async (hotspot: Hotspot) => {
     if (!trip) return;
@@ -104,6 +132,14 @@ const TripProvider = ({ children }: Props) => {
     await updateHotspots(trip.id, newHotspots);
   };
 
+  const removeInvite = async (id: string, uid?: string) => {
+    if (!trip) return;
+    await deleteInvite(id);
+    if (uid) {
+      await removeUserFromTrip(trip.id, uid);
+    }
+  };
+
   const reset = React.useCallback(() => {
     setTrip(null);
     setSelectedSpeciesCode(undefined);
@@ -112,9 +148,12 @@ const TripProvider = ({ children }: Props) => {
   return (
     <TripContext.Provider
       value={{
+        canEdit,
+        isOwner,
         trip,
         targets,
         selectedSpeciesCode,
+        invites,
         setSelectedSpeciesCode,
         appendHotspot,
         removeHotspot,
@@ -123,6 +162,7 @@ const TripProvider = ({ children }: Props) => {
         setTargets,
         removeTarget,
         saveNotes,
+        removeInvite,
         reset,
       }}
     >

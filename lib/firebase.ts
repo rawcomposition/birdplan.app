@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import * as fs from "firebase/firestore";
-import { Profile, Hotspot, Trip, TripInput, Target, CustomMarker } from "lib/types";
+import { Profile, Hotspot, Trip, TripInput, Target, CustomMarker, Invite } from "lib/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
@@ -72,7 +72,7 @@ export const updateMarkers = async (tripId: string, markers: CustomMarker[]) => 
 export const createTrip = async (trip: TripInput): Promise<string | null> => {
   const user = auth.currentUser;
   if (!user) return null;
-  const doc = await fs.addDoc(fs.collection(db, "trip"), { ...trip, userIds: [user.uid] });
+  const doc = await fs.addDoc(fs.collection(db, "trip"), { ...trip, userIds: [user.uid], ownerId: user.uid });
   return doc.id;
 };
 
@@ -80,6 +80,24 @@ export const deleteTrip = async (id: string) => {
   const user = auth.currentUser;
   if (!user) return;
   await fs.deleteDoc(fs.doc(db, "trip", id));
+};
+
+export const removeUserFromTrip = async (tripId: string, userId: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.setDoc(
+    fs.doc(db, "trip", tripId),
+    {
+      userIds: fs.arrayRemove(userId),
+    },
+    { merge: true }
+  );
+};
+
+export const deleteInvite = async (id: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.deleteDoc(fs.doc(db, "invite", id));
 };
 
 export const subscribeToTrip = (id: string, callback: (trip: Trip) => void): (() => void) => {
@@ -115,4 +133,15 @@ export const subscribeToProfile = (callback: (profile: Profile) => void): (() =>
       callback(doc.data() as Profile);
     }
   });
+};
+
+export const subscribeToTripInvites = (id: string, callback: (invites: Invite[]) => void): (() => void) => {
+  const user = auth.currentUser;
+  if (!user) return () => {};
+  return fs.onSnapshot(
+    fs.query(fs.collection(db, "invite"), fs.where("tripId", "==", id), fs.where("ownerId", "==", user.uid)),
+    (snapshot) => {
+      callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Invite)));
+    }
+  );
 };

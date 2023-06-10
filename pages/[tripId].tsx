@@ -19,20 +19,19 @@ import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
 import Button from "components/Button";
 import ExternalIcon from "icons/External";
+import ShareIcon from "icons/Share";
 import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
-import { useUser } from "providers/user";
 
 export default function Trip() {
   const { open } = useModal();
-  const { user } = useUser();
   const [showAll, setShowAll] = React.useState(false);
   const { lifelist } = useProfile();
-  const { targets, trip, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
+  const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
-  const canEdit = user?.uid && trip?.userIds?.includes(user.uid);
+  const isMultiRegion = trip?.region.includes(",");
 
   const savedHotspots = trip?.hotspots || [];
   const savedIdStr = savedHotspots.map((it) => it.id).join(",");
@@ -170,8 +169,22 @@ export default function Trip() {
               </Expand>
             )}
           </div>
-          {trip && !trip.region.includes(",") && (
-            <div className="mt-4 mb-8 ml-4 text-sm text-gray-400 flex flex-col gap-2">
+          {isOwner && (
+            <div className={clsx("mt-4 ml-4 text-sm lg:hidden", isMultiRegion && "mb-8")}>
+              <button
+                type="button"
+                className="text-gray-400 inline-flex items-center gap-2"
+                onClick={() => open("share")}
+              >
+                <ShareIcon className="" />
+                Share
+              </button>
+            </div>
+          )}
+          {trip && !isMultiRegion && (
+            <div
+              className={clsx("mb-8 ml-4 text-sm text-gray-400 flex flex-col gap-2", isOwner ? "mt-2 lg:mt-4" : "mt-4")}
+            >
               <Link
                 href={`https://ebird.org/targets?region=&r1=${trip.region}&bmo=${trip.startMonth}&emo=${trip.endMonth}&r2=world&t2=life&mediaType=`}
                 className="text-gray-400 inline-flex items-center gap-1"
@@ -181,7 +194,7 @@ export default function Trip() {
               </Link>
               <Link
                 href={`https://ebird.org/region/${trip.region}/media?yr=all&m=`}
-                className="text-gray-400 inline-flex items-center gap-1"
+                className="text-gray-400 inline-flex items-center gap-2"
                 target="_blank"
               >
                 <ExternalIcon className="text-xs" /> Illustrated Checklist

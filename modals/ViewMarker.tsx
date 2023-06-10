@@ -1,12 +1,10 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
 import Button from "components/Button";
-import Directions from "icons/Directions";
 import { CustomMarker } from "lib/types";
 import { useTrip } from "providers/trip";
 import Trash from "icons/Trash";
 import { useModal } from "providers/modals";
-import { useUser } from "providers/user";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import DirectionsButton from "components/DirectionsButton";
 
@@ -16,10 +14,8 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { user } = useUser();
-  const { trip, removeMarker } = useTrip();
+  const { canEdit, removeMarker } = useTrip();
   const { id, name, lat, lng } = marker;
-  const canEdit = user?.uid && trip?.userIds?.includes(user.uid);
 
   const handleRemoveMarker = () => {
     if (!confirm("Are you sure you want to delete this marker?")) return;
