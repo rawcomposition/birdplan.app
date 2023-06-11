@@ -55,7 +55,7 @@ export default function Planner() {
                 View rare birds near me <ArrowRight className="inline-block" />
               </Link>
               <h2 className="text-xl mt-10 mb-1 font-bold text-gray-700">Bird Finder</h2>
-              <Link href="/rba" className="font-bold">
+              <Link href="/targets" className="font-bold">
                 Find target birds <ArrowRight className="inline-block" />
               </Link>
             </>

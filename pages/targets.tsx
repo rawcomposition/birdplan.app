@@ -168,9 +168,12 @@ export default function Targets() {
             {selectedId &&
               hotspots.map((it, index) => <BirdFinderHotspotRow key={it.locationId} {...it} index={index} />)}
           </div>
-          <p className="text-sm text-gray-500 mt-12">
-            Data retrieved from <a href="https://www.michaelfogleman.com/birds/">Michael Fogleman&apos;s Bird Finder</a>
-          </p>
+          {(!!results.length || !!hotspots.length) && (
+            <p className="text-sm text-gray-500 mt-12">
+              Data retrieved from{" "}
+              <a href="https://www.michaelfogleman.com/birds/">Michael Fogleman&apos;s Bird Finder</a>
+            </p>
+          )}
         </div>
       </main>
 
