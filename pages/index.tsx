@@ -10,9 +10,11 @@ import { useUI } from "providers/ui";
 import Link from "next/link";
 import ArrowRight from "icons/ArrowRight";
 import LoginModal from "components/LoginModal";
+import { useProfile } from "providers/profile";
 
 export default function Planner() {
   const { trips, loading, deleteTrip } = useTrips();
+  const { enableExperimental } = useProfile();
   const { open } = useModal();
   const { closeSidebar } = useUI();
 
@@ -45,6 +47,18 @@ export default function Planner() {
                 Create one!
               </button>
             </p>
+          )}
+          {enableExperimental && (
+            <>
+              <h2 className="text-xl mt-16 mb-1 font-bold text-gray-700">Rare Bird Alert</h2>
+              <Link href="/rba" className="font-bold">
+                View rare birds near me <ArrowRight className="inline-block" />
+              </Link>
+              <h2 className="text-xl mt-10 mb-1 font-bold text-gray-700">Bird Finder</h2>
+              <Link href="/rba" className="font-bold">
+                Find target birds <ArrowRight className="inline-block" />
+              </Link>
+            </>
           )}
         </div>
       </main>

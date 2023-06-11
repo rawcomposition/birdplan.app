@@ -3,6 +3,7 @@ export type Profile = {
   countryLifelist: string[];
   radius: number;
   address?: Address;
+  enableExperimental?: boolean;
 };
 
 export type RareObservation = {

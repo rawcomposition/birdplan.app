@@ -18,6 +18,7 @@ const initialState: Profile = {
   countryLifelist: [],
   radius: 50,
   address: undefined,
+  enableExperimental: false,
 };
 
 export const ProfileContext = React.createContext<ContextT>({
@@ -83,6 +84,7 @@ const ProfileProvider = ({ children }: Props) => {
   return (
     <ProfileContext.Provider
       value={{
+        enableExperimental: state.enableExperimental,
         lifelist: state.lifelist || [],
         countryLifelist: state.countryLifelist || [],
         radius: state.radius || 50,
