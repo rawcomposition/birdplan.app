@@ -31,8 +31,12 @@
     transition: transform 0.2s ease-in-out;
   }
 
-  .input {
-    @apply py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 outline-blue-500 block w-full shadow-sm sm:text-sm rounded-md outline-offset-0;
+  input.input {
+    @apply py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 outline-blue-500 block w-full shadow-sm sm:text-sm rounded-md outline-offset-0 bg-white;
+  }
+
+  input[type="search"] {
+    -webkit-appearance: none !important;
   }
 
   .dark-scrollbar::-webkit-scrollbar {

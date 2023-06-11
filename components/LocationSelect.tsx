@@ -1,32 +1,27 @@
-import React from "react";
-import Input from "components/Input";
+import * as React from "react";
 import { LocationValue } from "lib/types";
-
-declare global {
-  interface Window {
-    google: any;
-  }
-}
+import Input from "components/Input";
 
 type Props = {
-  value?: LocationValue;
+  className?: string;
+  value: LocationValue | null;
   justUSA?: boolean;
   onChange: (value: LocationValue) => void;
-  [key: string]: any;
 };
 
-export default function LocationSelect({ value, onChange, justUSA, ...props }: Props) {
-  const label = value?.label || "";
-  const inputRef = React.useRef<HTMLInputElement>();
-  const isInitalizedRef = React.useRef<boolean>(false);
+export default function LocationSearch({ className, justUSA, value, onChange, ...props }: Props) {
+  const { label } = value || {};
+  const inputRef = React.useRef(null);
+  const isInitalizedRef = React.useRef<boolean>();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.keyCode === 13) {
       e.preventDefault();
     }
   };
 
   React.useEffect(() => {
+    //@ts-ignore
     if (isInitalizedRef.current || !window.google) {
       return;
     }
@@ -44,6 +39,7 @@ export default function LocationSelect({ value, onChange, justUSA, ...props }: P
       fields: ["formatted_address", "geometry"],
     };
 
+    //@ts-ignore
     const googlePlaces = new window.google.maps.places.Autocomplete(inputRef.current, options);
     googlePlaces.setFields(["formatted_address", "geometry"]);
     googlePlaces.addListener("place_changed", () => {
@@ -53,19 +49,22 @@ export default function LocationSelect({ value, onChange, justUSA, ...props }: P
   });
 
   React.useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.value = label || "";
+    if (!label && inputRef.current) {
+      (inputRef.current as HTMLInputElement).value = "";
     }
   }, [label]);
 
   return (
-    <Input
-      type="search"
-      ref={inputRef}
-      onKeyDown={handleKeyDown}
-      defaultValue={label}
-      placeholder="Enter a location"
-      {...props}
-    />
+    <>
+      <Input
+        type="search"
+        ref={inputRef}
+        onKeyDown={handleKeyDown}
+        defaultValue={label}
+        placeholder="Location"
+        className={className || ""}
+        {...props}
+      />
+    </>
   );
 }

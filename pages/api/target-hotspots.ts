@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const sortedResults = results.sort((a, b) => b.percent - a.percent);
 
+    res.setHeader("Cache-Control", "max-age=0, s-maxage=2592000"); //Cache for 30 days
     res.status(200).json({ success: true, results: sortedResults });
   } catch (error: any) {
     console.log(error);

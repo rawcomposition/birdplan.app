@@ -8,8 +8,11 @@ type Props = BFHotspot & {
 
 export default function Targets({ locationId, name, percent, sampleSize, index }: Props) {
   return (
-    <div key={locationId} className="border-t py-4 text-gray-500/80 text-[13px] pl-4 grid gap-2 sm:grid-cols-5">
-      <div className="col-span-3 pt-1">
+    <div
+      key={locationId}
+      className="border-t py-4 text-gray-500/80 text-[13px] pl-4 grid gap-2 grid-cols-1 sm:grid-cols-5"
+    >
+      <div className="sm:col-span-3">
         <span>{index + 1}.</span>
         <Link
           href={`https://ebird.org/hotspot/${locationId}`}
@@ -19,7 +22,7 @@ export default function Targets({ locationId, name, percent, sampleSize, index }
           {name}
         </Link>
       </div>
-      <div className="flex flex-col gap-1 w-full col-span-2">
+      <div className="flex flex-col gap-1 w-full sm:col-span-2">
         <div>
           <span className="text-gray-600 text-[17px] font-bold">{percent > 1 ? Math.round(percent) : percent}%</span>{" "}
           <span className="text-[13px]">of {sampleSize} checklists</span>

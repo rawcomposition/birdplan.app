@@ -17,7 +17,7 @@ import BirdFinderHotspotRow from "components/BirdFinderHotspotRow";
 import XMark from "icons/XMark";
 
 export default function Targets() {
-  const [location, setLocation] = React.useState<LocationValue>();
+  const [location, setLocation] = React.useState<LocationValue | null>(null);
   const [month, setMonth] = React.useState<Option>();
   const [radius, setRadius] = React.useState("25");
   const [loading, setLoading] = React.useState(false);
@@ -122,11 +122,11 @@ export default function Targets() {
           </div>
         </Sidebar>
         <div className="px-12 py-12 flex-grow h-full overflow-auto" onClick={closeSidebar}>
-          <form className="grid gap-4 sm:grid-cols-3 max-w-xl mx-auto mb-12" onSubmit={onSubmit}>
-            <LocationSelect value={location} onChange={setLocation} className="col-span-3" />
+          <form className="grid gap-4 grid-cols-2 sm:grid-cols-3 max-w-xl mx-auto mb-12" onSubmit={onSubmit}>
+            <LocationSelect value={location} onChange={setLocation} className="col-span-full" />
             <div className="flex">
               <label
-                className="py-2 px-3 border border-gray-300 border-r-0 focus:ring-slate-500 focus:border-slate-500 outline-blue-500 block shadow-sm sm:text-sm rounded-l-md outline-offset-0 whitespace-nowrap items-center bg-gray-200 h-full"
+                className="px-3 border border-gray-300 border-r-0 focus:ring-slate-500 focus:border-slate-500 outline-blue-500 flex shadow-sm text-sm rounded-l-md outline-offset-0 whitespace-nowrap items-center justify-center bg-gray-200 h-full"
                 htmlFor="radius"
               >
                 Radius (mi)
@@ -136,7 +136,7 @@ export default function Targets() {
                 type="number"
                 value={radius}
                 onChange={(e) => setRadius(e.target.value)}
-                className="py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 w-full outline-blue-500 block shadow-sm sm:text-sm rounded-r-md outline-offset-0"
+                className="py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 w-full outline-blue-500 block shadow-sm sm:text-sm rounded-r-md rounded-l-none outline-offset-0"
               />
             </div>
             <MonthSelect value={month} onChange={setMonth} placeholder="All Months" isClearable />
@@ -151,7 +151,7 @@ export default function Targets() {
               </p>
               <button
                 type="button"
-                className="text-[12px] px-2 py-0.5 bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full"
+                className="text-[12px] px-2 py-0.5 bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full whitespace-nowrap"
                 onClick={clearSelected}
               >
                 <XMark className="text-[11px] mr-1" />

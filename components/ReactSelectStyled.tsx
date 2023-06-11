@@ -12,7 +12,7 @@ const ReactSelectStyled = (props: any) => {
         }),
         input: (base, state) => ({
           ...base,
-          fontSize: "0.875rem",
+          fontSize: "1rem",
         }),
         container: (base, state) => ({
           ...base,

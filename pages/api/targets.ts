@@ -37,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       });
     });
 
+    res.setHeader("Cache-Control", "max-age=0, s-maxage=2592000"); //Cache for 30 days
     res.status(200).json({ success: true, results });
   } catch (error: any) {
     console.log(error);
