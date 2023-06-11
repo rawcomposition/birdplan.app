@@ -31,13 +31,17 @@ export default function Targets() {
   const { open } = useModal();
   const [results, setResults] = React.useState<BFTarget[]>([]);
   const [hotspots, setHotspots] = React.useState<BFHotspot[]>([]);
-  const lat = 20.65451688;
-  const lng = -105.2252072;
+  const lat = location?.lat;
+  const lng = location?.lng;
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!lat || !lng) {
       toast.error("Location is required");
+      return;
+    }
+    if (Number(radius) > 100) {
+      toast.error("Radius must be less than 100");
       return;
     }
     setLoading(true);
@@ -136,6 +140,7 @@ export default function Targets() {
                 type="number"
                 value={radius}
                 onChange={(e) => setRadius(e.target.value)}
+                max={100}
                 className="py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 w-full outline-blue-500 block shadow-sm sm:text-sm rounded-r-md rounded-l-none outline-offset-0"
               />
             </div>
