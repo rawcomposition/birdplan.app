@@ -56,11 +56,13 @@ export default function Targets() {
           "Content-Type": "application/json",
         },
       });
+      if (res.status === 504) throw new Error("Please try again, operation timed out.");
+      if (!res.ok) throw new Error("Something went wrong.");
       const json = await res.json();
-      setResults(json.results);
+      setResults(json.results || []);
       setNoResults(json.results.length === 0);
-    } catch (err) {
-      toast.error("Error fetching results");
+    } catch (err: any) {
+      toast.error(err.message);
     }
     setLoading(false);
     toast.dismiss(toastId);
@@ -85,10 +87,12 @@ export default function Targets() {
           },
         }
       );
+      if (res.status === 504) throw new Error("Please try again, operation timed out.");
+      if (!res.ok) throw new Error("Something went wrong.");
       const json = await res.json();
-      setHotspots(json.results);
-    } catch (err) {
-      toast.error("Error fetching results");
+      setHotspots(json.results || []);
+    } catch (err: any) {
+      toast.error(err.message);
     }
     setLoading(false);
     toast.dismiss(toastId);
