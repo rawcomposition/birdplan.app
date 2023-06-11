@@ -74,7 +74,7 @@ export default function Mapbox({
     id: "obs",
     type: "circle",
     paint: {
-      "circle-radius": 5,
+      "circle-radius": isMobile ? 8 : 7,
       "circle-stroke-width": 0.75,
       "circle-stroke-color": "#555",
       "circle-color": ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
