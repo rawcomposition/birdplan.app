@@ -99,7 +99,7 @@ export default function Rba() {
           <div className="container mx-auto max-w-xl">
             {(!lat || !lng) && <WelcomeMessage />}
 
-            <LocationSelect className="w-full mb-6" value={address} onChange={setAddress} />
+            <LocationSelect className="w-full mb-6" value={address} onChange={setAddress} justUSA />
 
             {error && <FetchError reload={call} />}
 

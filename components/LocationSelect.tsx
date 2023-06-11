@@ -1,5 +1,6 @@
 import React from "react";
 import Input from "components/Input";
+import { LocationValue } from "lib/types";
 
 declare global {
   interface Window {
@@ -7,19 +8,14 @@ declare global {
   }
 }
 
-type Value = {
-  label: string;
-  lat: number;
-  lng: number;
-};
-
 type Props = {
-  value?: Value;
-  onChange: (value: Value) => void;
+  value?: LocationValue;
+  justUSA?: boolean;
+  onChange: (value: LocationValue) => void;
   [key: string]: any;
 };
 
-export default function LocationSelect({ value, onChange, ...props }: Props) {
+export default function LocationSelect({ value, onChange, justUSA, ...props }: Props) {
   const label = value?.label || "";
   const inputRef = React.useRef<HTMLInputElement>();
   const isInitalizedRef = React.useRef<boolean>(false);
@@ -44,7 +40,7 @@ export default function LocationSelect({ value, onChange, ...props }: Props) {
     };
 
     const options = {
-      componentRestrictions: { country: "us" },
+      componentRestrictions: justUSA ? { country: "us" } : undefined,
       fields: ["formatted_address", "geometry"],
     };
 

@@ -6,7 +6,7 @@ import { useUser } from "providers/user";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 
-export default function Planner() {
+export default function Accept() {
   const { user } = useUser();
   const router = useRouter();
   const { inviteId } = router.query;

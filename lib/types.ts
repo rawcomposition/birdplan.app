@@ -153,3 +153,25 @@ export type Invite = {
   name?: string;
   uid?: string;
 };
+
+export type LocationValue = {
+  label: string;
+  lat: number;
+  lng: number;
+};
+
+// BF: Bird Finder
+
+export type BFTarget = {
+  code: string;
+  name: string;
+  percent: number;
+  id: string;
+};
+
+export type BFHotspot = {
+  locationId: string;
+  name: string;
+  sampleSize: number;
+  percent: number;
+};
