@@ -7,7 +7,7 @@ import { useTrip } from "providers/trip";
 import { Target, Option } from "lib/types";
 import Select from "components/ReactSelectStyled";
 
-const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%"];
+const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
 export default function UploadTargets() {
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
