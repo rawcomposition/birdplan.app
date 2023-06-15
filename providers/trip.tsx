@@ -20,7 +20,9 @@ type ContextT = {
   selectedSpeciesCode?: string;
   canEdit: boolean;
   isOwner: boolean;
+  selectedMarkerId?: string;
   setSelectedSpeciesCode: (code?: string) => void;
+  setSelectedMarkerId: (id?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
   appendMarker: (marker: CustomMarker) => Promise<void>;
@@ -43,6 +45,7 @@ const initialState = {
 export const TripContext = React.createContext<ContextT>({
   ...initialState,
   setSelectedSpeciesCode: () => {},
+  setSelectedMarkerId: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
   appendMarker: async () => {},
@@ -63,6 +66,7 @@ const TripProvider = ({ children }: Props) => {
   const [targets, setTripTargets] = React.useState<Target[]>([]);
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
+  const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
@@ -153,8 +157,10 @@ const TripProvider = ({ children }: Props) => {
         trip,
         targets,
         selectedSpeciesCode,
+        selectedMarkerId,
         invites,
         setSelectedSpeciesCode,
+        setSelectedMarkerId,
         appendHotspot,
         removeHotspot,
         appendMarker,

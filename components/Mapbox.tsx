@@ -5,6 +5,7 @@ import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "providers/modals";
+import { useTrip } from "providers/trip";
 
 type Props = {
   bounds: Trip["bounds"];
@@ -29,6 +30,7 @@ export default function Mapbox({
 }: Props) {
   const [satellite, setSatellite] = React.useState(false);
   const { open } = useModal();
+  const { selectedMarkerId } = useTrip();
 
   const isMobile = React.useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -132,6 +134,7 @@ export default function Mapbox({
               icon={MarkerIcon.HOTSPOT}
               color={markerColors[marker.shade || 0]}
               darkIcon={!!marker?.shade && marker?.shade > 1 && marker?.shade < 6}
+              highlight={marker.id === selectedMarkerId}
             />
           </Marker>
         ))}
@@ -142,7 +145,7 @@ export default function Mapbox({
             longitude={marker.lng}
             onClick={() => open("viewMarker", { marker })}
           >
-            <MarkerWithIcon icon={marker.icon} />
+            <MarkerWithIcon icon={marker.icon} highlight={marker.id === selectedMarkerId} />
           </Marker>
         ))}
         {hotspotLayer && (

@@ -15,6 +15,7 @@ type Props = {
   offset?: boolean;
   className?: string;
   showStroke?: boolean;
+  highlight?: boolean;
 };
 
 const iconMap: Record<MarkerIcon, any> = {
@@ -35,7 +36,15 @@ const defaultColors: Record<MarkerIcon, string> = {
   [MarkerIcon.AIRPORT]: "#64748b",
 };
 
-export default function MarkerWithIcon({ icon, darkIcon, color, offset = true, showStroke = true, className }: Props) {
+export default function MarkerWithIcon({
+  icon,
+  darkIcon,
+  color,
+  offset = true,
+  showStroke = true,
+  className,
+  highlight,
+}: Props) {
   const Icon = iconMap[icon];
   return (
     <div className={clsx("relative cursor-pointer", offset && "-mt-[16px]", className)}>
@@ -46,6 +55,9 @@ export default function MarkerWithIcon({ icon, darkIcon, color, offset = true, s
           darkIcon ? "text-gray-700" : "text-gray-100"
         )}
       />
+      {highlight && (
+        <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 border-2 border-gray-600/90 rounded-full " />
+      )}
     </div>
   );
 }
