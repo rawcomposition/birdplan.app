@@ -1,5 +1,5 @@
 import Button from "components/Button";
-import CheckIcon from "icons/1Check";
+import CheckIcon from "icons/Check";
 import Species from "components/Species";
 import SpeciesHeader from "components/SpeciesHeader";
 import SpeciesImage from "components/SpeciesImage";

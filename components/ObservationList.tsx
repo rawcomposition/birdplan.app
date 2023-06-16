@@ -1,6 +1,6 @@
 import { truncate } from "lib/helpers";
 import Timeago from "components/Timeago";
-import CameraIcon from "icons/1Camera";
+import CameraIcon from "icons/Camera";
 import { RareObservation } from "lib/types";
 
 type Props = {
