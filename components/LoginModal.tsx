@@ -25,7 +25,7 @@ const LoginModal = ({ showLoader = true }: Props) => {
           ) : (
             <>
               <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Let&apos;s get started</h2>
-              <p className="text-sm text-gray-500 text-center mb-6">Connect your Google account login</p>
+              <p className="text-sm text-gray-500 text-center mb-6">Connect your Google account to login</p>
               <div className="text-center">
                 <button
                   type="button"
