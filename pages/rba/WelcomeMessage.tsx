@@ -1,4 +1,4 @@
-import AnimatedArrow from "components/AnimatedArrow";
+import AnimatedArrow from "./AnimatedArrow";
 
 export default function WelcomeMessage() {
   return (

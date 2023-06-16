@@ -6,8 +6,6 @@ import { subscribeToProfile, setProfileValue, appendProfileLifelist, removeProfi
 interface ContextT extends Profile {
   setLifelist: (lifelist: string[]) => Promise<void>;
   setCountryLifelist: (lifelist: string[]) => Promise<void>;
-  appendLifelist: (speciesCode: string) => Promise<void>;
-  removeLifelist: (speciesCode: string) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
   setAddress: (address: Address) => Promise<void>;
   reset: () => void;
@@ -25,8 +23,6 @@ export const ProfileContext = React.createContext<ContextT>({
   ...initialState,
   setLifelist: async () => {},
   setCountryLifelist: async () => {},
-  appendLifelist: async () => {},
-  removeLifelist: async () => {},
   setRadius: async () => {},
   setAddress: async () => {},
   reset: () => {},
@@ -57,16 +53,6 @@ const ProfileProvider = ({ children }: Props) => {
     await setProfileValue("countryLifelist", countryLifelist);
   };
 
-  const appendLifelist = async (speciesCode: string) => {
-    setState((state) => ({ ...state, lifelist: [...state.lifelist, speciesCode] }));
-    await appendProfileLifelist(speciesCode);
-  };
-
-  const removeLifelist = async (speciesCode: string) => {
-    setState((state) => ({ ...state, lifelist: state.lifelist.filter((code) => code !== speciesCode) }));
-    await removeProfileLifelist(speciesCode);
-  };
-
   const setRadius = async (radius: number) => {
     setState((state) => ({ ...state, radius }));
     await setProfileValue("radius", radius);
@@ -91,8 +77,6 @@ const ProfileProvider = ({ children }: Props) => {
         address: state.address,
         setLifelist,
         setCountryLifelist,
-        appendLifelist,
-        removeLifelist,
         setRadius,
         setAddress,
         reset,

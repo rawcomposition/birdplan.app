@@ -1,14 +1,14 @@
 import React from "react";
 import Sidebar from "components/Sidebar";
 import Header from "components/Header";
-import SpeciesList from "components/SpeciesList";
-import Skeleton from "components/Skeleton";
+import SpeciesList from "./SpeciesList";
+import Skeleton from "./Skeleton";
 import LocationSelect from "components/LocationSelect";
-import useFetchSpecies from "hooks/useFetchSpecies";
-import WelcomeMessage from "components/WelcomeMessage";
-import NoResults from "components/NoResults";
-import FetchError from "components/FetchError";
-import ResultsInfo from "components/ResultsInfo";
+import useFetchRBA from "hooks/useFetchRBA";
+import WelcomeMessage from "./WelcomeMessage";
+import NoResults from "./NoResults";
+import FetchError from "./FetchError";
+import ResultsInfo from "./ResultsInfo";
 import Head from "next/head";
 import { useProfile } from "providers/profile";
 import Select from "components/ReactSelectStyled";
@@ -22,17 +22,16 @@ import LoginModal from "components/LoginModal";
 export default function Rba() {
   const { closeSidebar } = useUI();
   const { open } = useModal();
-  const { countryLifelist, radius, address, setRadius, setAddress, appendLifelist, removeLifelist } = useProfile();
+  const { countryLifelist, radius, address, setRadius, setAddress } = useProfile();
   const { lat, lng } = address || {};
 
-  const { species, loading, error, lastUpdate, call } = useFetchSpecies({
+  const { species, loading, error, lastUpdate, call } = useFetchRBA({
     lat: lat || null,
     lng: lng || null,
     radius,
   });
 
   const [expanded, setExpanded] = React.useState<string[]>([]);
-  const [fading, setFading] = React.useState<string[]>([]);
   const [showSeen, setShowSeen] = React.useState(false);
 
   React.useEffect(() => {
@@ -45,11 +44,6 @@ export default function Rba() {
     } else {
       setExpanded([...expanded, code]);
     }
-  };
-
-  const handleSeen = (code: string) => {
-    setFading((current) => [...current, code]);
-    setTimeout(() => appendLifelist(code), 1000);
   };
 
   const filteredSpecies = species?.filter(({ code }) => showSeen || !countryLifelist.includes(code));
@@ -111,10 +105,6 @@ export default function Rba() {
               <SpeciesList
                 items={filteredSpecies}
                 onToggleExpand={handleToggleExpand}
-                onAddSeen={handleSeen}
-                onRemoveSeen={removeLifelist}
-                fading={fading}
-                lifelist={countryLifelist}
                 expanded={expanded}
                 lat={lat}
                 lng={lng}

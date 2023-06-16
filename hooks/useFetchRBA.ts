@@ -15,7 +15,7 @@ interface Props {
   radius: number;
 }
 
-export default function useFetchSpecies({ lat, lng, radius }: Props) {
+export default function useFetchRBA({ lat, lng, radius }: Props) {
   const [state, setState] = React.useState<State>({
     error: false,
     loading: false,
