@@ -106,7 +106,7 @@ export default function Trip() {
         </Head>
       )}
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />
       <main className="flex h-[calc(100%-60px)]">
         <Sidebar noPadding>
           <div className={clsx("mb-4 mt-6 mx-6", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>

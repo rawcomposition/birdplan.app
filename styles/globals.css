@@ -9,7 +9,7 @@
     height: 100%;
   }
   body {
-    @apply bg-[#f3f5f9]/30;
+    @apply bg-[#fbfbfd];
     @apply font-body antialiased;
   }
 

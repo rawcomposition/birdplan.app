@@ -22,20 +22,24 @@ type Props = {
 export default function Header({ title, parent, showAccountOnSmScreens }: Props) {
   const { isOnline } = useRealtimeStatus();
   const { toggleSidebar, closeSidebar } = useUI();
-  const { trip, isOwner } = useTrip();
+  const { isOwner } = useTrip();
   const { open } = useModal();
 
   const router = useRouter();
-  const isSubPage = router.pathname !== "/";
+  const isSubPage = router.pathname !== "/trips";
 
   return (
     <header className="bg-slate-900 h-[60px] shrink-0 flex items-center">
-      <Link href="/" className={clsx("w-80 flex items-center", isSubPage && "hidden md:flex")} onClick={closeSidebar}>
+      <Link
+        href="/trips"
+        className={clsx("w-80 flex items-center", isSubPage && "hidden md:flex")}
+        onClick={closeSidebar}
+      >
         <img src="/icon.png" className="w-[50px] mx-4" width="50" height="50" />
         <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
       </Link>
       {isSubPage && (
-        <Link href="/" className="md:hidden pl-3 pr-5 py-3" onClick={closeSidebar}>
+        <Link href="/trips" className="md:hidden pl-3 pr-5 py-3" onClick={closeSidebar}>
           <AngleLeft className="text-gray-500 text-2xl flex items-center" />
         </Link>
       )}

@@ -44,6 +44,8 @@ export default function Button({
     gray: "text-gray-600 bg-gray-100",
     primary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors",
     pillPrimary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full",
+    pillOutlineGray:
+      "bg-transparent text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors rounded-full",
   };
 
   const colorClasses = colors[color];
