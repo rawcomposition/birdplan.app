@@ -3,12 +3,15 @@ import { useUser } from "providers/user";
 import Loading from "icons/Loading";
 import useFirebaseLogin from "hooks/useFirebaseLogin";
 
-type Props = {};
+type Props = {
+  showLoader?: boolean;
+};
 
-const LoginModal = ({}: Props) => {
+const LoginModal = ({ showLoader = true }: Props) => {
   const { login, loading: authLoading } = useFirebaseLogin();
   const { loading, user } = useUser();
   if (user?.uid && !loading) return null;
+  if (!showLoader && (loading || authLoading)) return null;
 
   return (
     <>

@@ -64,7 +64,7 @@ export default function Planner() {
         </div>
       </main>
       <Footer />
-      <LoginModal />
+      <LoginModal showLoader={false} />
     </div>
   );
 }
