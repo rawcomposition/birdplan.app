@@ -3,5 +3,5 @@
   "name": "Bird Planner",
   "background_color": "#0f172a",
   "display": "standalone",
-  "scope": "/trips"
+  "start_url": "/trips"
 }
