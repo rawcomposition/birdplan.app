@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         checklistId: info.subID,
         count: info.howMany,
         date: info.obsDt,
-        evidence: info.evidence && info.evidence !== "N",
+        evidence: info.evidence,
       };
     });
 

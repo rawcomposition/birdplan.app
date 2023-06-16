@@ -114,7 +114,7 @@ export type Observation = {
   checklistId: string;
   count: number;
   date: string;
-  evidence: "N";
+  evidence: "N" | "P" | "A";
 };
 
 export type Target = {

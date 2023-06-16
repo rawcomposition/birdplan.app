@@ -113,14 +113,16 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
               )}
             </div>
             {isEditing ? (
-              <TextareaAutosize
-                className="mt-1 input -mx-2"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                onBlur={handleSaveNotes}
-                minRows={2}
-                maxRows={15}
-              />
+              <div className="-mx-2">
+                <TextareaAutosize
+                  className="mt-1 input"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  onBlur={handleSaveNotes}
+                  minRows={2}
+                  maxRows={15}
+                />
+              </div>
             ) : (
               <div className="mt-1 text-gray-700 text-sm relative group">{notes || "No notes"}</div>
             )}
