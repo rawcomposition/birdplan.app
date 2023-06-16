@@ -1,5 +1,5 @@
 import Link from "next/link";
-import BreadcrumbArrow from "icons/breadcrumb-arrow";
+import BreadcrumbArrow from "icons/BreadcrumbArrow";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import Account from "components/Account";
 import Bars from "icons/Bars";

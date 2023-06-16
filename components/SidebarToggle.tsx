@@ -1,4 +1,4 @@
-import CogIcon from "icons/cog";
+import CogIcon from "icons/1Cog";
 
 type Props = {
   [key: string]: any;
