@@ -26,7 +26,7 @@ export default function useFetchRBA({ lat, lng, radius }: Props) {
   const call = React.useCallback(async () => {
     setState((current) => ({ ...current, loading: true, error: false, species: [] }));
     try {
-      const response = await fetch(`/api/fetch?lat=${lat}&lng=${lng}&radius=${radius}`);
+      const response = await fetch(`/api/get-rba?lat=${lat}&lng=${lng}&radius=${radius}`);
       if (!response.ok) throw new Error();
       const species = await response.json();
       if (!Array.isArray(species)) {

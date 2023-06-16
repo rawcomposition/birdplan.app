@@ -1,14 +1,34 @@
 import { distanceBetween } from "lib/helpers";
 import taxonomy from "../../taxonomy.json";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req, res) {
-  const { lat, lng, radius = 50 } = req.query;
+type RbaResponse = {
+  obsId: string;
+  speciesCode: string;
+  comName: string;
+  sciName: string;
+  locId: string;
+  locName: string;
+  obsDt: string;
+  howMany: number;
+  lat: number;
+  lng: number;
+  obsValid: boolean;
+  obsReviewed: boolean;
+  locationPrivate: boolean;
+  subId: string;
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+  const radius = Number(req.query.radius);
   const country = "US";
 
   const response = await fetch(
     `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
   );
-  let reports = await response.json();
+  let reports: RbaResponse[] = await response.json();
 
   if (!reports?.length) {
     res.status(200).json([]);
@@ -24,14 +44,14 @@ export default async function handler(req, res) {
       return {
         ...item,
         distance,
-        comName: taxon?.com || comName,
+        comName: taxon?.name || comName,
         speciesCode: taxon?.code || speciesCode,
       };
     })
-    .filter(({ distance, comName }) => distance <= parseInt(radius) && !comName.includes("(hybrid)"))
-    .map((item) => ({ ...item, distance: parseInt(item.distance) }));
+    .filter(({ distance, comName }) => distance <= radius && !comName.includes("(hybrid)"))
+    .map((item) => ({ ...item, distance: parseInt(item.distance.toString()) }));
 
-  const reportsBySpecies = {};
+  const reportsBySpecies: any = {};
 
   reports.forEach((item) => {
     if (!reportsBySpecies[item.speciesCode]) {
