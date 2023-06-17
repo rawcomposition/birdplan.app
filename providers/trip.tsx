@@ -30,6 +30,8 @@ type ContextT = {
   setTargets: (target: Target[]) => Promise<void>;
   removeTarget: (code: string) => Promise<void>;
   saveNotes: (id: string, notes: string) => Promise<void>;
+  setTranslatedHotspotName: (id: string, translatedName: string) => Promise<void>;
+  resetTranslatedHotspotName: (id: string) => Promise<void>;
   reset: () => void;
   removeInvite: (inviteId: string, uid?: string) => Promise<void>;
 };
@@ -53,6 +55,8 @@ export const TripContext = React.createContext<ContextT>({
   setTargets: async () => {},
   removeTarget: async () => {},
   saveNotes: async () => {},
+  setTranslatedHotspotName: async () => {},
+  resetTranslatedHotspotName: async () => {},
   reset: () => {},
   removeInvite: async () => {},
 });
@@ -136,6 +140,24 @@ const TripProvider = ({ children }: Props) => {
     await updateHotspots(trip.id, newHotspots);
   };
 
+  const setTranslatedHotspotName = async (id: string, translatedName: string) => {
+    if (!trip) return;
+    const newHotspots = trip.hotspots.map((it) => {
+      if (it.id === id) return { ...it, name: translatedName, originalName: it.name };
+      return it;
+    });
+    await updateHotspots(trip.id, newHotspots);
+  };
+
+  const resetTranslatedHotspotName = async (id: string) => {
+    if (!trip) return;
+    const newHotspots = trip.hotspots.map((it) => {
+      if (it.id === id) return it.originalName ? { ...it, name: it.originalName, originalName: "" } : it;
+      return it;
+    });
+    await updateHotspots(trip.id, newHotspots);
+  };
+
   const removeInvite = async (id: string, uid?: string) => {
     if (!trip) return;
     await deleteInvite(id);
@@ -168,6 +190,8 @@ const TripProvider = ({ children }: Props) => {
         setTargets,
         removeTarget,
         saveNotes,
+        setTranslatedHotspotName,
+        resetTranslatedHotspotName,
         removeInvite,
         reset,
       }}

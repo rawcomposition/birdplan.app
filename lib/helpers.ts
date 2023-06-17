@@ -1,6 +1,40 @@
 import { Trip } from "lib/types";
 import { toast } from "react-hot-toast";
 
+export const englishCountries = [
+  "US",
+  "CA",
+  "AU",
+  "GB",
+  "NZ",
+  "IE",
+  "GH",
+  "SG",
+  "BZ",
+  "ZA",
+  "IN",
+  "DM",
+  "MT",
+  "AG",
+  "KE",
+  "JM",
+  "GD",
+  "GY",
+  "BW",
+  "LR",
+  "BB",
+  "CM",
+  "NG",
+  "GM",
+  "TT",
+  "BS",
+];
+
+export const isRegionEnglish = (region: string) => {
+  const regionCode = region.split(",")[0];
+  return englishCountries.includes(regionCode);
+};
+
 export function truncate(string: string, length: number): string {
   return string.length > length ? `${string.substring(0, length)}...` : string;
 }
@@ -114,4 +148,22 @@ export const randomId = (length: number) => {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+};
+
+export const translate = async (string: string) => {
+  try {
+    const res = await fetch("/api/translate", {
+      method: "POST",
+      body: JSON.stringify({ text: string }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await res.json();
+    if (!json.text) throw new Error();
+    return json.text;
+  } catch (error) {
+    toast.error("Error translating");
+    return string;
+  }
 };

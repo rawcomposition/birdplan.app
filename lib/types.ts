@@ -73,6 +73,7 @@ export type EbirdHotspot = {
 export type Hotspot = {
   id: string;
   name: string;
+  originalName?: string;
   lat: number;
   lng: number;
   species?: number;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Body } from "providers/modals";
+import { Body } from "providers/modals";
 import { Hotspot as HotspotT } from "lib/types";
 import Button from "components/Button";
 import Feather from "icons/Feather";
@@ -10,6 +10,7 @@ import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 import TextareaAutosize from "react-textarea-autosize";
 import DirectionsButton from "components/DirectionsButton";
+import { translate, isRegionEnglish } from "lib/helpers";
 
 type Props = {
   hotspot: HotspotT;
@@ -22,10 +23,23 @@ type Info = {
 };
 
 export default function Hotspot({ hotspot, speciesName }: Props) {
-  const { trip, canEdit, appendHotspot, removeHotspot, saveNotes, selectedSpeciesCode } = useTrip();
+  const {
+    trip,
+    canEdit,
+    appendHotspot,
+    removeHotspot,
+    saveNotes,
+    selectedSpeciesCode,
+    setTranslatedHotspotName,
+    resetTranslatedHotspotName,
+  } = useTrip();
   const [info, setInfo] = React.useState<Info>();
-  const { id, name, lat, lng } = hotspot;
-  const isSaved = trip?.hotspots.some((it) => it.id === id);
+  const { id, lat, lng } = hotspot;
+  const savedHotspot = trip?.hotspots.find((it) => it.id === id);
+  const isSaved = !!savedHotspot;
+  const name = savedHotspot?.name || hotspot.name;
+  const originalName = savedHotspot?.originalName;
+  const [isTranslating, setIsTranslating] = React.useState(false);
   const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
   const [isEditing, setIsEditing] = React.useState(isSaved && !notes && canEdit);
 
@@ -60,9 +74,43 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const showNotes = isSaved && (isEditing || notes || canEdit);
   const showToggleBtn = canEdit && ((isEditing && !!notes) || !isEditing);
 
+  const handleTranslate = async () => {
+    setIsTranslating(true);
+    const translatedName = await translate(name);
+    setIsTranslating(false);
+    if (!translatedName) return;
+    if (translatedName === name) {
+      toast("No translation found");
+      return;
+    }
+    setTranslatedHotspotName(id, translatedName);
+  };
+
+  const canTranslate = isSaved && !isRegionEnglish(trip?.region || "");
+
   return (
     <>
-      <Header>{name}</Header>
+      <div className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50">
+        <h3 className="text-lg font-medium">{name}</h3>
+        {canTranslate && (
+          <div className="mt-0.5 text-[12px]">
+            {!originalName && !isTranslating && (
+              <button type="button" className="block text-sky-600" onClick={handleTranslate}>
+                Translate
+              </button>
+            )}
+            {isTranslating && <div className="text-gray-400">Translating...</div>}
+            {originalName && (
+              <div className="text-gray-500">
+                Original: {originalName} -{" "}
+                <button type="button" className="text-sky-600" onClick={() => resetTranslatedHotspotName(id)}>
+                  Reset
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
       <Body className="max-h-[65vh] sm:max-h-full pb-10 sm:pb-4 relative min-h-[240px]">
         <div className="flex gap-2 mb-4">
           <Button
