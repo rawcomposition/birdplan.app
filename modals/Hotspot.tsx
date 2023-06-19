@@ -13,6 +13,9 @@ import DirectionsButton from "components/DirectionsButton";
 import { translate, isRegionEnglish } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
+import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
+import RecentChecklistList from "components/RecentChecklistList";
+import clsx from "clsx";
 
 type Props = {
   hotspot: HotspotT;
@@ -38,6 +41,26 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const [isTranslating, setIsTranslating] = React.useState(false);
   const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
   const [isEditing, setIsEditing] = React.useState(isSaved && !notes && canEdit);
+  const [tab, setTab] = React.useState(speciesName ? "reports" : "needs");
+  const { recentChecklists } = useFetchRecentChecklists(id);
+
+  const tabs = [
+    {
+      label: "Recent Needs",
+      id: "needs",
+    },
+    {
+      label: "Checklists",
+      id: "checklists",
+    },
+  ];
+
+  if (speciesName) {
+    tabs.unshift({
+      label: `${speciesName} Reports`,
+      id: "reports",
+    });
+  }
 
   const handleSave = async () => {
     if (isSaved) {
@@ -119,7 +142,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             </Button>
           )}
         </div>
-        <HotspotStats id={id} speciesTotal={hotspot.species} />
+        <HotspotStats id={id} speciesTotal={hotspot.species} checklists={recentChecklists} />
         {showNotes && (
           <>
             <div className="flex items-center gap-3 mt-6">
@@ -150,8 +173,30 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             )}
           </>
         )}
-        {selectedSpeciesCode && <ObsList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />}
-        {!selectedSpeciesCode && <RecentSpeciesList locId={id} />}
+        <div className="-mx-6 mb-3">
+          <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
+            {tabs.map(({ label, id }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setTab(id)}
+                className={clsx(
+                  "text-sm font-medium text-gray-900 border-b-2 transition-colors pb-3 pt-3",
+                  tab === id ? "border-gray-500" : "border-transparent hover:border-gray-500"
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
+        <div className="-mx-1.5">
+          {tab === "reports" && (
+            <ObsList locId={id} speciesCode={selectedSpeciesCode || ""} speciesName={speciesName} />
+          )}
+          {tab === "needs" && <RecentSpeciesList locId={id} />}
+          {tab === "checklists" && <RecentChecklistList checklists={recentChecklists} />}
+        </div>
       </Body>
     </>
   );

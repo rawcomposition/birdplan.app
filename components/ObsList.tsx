@@ -40,13 +40,12 @@ export default function ObsList({ locId, speciesCode, speciesName }: Props) {
 
   return (
     <>
-      {speciesName && <h3 className="text-sm font-medium mt-4 text-gray-900">{speciesName} Reports</h3>}
       <table className="w-full text-[13px] mt-2">
-        <thead className="bg-neutral-100 text-neutral-500">
+        <thead className="text-neutral-600 font-bold">
           <tr>
-            <th className="text-left pl-1.5 py-1 font-normal">Time ago</th>
-            <th className="text-left font-normal">#</th>
-            <th className="font-normal text-center">Evidence</th>
+            <th className="text-left pl-1.5 py-1">Time ago</th>
+            <th className="text-left">#</th>
+            <th className="text-center">Evidence</th>
             <th className="text-right"></th>
           </tr>
         </thead>

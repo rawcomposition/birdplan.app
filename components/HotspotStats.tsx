@@ -1,5 +1,5 @@
 import React from "react";
-import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
+import { RecentChecklist } from "lib/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
@@ -7,6 +7,7 @@ dayjs.extend(relativeTime);
 type Props = {
   id: string;
   speciesTotal?: number;
+  checklists: RecentChecklist[];
 };
 
 type Info = {
@@ -14,12 +15,11 @@ type Info = {
   species: number;
 };
 
-export default function Hotspot({ id, speciesTotal }: Props) {
+export default function Hotspot({ id, speciesTotal, checklists }: Props) {
   const [info, setInfo] = React.useState<Info>();
-  const { recentChecklists } = useFetchRecentChecklists(id);
 
-  const lastChecklistDate = recentChecklists[0]?.obsDt;
-  const lastChecklistTime = recentChecklists[0]?.obsTime;
+  const lastChecklistDate = checklists[0]?.obsDt;
+  const lastChecklistTime = checklists[0]?.obsTime;
   const lastChecklist =
     lastChecklistDate && lastChecklistTime ? dayjs(`${lastChecklistDate} ${lastChecklistTime}`).fromNow() : "Never";
 
