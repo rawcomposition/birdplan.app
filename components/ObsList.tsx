@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 type Props = {
   locId: string;
   speciesCode: string;
-  recentChecklists: RecentChecklist[];
+  recentChecklists?: RecentChecklist[];
 };
 
 const previewCount = 10;
