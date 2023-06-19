@@ -22,7 +22,7 @@ export default function useFetchRecentChecklists(region?: string, count: number 
       }
       setLoading(false);
     })();
-  }, [region]);
+  }, [region, count]);
 
   return { recentChecklists: items, loading };
 }

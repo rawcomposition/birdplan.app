@@ -1,14 +1,17 @@
 import React from "react";
 import dayjs from "dayjs";
 import { RecentChecklist } from "lib/types";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
+import { dateTimeToRelative } from "lib/helpers";
+import { useTrip } from "providers/trip";
 
 type Props = {
   checklists: RecentChecklist[];
 };
 
 export default function RecentChecklistList({ checklists }: Props) {
+  const { trip } = useTrip();
+  const timezone = trip?.timezone;
+
   return (
     <>
       {checklists.length > 0 && (
@@ -28,7 +31,7 @@ export default function RecentChecklistList({ checklists }: Props) {
                 <tr key={subId} className="even:bg-neutral-50">
                   <td className="pl-1.5 py-[5px]">
                     <time dateTime={timestamp} title={`${obsDt} ${obsTime}`}>
-                      {timeAgo?.replace(" ago", "")?.replace("a ", "1 ").replace("an ", "1 ")}
+                      {dateTimeToRelative(`${obsDt} ${obsTime}`, timezone)}
                     </time>
                   </td>
                   <td>{numSpecies}</td>

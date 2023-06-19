@@ -1,8 +1,8 @@
 import React from "react";
 import { RecentChecklist } from "lib/types";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
+import { dateTimeToRelative } from "lib/helpers";
+import { useTrip } from "providers/trip";
 
 type Props = {
   id: string;
@@ -17,18 +17,17 @@ type Info = {
 
 export default function Hotspot({ id, speciesTotal, checklists }: Props) {
   const [info, setInfo] = React.useState<Info>();
+  const { trip } = useTrip();
+  const timezone = trip?.timezone;
 
   const lastChecklistDate = checklists[0]?.obsDt;
   const lastChecklistTime = checklists[0]?.obsTime;
   const lastChecklist =
-    lastChecklistDate && lastChecklistTime ? dayjs(`${lastChecklistDate} ${lastChecklistTime}`).fromNow() : "Never";
-
-  const lastChecklistTrimmed = lastChecklist
-    .replace(" ago", "")
-    .replace("an ", "1 ")
-    .replace("a ", "1 ")
-    .replace("months", "mo")
-    .replace("month", "mo");
+    lastChecklistDate && lastChecklistTime
+      ? dateTimeToRelative(`${lastChecklistDate} ${lastChecklistTime}`, timezone)
+          .replace("months", "mo")
+          .replace("month", "mo")
+      : "Never";
 
   React.useEffect(() => {
     (async () => {
@@ -55,9 +54,9 @@ export default function Hotspot({ id, speciesTotal, checklists }: Props) {
       </div>
       <div className="flex flex-col">
         {lastChecklistDate ? (
-          <span>
-            <span className="text-3xl font-bold">{lastChecklistTrimmed.split(" ")[0]}</span>{" "}
-            <span className="text-lg font-bold">{lastChecklistTrimmed.split(" ")[1]}</span>
+          <span title={dayjs(`${lastChecklistDate} ${lastChecklistTime}`).format("MMMM D, YYYY h:mm A")}>
+            <span className="text-3xl font-bold">{lastChecklist.split(" ")[0]}</span>{" "}
+            <span className="text-lg font-bold">{lastChecklist.split(" ")[1]}</span>
           </span>
         ) : (
           <span className="text-3xl font-bold">--</span>

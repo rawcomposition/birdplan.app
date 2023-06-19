@@ -107,6 +107,7 @@ export type Trip = {
   markers: CustomMarker[];
   startMonth: number;
   endMonth: number;
+  timezone: string;
 };
 
 export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId">;

@@ -6,7 +6,7 @@ import Input from "components/Input";
 import { Option, TripInput } from "lib/types";
 import { createTrip } from "lib/firebase";
 import toast from "react-hot-toast";
-import { getBounds } from "lib/helpers";
+import { getBounds, getCenterOfBounds, getTzFromLatLng } from "lib/helpers";
 import { useRouter } from "next/router";
 import RegionSelect from "components/RegionSelect";
 import MonthSelect from "components/MonthSelect";
@@ -63,6 +63,9 @@ export default function CreateTrip() {
       const bounds = await getBounds(region);
       if (!bounds) return toast.error("Failed to fetch region info");
 
+      const { lat, lng } = getCenterOfBounds(bounds);
+      const timezone = await getTzFromLatLng(lat, lng);
+
       let data: TripInput = {
         name,
         region: region,
@@ -71,6 +74,7 @@ export default function CreateTrip() {
         bounds,
         startMonth: Number(startMonth.value),
         endMonth: Number(endMonth.value),
+        timezone: timezone || "America/New_York",
       };
 
       const tripId = await createTrip(data);

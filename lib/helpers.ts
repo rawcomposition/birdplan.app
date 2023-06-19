@@ -1,5 +1,12 @@
 import { Trip } from "lib/types";
 import { toast } from "react-hot-toast";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const englishCountries = [
   "US",
@@ -132,6 +139,12 @@ export const getBounds = async (regionString: string) => {
   }
 };
 
+export const getCenterOfBounds = ({ minX, minY, maxX, maxY }: Trip["bounds"]) => {
+  const lat = (minY + maxY) / 2;
+  const lng = (minX + maxX) / 2;
+  return { lat, lng };
+};
+
 export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
   if (!bounds) return { lat: null, lng: null };
   const { minX, minY, maxX, maxY } = bounds;
@@ -166,4 +179,28 @@ export const translate = async (string: string) => {
     toast.error("Error translating");
     return string;
   }
+};
+
+export const getTzFromLatLng = async (lat: number, lng: number) => {
+  try {
+    const res = await fetch(`/api/get-tz?lat=${lat}&lng=${lng}`);
+    const json = await res.json();
+    if (!json.timezone) throw new Error();
+    return json.timezone;
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
+};
+
+export const dateTimeToRelative = (date: string, timezone?: string) => {
+  if (!timezone) return "";
+  const today = dayjs().tz(timezone).format("YYYY-MM-DD");
+  const yesterday = dayjs().tz(timezone).subtract(1, "day").format("YYYY-MM-DD");
+  const dateFormatted = dayjs(date).tz(timezone).format("YYYY-MM-DD");
+  if (dateFormatted === today) return "Today";
+  if (dateFormatted === yesterday) return "Yesterday";
+  const result = dayjs.tz(date, timezone).fromNow().replace(" ago", "").replace("an ", "1 ").replace("a ", "1 ");
+
+  return result;
 };

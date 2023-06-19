@@ -1,25 +1,36 @@
 import React from "react";
-import { Observation } from "lib/types";
+import { Observation, RecentChecklist } from "lib/types";
 import toast from "react-hot-toast";
-import dayjs from "dayjs";
 import CameraIcon from "icons/Camera";
 import CommentIcon from "icons/Comment";
 import SpeakerIcon from "icons/Speaker";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
+import { dateTimeToRelative } from "lib/helpers";
+import { useTrip } from "providers/trip";
+import dayjs from "dayjs";
 
 type Props = {
   locId: string;
   speciesCode: string;
-  speciesName?: string;
+  recentChecklists: RecentChecklist[];
 };
 
 const previewCount = 10;
 
-export default function ObsList({ locId, speciesCode, speciesName }: Props) {
+export default function ObsList({ locId, speciesCode, recentChecklists }: Props) {
   const [obs, setObs] = React.useState<Observation[]>([]);
   const [viewAll, setViewAll] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
+  const { trip } = useTrip();
+  const timezone = trip?.timezone;
+
+  const formattedObs =
+    obs.map((it) => {
+      const recentChecklist = recentChecklists?.find((checklist) => checklist.subId === it.checklistId);
+      return {
+        ...it,
+        date: recentChecklist ? `${recentChecklist.obsDt} ${recentChecklist.obsTime}` : `${it.date} 9:00 am`,
+      };
+    }) || [];
 
   React.useEffect(() => {
     if (!locId || !speciesCode) return;
@@ -36,7 +47,7 @@ export default function ObsList({ locId, speciesCode, speciesName }: Props) {
     })();
   }, [locId, speciesCode]);
 
-  const filteredObs = viewAll ? obs : obs.slice(0, previewCount);
+  const filteredObs = viewAll ? formattedObs : formattedObs.slice(0, previewCount);
 
   return (
     <>
@@ -54,7 +65,7 @@ export default function ObsList({ locId, speciesCode, speciesName }: Props) {
             <tr key={`${locId}-${speciesCode}-${index}`} className="even:bg-neutral-50">
               <td className="pl-1.5 py-[5px]">
                 <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>
-                  {dayjs(date).fromNow()?.replace(" ago", "")?.replace("a ", "1 ").replace("an ", "1 ")}
+                  {dateTimeToRelative(date, timezone)}
                 </time>
               </td>
               <td>{count}</td>
