@@ -6,9 +6,12 @@ type Item = {
   code: string;
   name: string;
   date: string;
+  checklistId: string;
+  count: number;
 };
 
 export default function useFetchRecentSpecies(region?: string) {
+  const [loading, setLoading] = React.useState(true);
   const [items, setItems] = React.useState<Item[]>([]);
   const { lifelist } = useProfile();
 
@@ -16,6 +19,7 @@ export default function useFetchRecentSpecies(region?: string) {
     if (!region) return;
     (async () => {
       try {
+        setLoading(true);
         const res = await fetch(`/api/region-species?region=${region}`);
         if (!res.ok) throw new Error();
         const data: Item[] = await res.json();
@@ -23,10 +27,11 @@ export default function useFetchRecentSpecies(region?: string) {
       } catch (error) {
         toast.error("Failed to fetch recent species");
       }
+      setLoading(false);
     })();
   }, [region]);
 
   const filtered = items.filter((it) => !lifelist.includes(it.code));
 
-  return { recentSpecies: filtered };
+  return { recentSpecies: filtered, loading };
 }

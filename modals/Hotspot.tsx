@@ -11,15 +11,12 @@ import ObsList from "components/ObsList";
 import TextareaAutosize from "react-textarea-autosize";
 import DirectionsButton from "components/DirectionsButton";
 import { translate, isRegionEnglish } from "lib/helpers";
+import RecentSpeciesList from "components/RecentSpeciesList";
+import HotspotStats from "components/HotspotStats";
 
 type Props = {
   hotspot: HotspotT;
   speciesName?: string;
-};
-
-type Info = {
-  checklists: number;
-  species: number;
 };
 
 export default function Hotspot({ hotspot, speciesName }: Props) {
@@ -33,7 +30,6 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
   } = useTrip();
-  const [info, setInfo] = React.useState<Info>();
   const { id, lat, lng } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
@@ -49,23 +45,10 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
       removeHotspot(id);
     } else {
       toast.success("Hotspot saved!");
-      appendHotspot({ ...hotspot, species: hotspot.species || info?.species || 0 });
+      appendHotspot({ ...hotspot, species: hotspot.species || 0 });
       if (!notes) setIsEditing(true);
     }
   };
-
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(`/api/hotspot-info?id=${id}`);
-        if (!res.ok) throw new Error();
-        const json = await res.json();
-        setInfo({ checklists: json.numChecklists, species: json.numSpecies });
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, [id]);
 
   const handleSaveNotes = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     saveNotes(id, e.target.value);
@@ -112,7 +95,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
         )}
       </div>
       <Body className="max-h-[65vh] sm:max-h-full pb-10 sm:pb-4 relative min-h-[240px]">
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-6">
           <Button
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
@@ -136,19 +119,10 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             </Button>
           )}
         </div>
-        <div className="flex gap-10 text-gray-500">
-          <div className="flex flex-col text-[#1c6900]">
-            <span className="text-3xl font-bold">{hotspot.species || info?.species || "--"}</span>
-            <span className="text-xs">Species</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl font-bold">{info?.checklists?.toLocaleString() || "--"}</span>
-            <span className="text-xs">Checklists</span>
-          </div>
-        </div>
+        <HotspotStats id={id} speciesTotal={hotspot.species} />
         {showNotes && (
           <>
-            <div className="flex items-center gap-3 mt-4">
+            <div className="flex items-center gap-3 mt-6">
               <h3 className="text-gray-700 font-bold">Notes</h3>
               {showToggleBtn && (
                 <button
@@ -177,6 +151,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </>
         )}
         {selectedSpeciesCode && <ObsList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />}
+        {!selectedSpeciesCode && <RecentSpeciesList locId={id} />}
       </Body>
     </>
   );

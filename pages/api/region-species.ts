@@ -15,10 +15,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           code: code,
           name: it.comName,
           date: it.obsDt,
+          checklistId: it.subId,
+          count: it.howMany,
         });
       }
       return acc;
     }, []);
+
+    res.setHeader("Cache-Control", "max-age=0, s-maxage=600"); //Cache for 10 minutes
 
     res.status(200).json(formatted);
   } catch (error) {

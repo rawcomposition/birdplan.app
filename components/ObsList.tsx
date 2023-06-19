@@ -55,7 +55,7 @@ export default function ObsList({ locId, speciesCode, speciesName }: Props) {
             <tr key={`${locId}-${speciesCode}-${index}`} className="even:bg-neutral-50">
               <td className="pl-1.5 py-[5px]">
                 <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>
-                  {dayjs(date).fromNow()?.replace(" ago", "")?.replace("a ", "1 ")}
+                  {dayjs(date).fromNow()?.replace(" ago", "")?.replace("a ", "1 ").replace("an ", "1 ")}
                 </time>
               </td>
               <td>{count}</td>
