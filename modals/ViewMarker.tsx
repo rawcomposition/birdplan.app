@@ -7,6 +7,7 @@ import Trash from "icons/Trash";
 import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import DirectionsButton from "components/DirectionsButton";
+import InputNotes from "components/InputNotes";
 
 type Props = {
   marker: CustomMarker;
@@ -14,7 +15,7 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { canEdit, removeMarker } = useTrip();
+  const { canEdit, removeMarker, saveMarkerNotes } = useTrip();
   const { id, name, lat, lng } = marker;
 
   const handleRemoveMarker = () => {
@@ -38,6 +39,7 @@ export default function ViewMarker({ marker }: Props) {
             </Button>
           )}
         </div>
+        <InputNotes value={marker.notes} onBlur={(value) => saveMarkerNotes(id, value)} />
       </Body>
     </>
   );

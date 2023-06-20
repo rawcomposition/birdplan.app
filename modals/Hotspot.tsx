@@ -8,7 +8,6 @@ import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
-import TextareaAutosize from "react-textarea-autosize";
 import DirectionsButton from "components/DirectionsButton";
 import { translate, isRegionEnglish } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
@@ -16,6 +15,7 @@ import HotspotStats from "components/HotspotStats";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import RecentChecklistList from "components/RecentChecklistList";
 import clsx from "clsx";
+import InputNotes from "components/InputNotes";
 
 type Props = {
   hotspot: HotspotT;
@@ -28,19 +28,17 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     canEdit,
     appendHotspot,
     removeHotspot,
-    saveNotes,
+    saveHotspotNotes,
     selectedSpeciesCode,
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
   } = useTrip();
-  const { id, lat, lng } = hotspot;
+  const { id, lat, lng, notes } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
-  const [notes, setNotes] = React.useState(trip?.hotspots.find((it) => it.id === id)?.notes);
-  const [isEditing, setIsEditing] = React.useState(isSaved && !notes && canEdit);
   const [tab, setTab] = React.useState(speciesName ? "reports" : "needs");
   const { recentChecklists } = useFetchRecentChecklists(id);
 
@@ -69,16 +67,8 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     } else {
       toast.success("Hotspot saved!");
       appendHotspot({ ...hotspot, species: hotspot.species || 0 });
-      if (!notes) setIsEditing(true);
     }
   };
-
-  const handleSaveNotes = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    saveNotes(id, e.target.value);
-  };
-
-  const showNotes = isSaved && (isEditing || notes || canEdit);
-  const showToggleBtn = canEdit && ((isEditing && !!notes) || !isEditing);
 
   const handleTranslate = async () => {
     setIsTranslating(true);
@@ -143,36 +133,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           )}
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} checklists={recentChecklists} />
-        {showNotes && (
-          <>
-            <div className="flex items-center gap-3 mt-6">
-              <h3 className="text-gray-700 font-bold">Notes</h3>
-              {showToggleBtn && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing((isEditing) => !isEditing)}
-                  className="text-sky-600 text-[13px] font-bold px-2 border border-sky-600 rounded hover:text-sky-700 hover:border-sky-700 transition-colors"
-                >
-                  {isEditing ? "Done" : "Edit"}
-                </button>
-              )}
-            </div>
-            {isEditing ? (
-              <div className="-mx-2">
-                <TextareaAutosize
-                  className="mt-1 input"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  onBlur={handleSaveNotes}
-                  minRows={2}
-                  maxRows={15}
-                />
-              </div>
-            ) : (
-              <div className="mt-1 text-gray-700 text-sm relative group">{notes || "No notes"}</div>
-            )}
-          </>
-        )}
+        {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
         <div className="-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id }) => (

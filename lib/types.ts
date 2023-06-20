@@ -140,6 +140,7 @@ export type CustomMarker = {
   lng: number;
   icon: MarkerIcon;
   id: string;
+  notes?: string;
 };
 
 export type Option = {

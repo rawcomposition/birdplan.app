@@ -25,7 +25,6 @@ export default function RecentChecklistList({ checklists }: Props) {
           </thead>
           <tbody>
             {checklists.map(({ subId, numSpecies, obsDt, obsTime }, index) => {
-              const timeAgo = obsDt && obsTime ? dayjs(`${obsDt} ${obsTime}`).fromNow() : "Unknown";
               const timestamp = dayjs(`${obsDt} ${obsTime}`).format();
               return (
                 <tr key={subId} className="even:bg-neutral-50">

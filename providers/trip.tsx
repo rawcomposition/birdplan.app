@@ -29,7 +29,8 @@ type ContextT = {
   removeMarker: (id: string) => Promise<void>;
   setTargets: (target: Target[]) => Promise<void>;
   removeTarget: (code: string) => Promise<void>;
-  saveNotes: (id: string, notes: string) => Promise<void>;
+  saveHotspotNotes: (id: string, notes: string) => Promise<void>;
+  saveMarkerNotes: (id: string, notes: string) => Promise<void>;
   setTranslatedHotspotName: (id: string, translatedName: string) => Promise<void>;
   resetTranslatedHotspotName: (id: string) => Promise<void>;
   reset: () => void;
@@ -54,7 +55,8 @@ export const TripContext = React.createContext<ContextT>({
   removeMarker: async () => {},
   setTargets: async () => {},
   removeTarget: async () => {},
-  saveNotes: async () => {},
+  saveHotspotNotes: async () => {},
+  saveMarkerNotes: async () => {},
   setTranslatedHotspotName: async () => {},
   resetTranslatedHotspotName: async () => {},
   reset: () => {},
@@ -120,6 +122,15 @@ const TripProvider = ({ children }: Props) => {
     await updateMarkers(trip.id, newMarkers);
   };
 
+  const saveMarkerNotes = async (id: string, notes: string) => {
+    if (!trip) return;
+    const newMarkers = trip.markers.map((it) => {
+      if (it.id === id) return { ...it, notes };
+      return it;
+    });
+    await updateMarkers(trip.id, newMarkers);
+  };
+
   const setTargets = async (targets: Target[]) => {
     if (!trip) return;
     await updateTargets(trip.id, targets);
@@ -131,7 +142,7 @@ const TripProvider = ({ children }: Props) => {
     await updateTargets(trip.id, newTargets);
   };
 
-  const saveNotes = async (id: string, notes: string) => {
+  const saveHotspotNotes = async (id: string, notes: string) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.map((it) => {
       if (it.id === id) return { ...it, notes };
@@ -189,7 +200,8 @@ const TripProvider = ({ children }: Props) => {
         removeMarker,
         setTargets,
         removeTarget,
-        saveNotes,
+        saveHotspotNotes,
+        saveMarkerNotes,
         setTranslatedHotspotName,
         resetTranslatedHotspotName,
         removeInvite,
