@@ -16,6 +16,7 @@ import UploadTargets from "modals/UploadTargets";
 import AddMarker from "modals/AddMarker";
 import ViewMarker from "modals/ViewMarker";
 import Share from "modals/Share";
+import Rename from "modals/Rename";
 
 const modals = [
   {
@@ -59,6 +60,11 @@ const modals = [
     id: "share",
     maxWidth: "400px",
     Component: Share,
+  },
+  {
+    id: "renameTrip",
+    maxWidth: "400px",
+    Component: Rename,
   },
 ];
 

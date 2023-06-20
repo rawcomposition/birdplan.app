@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 import { Trip } from "lib/types";
 import Trash from "icons/Trash";
+import Pencil from "icons/Pencil";
 import VerticalDots from "icons/VerticalDots";
+import { useModal } from "providers/modals";
 
 type Props = {
   trip: Trip;
@@ -11,11 +13,17 @@ type Props = {
 };
 
 export default function TripCard({ trip, onDelete }: Props) {
+  const { open } = useModal();
   const { id, name, hotspots } = trip;
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     onDelete(trip.id);
+  };
+
+  const handleRename = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    open("renameTrip", { trip });
   };
 
   return (
@@ -48,10 +56,19 @@ export default function TripCard({ trip, onDelete }: Props) {
               <div className="py-1">
                 <Menu.Item>
                   <button
-                    onClick={handleDelete}
+                    onClick={handleRename}
                     className="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 hover:text-gray-900"
                   >
-                    <Trash className="mr-2 text-red-700 text-[16px]" aria-hidden="true" />
+                    <Pencil className="mr-2" aria-hidden="true" />
+                    <span>Rename</span>
+                  </button>
+                </Menu.Item>
+                <Menu.Item>
+                  <button
+                    onClick={handleDelete}
+                    className="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 text-red-700 hover:text-red-900"
+                  >
+                    <Trash className="mr-2" aria-hidden="true" />
                     <span>Delete Trip</span>
                   </button>
                 </Menu.Item>
