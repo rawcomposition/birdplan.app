@@ -75,6 +75,7 @@ export default function CreateTrip() {
         startMonth: Number(startMonth.value),
         endMonth: Number(endMonth.value),
         timezone: timezone || "America/New_York",
+        createdAt: dayjs().format(),
       };
 
       const tripId = await createTrip(data);

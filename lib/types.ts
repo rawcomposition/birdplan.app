@@ -108,6 +108,7 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   timezone: string;
+  createdAt: string;
 };
 
 export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId">;

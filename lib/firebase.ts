@@ -126,7 +126,11 @@ export const subscribeToTripTargets = (tripId: string, callback: (trip: Target[]
 export const subscribeToTrips = (callback: (trips: Trip[]) => void): (() => void) => {
   const user = auth.currentUser;
   if (!user) return () => {};
-  const q = fs.query(fs.collection(db, "trip"), fs.where("userIds", "array-contains", user.uid));
+  const q = fs.query(
+    fs.collection(db, "trip"),
+    fs.where("userIds", "array-contains", user.uid),
+    fs.orderBy("createdAt", "desc")
+  );
   return fs.onSnapshot(q, (snapshot) => {
     callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Trip)));
   });
