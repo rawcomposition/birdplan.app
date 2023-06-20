@@ -80,7 +80,7 @@ export default function CreateTrip() {
 
       const tripId = await createTrip(data);
       if (tripId) {
-        router.push(`/${tripId}`);
+        router.push(`/${tripId}/import-targets`);
         close();
       }
     } catch (error) {

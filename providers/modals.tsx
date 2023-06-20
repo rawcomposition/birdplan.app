@@ -11,8 +11,6 @@ import clsx from "clsx";
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import CreateTrip from "modals/CreateTrip";
-import UploadLifelist from "modals/UploadLifelist";
-import UploadTargets from "modals/UploadTargets";
 import AddMarker from "modals/AddMarker";
 import ViewMarker from "modals/ViewMarker";
 import Share from "modals/Share";
@@ -35,16 +33,6 @@ const modals = [
     id: "createTrip",
     maxWidth: "400px",
     Component: CreateTrip,
-  },
-  {
-    id: "uploadLifelist",
-    maxWidth: "320px",
-    Component: UploadLifelist,
-  },
-  {
-    id: "uploadTargets",
-    maxWidth: "320px",
-    Component: UploadTargets,
   },
   {
     id: "addMarker",

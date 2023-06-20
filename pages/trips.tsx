@@ -13,7 +13,7 @@ import LoginModal from "components/LoginModal";
 import { useProfile } from "providers/profile";
 import Footer from "components/Footer";
 
-export default function Planner() {
+export default function Trips() {
   const { trips, loading, deleteTrip } = useTrips();
   const { enableExperimental } = useProfile();
   const { open } = useModal();

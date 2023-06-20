@@ -82,7 +82,7 @@ export default function Rba() {
           </div>
           <div className="-mx-6 mt-6 mb-8">
             <Expand heading="US Life List" count={countryLifelist?.length} className="text-white">
-              <Button size="sm" color="primary" onClick={() => open("uploadLifelist", { isCountry: true })}>
+              <Button size="sm" color="primary" href="/import-lifelist?isCountry=true">
                 Import Life List
               </Button>
             </Expand>

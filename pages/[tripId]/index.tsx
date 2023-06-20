@@ -163,7 +163,7 @@ export default function Trip() {
             )}
             {canEdit && (
               <Expand heading="My Life List" count={lifelist?.length} className="text-white">
-                <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
+                <Button size="sm" color="primary" href={`/import-lifelist/${trip?.id}`}>
                   Import Life List
                 </Button>
               </Expand>

@@ -123,7 +123,7 @@ export default function Targets() {
           </div>
           <div className="-mx-6 mb-8">
             <Expand heading="US Life List" count={lifelist?.length} className="text-white">
-              <Button size="sm" color="primary" onClick={() => open("uploadLifelist")}>
+              <Button size="sm" color="primary" href="/import-lifelist">
                 Import Life List
               </Button>
             </Expand>
