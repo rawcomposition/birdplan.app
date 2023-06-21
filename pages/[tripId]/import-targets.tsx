@@ -130,7 +130,7 @@ export default function ImportTargets() {
                 options={cutoffs.map((it) => ({ value: it, label: it }))}
                 value={cutoff}
                 onChange={setCutoff}
-                menuPortalTarget={document.body}
+                menuPortalTarget={typeof document !== "undefined" && document.body}
               />
             </div>
           </div>
