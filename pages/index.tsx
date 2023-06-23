@@ -51,7 +51,7 @@ export default function Planner() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Bird Planner</title>
+        <title>Bird Planner - Plan Your Next Birding Adventure</title>
       </Head>
 
       <header className="bg-white border-b border-gray-100 py-4 shrink-0 flex items-center">

@@ -34,7 +34,7 @@ export default function Accept() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Bird Planner</title>
+        <title>Accept Invite | Bird Planner</title>
       </Head>
 
       <Header showAccountOnSmScreens />

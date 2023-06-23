@@ -28,7 +28,7 @@ const iconMap: Record<MarkerIcon, any> = {
 };
 
 const defaultColors: Record<MarkerIcon, string> = {
-  [MarkerIcon.HOTSPOT]: "#fac500",
+  [MarkerIcon.HOTSPOT]: "#e57701",
   [MarkerIcon.HOUSE]: "#0369a1",
   [MarkerIcon.TENT]: "#65a30d",
   [MarkerIcon.AIRBNB]: "#ff385b",

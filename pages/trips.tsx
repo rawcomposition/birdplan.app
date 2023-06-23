@@ -22,7 +22,7 @@ export default function Trips() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Bird Planner</title>
+        <title>My Trips | Bird Planner</title>
       </Head>
 
       <Header showAccountOnSmScreens />
@@ -30,7 +30,7 @@ export default function Trips() {
         <Sidebar className="sm:hidden" />
         <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
           <div className="flex gap-8 items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-700">Your trips</h1>
+            <h1 className="text-3xl font-bold text-gray-700">My Trips</h1>
             <Button color="pillPrimary" size="md" href="/create" className="pr-6">
               <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
             </Button>
