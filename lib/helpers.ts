@@ -194,7 +194,7 @@ export const getTzFromLatLng = async (lat: number, lng: number) => {
 };
 
 export const dateTimeToRelative = (date: string, timezone?: string) => {
-  if (!timezone) return "";
+  if (!timezone || !date) return "";
   const today = dayjs().tz(timezone).format("YYYY-MM-DD");
   const yesterday = dayjs().tz(timezone).subtract(1, "day").format("YYYY-MM-DD");
   const dateFormatted = dayjs(date).tz(timezone).format("YYYY-MM-DD");

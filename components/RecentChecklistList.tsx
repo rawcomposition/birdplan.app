@@ -25,12 +25,13 @@ export default function RecentChecklistList({ checklists }: Props) {
           </thead>
           <tbody>
             {checklists.map(({ subId, numSpecies, obsDt, obsTime }, index) => {
-              const timestamp = dayjs(`${obsDt} ${obsTime}`).format();
+              const time = obsTime || "10:00";
+              const timestamp = dayjs(`${obsDt} ${time}`).format();
               return (
                 <tr key={subId} className="even:bg-neutral-50">
                   <td className="pl-1.5 py-[5px]">
-                    <time dateTime={timestamp} title={`${obsDt} ${obsTime}`}>
-                      {dateTimeToRelative(`${obsDt} ${obsTime}`, timezone)}
+                    <time dateTime={timestamp} title={`${obsDt} ${time}`}>
+                      {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
                     </time>
                   </td>
                   <td>{numSpecies}</td>

@@ -7,6 +7,12 @@ import Pencil from "icons/Pencil";
 import VerticalDots from "icons/VerticalDots";
 import { useModal } from "providers/modals";
 import { images } from "../images";
+import Info from "icons/Info";
+
+type Image = {
+  url: string;
+  by?: string;
+};
 
 type Props = {
   trip: Trip;
@@ -30,15 +36,21 @@ export default function TripCard({ trip, onDelete }: Props) {
     open("renameTrip", { trip });
   };
 
-  const imageId = images[stateCode as keyof typeof images] || images[countryCode as keyof typeof images];
+  const image: Image = images[stateCode as keyof typeof images] || images[countryCode as keyof typeof images];
 
   return (
     <Link href={`/${id}`}>
       <div className="bg-white rounded-lg shadow relative p-4">
+        {image?.by && (
+          <div className="absolute left-5 top-5 text-xs text-gray-600 rounded-full bg-white/50 group flex gap-1">
+            <Info className="text-[14px] p-0.5" />
+            <span className="hidden group-hover:block pr-2">Image by {image.by}</span>
+          </div>
+        )}
         <img
           src={
-            imageId
-              ? `https://cdn.download.ams.birds.cornell.edu/api/v1/asset/${imageId}/640`
+            image
+              ? `https://cdn.download.ams.birds.cornell.edu/api/v1/asset/${image.url}/640`
               : `https://source.unsplash.com/d2uHXWTkGn4/600`
           }
           className="w-full h-36 object-cover rounded-lg mb-3 object-[0_20%]"

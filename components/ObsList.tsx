@@ -28,7 +28,10 @@ export default function ObsList({ locId, speciesCode, recentChecklists }: Props)
       const recentChecklist = recentChecklists?.find((checklist) => checklist.subId === it.checklistId);
       return {
         ...it,
-        date: recentChecklist ? `${recentChecklist.obsDt} ${recentChecklist.obsTime}` : `${it.date} 9:00 am`,
+        date:
+          recentChecklist && recentChecklist.obsTime
+            ? `${recentChecklist.obsDt} ${recentChecklist.obsTime}`
+            : `${it.date} 9:00 am`,
       };
     }) || [];
 
