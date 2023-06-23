@@ -135,7 +135,7 @@ export default function CreateTrip() {
                   />
                 </div>
               </div>
-              <Field label="Country">
+              <Field label="Country Region">
                 <RegionSelect
                   type="country"
                   parent="world"
@@ -144,7 +144,7 @@ export default function CreateTrip() {
                   menuPortalTarget={typeof document !== "undefined" && document.body}
                 />
               </Field>
-              <Field label={requireSubregion ? "State/Province" : "State/Province"} isOptional={!requireSubregion}>
+              <Field label="State/Province Region" isOptional={!requireSubregion}>
                 <RegionSelect
                   type="subnational1"
                   parent={country?.value}
@@ -156,7 +156,7 @@ export default function CreateTrip() {
                 />
               </Field>
               {state?.length === 1 && (
-                <Field label="County" isOptional>
+                <Field label="County Region" isOptional>
                   <RegionSelect
                     type="subnational2"
                     parent={state?.[0].value}
