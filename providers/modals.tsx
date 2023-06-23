@@ -10,7 +10,6 @@ import clsx from "clsx";
 // modals
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
-import CreateTrip from "modals/CreateTrip";
 import AddMarker from "modals/AddMarker";
 import ViewMarker from "modals/ViewMarker";
 import Share from "modals/Share";
@@ -28,11 +27,6 @@ const modals = [
     maxWidth: "400px",
     hideBg: true,
     Component: PersonalLocation,
-  },
-  {
-    id: "createTrip",
-    maxWidth: "400px",
-    Component: CreateTrip,
   },
   {
     id: "addMarker",
@@ -56,8 +50,10 @@ const modals = [
   },
 ];
 
+type ModalId = "hotspot" | "personalLocation" | "addMarker" | "viewMarker" | "share" | "renameTrip";
+
 type Context = {
-  open: (id: string, props?: KeyValue) => void;
+  open: (id: ModalId, props?: KeyValue) => void;
   close: () => void;
 };
 
@@ -71,13 +67,13 @@ type Props = {
 };
 
 const ModalProvider = ({ children }: Props) => {
-  const [modalId, setModalId] = React.useState<string | null>(null);
+  const [modalId, setModalId] = React.useState<ModalId | null>(null);
   const [closing, setClosing] = React.useState(false);
   const [modalProps, setModalProps] = React.useState<KeyValue>({});
   const modal = modals.find((it) => it.id === modalId) || null;
   const Component = modal?.Component as React.ElementType;
 
-  const open = React.useCallback((id: string, props?: KeyValue) => {
+  const open = React.useCallback((id: ModalId, props?: KeyValue) => {
     setModalId(id);
     setModalProps(props || {});
   }, []);

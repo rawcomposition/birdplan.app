@@ -5,9 +5,11 @@ import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
+import { useProfile } from "providers/profile";
 
 export default function Accept() {
   const { user } = useUser();
+  const { lifelist } = useProfile();
   const router = useRouter();
   const { inviteId } = router.query;
   const uid = user?.uid;
@@ -25,7 +27,7 @@ export default function Accept() {
         },
       });
       const { tripId } = await res.json();
-      router.push(`/${tripId}`);
+      router.push(!!lifelist?.length ? `/${tripId}` : `/import-lifelist?tripId=${tripId}`);
     })();
   }, [uid]);
 

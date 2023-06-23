@@ -31,7 +31,7 @@ export default function Trips() {
         <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
           <div className="flex gap-8 items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-700">Your trips</h1>
-            <Button color="pillPrimary" size="md" onClick={() => open("createTrip")} className="pr-6">
+            <Button color="pillPrimary" size="md" href="/create" className="pr-6">
               <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
             </Button>
           </div>
@@ -44,9 +44,9 @@ export default function Trips() {
           {!loading && trips.length === 0 && (
             <p className="text-gray-500 text-lg">
               You don&apos;t have any trips yet.{" "}
-              <button type="button" className="text-blue-600 font-bold" onClick={() => open("createTrip")}>
+              <Link className="text-blue-600 font-bold" href="/create">
                 Create one!
-              </button>
+              </Link>
             </p>
           )}
           {enableExperimental && (
