@@ -147,7 +147,7 @@ export default function Trip() {
                     <SpeciesRow key={target.code} {...target} />
                   ))}
                 </ul>
-                <Button size="sm" color="primary" onClick={() => open("uploadTargets")}>
+                <Button size="sm" color="primary" href={`/${trip?.id}/import-targets`}>
                   Import Targets
                 </Button>
               </Expand>
