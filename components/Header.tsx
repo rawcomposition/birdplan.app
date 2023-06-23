@@ -30,6 +30,11 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
 
   return (
     <header className="bg-slate-900 h-[60px] shrink-0 flex items-center">
+      {!isOnline && (
+        <div className="bg-red-500 text-white px-2 py-0.5 text-xs absolute text-center w-full left-0 top-14 z-20">
+          No Internet Connection
+        </div>
+      )}
       <Link
         href="/trips"
         className={clsx("w-80 flex items-center", isSubPage && "hidden md:flex")}
@@ -56,11 +61,6 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
             )}
             <h1 className="text-gray-400 pr-5 md:pl-5 py-1.5 flex items-center">{title}</h1>
           </nav>
-        )}
-        {!isOnline && (
-          <div className="bg-red-500 text-white px-2 py-0.5 text-xs absolute text-center w-full left-0 top-14 z-20">
-            No Internet Connection
-          </div>
         )}
       </div>
       {isOwner && (
