@@ -33,10 +33,11 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
   } = useTrip();
-  const { id, lat, lng, notes } = hotspot;
+  const { id, lat, lng } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
+  const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(speciesName ? "reports" : "needs");

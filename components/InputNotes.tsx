@@ -40,7 +40,7 @@ export default function InputNotes({ value, onBlur }: Props) {
           />
         </div>
       ) : (
-        <div className="mt-1 text-gray-700 text-sm relative group">{notes || "No notes"}</div>
+        <div className="mt-1 text-gray-700 text-sm relative group whitespace-pre">{notes || "No notes"}</div>
       )}
     </>
   );
