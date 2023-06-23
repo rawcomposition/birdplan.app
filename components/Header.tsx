@@ -57,7 +57,11 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
             <h1 className="text-gray-400 pr-5 md:pl-5 py-1.5 flex items-center">{title}</h1>
           </nav>
         )}
-        {!isOnline && <div className="bg-red-500 text-white px-2 py-1 rounded text-xs">No Internet Connection</div>}
+        {!isOnline && (
+          <div className="bg-red-500 text-white px-2 py-0.5 text-xs absolute text-center w-full left-0 top-14 z-20">
+            No Internet Connection
+          </div>
+        )}
       </div>
       {isOwner && (
         <button
