@@ -23,6 +23,7 @@ import ShareIcon from "icons/Share";
 import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
+import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
 
 export default function Trip() {
   const { open } = useModal();
@@ -40,9 +41,8 @@ export default function Trip() {
     savedIdStr,
   });
 
-  const targetSpecies = targets.filter((it) => !lifelist.includes(it.code)) || [];
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const selectedSpecies = [...recentSpecies, ...targetSpecies].find((it) => it.code === selectedSpeciesCode);
+  const selectedSpecies = [...recentSpecies, ...targets].find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
@@ -140,18 +140,7 @@ export default function Trip() {
                 </>
               )}
             </Expand>
-            {canEdit && (
-              <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
-                <ul className="divide-y divide-gray-800 mb-2">
-                  {targetSpecies.map((target) => (
-                    <SpeciesRow key={target.code} {...target} />
-                  ))}
-                </ul>
-                <Button size="sm" color="primary" href={`/${trip?.id}/import-targets`}>
-                  Import Targets
-                </Button>
-              </Expand>
-            )}
+            <TargetSpeciesSidebarBlock />
             {canEdit && (
               <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
                 <ul className="divide-y divide-gray-800">

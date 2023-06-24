@@ -16,7 +16,6 @@ import Footer from "components/Footer";
 export default function Trips() {
   const { trips, loading, deleteTrip } = useTrips();
   const { enableExperimental } = useProfile();
-  const { open } = useModal();
   const { closeSidebar } = useUI();
 
   return (

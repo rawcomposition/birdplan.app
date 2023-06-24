@@ -146,6 +146,12 @@ export const subscribeToProfile = (callback: (profile: Profile) => void): (() =>
   });
 };
 
+export const subscribeToProfiles = (ids: string[], callback: (profiles: Profile[]) => void): (() => void) => {
+  return fs.onSnapshot(fs.query(fs.collection(db, "profile"), fs.where(fs.documentId(), "in", ids)), (snapshot) => {
+    callback(snapshot.docs.map((doc) => ({ ...(doc.data() as any), id: doc.id } as Profile)));
+  });
+};
+
 export const subscribeToTripInvites = (id: string, callback: (invites: Invite[]) => void): (() => void) => {
   const user = auth.currentUser;
   if (!user) return () => {};
