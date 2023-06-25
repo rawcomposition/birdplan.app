@@ -1,11 +1,7 @@
 import React from "react";
 import Header from "components/Header";
 import Head from "next/head";
-import Button from "components/Button";
 import TripCard from "components/TripCard";
-import Sidebar from "components/Sidebar";
-import Link from "next/link";
-import ArrowRight from "icons/ArrowRight";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import { images } from "../images";
@@ -35,7 +31,6 @@ export default function ImagePreviews() {
                     hotspots: [],
                   } as any
                 }
-                onDelete={() => {}}
               />
             ))}
           </div>
