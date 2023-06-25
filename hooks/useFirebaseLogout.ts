@@ -9,14 +9,12 @@ export default function useFirebaseLogout() {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
   const { reset: resetProfile } = useProfile();
-  const { reset: resetTrip } = useTrip();
 
   const logout = async () => {
     setLoading(true);
     try {
       await signOut(auth);
       resetProfile();
-      resetTrip();
       router.push("/");
     } catch (error) {
       alert("Error logging out");
