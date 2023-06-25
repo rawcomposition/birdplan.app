@@ -24,12 +24,19 @@ import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
 import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
+import Feather from "icons/Feather";
+import Bullseye from "icons/Bullseye";
+import Pencil from "icons/Pencil";
+import Trash from "icons/Trash";
+import { deleteTrip } from "lib/firebase";
+import { useRouter } from "next/router";
 
 export default function Trip() {
   const { open } = useModal();
+  const router = useRouter();
   const [showAll, setShowAll] = React.useState(false);
   const { lifelist } = useProfile();
-  const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode, reset } = useTrip();
+  const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const { closeSidebar } = useUI();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const isMultiRegion = trip?.region.includes(",");
@@ -84,6 +91,14 @@ export default function Trip() {
     setSelectedSpeciesCode(undefined);
   };
 
+  const handleDelete = async () => {
+    if (!trip) return;
+    if (confirm("Are you sure you want to delete this trip?")) {
+      await deleteTrip(trip.id);
+      router.push("/trips");
+    }
+  };
+
   const tripIsLoaded = !!trip;
   const tripIsNew = trip?.hotspots.length === 0;
 
@@ -93,10 +108,6 @@ export default function Trip() {
       call();
     }
   }, [tripIsLoaded, tripIsNew, call]);
-
-  React.useEffect(() => {
-    return () => reset();
-  }, [reset]);
 
   return (
     <div className="flex flex-col h-full">
@@ -116,11 +127,11 @@ export default function Trip() {
             </label>
           </div>
           <div>
-            <Expand heading="Saved Hotspots" className="text-white" defaultOpen count={savedHotspots.length}>
+            <Expand heading="Saved Hotspots" count={savedHotspots.length}>
               <HotspotList />
             </Expand>
 
-            <Expand heading="Custom Markers" className="text-white" count={trip?.markers?.length}>
+            <Expand heading="Custom Markers" count={trip?.markers?.length}>
               <ul className="space-y-2 mb-4 text-gray-200">
                 {trip?.markers?.map((marker) => (
                   <CustomMarkerRow key={marker.id} {...marker} />
@@ -142,7 +153,7 @@ export default function Trip() {
             </Expand>
             <TargetSpeciesSidebarBlock />
             {canEdit && (
-              <Expand heading="Recent Needs" className="text-white" count={recentSpecies.length}>
+              <Expand heading="Recent Needs" count={recentSpecies.length}>
                 <ul className="divide-y divide-gray-800">
                   {recentSpecies.map(({ code, name }) => (
                     <SpeciesRow key={code} name={name} code={code} />
@@ -151,26 +162,44 @@ export default function Trip() {
               </Expand>
             )}
             {canEdit && (
-              <Expand heading="My Life List" count={lifelist?.length} className="text-white">
-                <Button size="sm" color="primary" href={`/import-lifelist/${trip?.id}`}>
-                  Import Life List
-                </Button>
+              <Expand heading="Settings">
+                <div className="text-sm text-gray-400 flex flex-col gap-3">
+                  <Link href={`/import-lifelist?tripId=${trip?.id}`} className="flex items-center gap-2 text-gray-300">
+                    <Feather aria-hidden="true" />
+                    {!!lifelist?.length
+                      ? `Update Life List (${lifelist?.length?.toLocaleString()})`
+                      : "Import Life List"}
+                  </Link>
+                  <Link href={`/${trip?.id}/import-targets`} className="flex items-center gap-2 text-gray-300">
+                    <Bullseye aria-hidden="true" />
+                    {!!targets?.length ? "Update Targets" : "Import Targets"}
+                  </Link>
+                  <button
+                    onClick={() => open("renameTrip", { trip })}
+                    className="flex items-center gap-2 text-gray-300"
+                  >
+                    <Pencil aria-hidden="true" />
+                    Rename Trip
+                  </button>
+                  {isOwner && (
+                    <button
+                      type="button"
+                      className="text-gray-300 flex items-center gap-2"
+                      onClick={() => open("share")}
+                    >
+                      <ShareIcon />
+                      Share Trip
+                    </button>
+                  )}
+                  <button onClick={handleDelete} className="flex items-center gap-2 text-red-500">
+                    <Trash aria-hidden="true" />
+                    Delete Trip
+                  </button>
+                </div>
               </Expand>
             )}
           </div>
-          {isOwner && (
-            <div className={clsx("mt-4 ml-4 text-sm lg:hidden", isMultiRegion && "mb-8")}>
-              <button
-                type="button"
-                className="text-gray-400 inline-flex items-center gap-2"
-                onClick={() => open("share")}
-              >
-                <ShareIcon className="" />
-                Share
-              </button>
-            </div>
-          )}
-          {trip && !isMultiRegion && (
+          {trip && !isMultiRegion ? (
             <div
               className={clsx("mb-8 ml-4 text-sm text-gray-400 flex flex-col gap-2", isOwner ? "mt-2 lg:mt-4" : "mt-4")}
             >
@@ -189,6 +218,8 @@ export default function Trip() {
                 <ExternalIcon className="text-xs" /> Illustrated Checklist
               </Link>
             </div>
+          ) : (
+            <div className="mb-12" />
           )}
         </Sidebar>
 

@@ -33,7 +33,6 @@ type ContextT = {
   saveMarkerNotes: (id: string, notes: string) => Promise<void>;
   setTranslatedHotspotName: (id: string, translatedName: string) => Promise<void>;
   resetTranslatedHotspotName: (id: string) => Promise<void>;
-  reset: () => void;
   removeInvite: (inviteId: string, uid?: string) => Promise<void>;
 };
 
@@ -59,7 +58,6 @@ export const TripContext = React.createContext<ContextT>({
   saveMarkerNotes: async () => {},
   setTranslatedHotspotName: async () => {},
   resetTranslatedHotspotName: async () => {},
-  reset: () => {},
   removeInvite: async () => {},
 });
 
@@ -77,6 +75,14 @@ const TripProvider = ({ children }: Props) => {
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
+
+  React.useEffect(() => {
+    return () => {
+      setTrip(null);
+      setSelectedSpeciesCode(undefined);
+      setTripTargets([]);
+    };
+  }, [id]);
 
   React.useEffect(() => {
     if (!id) return;
@@ -177,11 +183,6 @@ const TripProvider = ({ children }: Props) => {
     }
   };
 
-  const reset = React.useCallback(() => {
-    setTrip(null);
-    setSelectedSpeciesCode(undefined);
-  }, []);
-
   return (
     <TripContext.Provider
       value={{
@@ -205,7 +206,6 @@ const TripProvider = ({ children }: Props) => {
         setTranslatedHotspotName,
         resetTranslatedHotspotName,
         removeInvite,
-        reset,
       }}
     >
       {children}

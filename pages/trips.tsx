@@ -14,7 +14,7 @@ import { useProfile } from "providers/profile";
 import Footer from "components/Footer";
 
 export default function Trips() {
-  const { trips, loading, deleteTrip } = useTrips();
+  const { trips, loading } = useTrips();
   const { enableExperimental } = useProfile();
   const { closeSidebar } = useUI();
 
@@ -36,7 +36,7 @@ export default function Trips() {
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {trips.map((trip) => (
-              <TripCard key={trip.id} trip={trip} onDelete={deleteTrip} />
+              <TripCard key={trip.id} trip={trip} />
             ))}
           </div>
           {loading && <p className="text-gray-500 text-lg">Loading...</p>}
