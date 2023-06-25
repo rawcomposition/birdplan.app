@@ -12,6 +12,7 @@ interface ContextT extends Profile {
 }
 
 const initialState: Profile = {
+  id: "",
   lifelist: [],
   countryLifelist: [],
   radius: 50,
@@ -70,6 +71,7 @@ const ProfileProvider = ({ children }: Props) => {
   return (
     <ProfileContext.Provider
       value={{
+        id: state.id,
         enableExperimental: state.enableExperimental,
         lifelist: state.lifelist || [],
         countryLifelist: state.countryLifelist || [],
