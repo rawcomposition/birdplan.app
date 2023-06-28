@@ -16,6 +16,9 @@ import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import RecentChecklistList from "components/RecentChecklistList";
 import clsx from "clsx";
 import InputNotes from "components/InputNotes";
+import { Menu } from "@headlessui/react";
+import VerticalDots from "icons/VerticalDots";
+import { months } from "lib/helpers";
 
 type Props = {
   hotspot: HotspotT;
@@ -132,6 +135,55 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
               )}
             </Button>
           )}
+          <Menu as="div" className="relative inline-block text-left">
+            <Menu.Button className="text-[13px] rounded-md text-gray-600 bg-gray-100 px-1.5 py-[6px] inline-flex items-center">
+              <VerticalDots />
+            </Menu.Button>
+            <Menu.Items className="absolute text-sm -right-2 top-8 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
+              <Menu.Item>
+                <a href={`https://ebird.org/hotspot/${id}`} target="_blank" rel="noreferrer" className="text-sky-600">
+                  View on eBird
+                </a>
+              </Menu.Item>
+              <Menu.Item>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-600"
+                >
+                  View on Google Maps
+                </a>
+              </Menu.Item>
+              <Menu.Item>
+                <h4 className="font-bold text-gray-700 text-xs mt-2">Targets</h4>
+              </Menu.Item>
+              <Menu.Item>
+                <a
+                  href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-600"
+                >
+                  All Year
+                </a>
+              </Menu.Item>
+              {trip?.startMonth && trip?.endMonth && (
+                <Menu.Item>
+                  <a
+                    href={`https://ebird.org/targets?r1=${id}&bmo=${trip.startMonth}&emo=${trip.endMonth}&r2=world&t2=life`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sky-600"
+                  >
+                    {trip.startMonth === trip.endMonth
+                      ? months[trip.startMonth - 1]
+                      : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`}
+                  </a>
+                </Menu.Item>
+              )}
+            </Menu.Items>
+          </Menu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} checklists={recentChecklists} />
         {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}

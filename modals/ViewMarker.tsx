@@ -8,6 +8,8 @@ import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
+import { Menu } from "@headlessui/react";
+import VerticalDots from "icons/VerticalDots";
 
 type Props = {
   marker: CustomMarker;
@@ -38,6 +40,23 @@ export default function ViewMarker({ marker }: Props) {
               <Trash className="mr-1 -mt-[3px] text-red-700" /> Delete
             </Button>
           )}
+          <Menu as="div" className="relative inline-block text-left">
+            <Menu.Button className="text-[13px] rounded-md text-gray-600 bg-gray-100 px-1.5 py-[6px] inline-flex items-center">
+              <VerticalDots />
+            </Menu.Button>
+            <Menu.Items className="absolute text-sm -left-2 top-8 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
+              <Menu.Item>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-600"
+                >
+                  View on Google Maps
+                </a>
+              </Menu.Item>
+            </Menu.Items>
+          </Menu>
         </div>
         <InputNotes value={marker.notes} onBlur={(value) => saveMarkerNotes(id, value)} />
       </Body>

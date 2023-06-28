@@ -1,9 +1,10 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
-
 import { Hotspot as HotspotT } from "lib/types";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
+import { Menu } from "@headlessui/react";
+import VerticalDots from "icons/VerticalDots";
 
 type Props = {
   hotspot: HotspotT;
@@ -22,6 +23,23 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
       <Body className="relative min-h-[240px]">
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} />
+          <Menu as="div" className="relative inline-block text-left">
+            <Menu.Button className="text-[13px] rounded-md text-gray-600 bg-gray-100 px-1.5 py-[6px] inline-flex items-center">
+              <VerticalDots />
+            </Menu.Button>
+            <Menu.Items className="absolute text-sm -left-2 top-8 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
+              <Menu.Item>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-600"
+                >
+                  View on Google Maps
+                </a>
+              </Menu.Item>
+            </Menu.Items>
+          </Menu>
         </div>
         {speciesCode && <ObsList locId={id} speciesCode={speciesCode} />}
       </Body>
