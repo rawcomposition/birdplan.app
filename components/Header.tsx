@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { useTrip } from "providers/trip";
 import AngleLeft from "icons/AngleLeft";
 import { useModal } from "providers/modals";
+import { useUser } from "providers/user";
 
 type Props = {
   title?: string;
@@ -24,6 +25,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
   const { toggleSidebar, closeSidebar } = useUI();
   const { isOwner } = useTrip();
   const { open } = useModal();
+  const { user } = useUser();
 
   const router = useRouter();
   const isSubPage = router.pathname !== "/trips";
@@ -36,7 +38,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
         </div>
       )}
       <Link
-        href="/trips"
+        href={user?.uid ? "/trips" : "/"}
         className={clsx("w-80 flex items-center", isSubPage && "hidden md:flex")}
         onClick={closeSidebar}
       >
@@ -44,7 +46,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
         <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
       </Link>
       {isSubPage && (
-        <Link href="/trips" className="md:hidden pl-3 pr-5 py-3" onClick={closeSidebar}>
+        <Link href={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3" onClick={closeSidebar}>
           <AngleLeft className="text-gray-500 text-2xl flex items-center" />
         </Link>
       )}

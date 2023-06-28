@@ -96,6 +96,7 @@ export type Trip = {
   id: string;
   userIds: string[];
   ownerId: string;
+  ownerName: string;
   name: string;
   region: string;
   bounds: {
@@ -112,7 +113,7 @@ export type Trip = {
   createdAt: string;
 };
 
-export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId">;
+export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId" | "ownerName">;
 
 export type Observation = {
   checklistId: string;

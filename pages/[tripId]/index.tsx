@@ -30,6 +30,7 @@ import Pencil from "icons/Pencil";
 import Trash from "icons/Trash";
 import { deleteTrip } from "lib/firebase";
 import { useRouter } from "next/router";
+import { useUser } from "providers/user";
 
 export default function Trip() {
   const { open } = useModal();
@@ -38,6 +39,7 @@ export default function Trip() {
   const { lifelist } = useProfile();
   const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const { closeSidebar } = useUI();
+  const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const isMultiRegion = trip?.region.includes(",");
 
@@ -117,7 +119,7 @@ export default function Trip() {
         </Head>
       )}
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <main className="flex h-[calc(100%-60px)]">
         <Sidebar noPadding>
           <div className={clsx("mb-4 mt-6 mx-6", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>

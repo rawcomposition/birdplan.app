@@ -72,7 +72,12 @@ export const updateMarkers = async (tripId: string, markers: CustomMarker[]) => 
 export const createTrip = async (trip: TripInput): Promise<string | null> => {
   const user = auth.currentUser;
   if (!user) return null;
-  const doc = await fs.addDoc(fs.collection(db, "trip"), { ...trip, userIds: [user.uid], ownerId: user.uid });
+  const doc = await fs.addDoc(fs.collection(db, "trip"), {
+    ...trip,
+    userIds: [user.uid],
+    ownerId: user.uid,
+    ownerName: user.displayName,
+  });
   return doc.id;
 };
 

@@ -12,7 +12,7 @@ export default function TargetSpeciesSidebarBlock() {
   const { targets, trip, invites } = useTrip();
   const { profiles } = useProfiles(trip?.userIds);
   const { user } = useUser();
-  const myUid = user?.uid;
+  const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
 
   const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
@@ -37,6 +37,9 @@ export default function TargetSpeciesSidebarBlock() {
 
   return (
     <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
+      {!user?.uid && (trip?.userIds?.length || 0) > 1 && (
+        <p className="text-gray-400/80 text-[12px] mb-2.5">Showing targets for {trip?.ownerName}</p>
+      )}
       {options.length > 1 && (
         <Menu as="div" className="mb-2.5 text-left relative">
           <div>

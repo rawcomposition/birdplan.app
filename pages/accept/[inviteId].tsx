@@ -13,9 +13,11 @@ export default function Accept() {
   const router = useRouter();
   const { inviteId } = router.query;
   const uid = user?.uid;
+  const hasLifelistRef = React.useRef(!!lifelist?.length);
+  hasLifelistRef.current = !!lifelist?.length;
 
   React.useEffect(() => {
-    if (!uid) return;
+    if (!uid || !inviteId) return;
     (async () => {
       const token = await auth.currentUser?.getIdToken();
       const res = await fetch("/api/accept", {
@@ -27,9 +29,9 @@ export default function Accept() {
         },
       });
       const { tripId } = await res.json();
-      router.push(!!lifelist?.length ? `/${tripId}` : `/import-lifelist?tripId=${tripId}`);
+      router.push(hasLifelistRef.current ? `/${tripId}` : `/import-lifelist?tripId=${tripId}`);
     })();
-  }, [uid]);
+  }, [uid, inviteId]);
 
   return (
     <div className="flex flex-col h-full">
