@@ -195,6 +195,14 @@ export type RecentChecklist = {
   };
 };
 
+export type RecentSpecies = {
+  code: string;
+  name: string;
+  date: string;
+  checklistId: string;
+  count: number;
+};
+
 // BF: Bird Finder
 
 export type BFTarget = {

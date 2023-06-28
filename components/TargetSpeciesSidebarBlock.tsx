@@ -8,6 +8,7 @@ import { Menu, Transition } from "@headlessui/react";
 import AngleDown from "icons/AngleDown";
 
 export default function TargetSpeciesSidebarBlock() {
+  const [search, setSearch] = React.useState("");
   const [selectedUid, setSelectedUid] = React.useState("");
   const { targets, trip, invites } = useTrip();
   const { profiles } = useProfiles(trip?.userIds);
@@ -17,6 +18,7 @@ export default function TargetSpeciesSidebarBlock() {
 
   const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
   const targetSpecies = targets.filter((it) => !lifelist.includes(it.code)) || [];
+  const filteredTargets = targetSpecies.filter((it) => it.name.toLowerCase().includes(search.toLowerCase()));
 
   const inviteOptions = invites
     ?.filter(({ uid }) => !!uid)
@@ -36,7 +38,7 @@ export default function TargetSpeciesSidebarBlock() {
   const selectedOption = options.find((it) => it.uid === actualUid);
 
   return (
-    <Expand heading="Target Species" className="text-white" count={targetSpecies.length}>
+    <Expand heading="Target Species" className="text-white" count={targetSpecies.length} focusInput>
       {!user?.uid && (trip?.userIds?.length || 0) > 1 && (
         <p className="text-gray-400/80 text-[12px] mb-2.5">Showing targets for {trip?.ownerName}</p>
       )}
@@ -77,8 +79,17 @@ export default function TargetSpeciesSidebarBlock() {
           </Transition>
         </Menu>
       )}
+      {targetSpecies.length > 0 && (
+        <input
+          type="search"
+          className="w-full px-2 py-[3px] text-gray-400/80 text-[12px] bg-gray-800 rounded-md mb-2 focus:outline-none focus:border-gray-600/90 border border-transparent"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search"
+        />
+      )}
       <ul className="divide-y divide-gray-800 mb-2">
-        {targetSpecies.map((target) => (
+        {filteredTargets.map((target) => (
           <SpeciesRow key={target.code} {...target} />
         ))}
       </ul>

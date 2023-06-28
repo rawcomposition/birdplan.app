@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
 import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
+import RecentSpeciesSidebarBlock from "components/RecentSpeciesSidebarBlock";
 import Feather from "icons/Feather";
 import Bullseye from "icons/Bullseye";
 import Pencil from "icons/Pencil";
@@ -154,15 +155,7 @@ export default function Trip() {
               )}
             </Expand>
             <TargetSpeciesSidebarBlock />
-            {canEdit && (
-              <Expand heading="Recent Needs" count={recentSpecies.length}>
-                <ul className="divide-y divide-gray-800">
-                  {recentSpecies.map(({ code, name }) => (
-                    <SpeciesRow key={code} name={name} code={code} />
-                  ))}
-                </ul>
-              </Expand>
-            )}
+            {canEdit && <RecentSpeciesSidebarBlock recentSpecies={recentSpecies} />}
             {canEdit && (
               <Expand heading="Settings">
                 <div className="text-sm text-gray-400 flex flex-col gap-3">
