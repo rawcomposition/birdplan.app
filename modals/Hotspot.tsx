@@ -108,7 +108,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </div>
         )}
       </div>
-      <Body className="max-h-[65vh] sm:max-h-full pb-10 sm:pb-4 relative min-h-[240px]">
+      <Body className="pb-10 sm:pb-4">
         <div className="flex gap-2 mb-6">
           <Button
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
@@ -135,7 +135,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} checklists={recentChecklists} />
         {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
-        <div className="-mx-6 mb-3">
+        <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id }) => (
               <button

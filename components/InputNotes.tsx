@@ -8,11 +8,21 @@ type Props = {
 };
 
 export default function InputNotes({ value, onBlur }: Props) {
+  const [canRender, setCanRender] = React.useState(false);
   const { canEdit } = useTrip();
   const [notes, setNotes] = React.useState(value);
   const [isEditing, setIsEditing] = React.useState(!notes && canEdit);
 
   const showToggleBtn = canEdit && ((isEditing && !!notes) || !isEditing);
+
+  React.useEffect(() => {
+    // Hack to prevent modal not fading in
+    setTimeout(() => {
+      setCanRender(true);
+    }, 0);
+  }, []);
+
+  if (!canRender) return null;
 
   return (
     <>

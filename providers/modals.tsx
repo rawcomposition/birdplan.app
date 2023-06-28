@@ -18,35 +18,32 @@ import Rename from "modals/Rename";
 const modals = [
   {
     id: "hotspot",
-    maxWidth: "450px",
     hideBg: true,
     Component: Hotspot,
   },
   {
     id: "personalLocation",
-    maxWidth: "400px",
     hideBg: true,
     Component: PersonalLocation,
   },
   {
     id: "addMarker",
-    maxWidth: "400px",
     Component: AddMarker,
+    small: true,
   },
   {
     id: "viewMarker",
-    maxWidth: "400px",
     Component: ViewMarker,
+    small: true,
   },
   {
     id: "share",
-    maxWidth: "400px",
     Component: Share,
   },
   {
     id: "renameTrip",
-    maxWidth: "400px",
     Component: Rename,
+    small: true,
   },
 ];
 
@@ -94,12 +91,7 @@ const ModalProvider = ({ children }: Props) => {
   return (
     <FieldContext.Provider value={{ open, close }}>
       {children}
-      <ModalWrapper
-        maxWidth={modal?.maxWidth}
-        open={!!modal && !closing}
-        onClose={handleDismiss}
-        hideBg={modal?.hideBg}
-      >
+      <ModalWrapper small={modal?.small} open={!!modal && !closing} onClose={handleDismiss} hideBg={modal?.hideBg}>
         {modal && <Component {...modalProps} />}
       </ModalWrapper>
     </FieldContext.Provider>
@@ -120,7 +112,7 @@ const Header = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Body = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={clsx("px-4 sm:px-6 py-4", className)}>{children}</div>
+  <div className={clsx("px-4 sm:px-6 pt-4", className)}>{children}</div>
 );
 
 export { ModalProvider, useModal, Footer, Header, Body };

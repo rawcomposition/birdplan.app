@@ -14,6 +14,9 @@ module.exports = {
       container: {
         center: true,
       },
+      boxShadow: {
+        left: "0 -20px 25px -5px rgba(0, 0, 0, 0.3)",
+      },
     },
     fontFamily: {
       body: ["Ubuntu", "sans-serif"],

@@ -1,54 +1,51 @@
 import React from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import clsx from "clsx";
+import { Transition } from "@headlessui/react";
 import CloseButton from "components/CloseButton";
+import clsx from "clsx";
 
 type Props = {
   open: boolean;
-  maxWidth?: string;
   hideBg?: boolean;
+  small?: boolean;
   onClose: () => void;
   children: React.ReactNode;
 };
 
-export default function ModalWrapper({ hideBg, open, onClose, maxWidth, children }: Props) {
-  return (
-    <Transition.Root show={open} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className={clsx("fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity", hideBg && "sm:hidden")} />
-        </Transition.Child>
+export default function ModalWrapper({ open, onClose, small, children }: Props) {
+  React.useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
 
-        <div className="fixed bottom-0 left-0 right-0 sm:inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center text-center">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel
-                className="relative transform overflow-hidden rounded-t-lg sm:rounded-b-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full"
-                style={{ maxWidth: maxWidth || "700px" }}
-              >
-                <CloseButton className="absolute top-4 right-5" onClick={onClose} />
-                {children}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+    document.addEventListener("keydown", handleEsc);
+
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, []);
+
+  return (
+    <Transition
+      show={open}
+      enter="ease-out duration-300"
+      enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
+      enterTo="opacity-100 translate-y-0 sm:translate-x-0"
+      leave="ease-in duration-200"
+      leaveFrom="opacity-100 translate-y-0 sm:translate-x-0"
+      leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
+      className={clsx(
+        "fixed bottom-0 left-0 right-0 sm:left-auto sm:top-[60px] z-10 w-full sm:max-w-md",
+        small ? "top-1/2" : "top-32"
+      )}
+    >
+      <div className="items-center justify-center text-center h-full">
+        <div className="relative transform rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none bg-white text-left h-full sm:shadow-left overflow-auto">
+          <CloseButton className="absolute top-4 right-5" onClick={onClose} />
+          {children}
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+    </Transition>
   );
 }
