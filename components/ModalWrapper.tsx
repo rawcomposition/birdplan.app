@@ -41,8 +41,8 @@ export default function ModalWrapper({ open, onClose, small, children }: Props) 
       )}
     >
       <div className="items-center justify-center text-center h-full">
+        <CloseButton className="fixed z-10 top-2 right-2 sm:right-6 p-2 bg-gray-50 rounded-full" onClick={onClose} />
         <div className="relative transform rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none bg-white text-left h-full sm:shadow-left overflow-auto">
-          <CloseButton className="absolute top-4 right-5" onClick={onClose} />
           {children}
         </div>
       </div>
