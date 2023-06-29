@@ -12,11 +12,12 @@ type Props = {
   locId: string;
   speciesCode: string;
   recentChecklists?: RecentChecklist[];
+  groupedChecklistIds?: string[][];
 };
 
 const previewCount = 10;
 
-export default function ObsList({ locId, speciesCode, recentChecklists }: Props) {
+export default function ObsList({ locId, speciesCode, recentChecklists, groupedChecklistIds }: Props) {
   const [obs, setObs] = React.useState<Observation[]>([]);
   const [viewAll, setViewAll] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
@@ -34,6 +35,15 @@ export default function ObsList({ locId, speciesCode, recentChecklists }: Props)
             : `${it.date} 9:00 am`,
       };
     }) || [];
+
+  const ids = obs.map((it) => it.checklistId);
+  const successRate = groupedChecklistIds?.length
+    ? groupedChecklistIds
+        ?.map((it) => {
+          return it.some((id) => ids.includes(id));
+        })
+        .filter(Boolean).length / groupedChecklistIds?.length
+    : null;
 
   React.useEffect(() => {
     if (!locId || !speciesCode) return;
@@ -54,6 +64,11 @@ export default function ObsList({ locId, speciesCode, recentChecklists }: Props)
 
   return (
     <>
+      {!!successRate && (
+        <div className="text-sm my-1 bg-sky-100 text-sky-800 p-1.5 px-2 rounded">
+          Seen in <strong>{Math.round(successRate * 100)}%</strong> of last {groupedChecklistIds?.length} checklists
+        </div>
+      )}
       <table className="w-full text-[13px] mt-2">
         <thead className="text-neutral-600 font-bold">
           <tr>

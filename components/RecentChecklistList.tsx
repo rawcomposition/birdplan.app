@@ -3,12 +3,14 @@ import dayjs from "dayjs";
 import { RecentChecklist } from "lib/types";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
+import Link from "next/link";
 
 type Props = {
   checklists: RecentChecklist[];
+  locId: string;
 };
 
-export default function RecentChecklistList({ checklists }: Props) {
+export default function RecentChecklistList({ checklists, locId }: Props) {
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
@@ -45,6 +47,17 @@ export default function RecentChecklistList({ checklists }: Props) {
             })}
           </tbody>
         </table>
+      )}
+      {checklists.length > 0 && (
+        <p className="text-sm mt-2 text-center">
+          <Link
+            target="_blank"
+            className="text-sm text-blue-900 mt-2"
+            href={`https://ebird.org/hotspot/${locId}/activity?yr=all&m=`}
+          >
+            View all checklists
+          </Link>
+        </p>
       )}
       {checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
     </>

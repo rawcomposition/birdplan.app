@@ -44,7 +44,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(speciesName ? "reports" : "needs");
-  const { recentChecklists } = useFetchRecentChecklists(id);
+  const { allChecklists, recentChecklists, groupedChecklistIds } = useFetchRecentChecklists(id);
 
   const tabs = [
     {
@@ -206,10 +206,15 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
         </div>
         <div className="-mx-1.5">
           {tab === "reports" && (
-            <ObsList locId={id} speciesCode={selectedSpeciesCode || ""} recentChecklists={recentChecklists} />
+            <ObsList
+              locId={id}
+              speciesCode={selectedSpeciesCode || ""}
+              recentChecklists={allChecklists}
+              groupedChecklistIds={groupedChecklistIds}
+            />
           )}
           {tab === "needs" && <RecentSpeciesList locId={id} />}
-          {tab === "checklists" && <RecentChecklistList checklists={recentChecklists} />}
+          {tab === "checklists" && <RecentChecklistList checklists={recentChecklists} locId={id} />}
         </div>
       </Body>
     </>
