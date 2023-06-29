@@ -29,8 +29,25 @@ export default function Mapbox({
   onDisableAddingMarker,
 }: Props) {
   const [satellite, setSatellite] = React.useState(false);
-  const { open } = useModal();
+  const { open, close } = useModal();
   const { selectedMarkerId } = useTrip();
+  const isOpeningModal = React.useRef(false);
+
+  const handleHotspotClick = (id: string) => {
+    isOpeningModal.current = true;
+    onHotspotClick(id);
+    setTimeout(() => {
+      isOpeningModal.current = false;
+    }, 500);
+  };
+
+  const handleMarkerClick = (marker: CustomMarker) => {
+    isOpeningModal.current = true;
+    open("viewMarker", { marker });
+    setTimeout(() => {
+      isOpeningModal.current = false;
+    }, 500);
+  };
 
   const isMobile = React.useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -112,7 +129,9 @@ export default function Mapbox({
           }
           const features = e.target.queryRenderedFeatures(e.point, { layers: activeLayers });
           if (features.length) {
-            onHotspotClick(features?.[0]?.properties?.id);
+            handleHotspotClick(features?.[0]?.properties?.id);
+          } else if (!isOpeningModal.current) {
+            close();
           }
         }}
         // @ts-ignore
@@ -128,7 +147,10 @@ export default function Mapbox({
             key={marker.id}
             latitude={marker.lat}
             longitude={marker.lng}
-            onClick={() => onHotspotClick(marker.id)}
+            onClick={() => {
+              handleHotspotClick(marker.id);
+              console.log("marker");
+            }}
           >
             <MarkerWithIcon
               icon={MarkerIcon.HOTSPOT}
@@ -142,19 +164,19 @@ export default function Mapbox({
             key={marker.id}
             latitude={marker.lat}
             longitude={marker.lng}
-            onClick={() => open("viewMarker", { marker })}
+            onClick={() => handleMarkerClick(marker)}
           >
             <MarkerWithIcon icon={marker.icon} highlight={marker.id === selectedMarkerId} />
           </Marker>
         ))}
         {hotspotLayer && (
-          <Source id="my-data" type="geojson" data={hotspotLayer}>
+          <Source id="hotspot-layer" type="geojson" data={hotspotLayer}>
             {/* @ts-ignore */}
             <Layer {...hsLayerStyle} />
           </Source>
         )}
         {obsLayer && (
-          <Source id="my-data" type="geojson" data={obsLayer}>
+          <Source id="obs-layer" type="geojson" data={obsLayer}>
             {/* @ts-ignore */}
             <Layer {...obsLayerStyle} />
           </Source>
