@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -6,19 +7,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const url = `https://ebird.org/mapServices/getLocInfo.do?fmt=json&locID=${locId}&speciesCodes=${speciesCode}&evidSort=false&excludeExX=false&excludeExAll=false&byr=1900&eyr=2023&yr=all&bmo=1&emo=12`;
 
-    // Get cookie
-    const res1 = await fetch(url, { redirect: "manual" });
-    const cookies = res1.headers.get("set-cookie");
-    const cookie = cookies?.split(";")[0];
-
-    if (!cookie) throw new Error("Error fetching observations");
-
-    const res2 = await fetch(url, {
-      headers: { cookie },
+    const json = await axios.get(url, {
+      headers: {
+        // This user agent seems to be allowed by eBird
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+      },
+      maxRedirects: 2,
     });
-    const json = await res2.json();
 
-    const formatted = json.infoList.map((info: any) => {
+    const formatted = json.data.infoList.map((info: any) => {
       return {
         checklistId: info.subID,
         count: info.howMany,
@@ -27,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     });
 
-    // Set cache to 1 day
-    res.setHeader("Cache-Control", "s-maxage=86400");
+    // Set cache to 1 hour
+    res.setHeader("Cache-Control", "s-maxage=3600");
 
     res.status(200).json(formatted);
   } catch (error) {
