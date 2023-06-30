@@ -211,7 +211,7 @@ type Params = {
   [key: string]: string | number | boolean;
 };
 
-export const get = async (url: string, params: Params) => {
+export const get = async (url: string, params: Params, showLoading?: boolean) => {
   const cleanParams = Object.keys(params).reduce((accumulator: any, key) => {
     if (params[key]) accumulator[key] = params[key];
     return accumulator;
@@ -219,9 +219,11 @@ export const get = async (url: string, params: Params) => {
 
   const queryParams = new URLSearchParams(cleanParams).toString();
 
+  if (showLoading) toast.loading("Loading...", { id: url });
   const res = await fetch(`${url}?${queryParams}`, {
     method: "GET",
   });
+  if (showLoading) toast.dismiss(url);
 
   let json: any = {};
 

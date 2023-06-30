@@ -13,7 +13,8 @@ import { toast } from "react-hot-toast";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: async ({ queryKey }) => get(queryKey[0] as string, (queryKey[1] || {}) as any),
+      queryFn: async ({ queryKey, meta }) =>
+        get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
       staleTime: 30 * 60 * 1000, // 30 minutes
       cacheTime: 60 * 60 * 1000, // 60 minutes
       refetchOnWindowFocus: false,

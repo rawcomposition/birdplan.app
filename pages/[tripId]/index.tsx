@@ -44,11 +44,7 @@ export default function Trip() {
   const isMultiRegion = trip?.region.includes(",");
 
   const savedHotspots = trip?.hotspots || [];
-  const savedIdStr = savedHotspots.map((it) => it.id).join(",");
-  const { hotspots, hotspotLayer, call } = useFetchHotspots({
-    region: trip?.region,
-    savedIdStr,
-  });
+  const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
   const selectedSpecies = [...recentSpecies, ...targets].find((it) => it.code === selectedSpeciesCode);
@@ -83,11 +79,6 @@ export default function Trip() {
       : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
   };
 
-  const handleToggleShowAll = () => {
-    if (!showAll) call();
-    setShowAll(!showAll);
-  };
-
   const handleEnableAddingMarker = () => {
     setIsAddingMarker(true);
     setSelectedSpeciesCode(undefined);
@@ -107,9 +98,8 @@ export default function Trip() {
   React.useEffect(() => {
     if (tripIsLoaded && tripIsNew) {
       setShowAll(true);
-      call();
     }
-  }, [tripIsLoaded, tripIsNew, call]);
+  }, [tripIsLoaded, tripIsNew]);
 
   return (
     <div className="flex flex-col h-full">
@@ -124,7 +114,7 @@ export default function Trip() {
         <Sidebar noPadding>
           <div className={clsx("mb-4 mt-6 mx-6", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
             <label className="text-white text-sm flex items-center gap-1">
-              <input type="checkbox" className="mr-2" checked={showAll} onChange={handleToggleShowAll} />
+              <input type="checkbox" className="mr-2" checked={showAll} onChange={() => setShowAll((prev) => !prev)} />
               Show all hotspots
             </label>
           </div>
