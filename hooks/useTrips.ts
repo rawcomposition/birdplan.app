@@ -3,15 +3,17 @@ import { Trip } from "lib/types";
 import { subscribeToTrips, deleteTrip as deleteDbTrip } from "lib/firebase";
 import toast from "react-hot-toast";
 import { useUser } from "providers/user";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function useTrip() {
   const [loading, setLoading] = React.useState(true);
-  const [trips, setTrips] = React.useState<Trip[]>([]);
+  const [trips, setTrips] = useLocalStorage<Trip[]>("trips", []);
   const { user } = useUser();
   const uid = user?.uid;
 
   React.useEffect(() => {
     if (!uid) return;
+    if (trips.length > 0) setLoading(false);
     const unsubscribe = subscribeToTrips((trips) => {
       setTrips(trips);
       setLoading(false);

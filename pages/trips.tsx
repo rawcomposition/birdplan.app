@@ -2,7 +2,6 @@ import React from "react";
 import Header from "components/Header";
 import Head from "next/head";
 import useTrips from "hooks/useTrips";
-import { useModal } from "providers/modals";
 import Button from "components/Button";
 import TripCard from "components/TripCard";
 import Sidebar from "components/Sidebar";
@@ -34,7 +33,7 @@ export default function Trips() {
               <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
             </Button>
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
             {trips.map((trip) => (
               <TripCard key={trip.id} trip={trip} />
             ))}

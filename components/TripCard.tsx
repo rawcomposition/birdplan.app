@@ -14,12 +14,20 @@ type Props = {
 };
 
 export default function TripCard({ trip }: Props) {
+  const [render, setRender] = React.useState(false);
   const { id, name, hotspots, region } = trip;
   const regionPieces = region.split(",")[0]?.split("-");
   const stateCode = regionPieces.length >= 2 ? `${regionPieces[0]}-${regionPieces[1]}` : null;
   const countryCode = regionPieces[0];
 
   const image: Image = images[stateCode as keyof typeof images] || images[countryCode as keyof typeof images];
+
+  // Avoid hydration errors from loading trips from localStorage
+  React.useEffect(() => {
+    setRender(true);
+  }, []);
+
+  if (!render) return null;
 
   return (
     <Link href={`/${id}`}>

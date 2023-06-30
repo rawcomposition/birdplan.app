@@ -11,7 +11,7 @@ type Props = {
 const previewCount = 10;
 
 export default function RecentSpeciesList({ locId }: Props) {
-  const { recentSpecies, loading } = useFetchRecentSpecies(locId);
+  const { recentSpecies, isLoading } = useFetchRecentSpecies(locId);
   const [viewAll, setViewAll] = React.useState(false);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
@@ -57,8 +57,10 @@ export default function RecentSpeciesList({ locId }: Props) {
           </button>
         )}
       </p>
-      {loading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {!loading && recentSpecies.length === 0 && <p className="text-gray-500 text-sm">No needs in the last 30 days</p>}
+      {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
+      {!isLoading && recentSpecies.length === 0 && (
+        <p className="text-gray-500 text-sm">No needs in the last 30 days</p>
+      )}
     </>
   );
 }
