@@ -17,7 +17,7 @@ export default function RecentSpeciesSidebarBlock({ recentSpecies }: Props) {
       {recentSpecies.length > 0 && (
         <input
           type="search"
-          className="w-full px-2 py-[3px] text-gray-400/80 text-[12px] bg-gray-800 rounded-md mb-2 focus:outline-none focus:border-gray-600/90 border border-transparent"
+          className="w-full px-2 py-[3px] text-gray-400/80 sm:text-[12px] bg-gray-800 rounded-md mb-2 focus:outline-none focus:border-gray-600/90 border border-transparent"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search"
