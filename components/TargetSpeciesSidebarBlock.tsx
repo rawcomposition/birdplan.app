@@ -6,6 +6,7 @@ import useProfiles from "hooks/useProfiles";
 import { useUser } from "providers/user";
 import { Menu, Transition } from "@headlessui/react";
 import AngleDown from "icons/AngleDown";
+import Search from "components/Search";
 
 export default function TargetSpeciesSidebarBlock() {
   const [search, setSearch] = React.useState("");
@@ -79,15 +80,7 @@ export default function TargetSpeciesSidebarBlock() {
           </Transition>
         </Menu>
       )}
-      {targetSpecies.length > 0 && (
-        <input
-          type="search"
-          className="w-full px-2 py-[3px] text-gray-400/80 sm:text-[12px] bg-gray-800 rounded-md mb-2 focus:outline-none focus:border-gray-600/90 border border-transparent"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search"
-        />
-      )}
+      {targetSpecies.length > 0 && <Search value={search} onChange={setSearch} />}
       <ul className="divide-y divide-gray-800 mb-2">
         {filteredTargets.map((target) => (
           <SpeciesRow key={target.code} {...target} />
