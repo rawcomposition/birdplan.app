@@ -1,5 +1,5 @@
 import React from "react";
-import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 type Obs = {
   id: string;
@@ -9,52 +9,35 @@ type Obs = {
   isPersonal: boolean;
 };
 
-type State = {
-  error: boolean;
-  loading: boolean;
-  obs: Obs[];
-};
-
 type Props = {
   region?: string;
   code?: string;
 };
 
 export default function useFetchSpeciesObs({ region, code }: Props) {
-  const [state, setState] = React.useState<State>({
-    error: false,
-    loading: false,
-    obs: [],
+  const { data } = useQuery<Obs[]>({
+    queryKey: [
+      `https://api.ebird.org/v2/data/obs/${region}/recent/${code}`,
+      { key: process.env.NEXT_PUBLIC_EBIRD_KEY, back: 30, includeProvisional: true },
+    ],
+    enabled: !!region && !!code,
+    meta: {
+      errorMessage: "Failed to load observations",
+    },
   });
+
+  const obs: Obs[] =
+    data?.map(({ lat, lng, locId, locationPrivate, locName }: any) => ({
+      lat,
+      lng,
+      id: locId,
+      name: locName,
+      isPersonal: locationPrivate,
+    })) || [];
+
   const obsRef = React.useRef<Obs[]>([]);
-  obsRef.current = state.obs;
-  const hasFetched = state.obs.length > 0;
-
-  React.useEffect(() => {
-    if (!region || !code) return;
-    (async () => {
-      setState((current) => ({ ...current, loading: true, error: false, species: [] }));
-      try {
-        const res = await fetch(
-          `https://api.ebird.org/v2/data/obs/${region}/recent/${code}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}&back=30&includeProvisional=true`
-        );
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        const obs: Obs[] = data.map(({ lat, lng, locId, locationPrivate, locName }: any) => ({
-          lat,
-          lng,
-          id: locId,
-          name: locName,
-          isPersonal: locationPrivate,
-        }));
-
-        setState({ loading: false, error: false, obs });
-      } catch (error) {
-        setState((current) => ({ ...current, loading: false, error: true, hotspots: [] }));
-        toast.error("Failed to species observations");
-      }
-    })();
-  }, [region, code]);
+  obsRef.current = obs;
+  const hasFetched = obs.length > 0;
 
   const layer = hasFetched
     ? {
@@ -77,5 +60,5 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
       }
     : null;
 
-  return { ...state, obsLayer: layer };
+  return { obs, obsLayer: layer };
 }

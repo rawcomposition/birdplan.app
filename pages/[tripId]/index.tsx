@@ -11,7 +11,6 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
-import SpeciesRow from "components/SpeciesRow";
 import CustomMarkerRow from "components/CustomMarkerRow";
 import clsx from "clsx";
 import toast from "react-hot-toast";

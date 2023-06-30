@@ -9,7 +9,7 @@ export default function useFetchRecentSpecies(region?: string) {
     queryKey: ["/api/region-species", { region }],
     enabled: !!region,
     meta: {
-      errorMessage: "Failed to fetch recent species",
+      errorMessage: "Failed to load recent species",
     },
   });
 
