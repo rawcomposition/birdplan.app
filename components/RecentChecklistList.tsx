@@ -1,18 +1,23 @@
 import React from "react";
 import dayjs from "dayjs";
-import { RecentChecklist } from "lib/types";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import Link from "next/link";
+import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
+import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 
 type Props = {
-  checklists: RecentChecklist[];
   locId: string;
+  speciesCode?: string;
 };
 
-export default function RecentChecklistList({ checklists, locId }: Props) {
+export default function RecentChecklistList({ locId, speciesCode }: Props) {
   const { trip } = useTrip();
   const timezone = trip?.timezone;
+
+  const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(locId);
+  const { data: obs } = useFetchHotspotObs(locId, speciesCode);
+  const checklists = groupedChecklists.map((group) => group[0]).slice(0, 10);
 
   return (
     <>
@@ -21,6 +26,7 @@ export default function RecentChecklistList({ checklists, locId }: Props) {
           <thead className="text-neutral-600 font-bold">
             <tr>
               <th className="text-left pl-1.5">Time ago</th>
+              <th className="text-left">Target</th>
               <th className="text-left">#</th>
               <th className="text-right"></th>
             </tr>
@@ -29,6 +35,7 @@ export default function RecentChecklistList({ checklists, locId }: Props) {
             {checklists.map(({ subId, numSpecies, obsDt, obsTime }, index) => {
               const time = obsTime || "10:00";
               const timestamp = dayjs(`${obsDt} ${time}`).format();
+              const hasObs = obs?.some((it) => it.checklistId === subId);
               return (
                 <tr key={subId} className="even:bg-neutral-50">
                   <td className="pl-1.5 py-[5px]">
@@ -36,6 +43,7 @@ export default function RecentChecklistList({ checklists, locId }: Props) {
                       {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
                     </time>
                   </td>
+                  <td className="pl-4">{hasObs ? "✅" : "❌"}</td>
                   <td>{numSpecies}</td>
                   <td className="text-right">
                     <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
@@ -60,6 +68,8 @@ export default function RecentChecklistList({ checklists, locId }: Props) {
         </p>
       )}
       {checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
+      {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
+      {error && <p className="text-gray-500 text-sm">Failed to load observations</p>}
     </>
   );
 }

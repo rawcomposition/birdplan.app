@@ -1,13 +1,12 @@
 import React from "react";
-import { RecentChecklist } from "lib/types";
 import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
+import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 
 type Props = {
   id: string;
   speciesTotal?: number;
-  checklists: RecentChecklist[];
 };
 
 type Info = {
@@ -15,13 +14,14 @@ type Info = {
   species: number;
 };
 
-export default function Hotspot({ id, speciesTotal, checklists }: Props) {
+export default function Hotspot({ id, speciesTotal }: Props) {
   const [info, setInfo] = React.useState<Info>();
+  const { checklists } = useFetchRecentChecklists(id);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
-  const lastChecklistDate = checklists[0]?.obsDt;
-  const lastChecklistTime = checklists[0]?.obsTime;
+  const lastChecklistDate = checklists?.[0]?.obsDt;
+  const lastChecklistTime = checklists?.[0]?.obsTime;
   const lastChecklist =
     lastChecklistDate && lastChecklistTime
       ? dateTimeToRelative(`${lastChecklistDate} ${lastChecklistTime}`, timezone)

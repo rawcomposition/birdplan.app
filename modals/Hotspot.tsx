@@ -12,7 +12,6 @@ import DirectionsButton from "components/DirectionsButton";
 import { translate, isRegionEnglish } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
-import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import RecentChecklistList from "components/RecentChecklistList";
 import clsx from "clsx";
 import InputNotes from "components/InputNotes";
@@ -44,7 +43,6 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(speciesName ? "reports" : "needs");
-  const { allChecklists, recentChecklists, groupedChecklistIds } = useFetchRecentChecklists(id);
 
   const tabs = [
     {
@@ -185,7 +183,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             </Menu.Items>
           </Menu>
         </div>
-        <HotspotStats id={id} speciesTotal={hotspot.species} checklists={recentChecklists} />
+        <HotspotStats id={id} speciesTotal={hotspot.species} />
         {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
@@ -205,16 +203,9 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </nav>
         </div>
         <div className="-mx-1.5">
-          {tab === "reports" && (
-            <ObsList
-              locId={id}
-              speciesCode={selectedSpeciesCode || ""}
-              recentChecklists={allChecklists}
-              groupedChecklistIds={groupedChecklistIds}
-            />
-          )}
+          {tab === "reports" && <ObsList locId={id} speciesCode={selectedSpeciesCode || ""} />}
           {tab === "needs" && <RecentSpeciesList locId={id} />}
-          {tab === "checklists" && <RecentChecklistList checklists={recentChecklists} locId={id} />}
+          {tab === "checklists" && <RecentChecklistList locId={id} speciesCode={selectedSpeciesCode} />}
         </div>
       </Body>
     </>

@@ -1,32 +1,33 @@
 import React from "react";
-import { Observation, RecentChecklist } from "lib/types";
-import toast from "react-hot-toast";
+import { RecentChecklist } from "lib/types";
 import CameraIcon from "icons/Camera";
 import CommentIcon from "icons/Comment";
 import SpeakerIcon from "icons/Speaker";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import dayjs from "dayjs";
+import useFetchHotspotObs from "hooks/useFetchHotspotObs";
+import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 
 type Props = {
   locId: string;
   speciesCode: string;
-  recentChecklists?: RecentChecklist[];
-  groupedChecklistIds?: string[][];
 };
 
 const previewCount = 10;
 
-export default function ObsList({ locId, speciesCode, recentChecklists, groupedChecklistIds }: Props) {
-  const [obs, setObs] = React.useState<Observation[]>([]);
+export default function ObsList({ locId, speciesCode }: Props) {
   const [viewAll, setViewAll] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
+  const { data, isLoading, error } = useFetchHotspotObs(locId, speciesCode);
+  const { checklists, groupedChecklists } = useFetchRecentChecklists(locId);
+  const groupedChecklistIds = groupedChecklists.map((group) => group.map((item) => item.subId)).slice(0, 10);
+
   const formattedObs =
-    obs.map((it) => {
-      const recentChecklist = recentChecklists?.find((checklist) => checklist.subId === it.checklistId);
+    data?.map((it) => {
+      const recentChecklist = checklists?.find((checklist) => checklist.subId === it.checklistId);
       return {
         ...it,
         date:
@@ -36,29 +37,14 @@ export default function ObsList({ locId, speciesCode, recentChecklists, groupedC
       };
     }) || [];
 
-  const ids = obs.map((it) => it.checklistId);
+  const ids = data?.map((it) => it.checklistId);
   const successRate = groupedChecklistIds?.length
     ? groupedChecklistIds
         ?.map((it) => {
-          return it.some((id) => ids.includes(id));
+          return it.some((id) => ids?.includes(id));
         })
         .filter(Boolean).length / groupedChecklistIds?.length
     : null;
-
-  React.useEffect(() => {
-    if (!locId || !speciesCode) return;
-    (async () => {
-      try {
-        const res = await fetch(`/api/hotspot-obs?locId=${locId}&speciesCode=${speciesCode}`);
-        if (!res.ok) throw new Error();
-        const json = await res.json();
-        setObs(json || []);
-      } catch (err) {
-        toast.error("Failed to load observations");
-      }
-      setLoading(false);
-    })();
-  }, [locId, speciesCode]);
 
   const filteredObs = viewAll ? formattedObs : formattedObs.slice(0, previewCount);
 
@@ -104,13 +90,14 @@ export default function ObsList({ locId, speciesCode, recentChecklists, groupedC
         </tbody>
       </table>
       <p className="text-sm mt-2 text-center">
-        {obs.length > previewCount && !viewAll && (
+        {(data?.length || 0) > previewCount && !viewAll && (
           <button className="text-sm text-blue-900 mt-2" onClick={() => setViewAll(true)}>
-            View all {obs.length} reports
+            View all {data?.length} reports
           </button>
         )}
       </p>
-      {loading && <p className="text-gray-500 text-sm">Loading...</p>}
+      {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
+      {error && <p className="text-gray-500 text-sm">Failed to load observations</p>}
     </>
   );
 }
