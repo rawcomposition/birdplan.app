@@ -6,18 +6,26 @@ import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";
 import { Toaster } from "react-hot-toast";
 import { UIProvider } from "providers/ui";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
 import { get } from "lib/helpers";
+import { toast } from "react-hot-toast";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: async ({ queryKey }) => get(queryKey[0] as string, (queryKey[1] || {}) as any),
-      staleTime: 15 * 60 * 1000, // 15 minutes
-      cacheTime: 20 * 60 * 1000, // 20 minutes
+      staleTime: 30 * 60 * 1000, // 30 minutes
+      cacheTime: 60 * 60 * 1000, // 60 minutes
       refetchOnWindowFocus: false,
     },
   },
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      if (query.meta?.errorMessage) {
+        toast.error(query.meta.errorMessage.toString());
+      }
+    },
+  }),
 });
 
 function MyApp({ Component, pageProps }: AppProps) {

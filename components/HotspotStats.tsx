@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
   id: string;
@@ -10,15 +11,19 @@ type Props = {
 };
 
 type Info = {
-  checklists: number;
-  species: number;
+  numChecklists: number;
+  numSpecies: number;
 };
 
 export default function Hotspot({ id, speciesTotal }: Props) {
-  const [info, setInfo] = React.useState<Info>();
   const { checklists } = useFetchRecentChecklists(id);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
+
+  const { data } = useQuery<Info>({
+    queryKey: ["/api/hotspot-info", { id }],
+    enabled: !!id,
+  });
 
   const lastChecklistDate = checklists?.[0]?.obsDt;
   const lastChecklistTime = checklists?.[0]?.obsTime;
@@ -29,27 +34,14 @@ export default function Hotspot({ id, speciesTotal }: Props) {
           .replace("month", "mo")
       : "Never";
 
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(`/api/hotspot-info?id=${id}`);
-        if (!res.ok) throw new Error();
-        const json = await res.json();
-        setInfo({ checklists: json.numChecklists, species: json.numSpecies });
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, [id]);
-
   return (
     <div className="flex gap-10 text-gray-500">
       <div className="flex flex-col text-[#1c6900]">
-        <span className="text-3xl font-bold">{speciesTotal || info?.species || "--"}</span>
+        <span className="text-3xl font-bold">{speciesTotal || data?.numSpecies || "--"}</span>
         <span className="text-xs">Species</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-3xl font-bold">{info?.checklists?.toLocaleString() || "--"}</span>
+        <span className="text-3xl font-bold">{data?.numChecklists?.toLocaleString() || "--"}</span>
         <span className="text-xs">Checklists</span>
       </div>
       <div className="flex flex-col">
