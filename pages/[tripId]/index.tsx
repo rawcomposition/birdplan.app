@@ -132,11 +132,11 @@ export default function Trip() {
               {canEdit && (
                 <>
                   {isAddingMarker ? (
-                    <Button size="sm" color="gray" onClick={() => setIsAddingMarker(false)}>
+                    <Button size="xs" color="gray" onClick={() => setIsAddingMarker(false)}>
                       Cancel Adding Marker
                     </Button>
                   ) : (
-                    <Button size="sm" color="primary" onClick={handleEnableAddingMarker}>
+                    <Button size="xs" color="primary" onClick={handleEnableAddingMarker}>
                       + Add Marker
                     </Button>
                   )}
