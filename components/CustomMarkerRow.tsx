@@ -16,7 +16,7 @@ export default function CustomMarkerRow(marker: CustomMarker) {
 
   return (
     <li className={"flex items-center gap-2 text-sm cursor-pointer"} title="Click to show on map" onClick={handleClick}>
-      <MarkerWithIcon showStroke={false} offset={false} icon={marker.icon} className="inline-block scale-[.65] -ml-1" />
+      <MarkerWithIcon showStroke={false} icon={marker.icon} className="inline-block scale-[.65] -ml-1" />
       <span className="truncate">{name}</span>
       <span className="text-gray-500 ml-auto text-xs"></span>
     </li>

@@ -22,7 +22,7 @@ export default function SpeciesRow({ name, code, percent, ...props }: Props) {
       onClick={!selected ? () => setSelectedSpeciesCode(code) : undefined}
       {...props}
     >
-      {selected ? <CircleFilled className="text-xs text-sky-600" /> : <Circle className="text-xs text-gray-700" />}
+      {selected ? <CircleFilled className="text-xs text-[#ce0d02]/90" /> : <Circle className="text-xs text-gray-700" />}
       <span className="truncate">{name}</span>
       <span className="text-gray-500 ml-auto text-xs">
         {selected && (

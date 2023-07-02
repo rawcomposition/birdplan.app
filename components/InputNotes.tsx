@@ -32,7 +32,7 @@ export default function InputNotes({ value, onBlur }: Props) {
           <button
             type="button"
             onClick={() => setIsEditing((isEditing) => !isEditing)}
-            className="text-sky-600 text-[13px] font-bold px-2 border border-sky-600 rounded hover:text-sky-700 hover:border-sky-700 transition-colors"
+            className="text-sky-600 text-[11px] font-bold px-2 border border-sky-600 rounded hover:text-sky-700 hover:border-sky-700 transition-colors"
           >
             {isEditing ? "Done" : "Edit"}
           </button>

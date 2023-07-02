@@ -152,11 +152,7 @@ export default function Mapbox({
               console.log("marker");
             }}
           >
-            <MarkerWithIcon
-              icon={MarkerIcon.HOTSPOT}
-              color={markerColors[7]}
-              highlight={marker.id === selectedMarkerId}
-            />
+            <MarkerWithIcon icon={MarkerIcon.HOTSPOT} highlight={marker.id === selectedMarkerId} />
           </Marker>
         ))}
         {customMarkers.map((marker) => (

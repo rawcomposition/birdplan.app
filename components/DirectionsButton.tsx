@@ -47,12 +47,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
                     className="flex items-center gap-2 text-sm cursor-pointer"
                     target="_blank"
                   >
-                    <MarkerWithIcon
-                      showStroke={false}
-                      offset={false}
-                      icon={marker.icon}
-                      className="inline-block ml-1 scale-75"
-                    />
+                    <MarkerWithIcon showStroke={false} icon={marker.icon} className="inline-block ml-1 scale-75" />
                     <span className="truncate">{marker.name}</span>
                   </Link>
                 </li>

@@ -132,8 +132,10 @@ export enum MarkerIcon {
   HOTSPOT = "hotspot",
   TENT = "tent",
   HOUSE = "house",
+  BOAT = "boat",
   AIRBNB = "airbnb",
   BINS = "bins",
+  HIKE = "hike",
   AIRPORT = "airport",
 }
 

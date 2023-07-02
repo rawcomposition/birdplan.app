@@ -37,20 +37,22 @@ export default function AddMarker({ lat, lng }: Props) {
             <Field label="Name">
               <Input type="text" name="name" value={name} autoFocus onChange={(e: any) => setName(e.target.value)} />
             </Field>
-            <label>Choose icon</label>
-            <div className="flex gap-2 mt-1 flex-wrap">
-              {Object.values(MarkerIcon).map((it) => (
-                <button
-                  type="button"
-                  key={it}
-                  onClick={() => setIcon(it)}
-                  className={clsx("border-2 p-1", icon === it ? "border-blue-500 rounded-md" : "border-transparent")}
-                >
-                  <MarkerWithIcon icon={it} offset={false} />
-                </button>
-              ))}
+            <div>
+              <label>Choose icon</label>
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {Object.values(MarkerIcon).map((it) => (
+                  <button
+                    type="button"
+                    key={it}
+                    onClick={() => setIcon(it)}
+                    className={clsx("border-2 p-1", icon === it ? "border-blue-500 rounded-md" : "border-transparent")}
+                  >
+                    <MarkerWithIcon icon={it} className="scale-125" />
+                  </button>
+                ))}
+              </div>
             </div>
-            <Button type="button" color="primary" className="mt-2" size="sm" onClick={handleAddMarker}>
+            <Button type="button" color="primary" className="mt-2" size="md" onClick={handleAddMarker}>
               Add Marker
             </Button>
           </div>

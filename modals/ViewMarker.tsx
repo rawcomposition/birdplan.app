@@ -29,7 +29,7 @@ export default function ViewMarker({ marker }: Props) {
   return (
     <>
       <Header>
-        <MarkerWithIcon offset={false} icon={marker.icon} className="inline-block scale-90 -mb-2 mr-2 -ml-1" />
+        <MarkerWithIcon icon={marker.icon} className="inline-block scale-90 -mb-2 mr-2 -ml-1" />
         {name}
       </Header>
       <Body className="relative min-h-[200px]">
