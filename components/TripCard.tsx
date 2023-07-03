@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Trip } from "lib/types";
+import ReactCountryFlag from "react-country-flag";
 
 type Props = {
   trip: Trip;
@@ -24,6 +25,11 @@ export default function TripCard({ trip }: Props) {
         <div>
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold text-gray-800 mb-2">{name}</h2>
+            <ReactCountryFlag
+              countryCode={trip.region.slice(0, 2)}
+              style={{ fontSize: "1.6rem" }}
+              aria-label="country flag"
+            />
           </div>
           <p className="text-sm text-gray-500">
             {hotspots.length} {hotspots.length === 1 ? "hotspot" : "hotspots"}
