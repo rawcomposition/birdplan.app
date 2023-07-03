@@ -81,7 +81,7 @@ export default function ObsList({ locId, speciesCode }: Props) {
         )}
       </p>
       {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {error && <p className="text-gray-500 text-sm">Failed to load observations</p>}
+      {error && <p className="text-red-500 text-sm">Failed to load observations</p>}
     </>
   );
 }

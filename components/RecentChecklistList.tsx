@@ -6,6 +6,7 @@ import Link from "next/link";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
+import Loading from "icons/Loading";
 
 type Props = {
   locId: string;
@@ -19,19 +20,25 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
 
   const { data: info } = useFetchHotspotInfo(locId);
   const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(locId);
-  const { data: obs } = useFetchHotspotObs(locId, speciesCode);
+  const { data: obs, isLoading: isLoadingObs, error: obsError } = useFetchHotspotObs(locId, speciesCode);
   const checklists = groupedChecklists.map((group) => group[0]).slice(0, 10);
 
   const successRate = info?.numChecklists && obs?.length ? obs.length / info.numChecklists : null;
 
   return (
     <>
-      {!!successRate && (
+      {speciesCode && (
         <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded">
           {speciesName}
           <br />
-          <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of{" "}
-          {info?.numChecklists?.toLocaleString()} checklists
+          {isLoadingObs && <Loading className="text-xl animate-spin" />}
+          {successRate && (
+            <>
+              <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of{" "}
+              {info?.numChecklists?.toLocaleString()} checklists
+            </>
+          )}
+          {!!obsError && <span className="text-red-500">Failed to load recent reports</span>}
         </div>
       )}
       {checklists.length > 0 && (
@@ -49,6 +56,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
               const time = obsTime || "10:00";
               const timestamp = dayjs(`${obsDt} ${time}`).format();
               const hasObs = obs?.some((it) => it.checklistId === subId);
+              const obsLabel = !obs?.length ? "--" : hasObs ? "✅" : "❌";
               return (
                 <tr key={subId} className="even:bg-neutral-50">
                   <td className="pl-1.5 py-[5px]">
@@ -56,7 +64,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
                       {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
                     </time>
                   </td>
-                  {speciesCode && <td className="text-center">{hasObs ? "✅" : "❌"}</td>}
+                  {speciesCode && <td className="text-center">{obsLabel}</td>}
                   {!speciesCode && <td className="text-center">{numSpecies}</td>}
                   <td className="text-right">
                     <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
@@ -80,9 +88,9 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
           </Link>
         </p>
       )}
-      {checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
+      {!isLoading && checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
       {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {error && <p className="text-gray-500 text-sm">Failed to load observations</p>}
+      {error && <p className="text-red-500 text-sm">Failed to load checklists</p>}
     </>
   );
 }
