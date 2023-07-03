@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish } from "lib/helpers";
+import { translate, isRegionEnglish, months, truncate } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -17,7 +17,6 @@ import clsx from "clsx";
 import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
 import VerticalDots from "icons/VerticalDots";
-import { months } from "lib/helpers";
 
 type Props = {
   hotspot: HotspotT;
@@ -42,22 +41,25 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
-  const [tab, setTab] = React.useState(speciesName ? "reports" : "needs");
+  const [tab, setTab] = React.useState(speciesName ? "checklists" : "needs");
 
   const tabs = [
     {
       label: "Recent Needs",
+      title: "",
       id: "needs",
     },
     {
       label: "Checklists",
+      title: "",
       id: "checklists",
     },
   ];
 
   if (speciesName) {
-    tabs.unshift({
-      label: `${speciesName} Reports`,
+    tabs.push({
+      label: `${truncate(speciesName, 18)} Reports`,
+      title: `${speciesName} Reports`,
       id: "reports",
     });
   }
@@ -187,7 +189,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
         {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
-            {tabs.map(({ label, id }) => (
+            {tabs.map(({ label, id, title }) => (
               <button
                 key={id}
                 type="button"
@@ -196,6 +198,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
                   "text-sm font-medium text-gray-900 border-b-2 transition-colors pb-3 pt-3",
                   tab === id ? "border-gray-500" : "border-transparent hover:border-gray-500"
                 )}
+                title={title}
               >
                 {label}
               </button>

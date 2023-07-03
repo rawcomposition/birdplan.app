@@ -5,6 +5,7 @@ import { useTrip } from "providers/trip";
 import Link from "next/link";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
+import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 
 type Props = {
   locId: string;
@@ -16,19 +17,30 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
+  const { data: info } = useFetchHotspotInfo(locId);
   const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(locId);
   const { data: obs } = useFetchHotspotObs(locId, speciesCode);
   const checklists = groupedChecklists.map((group) => group[0]).slice(0, 10);
 
+  const successRate = info?.numChecklists && obs?.length ? obs.length / info.numChecklists : null;
+
   return (
     <>
+      {!!successRate && (
+        <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded">
+          {speciesName}
+          <br />
+          <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of{" "}
+          {info?.numChecklists?.toLocaleString()} checklists
+        </div>
+      )}
       {checklists.length > 0 && (
         <table className="w-full text-[13px] mt-2">
           <thead className="text-neutral-600 font-bold">
             <tr>
               <th className="text-left pl-1.5">Time ago</th>
-              {speciesCode && <th className="text-center max-w-[4rem]">{speciesName}</th>}
-              <th className="text-center min-w-[2rem]">Species</th>
+              {speciesCode && <th className="text-center">{speciesName}</th>}
+              {!speciesCode && <th className="text-center min-w-[2rem]">Species Count</th>}
               <th className="text-right"></th>
             </tr>
           </thead>
@@ -45,7 +57,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
                     </time>
                   </td>
                   {speciesCode && <td className="text-center">{hasObs ? "✅" : "❌"}</td>}
-                  <td className="text-center">{numSpecies}</td>
+                  {!speciesCode && <td className="text-center">{numSpecies}</td>}
                   <td className="text-right">
                     <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
                       View Checklist

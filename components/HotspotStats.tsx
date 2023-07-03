@@ -3,27 +3,18 @@ import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
-import { useQuery } from "@tanstack/react-query";
+import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 
 type Props = {
   id: string;
   speciesTotal?: number;
 };
 
-type Info = {
-  numChecklists: number;
-  numSpecies: number;
-};
-
 export default function Hotspot({ id, speciesTotal }: Props) {
   const { checklists } = useFetchRecentChecklists(id);
+  const { data } = useFetchHotspotInfo(id);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
-
-  const { data } = useQuery<Info>({
-    queryKey: ["/api/hotspot-info", { id }],
-    enabled: !!id,
-  });
 
   const lastChecklistDate = checklists?.[0]?.obsDt;
   const lastChecklistTime = checklists?.[0]?.obsTime;

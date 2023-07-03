@@ -1,5 +1,4 @@
 import React from "react";
-import { RecentChecklist } from "lib/types";
 import CameraIcon from "icons/Camera";
 import CommentIcon from "icons/Comment";
 import SpeakerIcon from "icons/Speaker";
@@ -22,8 +21,7 @@ export default function ObsList({ locId, speciesCode }: Props) {
   const timezone = trip?.timezone;
 
   const { data, isLoading, error } = useFetchHotspotObs(locId, speciesCode);
-  const { checklists, groupedChecklists } = useFetchRecentChecklists(locId);
-  const groupedChecklistIds = groupedChecklists.map((group) => group.map((item) => item.subId)).slice(0, 10);
+  const { checklists } = useFetchRecentChecklists(locId);
 
   const formattedObs =
     data?.map((it) => {
@@ -37,24 +35,10 @@ export default function ObsList({ locId, speciesCode }: Props) {
       };
     }) || [];
 
-  const ids = data?.map((it) => it.checklistId);
-  const successRate = groupedChecklistIds?.length
-    ? groupedChecklistIds
-        ?.map((it) => {
-          return it.some((id) => ids?.includes(id));
-        })
-        .filter(Boolean).length / groupedChecklistIds?.length
-    : null;
-
   const filteredObs = viewAll ? formattedObs : formattedObs.slice(0, previewCount);
 
   return (
     <>
-      {!!successRate && (
-        <div className="text-sm my-1 bg-sky-100 text-sky-800 p-1.5 px-2 rounded">
-          Seen in <strong>{Math.round(successRate * 100)}%</strong> of last {groupedChecklistIds?.length} checklists
-        </div>
-      )}
       <table className="w-full text-[13px] mt-2">
         <thead className="text-neutral-600 font-bold">
           <tr>
