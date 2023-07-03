@@ -205,7 +205,9 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
         <div className="-mx-1.5">
           {tab === "reports" && <ObsList locId={id} speciesCode={selectedSpeciesCode || ""} />}
           {tab === "needs" && <RecentSpeciesList locId={id} />}
-          {tab === "checklists" && <RecentChecklistList locId={id} speciesCode={selectedSpeciesCode} />}
+          {tab === "checklists" && (
+            <RecentChecklistList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />
+          )}
         </div>
       </Body>
     </>

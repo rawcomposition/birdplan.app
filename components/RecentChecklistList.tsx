@@ -9,9 +9,10 @@ import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 type Props = {
   locId: string;
   speciesCode?: string;
+  speciesName?: string;
 };
 
-export default function RecentChecklistList({ locId, speciesCode }: Props) {
+export default function RecentChecklistList({ locId, speciesCode, speciesName }: Props) {
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
@@ -26,13 +27,13 @@ export default function RecentChecklistList({ locId, speciesCode }: Props) {
           <thead className="text-neutral-600 font-bold">
             <tr>
               <th className="text-left pl-1.5">Time ago</th>
-              {speciesCode && <th className="text-left">Target</th>}
-              <th className="text-left">#</th>
+              {speciesCode && <th className="text-center max-w-[4rem]">{speciesName}</th>}
+              <th className="text-center min-w-[2rem]">Species</th>
               <th className="text-right"></th>
             </tr>
           </thead>
           <tbody>
-            {checklists.map(({ subId, numSpecies, obsDt, obsTime }, index) => {
+            {checklists.map(({ subId, numSpecies, obsDt, obsTime }) => {
               const time = obsTime || "10:00";
               const timestamp = dayjs(`${obsDt} ${time}`).format();
               const hasObs = obs?.some((it) => it.checklistId === subId);
@@ -43,8 +44,8 @@ export default function RecentChecklistList({ locId, speciesCode }: Props) {
                       {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
                     </time>
                   </td>
-                  {speciesCode && <td className="pl-4">{hasObs ? "✅" : "❌"}</td>}
-                  <td>{numSpecies}</td>
+                  {speciesCode && <td className="text-center">{hasObs ? "✅" : "❌"}</td>}
+                  <td className="text-center">{numSpecies}</td>
                   <td className="text-right">
                     <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
                       View Checklist
