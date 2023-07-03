@@ -22,9 +22,17 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
   const filteredHotspots = trip?.hotspots.filter((it) => it.id !== hotspotId) || [];
   const filteredMarkers = trip?.markers.filter((it) => it.id !== markerId) || [];
 
+  const isDirect = filteredHotspots.length === 0 && filteredMarkers.length === 0;
+
   return (
     <>
-      <Button onClick={() => setOpen(true)} target="_blank" color="gray" size="sm">
+      <Button
+        onClick={isDirect ? null : () => setOpen(true)}
+        target="_blank"
+        color="gray"
+        size="sm"
+        href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
+      >
         <Directions className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
