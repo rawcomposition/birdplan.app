@@ -24,14 +24,14 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
   const { isOnline } = useRealtimeStatus();
   const { toggleSidebar, closeSidebar } = useUI();
   const { isOwner } = useTrip();
-  const { open } = useModal();
+  const { open, close } = useModal();
   const { user } = useUser();
 
   const router = useRouter();
   const isSubPage = router.pathname !== "/trips";
 
   return (
-    <header className="bg-slate-900 h-[60px] shrink-0 flex items-center">
+    <header className="bg-slate-900 h-[60px] shrink-0 flex items-center" onClick={close}>
       {!isOnline && (
         <div className="bg-red-500 text-white px-2 py-0.5 text-xs absolute text-center w-full left-0 top-14 z-20">
           No Internet Connection

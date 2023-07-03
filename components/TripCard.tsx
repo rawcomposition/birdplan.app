@@ -32,7 +32,7 @@ export default function TripCard({ trip }: Props) {
             />
           </div>
           <p className="text-sm text-gray-500">
-            {hotspots.length} {hotspots.length === 1 ? "hotspot" : "hotspots"}
+            {hotspots.length} {hotspots.length === 1 ? "saved hotspot" : "saved hotspots"}
           </p>
         </div>
       </div>
