@@ -3,6 +3,7 @@ import Circle from "icons/Circle";
 import CircleFilled from "icons/CircleFilled";
 import clsx from "clsx";
 import { useTrip } from "providers/trip";
+import { useUI } from "providers/ui";
 
 type Props = {
   name: string;
@@ -12,14 +13,20 @@ type Props = {
 };
 
 export default function SpeciesRow({ name, code, percent, ...props }: Props) {
+  const { closeSidebar } = useUI();
   const { selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const selected = selectedSpeciesCode === code;
+
+  const handleSelect = (code: string) => {
+    setSelectedSpeciesCode(code);
+    closeSidebar();
+  };
 
   return (
     <li
       className={clsx("flex items-center gap-2 text-sm text-gray-200 py-1.5", !selected && "cursor-pointer")}
       title="Click to show on map"
-      onClick={!selected ? () => setSelectedSpeciesCode(code) : undefined}
+      onClick={!selected ? () => handleSelect(code) : undefined}
       {...props}
     >
       {selected ? <CircleFilled className="text-xs text-[#ce0d02]/90" /> : <Circle className="text-xs text-gray-700" />}
