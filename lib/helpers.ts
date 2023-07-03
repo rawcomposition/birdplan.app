@@ -1,6 +1,8 @@
 import { Trip } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
+import { uploadFile } from "lib/firebase";
+import { v4 as uuidv4 } from "uuid";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -237,4 +239,15 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
     throw new Error(json.message || "An error ocurred");
   }
   return json;
+};
+
+export const uploadMapboxImg = async (bounds: Trip["bounds"]) => {
+  const id = uuidv4();
+  const res = await fetch(
+    `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}&padding=30`
+  );
+  const blob = await res.blob();
+  const file = new File([blob], `${id}.png`, { type: "image/png" });
+  const url = await uploadFile(file);
+  return url;
 };

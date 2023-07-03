@@ -14,7 +14,7 @@ import Field from "components/Field";
 import Input from "components/Input";
 import { Option, TripInput } from "lib/types";
 import { createTrip } from "lib/firebase";
-import { getBounds, getCenterOfBounds, getTzFromLatLng } from "lib/helpers";
+import { getBounds, getCenterOfBounds, getTzFromLatLng, uploadMapboxImg } from "lib/helpers";
 import { useModal } from "providers/modals";
 import { useUI } from "providers/ui";
 import dayjs from "dayjs";
@@ -72,6 +72,7 @@ export default function CreateTrip() {
 
       const { lat, lng } = getCenterOfBounds(bounds);
       const timezone = await getTzFromLatLng(lat, lng);
+      const imgUrl = await uploadMapboxImg(bounds);
 
       let data: TripInput = {
         name,
@@ -82,6 +83,7 @@ export default function CreateTrip() {
         startMonth: Number(startMonth.value),
         endMonth: Number(endMonth.value),
         timezone: timezone || "America/New_York",
+        imgUrl,
         createdAt: dayjs().format(),
       };
 

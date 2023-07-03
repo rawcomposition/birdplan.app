@@ -110,6 +110,7 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   timezone: string;
+  imgUrl: string | null;
   createdAt: string;
 };
 

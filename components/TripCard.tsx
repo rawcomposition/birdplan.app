@@ -20,13 +20,7 @@ export default function TripCard({ trip }: Props) {
   return (
     <Link href={`/${id}`}>
       <div className="bg-white rounded-lg shadow relative p-4">
-        {trip?.bounds?.minX && (
-          <img
-            src={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${trip?.bounds?.minX},${trip?.bounds?.minY},${trip?.bounds?.maxX},${trip?.bounds?.maxY}]/300x180@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}&padding=30`}
-            className="w-full h-36 object-cover rounded-lg mb-3 object-[0_20%]"
-            alt=""
-          />
-        )}
+        {trip?.imgUrl && <img src={trip?.imgUrl} className="w-full h-36 object-cover rounded-lg mb-3" alt="" />}
         <div>
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold text-gray-800 mb-2">{name}</h2>
