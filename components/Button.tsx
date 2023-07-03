@@ -35,7 +35,7 @@ export default function Button({
   const sizes: SizeTypes = {
     lg: "text-lg py-[0.625rem] px-[1.125rem]",
     md: "text-md py-2 px-5",
-    sm: "text-[13px] py-1 px-2",
+    sm: "text-[14px] py-1.5 px-2.5",
     xs: "text-[12px] py-0.5 px-1.5",
   };
 

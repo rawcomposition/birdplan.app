@@ -149,7 +149,6 @@ export default function Mapbox({
             longitude={marker.lng}
             onClick={() => {
               handleHotspotClick(marker.id);
-              console.log("marker");
             }}
           >
             <MarkerWithIcon icon={MarkerIcon.HOTSPOT} highlight={marker.id === selectedMarkerId} />

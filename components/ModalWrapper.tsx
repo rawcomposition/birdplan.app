@@ -5,7 +5,6 @@ import clsx from "clsx";
 
 type Props = {
   open: boolean;
-  hideBg?: boolean;
   small?: boolean;
   onClose: () => void;
   children: React.ReactNode;

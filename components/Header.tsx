@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import BreadcrumbArrow from "icons/BreadcrumbArrow";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
@@ -26,9 +27,15 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
   const { isOwner } = useTrip();
   const { open, close } = useModal();
   const { user } = useUser();
+  const shareRef = React.useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
   const isSubPage = router.pathname !== "/trips";
+
+  const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    open("share");
+  };
 
   return (
     <header className="bg-slate-900 h-[60px] shrink-0 flex items-center" onClick={close}>
@@ -69,7 +76,8 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
         <button
           type="button"
           className="rounded-full border text-accent/90 border-accent/90 py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:border-accent hover:text-accent"
-          onClick={() => open("share")}
+          onClick={handleShare}
+          ref={shareRef}
         >
           Share
         </button>

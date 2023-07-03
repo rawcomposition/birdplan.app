@@ -41,10 +41,10 @@ export default function ViewMarker({ marker }: Props) {
             </Button>
           )}
           <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="text-[13px] rounded-md text-gray-600 bg-gray-100 px-1.5 py-[6px] inline-flex items-center">
+            <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <VerticalDots />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -left-2 top-8 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
+            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
               <Menu.Item>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}

@@ -18,12 +18,10 @@ import Rename from "modals/Rename";
 const modals = [
   {
     id: "hotspot",
-    hideBg: true,
     Component: Hotspot,
   },
   {
     id: "personalLocation",
-    hideBg: true,
     Component: PersonalLocation,
   },
   {
@@ -91,7 +89,7 @@ const ModalProvider = ({ children }: Props) => {
   return (
     <FieldContext.Provider value={{ open, close }}>
       {children}
-      <ModalWrapper small={modal?.small} open={!!modal && !closing} onClose={handleDismiss} hideBg={modal?.hideBg}>
+      <ModalWrapper small={modal?.small} open={!!modal && !closing} onClose={handleDismiss}>
         {modal && <Component {...modalProps} />}
       </ModalWrapper>
     </FieldContext.Provider>
