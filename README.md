@@ -1,5 +1,5 @@
 
-![localhost_3000_](https://user-images.githubusercontent.com/740090/235351896-42f72d4d-fd27-4b73-bf0a-a67dc91146c6.png)
+![screenshot](https://github.com/rawcomposition/bird-planner/assets/740090/47152aa5-85a5-4cc7-bc75-f978320762e8)
 
 ## Welcome to BirdPlanner! 🦆
 
