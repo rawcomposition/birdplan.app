@@ -26,7 +26,7 @@ export default function RecentChecklistList({ locId, speciesCode }: Props) {
           <thead className="text-neutral-600 font-bold">
             <tr>
               <th className="text-left pl-1.5">Time ago</th>
-              <th className="text-left">Target</th>
+              {speciesCode && <th className="text-left">Target</th>}
               <th className="text-left">#</th>
               <th className="text-right"></th>
             </tr>
@@ -43,7 +43,7 @@ export default function RecentChecklistList({ locId, speciesCode }: Props) {
                       {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
                     </time>
                   </td>
-                  <td className="pl-4">{hasObs ? "✅" : "❌"}</td>
+                  {speciesCode && <td className="pl-4">{hasObs ? "✅" : "❌"}</td>}
                   <td>{numSpecies}</td>
                   <td className="text-right">
                     <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
