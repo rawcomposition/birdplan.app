@@ -102,7 +102,7 @@ export default function CreateTrip() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Create Trip | Bird Planner</title>
+        <title>Create Trip | BirdPlan.app</title>
       </Head>
 
       <Header showAccountOnSmScreens />

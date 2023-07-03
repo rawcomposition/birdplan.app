@@ -35,7 +35,7 @@ const features = [
   },
   {
     name: "Mobile friendly.",
-    description: "Though we don't have an app yet, Bird Planner is mobile friendly and works on any device.",
+    description: "Though we don't have an app yet, BirdPlan.app is mobile friendly and works on any device.",
     icon: Phone,
   },
   {
@@ -51,14 +51,14 @@ export default function Planner() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Bird Planner - Plan Your Next Birding Adventure</title>
+        <title>BirdPlan.app - Plan Your Next Birding Adventure</title>
       </Head>
 
       <header className="bg-white border-b border-gray-100 py-4 shrink-0 flex items-center">
         <div className="container flex items-center px-4">
           <Link href="/trips" className={clsx("flex items-center")}>
             <img src="/icon.png" className="w-[50px] mr-4" width="50" height="50" />
-            <h1 className="text-center text-gray-700 font-logo text-2xl">bird planner</h1>
+            <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
           </Link>
           {isLoggedIn ? (
             <Button color="pillPrimary" href="/trips" className="ml-auto">
@@ -82,7 +82,7 @@ export default function Planner() {
             The easiest way to plan your next birding trip
           </h1>
           <p className="text-xl text-center max-w-2xl mb-8">
-            Bird Planner is a tool for birders to plan their birding adventures. Save hotspots, add custom markers, find
+            BirdPlan.app is a tool for birders to plan their birding adventures. Save hotspots, add custom markers, find
             target species, view recent species reports, and more!
           </p>
           <div className="flex flex-col md:flex-row gap-4">
@@ -123,7 +123,7 @@ export default function Planner() {
           <div className="container flex flex-col items-center justify-center">
             <h1 className="text-4xl text-white leading-normal font-bold text-center mb-3">Ready to get started?</h1>
             <p className="text-xl text-white text-center max-w-2xl mb-10">
-              Bird Planner is free to use. Create an account to get started.
+              BirdPlan.app is free to use. Create an account to get started.
             </p>
             <div className="flex flex-col md:flex-row gap-4">
               <Button color="pillPrimary" size="lg" href={isLoggedIn ? "/trips" : "/signup"}>

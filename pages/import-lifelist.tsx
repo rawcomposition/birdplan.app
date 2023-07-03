@@ -65,7 +65,7 @@ export default function ImportLifelist() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Import Life List | Bird Planner</title>
+        <title>Import Life List | BirdPlan.app</title>
       </Head>
 
       <Header showAccountOnSmScreens />

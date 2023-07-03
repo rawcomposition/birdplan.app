@@ -91,7 +91,7 @@ export default function ImportTargets() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Import Targets | Bird Planner</title>
+        <title>Import Targets | BirdPlan.app</title>
       </Head>
 
       <Header showAccountOnSmScreens />

@@ -20,7 +20,7 @@ export default function Trips() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>My Trips | Bird Planner</title>
+        <title>My Trips | BirdPlan.app</title>
       </Head>
 
       <Header showAccountOnSmScreens />

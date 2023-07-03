@@ -109,7 +109,7 @@ export default function Targets() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Bird Planner</title>
+        <title>BirdPlan.app</title>
       </Head>
 
       <Header title="Bird Finder" />

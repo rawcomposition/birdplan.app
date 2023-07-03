@@ -43,7 +43,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
         onClick={closeSidebar}
       >
         <img src="/icon.png" className="w-[50px] mx-4" width="50" height="50" />
-        <h1 className="text-center text-[#757c8c] font-logo text-2xl">bird planner</h1>
+        <h1 className="text-center text-[#757c8c] font-logo text-2xl">BirdPlan.app</h1>
       </Link>
       {isSubPage && (
         <Link href={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3" onClick={closeSidebar}>
