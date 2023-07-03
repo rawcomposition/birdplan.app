@@ -27,9 +27,11 @@ export default function Trip({ name, code }: Props) {
           {isTarget && <Bullseye className="text-[#c2410d] text-sm" />}
           {name}
         </h2>
-        <Button color="gray" size="xs" onClick={handleRemoveTarget}>
-          Remove Target
-        </Button>
+        {isTarget && (
+          <Button color="gray" size="xs" onClick={handleRemoveTarget}>
+            Remove Target
+          </Button>
+        )}
         <CloseButton onClick={() => setSelectedSpeciesCode(undefined)} className="ml-auto" />
       </div>
       <p className="text-xs text-gray-500 mt-1.5">
