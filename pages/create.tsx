@@ -114,7 +114,7 @@ export default function CreateTrip() {
           </h1>
           <div className="flex gap-2 mb-2">
             <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
-              <Field label="Name">
+              <Field label="Name Your Trip">
                 <Input type="text" name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
               </Field>
               <div>
