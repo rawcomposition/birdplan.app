@@ -6,8 +6,11 @@ export default function Footer() {
         RawComposition
       </a>
       <span className="mx-2">•</span>
-      <a href="https://rawcomposition.com/about" target="_blank">
-        Contact
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSc16gkzUiRR5FNy4y2GdpK7nO5cOZtY9iawWPuLTrwMkbnJDA/viewform"
+        target="_blank"
+      >
+        Feedback
       </a>
       <span className="mx-2">•</span>
       <a href="https://github.com/rawcomposition/bird-planner" target="_blank">

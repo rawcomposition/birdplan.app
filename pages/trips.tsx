@@ -49,12 +49,11 @@ export default function Trips() {
           )}
           {enableExperimental && (
             <>
-              <h2 className="text-xl mt-16 mb-1 font-bold text-gray-700">Rare Bird Alert</h2>
-              <Link href="/rba" className="font-bold">
+              <Link href="/rba" className="text-sm">
                 View rare birds near me <ArrowRight className="inline-block" />
               </Link>
-              <h2 className="text-xl mt-10 mb-1 font-bold text-gray-700">Bird Finder</h2>
-              <Link href="/targets" className="font-bold">
+              <br />
+              <Link href="/targets" className="text-sm">
                 Find target birds <ArrowRight className="inline-block" />
               </Link>
             </>
