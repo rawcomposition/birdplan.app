@@ -14,7 +14,7 @@ type Region = {
 };
 
 export default function RegionSelect({ type, parent, ...props }: Props) {
-  const { data, isLoading } = useQuery<Region[]>({
+  const { data, isFetching } = useQuery<Region[]>({
     queryKey: [
       `https://api.ebird.org/v2/ref/region/list/${type}/${parent}`,
       { key: process.env.NEXT_PUBLIC_EBIRD_KEY },
@@ -32,8 +32,8 @@ export default function RegionSelect({ type, parent, ...props }: Props) {
       instanceId={`region-select-${type}`}
       placeholder="Select..."
       options={options}
-      isLoading={isLoading}
-      isDisabled={!isLoading && !options.length}
+      isLoading={isFetching}
+      isDisabled={!isFetching && !options.length}
       {...props}
     />
   );
