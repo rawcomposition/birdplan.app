@@ -7,6 +7,8 @@ import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 import Loading from "icons/Loading";
+import clsx from "clsx";
+import ObsList from "components/ObsList";
 
 type Props = {
   locId: string;
@@ -15,6 +17,7 @@ type Props = {
 };
 
 export default function RecentChecklistList({ locId, speciesCode, speciesName }: Props) {
+  const [view, setView] = React.useState<"all" | "obs">("all");
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
@@ -41,56 +44,85 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
           {!!obsError && <span className="text-red-500">Failed to load recent reports</span>}
         </div>
       )}
-      {checklists.length > 0 && (
-        <table className="w-full text-[13px] mt-2">
-          <thead className="text-neutral-600 font-bold">
-            <tr>
-              <th className="text-left pl-1.5">Time ago</th>
-              {speciesCode && <th className="text-center">{speciesName}</th>}
-              {!speciesCode && <th className="text-center min-w-[2rem]">Species Count</th>}
-              <th className="text-right"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {checklists.map(({ subId, numSpecies, obsDt, obsTime }) => {
-              const time = obsTime || "10:00";
-              const timestamp = dayjs(`${obsDt} ${time}`).format();
-              const hasObs = obs?.some((it) => it.checklistId === subId);
-              const obsLabel = !obs?.length ? "--" : hasObs ? "✅" : "❌";
-              return (
-                <tr key={subId} className="even:bg-neutral-50">
-                  <td className="pl-1.5 py-[5px]">
-                    <time dateTime={timestamp} title={`${obsDt} ${time}`}>
-                      {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
-                    </time>
-                  </td>
-                  {speciesCode && <td className="text-center">{obsLabel}</td>}
-                  {!speciesCode && <td className="text-center">{numSpecies}</td>}
-                  <td className="text-right">
-                    <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
-                      View Checklist
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
-      {checklists.length > 0 && (
-        <p className="text-sm mt-2 text-center">
-          <Link
-            target="_blank"
-            className="text-sm text-blue-900 mt-2"
-            href={`https://ebird.org/hotspot/${locId}/activity?yr=all&m=`}
+      {speciesCode && (
+        <div className="flex gap-2 my-4">
+          <button
+            type="button"
+            className={clsx(
+              "text-xs px-2 py-0.5 rounded-full",
+              view === "all" ? "bg-sky-600 text-white font-bold" : "bg-gray-100 text-gray-600"
+            )}
+            onClick={() => setView("all")}
           >
-            View all checklists
-          </Link>
-        </p>
+            All
+          </button>
+          <button
+            type="button"
+            className={clsx(
+              "text-xs px-2 py-0.5 rounded-full",
+              view === "obs" ? "bg-sky-600 text-white font-bold" : "bg-gray-100 text-gray-600"
+            )}
+            onClick={() => setView("obs")}
+          >
+            {speciesName} Reports
+          </button>
+        </div>
       )}
-      {!isLoading && checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
-      {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {error && <p className="text-red-500 text-sm">Failed to load checklists</p>}
+      {view === "obs" && speciesCode && <ObsList locId={locId} speciesCode={speciesCode} />}
+      {view === "all" && (
+        <>
+          {checklists.length > 0 && (
+            <table className="w-full text-[13px] mt-2">
+              <thead className="text-neutral-600 font-bold">
+                <tr>
+                  <th className="text-left pl-1.5">Time ago</th>
+                  {speciesCode && <th className="text-center">{speciesName}</th>}
+                  {!speciesCode && <th className="text-center min-w-[2rem]">Species Count</th>}
+                  <th className="text-right"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {checklists.map(({ subId, numSpecies, obsDt, obsTime }) => {
+                  const time = obsTime || "10:00";
+                  const timestamp = dayjs(`${obsDt} ${time}`).format();
+                  const hasObs = obs?.some((it) => it.checklistId === subId);
+                  const obsLabel = !obs?.length ? "--" : hasObs ? "✅" : "❌";
+                  return (
+                    <tr key={subId} className="even:bg-neutral-50">
+                      <td className="pl-1.5 py-[5px]">
+                        <time dateTime={timestamp} title={`${obsDt} ${time}`}>
+                          {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
+                        </time>
+                      </td>
+                      {speciesCode && <td className="text-center">{obsLabel}</td>}
+                      {!speciesCode && <td className="text-center">{numSpecies}</td>}
+                      <td className="text-right">
+                        <a href={`https://ebird.org/checklist/${subId}`} target="_blank" rel="noreferrer">
+                          View Checklist
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+          {checklists.length > 0 && (
+            <p className="text-sm mt-2 text-center">
+              <Link
+                target="_blank"
+                className="text-sm text-blue-900 mt-2"
+                href={`https://ebird.org/hotspot/${locId}/activity?yr=all&m=`}
+              >
+                View all checklists
+              </Link>
+            </p>
+          )}
+          {!isLoading && checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
+          {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
+          {error && <p className="text-red-500 text-sm">Failed to load checklists</p>}
+        </>
+      )}
     </>
   );
 }

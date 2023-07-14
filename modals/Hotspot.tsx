@@ -7,9 +7,8 @@ import Star from "icons/Star";
 import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
-import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish, months, truncate } from "lib/helpers";
+import { translate, isRegionEnglish, months } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -55,14 +54,6 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
       id: "checklists",
     },
   ];
-
-  if (speciesName) {
-    tabs.push({
-      label: `${truncate(speciesName, 18)} Reports`,
-      title: `${speciesName} Reports`,
-      id: "reports",
-    });
-  }
 
   const handleSave = async () => {
     if (isSaved) {
@@ -206,7 +197,6 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </nav>
         </div>
         <div className="sm:-mx-1.5">
-          {tab === "reports" && <ObsList locId={id} speciesCode={selectedSpeciesCode || ""} />}
           {tab === "needs" && <RecentSpeciesList locId={id} />}
           {tab === "checklists" && (
             <RecentChecklistList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />
