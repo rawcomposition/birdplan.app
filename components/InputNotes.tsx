@@ -26,19 +26,8 @@ export default function InputNotes({ value, onBlur }: Props) {
 
   return (
     <>
-      <div className="flex items-center gap-3 mt-6">
-        {showToggleBtn && (
-          <button
-            type="button"
-            onClick={() => setIsEditing((isEditing) => !isEditing)}
-            className="text-sky-600 text-[11px] font-bold px-2 border border-sky-600 rounded hover:text-sky-700 hover:border-sky-700 transition-colors"
-          >
-            {isEditing ? "Done" : "Edit"}
-          </button>
-        )}
-      </div>
       {isEditing ? (
-        <div className="-mx-2">
+        <div className="mt-6 -mx-2">
           <TextareaAutosize
             placeholder="Notes..."
             className="mt-1 input"
@@ -50,8 +39,19 @@ export default function InputNotes({ value, onBlur }: Props) {
           />
         </div>
       ) : (
-        <div className="mt-1 text-gray-700 text-sm relative group whitespace-pre">{notes || "No notes"}</div>
+        <div className="mt-6 text-gray-700 text-sm relative group whitespace-pre">{notes || "No notes"}</div>
       )}
+      <div className="-mt-1 -ml-3">
+        {showToggleBtn && (
+          <button
+            type="button"
+            onClick={() => setIsEditing((isEditing) => !isEditing)}
+            className="text-sky-600 text-[12px] font-bold px-3 py-1"
+          >
+            {isEditing ? "Done" : "Edit"}
+          </button>
+        )}
+      </div>
     </>
   );
 }
