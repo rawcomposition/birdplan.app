@@ -40,12 +40,12 @@ export default function CreateTrip() {
   const requireSubregion = largeRegions.includes(country?.value || "");
 
   const getRegionCode = () => {
-    if (county)
+    if (county && county.length > 0)
       return county
         .map((it) => it.value)
         .sort()
         .join(",");
-    if (state)
+    if (state && state.length > 0)
       return state
         .map((it) => it.value)
         .sort()
