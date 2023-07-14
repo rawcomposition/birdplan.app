@@ -27,7 +27,6 @@ export default function InputNotes({ value, onBlur }: Props) {
   return (
     <>
       <div className="flex items-center gap-3 mt-6">
-        <h3 className="text-gray-700 font-bold">Notes</h3>
         {showToggleBtn && (
           <button
             type="button"
@@ -41,6 +40,7 @@ export default function InputNotes({ value, onBlur }: Props) {
       {isEditing ? (
         <div className="-mx-2">
           <TextareaAutosize
+            placeholder="Notes..."
             className="mt-1 input"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}

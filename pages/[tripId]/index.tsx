@@ -26,6 +26,8 @@ import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
 import RecentSpeciesSidebarBlock from "components/RecentSpeciesSidebarBlock";
 import Feather from "icons/Feather";
 import Bullseye from "icons/Bullseye";
+import MapFlatIcon from "icons/MapFlat";
+import ListTreeIcon from "icons/ListTree";
 import Pencil from "icons/Pencil";
 import Trash from "icons/Trash";
 import { deleteTrip } from "lib/firebase";
@@ -36,6 +38,7 @@ export default function Trip() {
   const { open } = useModal();
   const router = useRouter();
   const [showAll, setShowAll] = React.useState(false);
+  const [view, setView] = React.useState<"map" | "targets">("map");
   const { lifelist } = useProfile();
   const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const { closeSidebar } = useUI();
@@ -112,7 +115,36 @@ export default function Trip() {
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <main className="flex h-[calc(100%-60px)]">
         <Sidebar noPadding>
-          <div className={clsx("mb-4 mt-6 mx-6", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
+          <div className="flex flex-col gap-1.5 mb-4 mx-3 mt-4">
+            <button
+              type="button"
+              className={clsx(
+                "flex items-center text-[15px] gap-2 font-bold w-full text-left rounded py-1.5 px-3",
+                view === "map" ? "bg-sky-600/80 text-white" : "hover:bg-white/10 text-gray-300"
+              )}
+              onClick={() => setView("map")}
+            >
+              <MapFlatIcon />
+              Map
+            </button>
+            <button
+              type="button"
+              className={clsx(
+                "flex items-center text-[15px] gap-2 font-bold w-full text-left rounded py-1.5 px-3",
+                view === "targets" ? "bg-sky-600/80 text-white" : "hover:bg-white/10 text-gray-300"
+              )}
+              onClick={() => setView("targets")}
+            >
+              <ListTreeIcon />
+              Target Planner
+            </button>
+          </div>
+          <div
+            className={clsx(
+              "mb-4 px-6 pt-4 border-t border-gray-700",
+              !!selectedSpeciesCode && "opacity-50 pointer-events-none"
+            )}
+          >
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={() => setShowAll((prev) => !prev)} />
               Show all hotspots
