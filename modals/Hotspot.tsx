@@ -8,7 +8,7 @@ import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish, months } from "lib/helpers";
+import { translate, isRegionEnglish, fullMonths } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -16,6 +16,8 @@ import clsx from "clsx";
 import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
 import VerticalDots from "icons/VerticalDots";
+import HotspotTargets from "components/HotspotTargets";
+import HotspotFavs from "components/HotspotFavs";
 
 type Props = {
   hotspot: HotspotT;
@@ -55,6 +57,14 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
     },
   ];
 
+  if (isSaved) {
+    tabs.push({
+      label: "Targets",
+      title: "",
+      id: "targets",
+    });
+  }
+
   const handleSave = async () => {
     if (isSaved) {
       if (notes && !confirm("Are you sure you want to unsave this hotspot? Your notes will be lost.")) return;
@@ -78,6 +88,12 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   };
 
   const canTranslate = isSaved && !isRegionEnglish(trip?.region || "");
+  const tripRangeLabel =
+    trip?.startMonth && trip?.endMonth
+      ? trip.startMonth === trip.endMonth
+        ? fullMonths[trip.startMonth - 1]
+        : `${fullMonths[trip.startMonth - 1]} - ${fullMonths[trip.endMonth - 1]}`
+      : "";
 
   return (
     <>
@@ -167,9 +183,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
                     rel="noreferrer"
                     className="text-sky-600"
                   >
-                    {trip.startMonth === trip.endMonth
-                      ? months[trip.startMonth - 1]
-                      : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`}
+                    {tripRangeLabel}
                   </a>
                 </Menu.Item>
               )}
@@ -177,6 +191,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </Menu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} />
+        <HotspotFavs locId={id} />
         {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
@@ -201,6 +216,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           {tab === "checklists" && (
             <RecentChecklistList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />
           )}
+          {tab === "targets" && <HotspotTargets locId={id} tripRangeLabel={tripRangeLabel} />}
         </div>
       </Body>
     </>

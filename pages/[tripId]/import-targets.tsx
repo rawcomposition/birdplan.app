@@ -2,7 +2,6 @@ import React from "react";
 import Header from "components/Header";
 import Head from "next/head";
 import { useTrip } from "providers/trip";
-import Papa from "papaparse";
 import toast from "react-hot-toast";
 import Button from "components/Button";
 import Sidebar from "components/Sidebar";
@@ -10,17 +9,13 @@ import { useUI } from "providers/ui";
 import { useProfile } from "providers/profile";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
-import { Target, Option } from "lib/types";
+import { Option } from "lib/types";
 import Select from "components/ReactSelectStyled";
 import Download from "icons/Download";
 import { useRouter } from "next/router";
+import { parseTargets } from "lib/helpers";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
-
-const getDataInRange = (data: number[], start: number, end: number) => {
-  if (start <= end) return data.slice(start - 1, end);
-  return [...data.slice(0, end), ...data.slice(start - 1)];
-};
 
 export default function ImportTargets() {
   const { trip, setTargets } = useTrip();
@@ -35,52 +30,17 @@ export default function ImportTargets() {
 
   const redirectUrl = lifelist.length > 0 ? `/${trip?.id}` : `/import-lifelist?tripId=${trip?.id}`;
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!trip) return;
     try {
       const file = e.target.files?.[0];
       if (!file) return;
-      Papa.parse(file, {
-        header: true,
-        delimiter: "\t",
-        complete: async function (results: any) {
-          const startWeek = startMonth * 4 - 3;
-          const endWeek = endMonth * 4;
-          const data = results.data.filter((it: any) => it[""] !== "");
-          const species = data.slice(4).map((it: any) => {
-            const name = it[""].split(" (")[0];
-            const abundance = it.__parsed_extra.slice(0, 48).map((it: string) => Number(it));
-            const abundanceInRange = getDataInRange(abundance, startWeek, endWeek);
-            const sum = abundanceInRange.reduce((acc, it) => acc + it, 0);
-            const percent = (sum / abundanceInRange.length) * 100;
-            const rounded =
-              percent >= 1
-                ? Math.round(percent)
-                : percent >= 0.1
-                ? Math.round(percent * 10) / 10
-                : Math.round(percent * 100) / 100;
-            return { name, percent: rounded };
-          });
-
-          const sorted = species.sort((a: Target, b: Target) => b.percent - a.percent);
-
-          const filtered = sorted.filter((it: Target) => it.percent >= Number(cutoff.value.replace("%", "")));
-
-          // Fetch to species codes
-          const toastId = toast.loading("Importing...");
-          const res = await fetch("/api/com-name-codes", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(filtered),
-          });
-          const withCodes = await res.json();
-          setTargets(withCodes);
-          toast.success("Targets imported");
-          toast.dismiss(toastId);
-          router.push(redirectUrl);
-        },
-      });
+      const toastId = toast.loading("Importing...");
+      const res = await parseTargets({ file, cutoff: cutoff.value, startMonth, endMonth });
+      setTargets({ ...res, tripId: trip.id });
+      toast.success("Targets imported");
+      toast.dismiss(toastId);
+      router.push(redirectUrl);
     } catch (error) {
       console.error(error);
       toast.error("Error processing file");

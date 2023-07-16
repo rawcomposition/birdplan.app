@@ -50,7 +50,7 @@ export default function Trip() {
   const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const selectedSpecies = [...recentSpecies, ...targets].find((it) => it.code === selectedSpeciesCode);
+  const selectedSpecies = [...recentSpecies, ...targets.items].find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
@@ -188,7 +188,7 @@ export default function Trip() {
                   </Link>
                   <Link href={`/${trip?.id}/import-targets`} className="flex items-center gap-2 text-gray-300">
                     <Bullseye aria-hidden="true" />
-                    {!!targets?.length ? "Update Targets" : "Import Targets"}
+                    {!!targets?.items?.length ? "Update Targets" : "Import Targets"}
                   </Link>
                   <button
                     onClick={() => open("renameTrip", { trip })}

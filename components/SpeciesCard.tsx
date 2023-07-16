@@ -11,7 +11,7 @@ type Props = {
 
 export default function Trip({ name, code }: Props) {
   const { targets, setSelectedSpeciesCode, removeTarget, trip } = useTrip();
-  const isTarget = targets?.findIndex((it) => it.code === code) !== -1;
+  const isTarget = targets?.items?.findIndex((it) => it.code === code) !== -1;
 
   const handleRemoveTarget = () => {
     if (!confirm("Are you sure you want to remove this target? You can only add it back by re-importing your targets."))

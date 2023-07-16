@@ -9,6 +9,7 @@ import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 import Loading from "icons/Loading";
 import clsx from "clsx";
 import ObsList from "components/ObsList";
+import FilterTabs from "components/FilterTabs";
 
 type Props = {
   locId: string;
@@ -17,7 +18,7 @@ type Props = {
 };
 
 export default function RecentChecklistList({ locId, speciesCode, speciesName }: Props) {
-  const [view, setView] = React.useState<"all" | "obs">("all");
+  const [view, setView] = React.useState<string>("all");
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
@@ -45,28 +46,15 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
         </div>
       )}
       {speciesCode && (
-        <div className="flex gap-2 my-4">
-          <button
-            type="button"
-            className={clsx(
-              "text-xs px-2 py-0.5 rounded-full",
-              view === "all" ? "bg-sky-600 text-white font-bold" : "bg-gray-100 text-gray-600"
-            )}
-            onClick={() => setView("all")}
-          >
-            All
-          </button>
-          <button
-            type="button"
-            className={clsx(
-              "text-xs px-2 py-0.5 rounded-full",
-              view === "obs" ? "bg-sky-600 text-white font-bold" : "bg-gray-100 text-gray-600"
-            )}
-            onClick={() => setView("obs")}
-          >
-            {speciesName} Reports
-          </button>
-        </div>
+        <FilterTabs
+          className="my-4"
+          value={view}
+          onChange={setView}
+          options={[
+            { label: "All", value: "all" },
+            { label: `${speciesName} Reports`, value: "obs" },
+          ]}
+        />
       )}
       {view === "obs" && speciesCode && <ObsList locId={locId} speciesCode={speciesCode} />}
       {view === "all" && (

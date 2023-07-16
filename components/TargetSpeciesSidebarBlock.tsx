@@ -18,7 +18,7 @@ export default function TargetSpeciesSidebarBlock() {
   const actualUid = selectedUid || myUid;
 
   const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
-  const targetSpecies = targets.filter((it) => !lifelist.includes(it.code)) || [];
+  const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
   const filteredTargets = targetSpecies.filter((it) => it.name.toLowerCase().includes(search.toLowerCase()));
 
   const inviteOptions = invites

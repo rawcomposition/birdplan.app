@@ -1,5 +1,5 @@
 import React from "react";
-import { Hotspot, Trip, Target, CustomMarker, Invite } from "lib/types";
+import { Hotspot, Trip, Target, Targets, CustomMarker, Invite } from "lib/types";
 import {
   subscribeToTrip,
   subscribeToTripTargets,
@@ -16,7 +16,7 @@ import { useUser } from "providers/user";
 type ContextT = {
   trip: Trip | null;
   invites: Invite[];
-  targets: Target[];
+  targets: Targets;
   selectedSpeciesCode?: string;
   canEdit: boolean;
   isOwner: boolean;
@@ -27,10 +27,13 @@ type ContextT = {
   removeHotspot: (id: string) => Promise<void>;
   appendMarker: (marker: CustomMarker) => Promise<void>;
   removeMarker: (id: string) => Promise<void>;
-  setTargets: (target: Target[]) => Promise<void>;
+  setTargets: ({ items, N, yrN }: Targets) => Promise<void>;
   removeTarget: (code: string) => Promise<void>;
   saveHotspotNotes: (id: string, notes: string) => Promise<void>;
+  setHotspotTargetsId: (hotspotId: string, targetsId: string) => Promise<void>;
   saveMarkerNotes: (id: string, notes: string) => Promise<void>;
+  addHotspotFav: (id: string, code: string, name: string, range: string, percent: number) => Promise<void>;
+  removeHotspotFav: (id: string, code: string) => Promise<void>;
   setTranslatedHotspotName: (id: string, translatedName: string) => Promise<void>;
   resetTranslatedHotspotName: (id: string) => Promise<void>;
   removeInvite: (inviteId: string, uid?: string) => Promise<void>;
@@ -38,7 +41,12 @@ type ContextT = {
 
 const initialState = {
   trip: null,
-  targets: [],
+  targets: {
+    items: [],
+    N: 0,
+    yrN: 0,
+    tripId: "",
+  },
   canEdit: false,
   isOwner: false,
   invites: [],
@@ -55,7 +63,10 @@ export const TripContext = React.createContext<ContextT>({
   setTargets: async () => {},
   removeTarget: async () => {},
   saveHotspotNotes: async () => {},
+  addHotspotFav: async () => {},
+  setHotspotTargetsId: async () => {},
   saveMarkerNotes: async () => {},
+  removeHotspotFav: async () => {},
   setTranslatedHotspotName: async () => {},
   resetTranslatedHotspotName: async () => {},
   removeInvite: async () => {},
@@ -67,7 +78,7 @@ type Props = {
 
 const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
-  const [targets, setTripTargets] = React.useState<Target[]>([]);
+  const [targets, setTripTargets] = React.useState<Targets>(initialState.targets);
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
@@ -80,7 +91,7 @@ const TripProvider = ({ children }: Props) => {
     return () => {
       setTrip(null);
       setSelectedSpeciesCode(undefined);
-      setTripTargets([]);
+      setTripTargets(initialState.targets);
     };
   }, [id]);
 
@@ -137,14 +148,38 @@ const TripProvider = ({ children }: Props) => {
     await updateMarkers(trip.id, newMarkers);
   };
 
-  const setTargets = async (targets: Target[]) => {
+  const addHotspotFav = async (id: string, code: string, name: string, range: string, percent: number) => {
     if (!trip) return;
-    await updateTargets(trip.id, targets);
+    const newHotspots = trip.hotspots.map((it) => {
+      if (it.id === id) {
+        const favs = it.favs ? [...it.favs, { code, name, range, percent }] : [{ code, name, range, percent }];
+        return { ...it, favs };
+      }
+      return it;
+    });
+    await updateHotspots(trip.id, newHotspots);
+  };
+
+  const removeHotspotFav = async (id: string, code: string) => {
+    if (!trip) return;
+    const newHotspots = trip.hotspots.map((it) => {
+      if (it.id === id) {
+        const favs = it.favs?.filter((it) => it.code !== code);
+        return { ...it, favs };
+      }
+      return it;
+    });
+    await updateHotspots(trip.id, newHotspots);
+  };
+
+  const setTargets = async (data: Targets) => {
+    if (!trip) return;
+    await updateTargets(trip.id, data, true);
   };
 
   const removeTarget = async (code: string) => {
     if (!trip) return;
-    const newTargets = targets.filter((it) => it.code !== code);
+    const newTargets = { ...targets, items: targets.items.filter((it) => it.code !== code) };
     await updateTargets(trip.id, newTargets);
   };
 
@@ -152,6 +187,15 @@ const TripProvider = ({ children }: Props) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.map((it) => {
       if (it.id === id) return { ...it, notes };
+      return it;
+    });
+    await updateHotspots(trip.id, newHotspots);
+  };
+
+  const setHotspotTargetsId = async (hotspotId: string, targetsId: string) => {
+    if (!trip) return;
+    const newHotspots = trip.hotspots.map((it) => {
+      if (it.id === hotspotId) return { ...it, targetsId };
       return it;
     });
     await updateHotspots(trip.id, newHotspots);
@@ -202,7 +246,10 @@ const TripProvider = ({ children }: Props) => {
         setTargets,
         removeTarget,
         saveHotspotNotes,
+        setHotspotTargetsId,
         saveMarkerNotes,
+        addHotspotFav,
+        removeHotspotFav,
         setTranslatedHotspotName,
         resetTranslatedHotspotName,
         removeInvite,

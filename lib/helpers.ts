@@ -1,8 +1,9 @@
-import { Trip } from "lib/types";
+import { Trip, Target } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import { uploadFile } from "lib/firebase";
 import { v4 as uuidv4 } from "uuid";
+import Papa from "papaparse";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -11,6 +12,18 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+export const fullMonths = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+];
 
 export const englishCountries = [
   "US",
@@ -250,4 +263,95 @@ export const uploadMapboxImg = async (bounds: Trip["bounds"]) => {
   const file = new File([blob], `${id}.png`, { type: "image/png" });
   const url = await uploadFile(file);
   return url;
+};
+
+const getDataInRange = (data: number[], start: number, end: number) => {
+  if (start <= end) return data.slice(start - 1, end);
+  return [...data.slice(0, end), ...data.slice(start - 1)];
+};
+
+type ParseTargetProps = {
+  file: File;
+  startMonth?: number;
+  endMonth?: number;
+  cutoff?: string;
+};
+
+type ParseTargetResponse = {
+  items: Target[];
+  N: number;
+  yrN: number;
+};
+
+export const parseTargets = async ({
+  file,
+  startMonth = 1,
+  endMonth = 12,
+  cutoff,
+}: ParseTargetProps): Promise<ParseTargetResponse> => {
+  return new Promise((resolve, reject) => {
+    try {
+      Papa.parse(file, {
+        header: true,
+        delimiter: "\t",
+        complete: async function (results: any) {
+          const startWeek = startMonth * 4 - 3;
+          const endWeek = endMonth * 4;
+          const data = results.data.filter((it: any) => it[""] !== "");
+          const sampleSizes = data[2].__parsed_extra.slice(0, 48).map((it: string) => Number(it));
+          const sampleSizesInRange = getDataInRange(sampleSizes, startWeek, endWeek);
+          const N = sampleSizesInRange.reduce((acc, it) => acc + it, 0);
+          const yrN = sampleSizes.reduce((acc: number, it: number) => acc + it, 0);
+          const species = data.slice(3).map((it: any) => {
+            const name = it[""].split(" (")[0];
+            const counts = it.__parsed_extra.slice(0, 48).map((it: string, i: number) => sampleSizes[i] * Number(it));
+            const countsInRange = getDataInRange(counts, startWeek, endWeek);
+            const sumCountsInRange = countsInRange.reduce((acc, it) => acc + it, 0);
+            const sumCountsYr = counts.reduce((acc: number, it: number) => acc + it, 0);
+            const percent = (sumCountsInRange / N) * 100;
+            const percentYr = (sumCountsYr / yrN) * 100;
+            const rounded =
+              percent >= 1
+                ? Math.round(percent)
+                : percent >= 0.1
+                ? Math.round(percent * 10) / 10
+                : Math.round(percent * 100) / 100;
+
+            const roundedYr =
+              percentYr >= 1
+                ? Math.round(percentYr)
+                : percentYr >= 0.1
+                ? Math.round(percentYr * 10) / 10
+                : Math.round(percentYr * 100) / 100;
+
+            return { name, percent: rounded, percentYr: roundedYr };
+          });
+
+          const sorted = species.sort((a: Target, b: Target) => b.percent - a.percent);
+
+          const filtered = cutoff
+            ? // Providing cutoff only applies to trip months percent (used for regions)
+              sorted.filter((it: Target) => it.percent >= Number(cutoff.replace("%", "")))
+            : sorted.filter((it: Target) => it.percent >= 5 || it.percentYr >= 5);
+
+          // Fetch to species codes
+          const res = await fetch("/api/com-name-codes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(filtered),
+          });
+          const withCodes = await res.json();
+          resolve({
+            items: withCodes,
+            N,
+            yrN,
+          });
+        },
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
