@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
+import HeartSolid from "icons/HeartSolid";
 
 type Props = {
   locId: string;
@@ -15,6 +16,8 @@ export default function RecentSpeciesList({ locId }: Props) {
   const [viewAll, setViewAll] = React.useState(false);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
+  const hotspot = trip?.hotspots.find((it) => it.id === locId);
+  const favCodes = hotspot?.favs?.map((it) => it.code) || [];
 
   const filteredObs = viewAll ? recentSpecies : recentSpecies.slice(0, previewCount);
 
@@ -33,7 +36,12 @@ export default function RecentSpeciesList({ locId }: Props) {
           <tbody>
             {filteredObs.map(({ code, name, date, count, checklistId }) => (
               <tr key={`${code}-${checklistId}`} className="even:bg-neutral-50">
-                <td className="pl-1.5 py-[5px]">{name}</td>
+                <td className="pl-1.5 py-[5px] relative">
+                  {favCodes.includes(code) && (
+                    <HeartSolid className="text-pink-700 absolute top-[12px] left-[-9px] text-[8px]" />
+                  )}
+                  {name}
+                </td>
                 <td>
                   <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>
                     {dateTimeToRelative(date, timezone)}
