@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import * as fs from "firebase/firestore";
-import { Profile, Hotspot, Trip, TripInput, Target, CustomMarker, Invite } from "lib/types";
+import { Profile, Hotspot, Trip, TripInput, Target, Targets, CustomMarker, Invite } from "lib/types";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
@@ -71,10 +71,37 @@ export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
   await fs.setDoc(fs.doc(db, "trip", tripId), { hotspots }, { merge: true });
 };
 
-export const updateTargets = async (tripId: string, targets: Target[]) => {
+export const updateTargets = async (id: string, data: Targets, shouldTimestamp?: boolean) => {
   const user = auth.currentUser;
   if (!user) return;
-  await fs.setDoc(fs.doc(db, "targets", tripId), { items: targets, updatedAt: fs.serverTimestamp() });
+  await fs.setDoc(fs.doc(db, "targets", id), {
+    ...data,
+    ...(shouldTimestamp ? { updatedAt: fs.serverTimestamp() } : {}),
+  });
+};
+
+export const addTargets = async (data: Targets): Promise<{ id: string } | null> => {
+  const user = auth.currentUser;
+  if (!user) return null;
+  const res = await fs.addDoc(fs.collection(db, "targets"), {
+    ...data,
+    updatedAt: fs.serverTimestamp(),
+  });
+  return { id: res.id };
+};
+
+export const deleteTargets = async (id: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.deleteDoc(fs.doc(db, "targets", id));
+};
+
+export const getTargets = async (id: string): Promise<Targets | null> => {
+  const doc = await fs.getDoc(fs.doc(db, "targets", id));
+  if (doc.exists()) {
+    return doc.data() as Targets;
+  }
+  return null;
 };
 
 export const updateMarkers = async (tripId: string, markers: CustomMarker[]) => {
@@ -134,10 +161,10 @@ export const subscribeToTrip = (id: string, callback: (trip: Trip) => void): (()
   });
 };
 
-export const subscribeToTripTargets = (tripId: string, callback: (trip: Target[]) => void): (() => void) => {
+export const subscribeToTripTargets = (tripId: string, callback: (data: Targets) => void): (() => void) => {
   return fs.onSnapshot(fs.doc(db, "targets", tripId), (doc) => {
     if (doc.exists()) {
-      callback(doc.data()?.items as Target[]);
+      callback(doc.data() as Targets);
     }
   });
 };

@@ -26,6 +26,8 @@ import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
 import RecentSpeciesSidebarBlock from "components/RecentSpeciesSidebarBlock";
 import Feather from "icons/Feather";
 import Bullseye from "icons/Bullseye";
+import MapFlatIcon from "icons/MapFlat";
+import ListTreeIcon from "icons/ListTree";
 import Pencil from "icons/Pencil";
 import Trash from "icons/Trash";
 import { deleteTrip } from "lib/firebase";
@@ -36,6 +38,7 @@ export default function Trip() {
   const { open } = useModal();
   const router = useRouter();
   const [showAll, setShowAll] = React.useState(false);
+  const [view, setView] = React.useState<"map" | "targets">("map");
   const { lifelist } = useProfile();
   const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
   const { closeSidebar } = useUI();
@@ -47,7 +50,7 @@ export default function Trip() {
   const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const selectedSpecies = [...recentSpecies, ...targets].find((it) => it.code === selectedSpeciesCode);
+  const selectedSpecies = [...recentSpecies, ...targets.items].find((it) => it.code === selectedSpeciesCode);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
@@ -112,7 +115,7 @@ export default function Trip() {
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <main className="flex h-[calc(100%-60px)]">
         <Sidebar noPadding>
-          <div className={clsx("mb-4 mt-6 mx-6", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
+          <div className={clsx("mb-4 px-6 pt-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={() => setShowAll((prev) => !prev)} />
               Show all hotspots
@@ -156,7 +159,7 @@ export default function Trip() {
                   </Link>
                   <Link href={`/${trip?.id}/import-targets`} className="flex items-center gap-2 text-gray-300">
                     <Bullseye aria-hidden="true" />
-                    {!!targets?.length ? "Update Targets" : "Import Targets"}
+                    {!!targets?.items?.length ? "Update Targets" : "Import Targets"}
                   </Link>
                   <button
                     onClick={() => open("renameTrip", { trip })}

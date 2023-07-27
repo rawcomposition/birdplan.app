@@ -42,7 +42,7 @@ export default function ObsList({ locId, speciesCode }: Props) {
       <table className="w-full text-[13px] mt-2">
         <thead className="text-neutral-600 font-bold">
           <tr>
-            <th className="text-left pl-1.5 py-1">Time ago</th>
+            <th className="text-left pl-1.5">Time ago</th>
             <th className="text-left">#</th>
             <th className="text-center">Evidence</th>
             <th className="text-right"></th>

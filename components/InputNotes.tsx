@@ -26,32 +26,32 @@ export default function InputNotes({ value, onBlur }: Props) {
 
   return (
     <>
-      <div className="flex items-center gap-3 mt-6">
-        <h3 className="text-gray-700 font-bold">Notes</h3>
+      {isEditing ? (
+        <div className="mt-6 -mx-2">
+          <TextareaAutosize
+            placeholder="Notes..."
+            className="mt-1 input"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            onBlur={(e) => onBlur(e.target.value)}
+            minRows={1}
+            maxRows={15}
+          />
+        </div>
+      ) : (
+        <div className="mt-6 text-gray-700 text-sm relative group whitespace-pre">{notes || "No notes"}</div>
+      )}
+      <div className="-mt-1 -ml-3">
         {showToggleBtn && (
           <button
             type="button"
             onClick={() => setIsEditing((isEditing) => !isEditing)}
-            className="text-sky-600 text-[11px] font-bold px-2 border border-sky-600 rounded hover:text-sky-700 hover:border-sky-700 transition-colors"
+            className="text-sky-600 text-[12px] font-bold px-3 py-1"
           >
             {isEditing ? "Done" : "Edit"}
           </button>
         )}
       </div>
-      {isEditing ? (
-        <div className="-mx-2">
-          <TextareaAutosize
-            className="mt-1 input"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            onBlur={(e) => onBlur(e.target.value)}
-            minRows={2}
-            maxRows={15}
-          />
-        </div>
-      ) : (
-        <div className="mt-1 text-gray-700 text-sm relative group whitespace-pre">{notes || "No notes"}</div>
-      )}
     </>
   );
 }

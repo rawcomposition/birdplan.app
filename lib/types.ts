@@ -79,6 +79,13 @@ export type Hotspot = {
   lng: number;
   species?: number;
   notes?: string;
+  targetsId?: string;
+  favs: {
+    name: string;
+    code: string;
+    range: string;
+    percent: number;
+  }[];
 };
 
 export type KeyValue = {
@@ -127,6 +134,7 @@ export type Target = {
   code: string;
   name: string;
   percent: number;
+  percentYr: number;
 };
 
 export enum MarkerIcon {
@@ -204,6 +212,15 @@ export type RecentSpecies = {
   date: string;
   checklistId: string;
   count: number;
+};
+
+export type Targets = {
+  items: Target[];
+  N: number;
+  yrN: number;
+  tripId: string;
+  hotspotId?: string;
+  updatedAt?: string;
 };
 
 // BF: Bird Finder
