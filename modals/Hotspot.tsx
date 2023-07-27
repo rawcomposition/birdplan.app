@@ -59,7 +59,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
 
   if (isSaved) {
     tabs.push({
-      label: "Targets",
+      label: hotspot?.targetsId ? "Targets" : "Import Targets",
       title: "",
       id: "targets",
     });

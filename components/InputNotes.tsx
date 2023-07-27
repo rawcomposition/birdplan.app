@@ -34,7 +34,7 @@ export default function InputNotes({ value, onBlur }: Props) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             onBlur={(e) => onBlur(e.target.value)}
-            minRows={2}
+            minRows={1}
             maxRows={15}
           />
         </div>

@@ -10,6 +10,7 @@ export default function HotspotFavs({ locId }: Props) {
   const { trip } = useTrip();
   const hotspot = trip?.hotspots.find((it) => it.id === locId);
 
+  if (!hotspot?.favs?.length) return null;
   return (
     <div className="mt-8 mb-4">
       <h3 className="text-gray-900 text-sm font-bold mb-2">Favorites</h3>
