@@ -4,9 +4,9 @@ import Directions from "icons/Directions";
 import SlideOver from "components/SlideOver";
 import { useTrip } from "providers/trip";
 import MarkerWithIcon from "components/MarkerWithIcon";
-import Marker from "icons/Marker";
+import GoogleMaps from "icons/GoogleMaps";
 import Link from "next/link";
-import { getMarkerColor } from "lib/helpers";
+import { MarkerIcon } from "lib/types";
 
 type Props = {
   lat: number;
@@ -38,21 +38,21 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
       <SlideOver open={open} onClose={() => setOpen(false)}>
         <Link
           href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
-          className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5"
+          className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700"
           target="_blank"
         >
-          <Directions className="text-lg ml-3 mr-1.5 text-green-700" />
+          <GoogleMaps className="text-lg ml-3.5 mr-1.5" />
           View on Google Maps
         </Link>
         {(!!filteredHotspots?.length || !!filteredMarkers?.length) && (
           <>
-            <h3 className="font-bold mb-1 -mt-1.5 text-sm">Directions from...</h3>
-            <ul className="flex flex-col pl-2">
+            <h3 className="font-bold mb-1.5 -mt-1.5 text-sm">Directions from...</h3>
+            <ul className="flex flex-col pl-2 space-y-0.5">
               {filteredMarkers.map((marker) => (
                 <li key={marker.id}>
                   <Link
                     href={`https://www.google.com/maps/dir/?api=1&origin=${marker.lat},${marker.lng}&destination=${lat},${lng}`}
-                    className="flex items-center gap-2 text-sm cursor-pointer"
+                    className="flex items-center gap-2 text-sm cursor-pointer text-gray-700"
                     target="_blank"
                   >
                     <MarkerWithIcon showStroke={false} icon={marker.icon} className="inline-block ml-1 scale-75" />
@@ -64,10 +64,14 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
                 <li key={hotspot.id}>
                   <Link
                     href={`https://www.google.com/maps/dir/?api=1&origin=${hotspot.lat},${hotspot.lng}&destination=${lat},${lng}`}
-                    className="flex items-center gap-2 text-sm cursor-pointer py-0.5"
+                    className="flex items-center gap-2 text-sm cursor-pointer py-0.5 text-gray-700"
                     target="_blank"
                   >
-                    <Marker className="h-8 w-8 scale-75 shrink-0" color={getMarkerColor(hotspot.species || 0)} />
+                    <MarkerWithIcon
+                      showStroke={false}
+                      icon={MarkerIcon.HOTSPOT}
+                      className="inline-block ml-1 scale-75"
+                    />
                     <span className="truncate">{hotspot.name}</span>
                   </Link>
                 </li>
