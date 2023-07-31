@@ -39,7 +39,7 @@ export default function InputNotes({ value, onBlur }: Props) {
           />
         </div>
       ) : (
-        <div className="mt-6 text-gray-700 text-sm relative group whitespace-pre">{notes || "No notes"}</div>
+        <div className="mt-6 text-gray-700 text-sm relative group whitespace-pre-wrap">{notes || "No notes"}</div>
       )}
       <div className="-mt-1 -ml-3">
         {showToggleBtn && (
