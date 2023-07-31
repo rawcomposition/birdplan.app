@@ -109,7 +109,7 @@ export default function HotspotTargets({ locId, tripRangeLabel }: Props) {
           ]}
         />
       )}
-      {!sortedItems?.length && <p className="text-gray-500 text-sm">No targets found</p>}
+      {!sortedItems?.length && <p className="text-gray-500 text-sm">No targets found &gt; 5%</p>}
       {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
       {sortedItems.map((it, index) => (
         <HotspotTargetRow key={it.code} {...it} index={index} view={view} locId={locId} range={tripRangeLabel} />
