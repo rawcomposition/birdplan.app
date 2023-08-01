@@ -21,8 +21,7 @@ export default function RecentSpeciesSidebarBlock({ recentSpecies }: Props) {
   const yesterday = dayjs().tz(tz).subtract(1, "day").format("YYYY-MM-DD");
   let todayUsed = false;
   let yesterdayUsed = false;
-  let gtSevenDaysAgoUsed = false;
-  let gtFifteenDaysAgoUsed = false;
+  let olderUsed = false;
 
   return (
     <Expand heading="Recent Needs" count={recentSpecies.length} focusInput>
@@ -33,8 +32,7 @@ export default function RecentSpeciesSidebarBlock({ recentSpecies }: Props) {
 
           let showToday = false;
           let showYesterday = false;
-          let showGtSevenDaysAgo = false;
-          let showGtFifteenDaysAgo = false;
+          let showOlder = false;
 
           if (dateFormatted === today) {
             if (!todayUsed) {
@@ -46,23 +44,17 @@ export default function RecentSpeciesSidebarBlock({ recentSpecies }: Props) {
               yesterdayUsed = true;
               showYesterday = true;
             }
-          } else if (dayjs(date).tz(tz).isAfter(dayjs().tz(tz).subtract(7, "day"))) {
-            if (!gtSevenDaysAgoUsed) {
-              gtSevenDaysAgoUsed = true;
-              showGtSevenDaysAgo = true;
-            }
-          } else if (dayjs(date).tz(tz).isAfter(dayjs().tz(tz).subtract(15, "day"))) {
-            if (!gtFifteenDaysAgoUsed) {
-              gtFifteenDaysAgoUsed = true;
-              showGtFifteenDaysAgo = true;
+          } else {
+            if (!olderUsed) {
+              olderUsed = true;
+              showOlder = true;
             }
           }
           return (
             <>
               {showToday && <li className="text-xs text-gray-500 py-1 pt-4">Today</li>}
               {showYesterday && <li className="text-xs text-gray-500 py-1 pt-4">Yesterday</li>}
-              {showGtSevenDaysAgo && <li className="text-xs text-gray-500 py-1 pt-4">More than 7 days ago</li>}
-              {showGtFifteenDaysAgo && <li className="text-xs text-gray-500 py-1 pt-4">More than 15 days ago</li>}
+              {showOlder && (todayUsed || yesterdayUsed) && <li className="text-xs text-gray-500 py-1 pt-4">Older</li>}
               <SpeciesRow key={code} name={name} code={code} />
             </>
           );
