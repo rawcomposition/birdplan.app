@@ -7,7 +7,6 @@ import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 import Loading from "icons/Loading";
-import clsx from "clsx";
 import ObsList from "components/ObsList";
 import FilterTabs from "components/FilterTabs";
 
@@ -25,7 +24,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
   const { data: info } = useFetchHotspotInfo(locId);
   const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(locId);
   const { data: obs, isLoading: isLoadingObs, error: obsError } = useFetchHotspotObs(locId, speciesCode);
-  const checklists = groupedChecklists.map((group) => group[0]).slice(0, 10);
+  const checklists = groupedChecklists.slice(0, 10);
 
   const successRate = info?.numChecklists && obs?.length ? obs.length / info.numChecklists : null;
 
@@ -70,10 +69,13 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
                 </tr>
               </thead>
               <tbody>
-                {checklists.map(({ subId, numSpecies, obsDt, obsTime }) => {
+                {checklists.map((checklists) => {
+                  const checklist = checklists[0];
+                  const { subId, numSpecies, obsDt, obsTime } = checklist;
+                  const checklistIds = checklists.map((it) => it.subId);
                   const time = obsTime || "10:00";
                   const timestamp = dayjs(`${obsDt} ${time}`).format();
-                  const hasObs = obs?.some((it) => it.checklistId === subId);
+                  const hasObs = obs?.some((it) => checklistIds.includes(it.checklistId));
                   const obsLabel = !obs?.length ? "--" : hasObs ? "✅" : "❌";
                   return (
                     <tr key={subId} className="even:bg-neutral-50">
