@@ -51,12 +51,12 @@ export default function RecentSpeciesSidebarBlock({ recentSpecies }: Props) {
             }
           }
           return (
-            <>
+            <React.Fragment key={code}>
               {showToday && <li className="text-xs text-gray-500 py-1 pt-4">Today</li>}
               {showYesterday && <li className="text-xs text-gray-500 py-1 pt-4">Yesterday</li>}
               {showOlder && (todayUsed || yesterdayUsed) && <li className="text-xs text-gray-500 py-1 pt-4">Older</li>}
-              <SpeciesRow key={code} name={name} code={code} />
-            </>
+              <SpeciesRow name={name} code={code} />
+            </React.Fragment>
           );
         })}
       </ul>
