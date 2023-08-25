@@ -2,6 +2,8 @@ import { distanceBetween } from "lib/helpers";
 import taxonomy from "../../taxonomy.json";
 import type { NextApiRequest, NextApiResponse } from "next";
 import ABASpecies from "../../aba-species.json";
+import { find } from "geo-tz";
+import dayjs from "dayjs";
 
 type RbaResponse = {
   obsId: string;
@@ -43,8 +45,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const distance = lat && lng ? parseInt(distanceBetween(lat, lng, item.lat, item.lng, false).toFixed(2)) : null;
       const { comName, sciName, speciesCode } = item;
       const taxon = taxonomy.find((item) => item.sci === sciName);
+      const timezones = find(Number(item.lat), Number(item.lng));
+      const timezone = timezones[0];
+      const datetime = dayjs.tz(item.obsDt, timezone);
       return {
         ...item,
+        obsDt: datetime.format(),
         distance,
         comName: taxon?.name || comName,
         speciesCode: taxon?.code || speciesCode,
