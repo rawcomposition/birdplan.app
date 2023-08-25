@@ -1,4 +1,3 @@
-import { distanceBetween } from "lib/helpers";
 import taxonomy from "../../taxonomy.json";
 import type { NextApiRequest, NextApiResponse } from "next";
 import ABASpecies from "../../aba-species.json";
@@ -24,8 +23,6 @@ type RbaResponse = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const lat = Number(req.query.lat);
-  const lng = Number(req.query.lng);
   const country = "US";
   const excludeStates = ["US-HI", "US-AK"];
 
@@ -42,7 +39,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     //Remove duplicates. For unknown reasons, eBird sometimes returns duplicates
     .filter((value, index, array) => array.findIndex((searchItem) => searchItem.obsId === value.obsId) === index)
     .map((item) => {
-      const distance = lat && lng ? parseInt(distanceBetween(lat, lng, item.lat, item.lng, false).toFixed(2)) : null;
       const { comName, sciName, speciesCode } = item;
       const taxon = taxonomy.find((item) => item.sci === sciName);
       const timezones = find(Number(item.lat), Number(item.lng));
@@ -51,7 +47,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return {
         ...item,
         obsDt: datetime.format(),
-        distance,
         comName: taxon?.name || comName,
         speciesCode: taxon?.code || speciesCode,
       };

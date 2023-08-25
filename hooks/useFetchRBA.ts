@@ -9,12 +9,7 @@ interface State {
   species: Species[];
 }
 
-interface Props {
-  lat: number | null;
-  lng: number | null;
-}
-
-export default function useFetchRBA({ lat, lng }: Props) {
+export default function useFetchRBA() {
   const [state, setState] = React.useState<State>({
     error: false,
     loading: false,
@@ -25,7 +20,7 @@ export default function useFetchRBA({ lat, lng }: Props) {
   const call = React.useCallback(async () => {
     setState((current) => ({ ...current, loading: true, error: false, species: [] }));
     try {
-      const response = await fetch(`/api/get-rba?lat=${lat}&lng=${lng}`);
+      const response = await fetch("/api/get-rba");
       if (!response.ok) throw new Error();
       const species = await response.json();
       if (!Array.isArray(species)) {
@@ -37,7 +32,7 @@ export default function useFetchRBA({ lat, lng }: Props) {
       console.error(error);
       setState((current) => ({ ...current, loading: false, error: true, species: [] }));
     }
-  }, [lat, lng]);
+  }, []);
 
   return { ...state, call };
 }

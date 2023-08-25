@@ -17,23 +17,37 @@ import Button from "components/Button";
 import LoginModal from "components/LoginModal";
 import { toast } from "react-hot-toast";
 import { debounce } from "lib/helpers";
+import { distanceBetween } from "lib/helpers";
 
 export default function Rba() {
   const { closeSidebar } = useUI();
   const { countryLifelist, radius, lat, lng, setRadius, setLat, setLng } = useProfile();
 
-  const { species, loading, error, lastUpdate, call } = useFetchRBA({
-    lat: lat || null,
-    lng: lng || null,
-  });
-
-  console.log(lat, lng);
+  const { species, loading, error, lastUpdate, call } = useFetchRBA();
 
   const [expanded, setExpanded] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     call();
   }, [call]);
+
+  const formattedSpecies = React.useMemo(() => {
+    if (!species) return [];
+    return species.map((species) => {
+      const reports = species.reports.map((report) => {
+        const distance =
+          lat && lng ? parseInt(distanceBetween(lat, lng, report.lat, report.lng, false).toFixed(2)) : null;
+        return {
+          ...report,
+          distance,
+        };
+      });
+      return {
+        ...species,
+        reports,
+      };
+    });
+  }, [species, lat, lng]);
 
   const handleLatChange = debounce(setLat, 1000);
   const handleLngChange = debounce(setLng, 1000);
@@ -65,7 +79,7 @@ export default function Rba() {
     }
   };
 
-  const filteredSpecies = species?.filter(({ code }) => !countryLifelist.includes(code));
+  const filteredSpecies = formattedSpecies?.filter(({ code }) => !countryLifelist.includes(code));
 
   const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0 && !error;
 

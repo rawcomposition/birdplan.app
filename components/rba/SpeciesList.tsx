@@ -26,7 +26,7 @@ export default function SpeciesList({ items, expanded, onToggleExpand, radius, l
         const isExpanded = expanded.includes(code);
         const date = reports[0].obsDt;
         const distances = reports.map(({ distance }) => distance).filter((value) => !!value);
-        const shortestDistance = distances.sort((a, b) => (a || 0) - (b || 0)).shift() || 0;
+        const shortestDistance = distances.sort((a, b) => (a || 0) - (b || 0)).shift() || null;
         const distancesAllEqual = distances.every((value) => value === distances[0]);
         reports = reports.map((report) => ({
           ...report,
@@ -67,7 +67,7 @@ export default function SpeciesList({ items, expanded, onToggleExpand, radius, l
                   <span className="bg-gray-300 text-gray-600 rounded-sm px-2 py-1 text-xs whitespace-nowrap">
                     <Timeago datetime={date} />
                   </span>
-                  {!!lat && !!lng && (
+                  {!!lat && !!lng && !!shortestDistance && (
                     <span
                       className={clsx(
                         "rounded-sm px-2 py-1 text-xs whitespace-nowrap",
