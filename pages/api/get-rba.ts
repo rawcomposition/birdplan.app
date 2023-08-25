@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     //Remove duplicates. For unknown reasons, eBird sometimes returns duplicates
     .filter((value, index, array) => array.findIndex((searchItem) => searchItem.obsId === value.obsId) === index)
     .map((item) => {
-      const distance = parseFloat(distanceBetween(lat, lng, item.lat, item.lng, false).toFixed(2));
+      const distance = lat && lng ? parseInt(distanceBetween(lat, lng, item.lat, item.lng, false).toFixed(2)) : null;
       const { comName, sciName, speciesCode } = item;
       const taxon = taxonomy.find((item) => item.sci === sciName);
       return {
@@ -52,8 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
     .filter(
       ({ comName, subnational1Code }) => !comName.includes("(hybrid)") && !excludeStates.includes(subnational1Code)
-    )
-    .map((item) => ({ ...item, distance: parseInt(item.distance.toString()) }));
+    );
 
   const reportsBySpecies: any = {};
 
@@ -62,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // @ts-ignore
       const abaSpecies = ABASpecies[item.sciName];
       let imgUrl = undefined;
-      if (abaSpecies.imgUrl) {
+      if (abaSpecies?.imgUrl) {
         const imgSplit = abaSpecies.imgUrl.split("/");
         if (abaSpecies.imgUrl.indexOf("/commons/") != -1) {
           imgUrl =

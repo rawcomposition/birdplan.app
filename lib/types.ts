@@ -3,7 +3,8 @@ export type Profile = {
   lifelist: string[];
   countryLifelist: string[];
   radius: number;
-  address?: Address;
+  lat?: number;
+  lng?: number;
   enableExperimental?: boolean;
 };
 
@@ -17,7 +18,7 @@ export type RareObservation = {
   userDisplayName: string;
   lat: number;
   lng: number;
-  distance: number;
+  distance: number | null;
   isClosest: boolean;
   hasRichMedia: boolean;
 };
@@ -28,24 +29,6 @@ export type Species = {
   abaCode?: number;
   imgUrl?: string;
   reports: RareObservation[];
-};
-
-export type Address = {
-  label: string;
-  lat: number;
-  lng: number;
-};
-
-export type State = {
-  species: Species[];
-  expanded: string[];
-  seen: string[];
-  pending: string[];
-  showSeen: boolean;
-  radius: number;
-  isCacheRestored: boolean;
-  showSidebar: boolean;
-  address?: Address;
 };
 
 export type DispatchAction = {

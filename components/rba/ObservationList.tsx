@@ -5,8 +5,8 @@ import { RareObservation } from "lib/types";
 
 type Props = {
   items: RareObservation[];
-  userLat: number;
-  userLng: number;
+  userLat?: number;
+  userLng?: number;
 };
 
 export default function ObservationList({ userLat, userLng, items }: Props) {

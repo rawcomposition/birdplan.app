@@ -41,30 +41,6 @@ export async function uploadFile(file: File): Promise<string | null> {
   return url;
 }
 
-export const appendProfileLifelist = async (speciesCode: string) => {
-  const user = auth.currentUser;
-  if (!user) return;
-  await fs.setDoc(
-    fs.doc(db, "profile", user.uid),
-    {
-      lifelist: fs.arrayUnion(speciesCode),
-    },
-    { merge: true }
-  );
-};
-
-export const removeProfileLifelist = async (speciesCode: string) => {
-  const user = auth.currentUser;
-  if (!user) return;
-  await fs.setDoc(
-    fs.doc(db, "profile", user.uid),
-    {
-      lifelist: fs.arrayRemove(speciesCode),
-    },
-    { merge: true }
-  );
-};
-
 export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
   const user = auth.currentUser;
   if (!user) return;

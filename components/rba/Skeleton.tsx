@@ -13,10 +13,10 @@ export default function Skeleton({ count = 1 }: Props) {
             src="/placeholder.png"
             width="150"
             height="150"
-            className="object-cover rounded p-4 w-[150px] h-[150px] opacity-50"
+            className="object-cover rounded m-4 w-16 h-16 opacity-50"
           />
         </div>
-        <div className="flex-1 py-8 pr-4 flex-shrink">
+        <div className="flex-1 pt-8 pr-4 flex-shrink">
           <div className="space-y-5">
             <div className="grid grid-cols-3 gap-16">
               <div className="h-3 bg-slate-200 rounded col-span-2"></div>
@@ -24,7 +24,6 @@ export default function Skeleton({ count = 1 }: Props) {
             </div>
             <div className="h-3 bg-slate-200 rounded"></div>
           </div>
-          <div className="h-3 mt-5 bg-slate-200 rounded w-1/2"></div>
         </div>
       </div>
     </article>

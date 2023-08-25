@@ -119,13 +119,12 @@ export const getMarkerColorIndex = (count: number) => {
 };
 
 export const radiusOptions = [
-  { label: "5 mi", value: 5 },
-  { label: "10 mi", value: 10 },
   { label: "20 mi", value: 20 },
   { label: "50 mi", value: 50 },
   { label: "100 mi", value: 100 },
-  { label: "250 mi", value: 250 },
-  { label: "350 mi", value: 350 },
+  { label: "200 mi", value: 200 },
+  { label: "300 mi", value: 300 },
+  { label: "400 mi", value: 400 },
   { label: "500 mi", value: 500 },
 ];
 
@@ -354,4 +353,13 @@ export const parseTargets = async ({
       reject(error);
     }
   });
+};
+
+//https://decipher.dev/30-seconds-of-typescript/docs/debounce/
+export const debounce = (fn: Function, ms = 300) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return function (this: any, ...args: any[]) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), ms);
+  };
 };

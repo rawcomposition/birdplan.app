@@ -9,11 +9,12 @@ type Props = {
   items: SpeciesT[];
   expanded: string[];
   onToggleExpand: (code: string) => void;
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
+  radius?: number;
 };
 
-export default function SpeciesList({ items, expanded, onToggleExpand, lat, lng }: Props) {
+export default function SpeciesList({ items, expanded, onToggleExpand, radius, lat, lng }: Props) {
   const getAbaCodeColor = (code?: number) => {
     if (code && code <= 3) return "border-gray-200 text-gray-800";
     if (code === 4) return "border-red-700 text-red-800";
@@ -24,8 +25,8 @@ export default function SpeciesList({ items, expanded, onToggleExpand, lat, lng 
       {items?.map(({ name, code, reports, abaCode, imgUrl }) => {
         const isExpanded = expanded.includes(code);
         const date = reports[0].obsDt;
-        const distances = reports.map(({ distance }) => distance);
-        const shortestDistance = distances.sort((a, b) => a - b).shift() || 0;
+        const distances = reports.map(({ distance }) => distance).filter((value) => !!value);
+        const shortestDistance = distances.sort((a, b) => (a || 0) - (b || 0)).shift() || 0;
         const distancesAllEqual = distances.every((value) => value === distances[0]);
         reports = reports.map((report) => ({
           ...report,
@@ -36,7 +37,12 @@ export default function SpeciesList({ items, expanded, onToggleExpand, lat, lng 
           <article key={code} className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full">
             <div className="flex cursor-pointer" onClick={() => onToggleExpand(code)}>
               <div className="flex-shrink-0 p-4 mr-4">
-                <img src={imgUrl} alt={name} className="w-16 h-16 rounded-lg object-cover" />
+                <img
+                  src={imgUrl || "/placeholder.png"}
+                  alt={name}
+                  className={clsx("w-16 h-16 rounded-lg object-cover", !imgUrl && "opacity-60")}
+                  loading="lazy"
+                />
               </div>
               <div className="pr-2 pt-3 xs:pr-4 w-full py-4 xs:flex xs:justify-between items-center">
                 <div className="flex flex-col gap-1">
@@ -61,15 +67,17 @@ export default function SpeciesList({ items, expanded, onToggleExpand, lat, lng 
                   <span className="bg-gray-300 text-gray-600 rounded-sm px-2 py-1 text-xs whitespace-nowrap">
                     <Timeago datetime={date} />
                   </span>
-                  <span
-                    className={clsx(
-                      "rounded-sm px-2 py-1 text-xs whitespace-nowrap",
-                      shortestDistance <= 250 ? "bg-lime-600 text-white" : "bg-gray-300 text-gray-600"
-                    )}
-                  >
-                    <MapIcon className="mr-1 mt-[-2px] text-[0.85em]" />
-                    {shortestDistance} mi
-                  </span>
+                  {!!lat && !!lng && (
+                    <span
+                      className={clsx(
+                        "rounded-sm px-2 py-1 text-xs whitespace-nowrap",
+                        radius && shortestDistance < radius ? "bg-lime-600 text-white" : "bg-gray-300 text-gray-600"
+                      )}
+                    >
+                      <MapIcon className="mr-1 mt-[-2px] text-[0.85em]" />
+                      {shortestDistance} mi
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="flex items-center pr-4 pl-1">

@@ -1,13 +1,14 @@
 import React from "react";
 import { useUser } from "providers/user";
-import { Address, Profile } from "lib/types";
-import { subscribeToProfile, setProfileValue, appendProfileLifelist, removeProfileLifelist } from "lib/firebase";
+import { Profile } from "lib/types";
+import { subscribeToProfile, setProfileValue } from "lib/firebase";
 
 interface ContextT extends Profile {
   setLifelist: (lifelist: string[]) => Promise<void>;
   setCountryLifelist: (lifelist: string[]) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
-  setAddress: (address: Address) => Promise<void>;
+  setLat: (lat: number) => Promise<void>;
+  setLng: (lng: number) => Promise<void>;
   reset: () => void;
 }
 
@@ -16,7 +17,8 @@ const initialState: Profile = {
   lifelist: [],
   countryLifelist: [],
   radius: 50,
-  address: undefined,
+  lat: undefined,
+  lng: undefined,
   enableExperimental: false,
 };
 
@@ -25,7 +27,8 @@ export const ProfileContext = React.createContext<ContextT>({
   setLifelist: async () => {},
   setCountryLifelist: async () => {},
   setRadius: async () => {},
-  setAddress: async () => {},
+  setLat: async () => {},
+  setLng: async () => {},
   reset: () => {},
 });
 
@@ -59,9 +62,14 @@ const ProfileProvider = ({ children }: Props) => {
     await setProfileValue("radius", radius);
   };
 
-  const setAddress = async (address: Address) => {
-    setState((state) => ({ ...state, address }));
-    await setProfileValue("address", address);
+  const setLat = async (lat: number) => {
+    setState((state) => ({ ...state, lat }));
+    await setProfileValue("lat", lat);
+  };
+
+  const setLng = async (lng: number) => {
+    setState((state) => ({ ...state, lng }));
+    await setProfileValue("lng", lng);
   };
 
   const reset = () => {
@@ -76,11 +84,13 @@ const ProfileProvider = ({ children }: Props) => {
         lifelist: state.lifelist || [],
         countryLifelist: state.countryLifelist || [],
         radius: state.radius || 50,
-        address: state.address,
+        lat: state.lat,
+        lng: state.lng,
+        setLat,
+        setLng,
         setLifelist,
         setCountryLifelist,
         setRadius,
-        setAddress,
         reset,
       }}
     >
