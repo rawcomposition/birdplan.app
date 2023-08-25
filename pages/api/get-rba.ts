@@ -1,6 +1,7 @@
 import { distanceBetween } from "lib/helpers";
 import taxonomy from "../../taxonomy.json";
 import type { NextApiRequest, NextApiResponse } from "next";
+import ABASpecies from "../../aba-species.json";
 
 type RbaResponse = {
   obsId: string;
@@ -17,21 +18,22 @@ type RbaResponse = {
   obsReviewed: boolean;
   locationPrivate: boolean;
   subId: string;
+  subnational1Code: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const lat = Number(req.query.lat);
   const lng = Number(req.query.lng);
-  const radius = Number(req.query.radius);
   const country = "US";
+  const excludeStates = ["US-HI", "US-AK"];
 
   const response = await fetch(
-    `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&back=2&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
   );
   let reports: RbaResponse[] = await response.json();
 
   if (!reports?.length) {
-    res.status(200).json([]);
+    return res.status(200).json([]);
   }
 
   reports = reports
@@ -48,17 +50,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         speciesCode: taxon?.code || speciesCode,
       };
     })
-    .filter(({ distance, comName }) => distance <= radius && !comName.includes("(hybrid)"))
+    .filter(
+      ({ comName, subnational1Code }) => !comName.includes("(hybrid)") && !excludeStates.includes(subnational1Code)
+    )
     .map((item) => ({ ...item, distance: parseInt(item.distance.toString()) }));
 
   const reportsBySpecies: any = {};
 
   reports.forEach((item) => {
     if (!reportsBySpecies[item.speciesCode]) {
+      // @ts-ignore
+      const abaCode = ABASpecies[item.sciName]?.abaCode;
       reportsBySpecies[item.speciesCode] = {
         name: item.comName,
-        sciName: item.sciName,
         code: item.speciesCode,
+        abaCode,
         reports: [],
       };
     }

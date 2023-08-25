@@ -21,7 +21,7 @@ export default function Expand({ heading, children, className, defaultOpen, coun
   return (
     <div className="print:break-inside-avoid bg-gray-900/80 py-2 border-t border-gray-700/80 px-4">
       <div className="flex items-center gap-2 py-1.5 text-gray-300 cursor-pointer" onClick={onToggle}>
-        <button type="button" className={`expand-btn ${!open ? "-rotate-90" : ""}`} />
+        <button type="button" className={`expand-btn w-4 h-4 ${!open ? "-rotate-90" : ""}`} />
         <div className="flex justify-between items-center flex-1">
           <h3 className="font-medium text-[15px] flex justify-between">{heading}</h3>
           {!!count && <span className="text-gray-400 text-[13px]">{count.toLocaleString()}</span>}

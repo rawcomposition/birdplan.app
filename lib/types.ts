@@ -24,8 +24,8 @@ export type RareObservation = {
 
 export type Species = {
   name: string;
-  sciName: string;
   code: string;
+  abaCode?: number;
   reports: RareObservation[];
 };
 
