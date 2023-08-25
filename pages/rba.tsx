@@ -16,12 +16,10 @@ import { radiusOptions } from "lib/helpers";
 import { useUI } from "providers/ui";
 import Expand from "components/Expand";
 import Button from "components/Button";
-import { useModal } from "providers/modals";
 import LoginModal from "components/LoginModal";
 
 export default function Rba() {
   const { closeSidebar } = useUI();
-  const { open } = useModal();
   const { countryLifelist, radius, address, setRadius, setAddress } = useProfile();
   const { lat, lng } = address || {};
 

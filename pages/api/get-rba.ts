@@ -60,11 +60,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   reports.forEach((item) => {
     if (!reportsBySpecies[item.speciesCode]) {
       // @ts-ignore
-      const abaCode = ABASpecies[item.sciName]?.abaCode;
+      const abaSpecies = ABASpecies[item.sciName];
+      let imgUrl = undefined;
+      if (abaSpecies.imgUrl) {
+        const imgSplit = abaSpecies.imgUrl.split("/");
+        if (abaSpecies.imgUrl.indexOf("/commons/") != -1) {
+          imgUrl =
+            abaSpecies.imgUrl.replace("/commons/", "/commons/thumb/") + "/200px-" + imgSplit[imgSplit.length - 1];
+        }
+      }
       reportsBySpecies[item.speciesCode] = {
         name: item.comName,
         code: item.speciesCode,
-        abaCode,
+        abaCode: abaSpecies?.abaCode,
+        imgUrl,
         reports: [],
       };
     }

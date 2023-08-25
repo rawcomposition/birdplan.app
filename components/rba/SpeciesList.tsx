@@ -18,11 +18,10 @@ export default function SpeciesList({ items, expanded, onToggleExpand, lat, lng 
     if (code && code <= 3) return "border-gray-200 text-gray-800";
     if (code === 4) return "border-red-700 text-red-800";
     if (code === 5) return "border-red-700 text-red-800";
-    if (!code) return "border-gray-900 text-gray-900";
   };
   return (
     <div>
-      {items?.map(({ name, code, reports, abaCode }) => {
+      {items?.map(({ name, code, reports, abaCode, imgUrl }) => {
         const isExpanded = expanded.includes(code);
         const date = reports[0].obsDt;
         const distances = reports.map(({ distance }) => distance);
@@ -36,23 +35,27 @@ export default function SpeciesList({ items, expanded, onToggleExpand, lat, lng 
         return (
           <article key={code} className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full">
             <div className="flex cursor-pointer" onClick={() => onToggleExpand(code)}>
-              <div className="flex-shrink-0 p-4 mr-4 flex items-center">
-                <span
-                  className={clsx(
-                    "w-6 h-6 border rounded-full flex items-center justify-center font-bold text-[13px]",
-                    getAbaCodeColor(abaCode),
-                    !abaCode && "text-[9.5px]"
-                  )}
-                >
-                  {abaCode || "N/A"}
-                </span>
+              <div className="flex-shrink-0 p-4 mr-4">
+                <img src={imgUrl} alt={name} className="w-16 h-16 rounded-lg object-cover" />
               </div>
-              <div className="pr-2 pt-3 xs:pr-4 w-full py-4 xs:flex xs:justify-between">
-                <div className="flex flex-col gap-[1px]">
+              <div className="pr-2 pt-3 xs:pr-4 w-full py-4 xs:flex xs:justify-between items-center">
+                <div className="flex flex-col gap-1">
                   <h3 className="font-bold text-gray-800">{truncate(name, 32)}</h3>
-                  <span className="text-[13px] text-gray-600">
-                    {reports.length} {reports.length === 1 ? "Report" : "Reports"}
-                  </span>
+                  <div className="text-[13px] text-gray-600 flex items-center gap-2">
+                    <span>
+                      {reports.length} {reports.length === 1 ? "Report" : "Reports"}
+                    </span>
+                    {abaCode && (
+                      <span
+                        className={clsx(
+                          "border rounded flex items-center justify-center text-[10.5px] px-1 mt-px",
+                          getAbaCodeColor(abaCode)
+                        )}
+                      >
+                        Code {abaCode}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="whitespace-nowrap flex gap-2 items-center mt-2 xs:mt-0">
                   <span className="bg-gray-300 text-gray-600 rounded-sm px-2 py-1 text-xs whitespace-nowrap">

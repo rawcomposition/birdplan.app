@@ -26,6 +26,7 @@ export type Species = {
   name: string;
   code: string;
   abaCode?: number;
+  imgUrl?: string;
   reports: RareObservation[];
 };
 
