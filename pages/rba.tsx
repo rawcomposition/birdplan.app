@@ -88,10 +88,10 @@ export default function Rba() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>US Lower 48 Rare Bird Alert</title>
+        <title>Lower 48 Rare Birds</title>
       </Head>
 
-      <Header title="US Lower 48 Rare Bird Alert" />
+      <Header title="Lower 48 Rare Birds" />
       <main className="flex h-[calc(100%-60px)]">
         <Sidebar>
           <div className="mb-6">
