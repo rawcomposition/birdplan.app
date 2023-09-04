@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const excludeStates = ["US-HI", "US-AK"];
 
   const response = await fetch(
-    `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&back=2&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    `https://api.ebird.org/v2/data/obs/${country}/recent/notable?detail=full&back=1&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
   );
   let reports: RbaResponse[] = await response.json();
 
