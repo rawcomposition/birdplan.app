@@ -23,6 +23,8 @@ export const fullMonths = [
   "August",
   "September",
   "October",
+  "Novermber",
+  "December",
 ];
 
 export const englishCountries = [
