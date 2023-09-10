@@ -12,16 +12,19 @@ type Props = {
   lat?: number;
   lng?: number;
   radius?: number;
+  heading: string;
 };
 
-export default function SpeciesList({ items, expanded, onToggleExpand, radius, lat, lng }: Props) {
+export default function SpeciesList({ heading, items, expanded, onToggleExpand, radius, lat, lng }: Props) {
   const getAbaCodeColor = (code?: number) => {
     if (code && code <= 3) return "border-gray-200 text-gray-800";
     if (code === 4) return "border-red-700 text-red-800";
     if (code === 5) return "border-red-700 text-red-800";
   };
   return (
-    <div>
+    <div className="mb-8">
+      <h2 className="font-bold mb-4 text-gray-500">{heading}</h2>
+      {items?.length === 0 && <p className="text-gray-500 text-sm">No results found</p>}
       {items?.map(({ name, code, reports, abaCode, imgUrl }) => {
         const isExpanded = expanded.includes(code);
         const date = reports[0].obsDt;
@@ -68,12 +71,7 @@ export default function SpeciesList({ items, expanded, onToggleExpand, radius, l
                     <Timeago datetime={date} />
                   </span>
                   {!!lat && !!lng && !!shortestDistance && (
-                    <span
-                      className={clsx(
-                        "rounded-sm px-2 py-1 text-xs whitespace-nowrap",
-                        radius && shortestDistance < radius ? "bg-lime-600 text-white" : "bg-gray-300 text-gray-600"
-                      )}
-                    >
+                    <span className="rounded-sm px-2 py-1 text-xs whitespace-nowrap bg-gray-300 text-gray-600">
                       <MapIcon className="mr-1 mt-[-2px] text-[0.85em]" />
                       {shortestDistance} mi
                     </span>

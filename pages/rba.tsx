@@ -80,6 +80,12 @@ export default function Rba() {
   };
 
   const filteredSpecies = formattedSpecies?.filter(({ code }) => !countryLifelist.includes(code));
+  const speciesInRadius = filteredSpecies?.filter(({ reports }) =>
+    reports.some(({ distance }) => distance && distance <= radius)
+  );
+  const speciesOutsideRadius = filteredSpecies?.filter(({ reports }) =>
+    reports.some(({ distance }) => distance && distance > radius)
+  );
 
   const showNoResults = lat && lng && !loading && species !== null && filteredSpecies?.length === 0 && !error;
 
@@ -164,9 +170,22 @@ export default function Rba() {
 
             {showNoResults && <NoResults reload={call} />}
 
-            {!!filteredSpecies?.length && (
+            {!loading && (
               <SpeciesList
-                items={filteredSpecies}
+                heading={`Nearby Reports (within ${radius} miles)`}
+                items={speciesInRadius}
+                onToggleExpand={handleToggleExpand}
+                expanded={expanded}
+                lat={lat}
+                lng={lng}
+                radius={radius}
+              />
+            )}
+
+            {!loading && (
+              <SpeciesList
+                heading="Other Reports"
+                items={speciesOutsideRadius}
                 onToggleExpand={handleToggleExpand}
                 expanded={expanded}
                 lat={lat}
