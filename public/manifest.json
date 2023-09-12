@@ -2,6 +2,5 @@
   "short_name": "BirdPlan",
   "name": "BirdPlan.app",
   "background_color": "#0f172a",
-  "display": "standalone",
-  "start_url": "/trips"
+  "display": "standalone"
 }
