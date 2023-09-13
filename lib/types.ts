@@ -156,12 +156,6 @@ export type Invite = {
   uid?: string;
 };
 
-export type LocationValue = {
-  label: string;
-  lat: number;
-  lng: number;
-};
-
 export type RecentChecklist = {
   locId: string;
   subId: string;
@@ -205,20 +199,4 @@ export type Targets = {
   tripId: string;
   hotspotId?: string;
   updatedAt?: string;
-};
-
-// BF: Bird Finder
-
-export type BFTarget = {
-  code: string;
-  name: string;
-  percent: number;
-  id: string;
-};
-
-export type BFHotspot = {
-  locationId: string;
-  name: string;
-  sampleSize: number;
-  percent: number;
 };

@@ -26,8 +26,20 @@ export default function Trips() {
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
-          <div className="flex gap-8 items-center mb-8">
+        <div className="p-4 md:p-0" onClick={closeSidebar}>
+          {enableExperimental && (
+            <Link
+              href="/rba"
+              className="bg-white rounded-lg shadow relative p-4 mb-8 flex items-center justify-between text-gray-700 font-bold"
+            >
+              <span>
+                <span className="text-xl font-bold mr-3">🔥</span>
+                View the lower 48 RBA
+              </span>{" "}
+              <ArrowRight className="inline-block" />
+            </Link>
+          )}
+          <div className="flex gap-8 items-center mb-8 mt-4">
             <h1 className="text-3xl font-bold text-gray-700">My Trips</h1>
             <Button color="pillPrimary" size="md" href="/create" className="pr-6">
               <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
@@ -46,17 +58,6 @@ export default function Trips() {
                 Create one!
               </Link>
             </p>
-          )}
-          {enableExperimental && (
-            <>
-              <Link href="/rba" className="text-sm">
-                View rare birds near me <ArrowRight className="inline-block" />
-              </Link>
-              <br />
-              <Link href="/targets" className="text-sm">
-                Find target birds <ArrowRight className="inline-block" />
-              </Link>
-            </>
           )}
         </div>
       </main>
