@@ -27,7 +27,7 @@ import RecentSpeciesSidebarBlock from "components/RecentSpeciesSidebarBlock";
 import Feather from "icons/Feather";
 import Bullseye from "icons/Bullseye";
 import MapFlatIcon from "icons/MapFlat";
-import ListTreeIcon from "icons/ListTree";
+import ListIcon from "icons/List";
 import Pencil from "icons/Pencil";
 import Trash from "icons/Trash";
 import { deleteTrip } from "lib/firebase";
@@ -41,7 +41,7 @@ export default function Trip() {
   const [view, setView] = React.useState<"map" | "targets">("map");
   const { lifelist } = useProfile();
   const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
-  const { closeSidebar } = useUI();
+  const { closeSidebar, openSidebar } = useUI();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const isMultiRegion = trip?.region.includes(",");
@@ -114,7 +114,7 @@ export default function Trip() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <main className="flex h-[calc(100%-60px)]">
-        <Sidebar noPadding>
+        <Sidebar noPadding fullWidth noAnimation noAccount>
           <div className={clsx("mb-4 px-6 pt-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={() => setShowAll((prev) => !prev)} />
@@ -208,6 +208,13 @@ export default function Trip() {
           ) : (
             <div className="mb-12" />
           )}
+          <Button
+            color="pillWhite"
+            className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+            onClick={closeSidebar}
+          >
+            Map <MapFlatIcon className="w-4 h-4" />
+          </Button>
         </Sidebar>
 
         <div className="h-full grow" onClick={closeSidebar}>
@@ -234,6 +241,13 @@ export default function Trip() {
             )}
           </div>
         </div>
+        <Button
+          color="pillWhite"
+          className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+          onClick={openSidebar}
+        >
+          List <ListIcon className="w-4 h-4" />
+        </Button>
       </main>
     </div>
   );

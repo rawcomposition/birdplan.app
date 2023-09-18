@@ -4,10 +4,12 @@ export const UIContext = React.createContext<{
   sidebarOpen: boolean;
   toggleSidebar: () => void;
   closeSidebar: () => void;
+  openSidebar: () => void;
 }>({
   sidebarOpen: false,
   toggleSidebar: () => {},
   closeSidebar: () => {},
+  openSidebar: () => {},
 });
 
 type Props = {
@@ -25,7 +27,15 @@ const UIProvider = ({ children }: Props) => {
     setSidebarOpen(false);
   };
 
-  return <UIContext.Provider value={{ sidebarOpen, toggleSidebar, closeSidebar }}>{children}</UIContext.Provider>;
+  const openSidebar = () => {
+    setSidebarOpen(true);
+  };
+
+  return (
+    <UIContext.Provider value={{ sidebarOpen, toggleSidebar, closeSidebar, openSidebar }}>
+      {children}
+    </UIContext.Provider>
+  );
 };
 
 const useUI = () => {

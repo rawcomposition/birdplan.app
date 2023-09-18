@@ -36,6 +36,7 @@ export default function Button({
     lg: "text-lg py-[0.625rem] px-[1.125rem]",
     md: "text-md py-2 px-5",
     sm: "text-[14px] py-1.5 px-2.5",
+    smIsh: "text-[14px] py-1.5 px-3.5",
     xs: "text-[12px] py-0.5 px-1.5",
   };
 
@@ -46,6 +47,7 @@ export default function Button({
     pillPrimary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full",
     pillOutlineGray:
       "bg-transparent text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors rounded-full",
+    pillWhite: "bg-white text-gray-600 hover:bg-gray-50 transition-colors rounded-full shadow-md",
   };
 
   const colorClasses = colors[color];
