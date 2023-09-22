@@ -96,7 +96,7 @@ export default function ImportTargets() {
           </div>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">3. Upload file</h3>
-            <p className="text-sm text-gray-600 mb-2">Uplod the TXT file you downloaded in step 1.</p>
+            <p className="text-sm text-gray-600 mb-2">Upload the TXT file you downloaded in step 1.</p>
             <input ref={fileInputRef} type="file" accept=".txt,.xls" className="text-xs" onChange={handleFileUpload} />
           </div>
           <div className="flex">

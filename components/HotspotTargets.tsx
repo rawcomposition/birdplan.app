@@ -89,7 +89,7 @@ export default function HotspotTargets({ locId, tripRangeLabel }: Props) {
           </p>
         </div>
         <div className="mb-8">
-          <h3 className="text-md font-medium mb-2 text-gray-700">2. Uplod the CSV file</h3>
+          <h3 className="text-md font-medium mb-2 text-gray-700">2. Upload the CSV file</h3>
           <input ref={fileInputRef} type="file" accept=".txt" className="text-xs" onChange={handleFileUpload} />
         </div>
       </>
