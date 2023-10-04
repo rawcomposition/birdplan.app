@@ -30,7 +30,7 @@ export default function Trips() {
           {enableExperimental && (
             <Link
               href="/rba"
-              className="bg-white rounded-lg shadow relative p-4 mb-8 flex items-center justify-between text-gray-700 font-bold"
+              className="bg-white rounded-lg shadow relative p-4 mb-8 flex items-center justify-between text-gray-700 font-bold md:mt-6"
             >
               <span>
                 <span className="text-xl font-bold mr-3">🔥</span>

@@ -154,6 +154,16 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
               </Menu.Item>
               <Menu.Item>
                 <a
+                  href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-600"
+                >
+                  Illustrated Checklist
+                </a>
+              </Menu.Item>
+              <Menu.Item>
+                <a
                   href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
                   target="_blank"
                   rel="noreferrer"
