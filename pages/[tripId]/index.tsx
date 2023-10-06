@@ -122,7 +122,7 @@ export default function Trip() {
             </label>
           </div>
           <div>
-            <Expand heading="Saved Hotspots" count={savedHotspots.length}>
+            <Expand heading="Trip Hotspots" count={savedHotspots.length}>
               <HotspotList />
             </Expand>
 

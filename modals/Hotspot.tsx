@@ -18,6 +18,9 @@ import { Menu } from "@headlessui/react";
 import VerticalDots from "icons/VerticalDots";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
+import XMark from "icons/XMark";
+import PlusIcon from "icons/Plus";
+import Trash from "icons/Trash";
 
 type Props = {
   hotspot: HotspotT;
@@ -67,10 +70,11 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
 
   const handleSave = async () => {
     if (isSaved) {
-      if (notes && !confirm("Are you sure you want to unsave this hotspot? Your notes will be lost.")) return;
+      if (notes && !confirm("Are you sure you want to remove this hotspot from your trip? Your notes will be lost."))
+        return;
       removeHotspot(id);
     } else {
-      toast.success("Hotspot saved!");
+      toast.success("Hotspot added to trip!");
       appendHotspot({ ...hotspot, species: hotspot.species || 0 });
     }
   };
@@ -129,29 +133,20 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
             <Feather className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
-          {canEdit && (
-            <Button color="gray" size="sm" onClick={handleSave}>
-              {isSaved ? (
-                <>
-                  <Star className="mr-1 -mt-[3px] text-sky-600" /> Saved
-                </>
-              ) : (
-                <>
-                  <StarOutline className="mr-1 -mt-[3px] text-sky-600" /> Save
-                </>
-              )}
-            </Button>
-          )}
+          <Button
+            href={`https://ebird.org/hotspot/${id}`}
+            target="_blank"
+            color="gray"
+            size="sm"
+            className="inline-flex items-center"
+          >
+            <img src="/ebird.png" width={48} />
+          </Button>
           <Menu as="div" className="relative inline-block text-left">
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <VerticalDots />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
-              <Menu.Item>
-                <a href={`https://ebird.org/hotspot/${id}`} target="_blank" rel="noreferrer" className="text-sky-600">
-                  View on eBird
-                </a>
-              </Menu.Item>
+            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
               <Menu.Item>
                 <a
                   href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
@@ -162,39 +157,11 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
                   Illustrated Checklist
                 </a>
               </Menu.Item>
-              <Menu.Item>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sky-600"
-                >
-                  View on Google Maps
-                </a>
-              </Menu.Item>
-              <Menu.Item>
-                <h4 className="font-bold text-gray-700 text-xs mt-2">Targets</h4>
-              </Menu.Item>
-              <Menu.Item>
-                <a
-                  href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sky-600"
-                >
-                  All Year
-                </a>
-              </Menu.Item>
-              {trip?.startMonth && trip?.endMonth && (
+              {canEdit && isSaved && (
                 <Menu.Item>
-                  <a
-                    href={`https://ebird.org/targets?r1=${id}&bmo=${trip.startMonth}&emo=${trip.endMonth}&r2=world&t2=life`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-600"
-                  >
-                    {tripRangeLabel}
-                  </a>
+                  <button type="button" onClick={handleSave} className="inline-flex items-center gap-1 text-red-700">
+                    Remove from trip
+                  </button>
                 </Menu.Item>
               )}
             </Menu.Items>
@@ -202,6 +169,17 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} />
         <HotspotFavs locId={id} />
+
+        {canEdit && !isSaved && (
+          <button
+            type="button"
+            onClick={handleSave}
+            className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-sky-600 mt-4 flex items-center gap-2"
+          >
+            <PlusIcon className="text-lg text-sky-600" /> Add to trip
+          </button>
+        )}
+
         {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
