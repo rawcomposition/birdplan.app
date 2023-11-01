@@ -7,14 +7,12 @@ import TripCard from "components/TripCard";
 import Sidebar from "components/Sidebar";
 import { useUI } from "providers/ui";
 import Link from "next/link";
-import ArrowRight from "icons/ArrowRight";
 import LoginModal from "components/LoginModal";
-import { useProfile } from "providers/profile";
 import Footer from "components/Footer";
+import RbaButton from "components/RbaButton";
 
 export default function Trips() {
   const { trips, loading } = useTrips();
-  const { enableExperimental } = useProfile();
   const { closeSidebar } = useUI();
 
   return (
@@ -27,18 +25,7 @@ export default function Trips() {
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Sidebar className="sm:hidden" />
         <div className="p-4 md:p-0" onClick={closeSidebar}>
-          {enableExperimental && (
-            <Link
-              href="/rba"
-              className="bg-white rounded-lg shadow relative p-4 mb-8 flex items-center justify-between text-gray-700 font-bold md:mt-6"
-            >
-              <span>
-                <span className="text-xl font-bold mr-3">🔥</span>
-                View the lower 48 RBA
-              </span>{" "}
-              <ArrowRight className="inline-block" />
-            </Link>
-          )}
+          <RbaButton />
           <div className="flex gap-8 items-center mb-8 mt-4">
             <h1 className="text-3xl font-bold text-gray-700">My Trips</h1>
             <Button color="pillPrimary" size="md" href="/create" className="pr-6">
