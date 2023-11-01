@@ -163,7 +163,7 @@ export const subscribeToProfile = (callback: (profile: Profile) => void): (() =>
   if (!user) return () => {};
   return fs.onSnapshot(fs.doc(db, "profile", user.uid), (doc) => {
     if (doc.exists()) {
-      callback(doc.data() as Profile);
+      callback({ id: doc.id, ...doc.data() } as Profile);
     }
   });
 };
