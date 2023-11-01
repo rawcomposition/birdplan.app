@@ -7,6 +7,7 @@ import { useUser } from "providers/user";
 import { Menu, Transition } from "@headlessui/react";
 import AngleDown from "icons/AngleDown";
 import Search from "components/Search";
+import Button from "components/Button";
 
 export default function TargetSpeciesSidebarBlock() {
   const [search, setSearch] = React.useState("");
@@ -86,6 +87,11 @@ export default function TargetSpeciesSidebarBlock() {
           <SpeciesRow key={target.code} {...target} />
         ))}
       </ul>
+      {!targets?.items?.length && (
+        <Button href={`/${trip?.id}/import-targets`} size="xs" color="primary">
+          Import Targets
+        </Button>
+      )}
     </Expand>
   );
 }
