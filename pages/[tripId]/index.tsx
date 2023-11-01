@@ -211,15 +211,16 @@ export default function Trip() {
           )}
           <Button
             color="pillWhite"
-            className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+            className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
             onClick={closeSidebar}
           >
             Map <MapFlatIcon className="w-4 h-4" />
           </Button>
         </Sidebar>
 
-        <div className="h-full grow" onClick={closeSidebar}>
-          <div className="w-full h-full relative">
+        <div className="h-full grow flex flex-col" onClick={closeSidebar}>
+          {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
+          <div className="w-full grow relative">
             {trip?.bounds && (
               <MapBox
                 key={trip.id}
@@ -233,7 +234,6 @@ export default function Trip() {
                 onDisableAddingMarker={() => setIsAddingMarker(false)}
               />
             )}
-            {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
             {isAddingMarker && (
               <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
                 Click anywhere on map to add marker
