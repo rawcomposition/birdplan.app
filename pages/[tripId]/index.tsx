@@ -218,7 +218,7 @@ export default function Trip() {
           </Button>
         </Sidebar>
 
-        <div className="h-full grow flex flex-col" onClick={closeSidebar}>
+        <div className="h-full grow flex sm:relative flex-col" onClick={closeSidebar}>
           {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
           <div className="w-full grow relative">
             {trip?.bounds && (
