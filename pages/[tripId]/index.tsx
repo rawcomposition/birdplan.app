@@ -41,7 +41,7 @@ export default function Trip() {
   const [view, setView] = React.useState<"map" | "targets">("map");
   const { lifelist } = useProfile();
   const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
-  const { closeSidebar, openSidebar } = useUI();
+  const { closeSidebar, openSidebar, sidebarOpen } = useUI();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const isMultiRegion = trip?.region.includes(",");
@@ -209,13 +209,15 @@ export default function Trip() {
           ) : (
             <div className="mb-12" />
           )}
-          <Button
-            color="pillWhite"
-            className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-            onClick={closeSidebar}
-          >
-            Map <MapFlatIcon className="w-4 h-4" />
-          </Button>
+          {sidebarOpen && (
+            <Button
+              color="pillWhite"
+              className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+              onClick={closeSidebar}
+            >
+              Map <MapFlatIcon className="w-4 h-4" />
+            </Button>
+          )}
         </Sidebar>
 
         <div className="h-full grow flex sm:relative flex-col" onClick={closeSidebar}>
