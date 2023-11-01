@@ -85,6 +85,7 @@ export default function Trip() {
   const handleEnableAddingMarker = () => {
     setIsAddingMarker(true);
     setSelectedSpeciesCode(undefined);
+    closeSidebar();
   };
 
   const handleDelete = async () => {
