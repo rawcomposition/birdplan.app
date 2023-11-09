@@ -1,6 +1,6 @@
 import React from "react";
 import { auth } from "lib/firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, indexedDBLocalPersistence, setPersistence } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 
@@ -10,6 +10,7 @@ export default function useFirebaseLogin() {
 
   const login = async () => {
     setLoading(true);
+    await setPersistence(auth, indexedDBLocalPersistence);
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
