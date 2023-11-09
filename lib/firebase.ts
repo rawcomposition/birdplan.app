@@ -15,13 +15,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 export const auth = getAuth(app);
-
-export const db = fs.initializeFirestore(app, {
-  // @ts-ignore
-  localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }),
-});
+export const db = fs.getFirestore(app);
+fs.enableIndexedDbPersistence(db);
 
 export const setProfileValue = async (key: string, value: Profile[keyof Profile]) => {
   const user = auth.currentUser;
