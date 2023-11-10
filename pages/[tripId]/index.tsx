@@ -7,27 +7,23 @@ import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
 import Expand from "components/Expand";
 import useFetchHotspots from "hooks/useFetchHotspots";
-import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
-import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
 import CustomMarkerRow from "components/CustomMarkerRow";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
-import SpeciesCard from "components/SpeciesCard";
 import Button from "components/Button";
 import ExternalIcon from "icons/External";
 import ShareIcon from "icons/Share";
 import Link from "next/link";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
-import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
-import RecentSpeciesSidebarBlock from "components/RecentSpeciesSidebarBlock";
 import Feather from "icons/Feather";
 import Bullseye from "icons/Bullseye";
 import MapFlatIcon from "icons/MapFlat";
 import ListIcon from "icons/List";
+import TripNav from "components/TripNav";
 import Pencil from "icons/Pencil";
 import Trash from "icons/Trash";
 import { deleteTrip } from "lib/firebase";
@@ -38,9 +34,8 @@ export default function Trip() {
   const { open } = useModal();
   const router = useRouter();
   const [showAll, setShowAll] = React.useState(false);
-  const [view, setView] = React.useState<"map" | "targets">("map");
   const { lifelist } = useProfile();
-  const { targets, trip, isOwner, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
+  const { targets, trip, isOwner, canEdit } = useTrip();
   const { closeSidebar, openSidebar, sidebarOpen } = useUI();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
@@ -49,10 +44,6 @@ export default function Trip() {
   const savedHotspots = trip?.hotspots || [];
   const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
-  const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const selectedSpecies = [...recentSpecies, ...targets.items].find((it) => it.code === selectedSpeciesCode);
-  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
-
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,
     lng: it.lng,
@@ -60,31 +51,18 @@ export default function Trip() {
     id: it.id,
   }));
 
-  const markers = selectedSpeciesCode ? [] : [...savedHotspotMarkers];
-  const customMarkers = selectedSpeciesCode ? [] : trip?.markers || [];
+  const markers = [...savedHotspotMarkers];
+  const customMarkers = trip?.markers || [];
 
   const hotspotClick = (id: string) => {
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
     const hotspot = allHotspots.find((it) => it.id === id);
     if (!hotspot) return toast.error("Hotspot not found");
-    open("hotspot", { hotspot, speciesCode: selectedSpeciesCode });
-  };
-
-  const obsClick = (id: string) => {
-    const observation = obs.find((it) => it.id === id);
-    if (!observation) return toast.error("Observation not found");
-    observation.isPersonal
-      ? open(observation.isPersonal ? "personalLocation" : "hotspot", {
-          hotspot: observation,
-          speciesCode: selectedSpeciesCode,
-          speciesName: selectedSpecies?.name,
-        })
-      : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
+    open("hotspot", { hotspot });
   };
 
   const handleEnableAddingMarker = () => {
     setIsAddingMarker(true);
-    setSelectedSpeciesCode(undefined);
     closeSidebar();
   };
 
@@ -116,7 +94,8 @@ export default function Trip() {
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <main className="flex h-[calc(100%-60px)]">
         <Sidebar noPadding fullWidth noAnimation noAccount>
-          <div className={clsx("mb-4 px-6 pt-4", !!selectedSpeciesCode && "opacity-50 pointer-events-none")}>
+          <TripNav tripId={trip?.id || ""} active="" />
+          <div className="mb-4 px-6 pt-4 border-t border-gray-700">
             <label className="text-white text-sm flex items-center gap-1">
               <input type="checkbox" className="mr-2" checked={showAll} onChange={() => setShowAll((prev) => !prev)} />
               Show all hotspots
@@ -147,8 +126,6 @@ export default function Trip() {
                 </>
               )}
             </Expand>
-            <TargetSpeciesSidebarBlock />
-            {canEdit && <RecentSpeciesSidebarBlock recentSpecies={recentSpecies} />}
             {canEdit && (
               <Expand heading="Settings">
                 <div className="text-sm text-gray-400 flex flex-col gap-3">
@@ -221,16 +198,14 @@ export default function Trip() {
         </Sidebar>
 
         <div className="h-full grow flex sm:relative flex-col" onClick={closeSidebar}>
-          {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
           <div className="w-full grow relative">
             {trip?.bounds && (
               <MapBox
                 key={trip.id}
-                onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
+                onHotspotClick={hotspotClick}
                 markers={markers}
                 customMarkers={customMarkers}
-                hotspotLayer={showAll && !selectedSpeciesCode && hotspotLayer}
-                obsLayer={selectedSpeciesCode && obsLayer}
+                hotspotLayer={showAll && hotspotLayer}
                 bounds={trip.bounds}
                 addingMarker={isAddingMarker}
                 onDisableAddingMarker={() => setIsAddingMarker(false)}
