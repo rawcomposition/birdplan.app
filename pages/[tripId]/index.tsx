@@ -25,6 +25,7 @@ import MapFlatIcon from "icons/MapFlat";
 import ListIcon from "icons/List";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
+import ItineraryBuilder from "components/ItineraryBuilder";
 
 export default function Trip() {
   const { open } = useModal();
@@ -158,37 +159,45 @@ export default function Trip() {
           </Sidebar>
         )}
 
-        <div className="h-full grow flex sm:relative flex-col" onClick={closeSidebar}>
-          {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
-          <div className="w-full grow relative">
-            {trip?.bounds && (
-              <MapBox
-                key={trip.id}
-                onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
-                markers={markers}
-                customMarkers={customMarkers}
-                hotspotLayer={showAll && !selectedSpeciesCode && hotspotLayer}
-                obsLayer={selectedSpeciesCode && obsLayer}
-                bounds={trip.bounds}
-                addingMarker={isAddingMarker}
-                onDisableAddingMarker={() => setIsAddingMarker(false)}
-              />
-            )}
-            {isAddingMarker && (
-              <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
-                Click anywhere on map to add marker
-                <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
+        <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
+          {view === "itinerary" ? (
+            <ItineraryBuilder />
+          ) : (
+            <>
+              {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
+              <div className="w-full grow relative">
+                {trip?.bounds && (
+                  <MapBox
+                    key={trip.id}
+                    onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
+                    markers={markers}
+                    customMarkers={customMarkers}
+                    hotspotLayer={showAll && !selectedSpeciesCode && hotspotLayer}
+                    obsLayer={selectedSpeciesCode && obsLayer}
+                    bounds={trip.bounds}
+                    addingMarker={isAddingMarker}
+                    onDisableAddingMarker={() => setIsAddingMarker(false)}
+                  />
+                )}
+                {isAddingMarker && (
+                  <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
+                    Click anywhere on map to add marker
+                    <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
-        <Button
-          color="pillWhite"
-          className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-          onClick={openSidebar}
-        >
-          List <ListIcon className="w-4 h-4" />
-        </Button>
+        {view !== "itinerary" && (
+          <Button
+            color="pillWhite"
+            className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+            onClick={openSidebar}
+          >
+            List <ListIcon className="w-4 h-4" />
+          </Button>
+        )}
       </main>
     </div>
   );

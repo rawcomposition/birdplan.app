@@ -83,6 +83,14 @@ export type Bounds = {
   neLng: number;
 };
 
+export type Day = {
+  id: string;
+  locations: {
+    locationId: string;
+    type: "hotspot" | "marker";
+  }[];
+};
+
 export type Trip = {
   id: string;
   userIds: string[];
@@ -98,6 +106,8 @@ export type Trip = {
   };
   hotspots: Hotspot[];
   markers: CustomMarker[];
+  itinerary: Day[];
+  startDate: string;
   startMonth: number;
   endMonth: number;
   timezone: string;

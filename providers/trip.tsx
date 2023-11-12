@@ -1,17 +1,20 @@
 import React from "react";
-import { Hotspot, Trip, Target, Targets, CustomMarker, Invite } from "lib/types";
+import { Hotspot, Trip, Targets, CustomMarker, Invite } from "lib/types";
 import {
   subscribeToTrip,
   subscribeToTripTargets,
   subscribeToTripInvites,
   updateHotspots,
+  updateItinerary,
   updateTargets,
   updateMarkers,
   deleteInvite,
   removeUserFromTrip,
+  setTripStartDate,
 } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
+import { randomId } from "lib/helpers";
 
 type ContextT = {
   trip: Trip | null;
@@ -29,6 +32,11 @@ type ContextT = {
   removeMarker: (id: string) => Promise<void>;
   setTargets: ({ items, N, yrN }: Targets) => Promise<void>;
   removeTarget: (code: string) => Promise<void>;
+  setStartDate: (date: string) => Promise<void>;
+  appendItineraryDay: () => Promise<void>;
+  removeItineraryDay: (id: string) => Promise<void>;
+  addItineraryDayLocation: (dayId: string, type: "hotspot" | "marker", locationId: string) => Promise<void>;
+  removeItineraryDayLocation: (dayId: string, locationId: string) => Promise<void>;
   saveHotspotNotes: (id: string, notes: string) => Promise<void>;
   setHotspotTargetsId: (hotspotId: string, targetsId: string) => Promise<void>;
   saveMarkerNotes: (id: string, notes: string) => Promise<void>;
@@ -62,6 +70,11 @@ export const TripContext = React.createContext<ContextT>({
   removeMarker: async () => {},
   setTargets: async () => {},
   removeTarget: async () => {},
+  setStartDate: async () => {},
+  appendItineraryDay: async () => {},
+  removeItineraryDay: async () => {},
+  addItineraryDayLocation: async () => {},
+  removeItineraryDayLocation: async () => {},
   saveHotspotNotes: async () => {},
   addHotspotFav: async () => {},
   setHotspotTargetsId: async () => {},
@@ -227,6 +240,47 @@ const TripProvider = ({ children }: Props) => {
     }
   };
 
+  const setStartDate = async (date: string) => {
+    if (!trip) return;
+    await setTripStartDate(trip.id, date);
+  };
+
+  const appendItineraryDay = async () => {
+    if (!trip) return;
+    const newItinerary = [...(trip.itinerary || []), { id: randomId(6), locations: [] }];
+    await updateItinerary(trip.id, newItinerary);
+  };
+
+  const removeItineraryDay = async (id: string) => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.filter((it) => it.id !== id);
+    await updateItinerary(trip.id, newItinerary);
+  };
+
+  const addItineraryDayLocation = async (dayId: string, type: "hotspot" | "marker", locationId: string) => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.map((it) => {
+      if (it.id === dayId) {
+        const locations = [...(it.locations || []), { type, locationId }];
+        return { ...it, locations };
+      }
+      return it;
+    });
+    await updateItinerary(trip.id, newItinerary);
+  };
+
+  const removeItineraryDayLocation = async (dayId: string, locationId: string) => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.map((it) => {
+      if (it.id === dayId) {
+        const locations = it.locations?.filter((it) => it.locationId !== locationId);
+        return { ...it, locations };
+      }
+      return it;
+    });
+    await updateItinerary(trip.id, newItinerary);
+  };
+
   return (
     <TripContext.Provider
       value={{
@@ -245,6 +299,11 @@ const TripProvider = ({ children }: Props) => {
         removeMarker,
         setTargets,
         removeTarget,
+        setStartDate,
+        appendItineraryDay,
+        removeItineraryDay,
+        addItineraryDayLocation,
+        removeItineraryDayLocation,
         saveHotspotNotes,
         setHotspotTargetsId,
         saveMarkerNotes,
