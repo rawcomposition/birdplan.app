@@ -22,7 +22,7 @@ export default function TripNav({ onChange, active }: Props) {
           key={slug}
           onClick={() => onChange(slug)}
           className={clsx(
-            "flex items-center text-[14px] gap-2 font-bold justify-center rounded py-1 px-2.5",
+            "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-2.5",
             active === slug ? "bg-sky-600/80 text-white" : "hover:bg-white/10 text-gray-300"
           )}
         >

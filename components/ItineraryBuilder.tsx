@@ -49,7 +49,7 @@ export default function ItineraryBuilder() {
           <Button
             size="smPill"
             color="pillOutlineGray"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 print:hidden"
             onClick={() => setEditing(true)}
           >
             <Pencil className="w-4 h-4" />
@@ -91,7 +91,7 @@ export default function ItineraryBuilder() {
               <span className="text-gray-500 text-sm">{date}</span>
             </div>
             {!!locations?.length && (
-              <ul className="flex flex-col gap-1.5">
+              <ul className="flex flex-col gap-2.5">
                 {locations?.map(({ locationId }, index) => {
                   const location =
                     trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
@@ -107,9 +107,9 @@ export default function ItineraryBuilder() {
                       <MarkerWithIcon
                         showStroke={false}
                         icon={(location as any)?.icon || "hotspot"}
-                        className="inline-block scale-75 flex-shrink-0"
+                        className="inline-block scale-[.8] flex-shrink-0 print:hidden"
                       />
-                      <span className="truncate">{location?.name || "Unknown Location"}</span>
+                      <span className="truncate font-medium">{location?.name || "Unknown Location"}</span>
                       {isEditing && (
                         <div className="flex items-center gap-1.5 ml-auto">
                           {index !== locations.length - 1 && (
@@ -162,7 +162,7 @@ export default function ItineraryBuilder() {
         );
       })}
       {isEditing && (
-        <Button color="primary" onClick={appendItineraryDay}>
+        <Button color="primary" onClick={appendItineraryDay} className="mb-8">
           Add Day
         </Button>
       )}
