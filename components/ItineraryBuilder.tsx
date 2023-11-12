@@ -8,10 +8,20 @@ import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import Pencil from "icons/Pencil";
 import CheckIcon from "icons/Check";
-import Trash from "icons/Trash";
+import XMarkBold from "icons/XMarkBold";
+import clsx from "clsx";
+import AngleDownBold from "icons/AngleDownBold";
 
 export default function ItineraryBuilder() {
-  const { trip, canEdit, setStartDate, appendItineraryDay, removeItineraryDay, removeItineraryDayLocation } = useTrip();
+  const {
+    trip,
+    canEdit,
+    setStartDate,
+    appendItineraryDay,
+    removeItineraryDay,
+    removeItineraryDayLocation,
+    moveItineraryDayLocation,
+  } = useTrip();
   const { open } = useModal();
 
   const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
@@ -75,18 +85,25 @@ export default function ItineraryBuilder() {
       {trip?.itinerary.map(({ id, locations }, i) => {
         const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
         return (
-          <div key={id} className="pt-3 p-5 bg-white rounded-lg shadow mb-8 relative space-y-4">
+          <div key={id} className="pt-3 p-5 bg-white rounded-lg shadow mb-8 relative space-y-6">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-xl font-bold text-gray-700">Day {i + 1}</h2>
               <span className="text-gray-500 text-sm">{date}</span>
             </div>
             {!!locations?.length && (
-              <ul className="flex flex-col gap-1">
-                {locations?.map(({ locationId }) => {
+              <ul className="flex flex-col gap-1.5">
+                {locations?.map(({ locationId }, index) => {
                   const location =
                     trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
                   return (
-                    <li key={locationId} className="flex items-center gap-2 text-sm text-gray-700 group relative pl-1">
+                    <li
+                      key={locationId}
+                      className={clsx(
+                        "flex items-center gap-2 text-sm text-gray-700 group relative",
+                        isEditing &&
+                          "border rounded p-1 -mx-1 border-transparent hover:border-gray-200 transition-colors"
+                      )}
+                    >
                       <MarkerWithIcon
                         showStroke={false}
                         icon={(location as any)?.icon || "hotspot"}
@@ -94,13 +111,33 @@ export default function ItineraryBuilder() {
                       />
                       <span className="truncate">{location?.name || "Unknown Location"}</span>
                       {isEditing && (
-                        <button
-                          type="button"
-                          onClick={() => removeItineraryDayLocation(id, locationId)}
-                          className="text-[15px] p-1 -top-[2px] -left-4 text-gray-500 absolute opacity-0 group-hover:opacity-80 transition-opacity"
-                        >
-                          <Trash />
-                        </button>
+                        <div className="flex items-center gap-1.5 ml-auto">
+                          {index !== locations.length - 1 && (
+                            <button
+                              type="button"
+                              onClick={() => moveItineraryDayLocation(id, locationId, "down")}
+                              className="text-[16px] p-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
+                            >
+                              <AngleDownBold />
+                            </button>
+                          )}
+                          {index !== 0 && (
+                            <button
+                              type="button"
+                              onClick={() => moveItineraryDayLocation(id, locationId, "up")}
+                              className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <AngleDownBold className="rotate-180" />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => removeItineraryDayLocation(id, locationId)}
+                            className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <XMarkBold />
+                          </button>
+                        </div>
                       )}
                     </li>
                   );

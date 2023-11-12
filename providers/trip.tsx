@@ -37,6 +37,7 @@ type ContextT = {
   removeItineraryDay: (id: string) => Promise<void>;
   addItineraryDayLocation: (dayId: string, type: "hotspot" | "marker", locationId: string) => Promise<void>;
   removeItineraryDayLocation: (dayId: string, locationId: string) => Promise<void>;
+  moveItineraryDayLocation: (dayId: string, locationId: string, direction: "up" | "down") => Promise<void>;
   saveHotspotNotes: (id: string, notes: string) => Promise<void>;
   setHotspotTargetsId: (hotspotId: string, targetsId: string) => Promise<void>;
   saveMarkerNotes: (id: string, notes: string) => Promise<void>;
@@ -75,6 +76,7 @@ export const TripContext = React.createContext<ContextT>({
   removeItineraryDay: async () => {},
   addItineraryDayLocation: async () => {},
   removeItineraryDayLocation: async () => {},
+  moveItineraryDayLocation: async () => {},
   saveHotspotNotes: async () => {},
   addHotspotFav: async () => {},
   setHotspotTargetsId: async () => {},
@@ -281,6 +283,22 @@ const TripProvider = ({ children }: Props) => {
     await updateItinerary(trip.id, newItinerary);
   };
 
+  const moveItineraryDayLocation = async (dayId: string, locationId: string, direction: "up" | "down") => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.map((it) => {
+      if (it.id === dayId) {
+        const locations = [...(it.locations || [])];
+        const locationIndex = locations.findIndex((it) => it.locationId === locationId);
+        const location = locations.splice(locationIndex, 1)[0];
+        const newIndex = direction === "up" ? locationIndex - 1 : locationIndex + 1;
+        locations.splice(newIndex, 0, location);
+        return { ...it, locations };
+      }
+      return it;
+    });
+    await updateItinerary(trip.id, newItinerary);
+  };
+
   return (
     <TripContext.Provider
       value={{
@@ -304,6 +322,7 @@ const TripProvider = ({ children }: Props) => {
         removeItineraryDay,
         addItineraryDayLocation,
         removeItineraryDayLocation,
+        moveItineraryDayLocation,
         saveHotspotNotes,
         setHotspotTargetsId,
         saveMarkerNotes,
