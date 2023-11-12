@@ -107,7 +107,7 @@ export type Trip = {
   hotspots: Hotspot[];
   markers: CustomMarker[];
   itinerary: Day[];
-  startDate: string;
+  startDate?: string;
   startMonth: number;
   endMonth: number;
   timezone: string;
