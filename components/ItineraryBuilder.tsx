@@ -9,8 +9,8 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import Pencil from "icons/Pencil";
 import CheckIcon from "icons/Check";
 import XMarkBold from "icons/XMarkBold";
-import clsx from "clsx";
 import AngleDownBold from "icons/AngleDownBold";
+import TravelTime from "./TravelTime";
 
 export default function ItineraryBuilder() {
   const {
@@ -43,28 +43,17 @@ export default function ItineraryBuilder() {
 
   return (
     <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold text-gray-700">Itinerary</h1>
-        {canEdit && !isEditing && (
+      <div className="flex justify-between items-center mb-12">
+        <h1 className="text-3xl font-bold text-gray-700">Trip Itinerary</h1>
+        {canEdit && (
           <Button
             size="smPill"
             color="pillOutlineGray"
             className="flex items-center gap-2 print:hidden"
-            onClick={() => setEditing(true)}
+            onClick={() => setEditing((prev) => !prev)}
           >
-            <Pencil className="w-4 h-4" />
-            <span>Edit</span>
-          </Button>
-        )}
-        {isEditing && (
-          <Button
-            size="smPill"
-            color="pillOutlineGray"
-            className="flex items-center gap-2"
-            onClick={() => setEditing(false)}
-          >
-            <CheckIcon className="w-4 h-4" />
-            <span>Done</span>
+            {isEditing ? <CheckIcon className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+            <span>{isEditing ? "Done" : "Edit"}</span>
           </Button>
         )}
       </div>
@@ -85,67 +74,70 @@ export default function ItineraryBuilder() {
       {trip?.itinerary.map(({ id, locations }, i) => {
         const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
         return (
-          <div key={id} className="pt-3 p-5 bg-white rounded-lg shadow mb-8 relative space-y-6">
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-xl font-bold text-gray-700">Day {i + 1}</h2>
+          <div key={id} className="mb-8">
+            <div className="mb-3">
+              <h1 className="text-xl font-bold text-gray-700">Day {i + 1}</h1>
               <span className="text-gray-500 text-sm">{date}</span>
             </div>
             {!!locations?.length && (
-              <ul className="flex flex-col gap-2.5">
+              <ul className="flex flex-col">
                 {locations?.map(({ locationId }, index) => {
                   const location =
                     trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
                   return (
-                    <li
-                      key={locationId}
-                      className={clsx(
-                        "flex items-center gap-2 text-sm text-gray-700 group relative",
-                        isEditing &&
-                          "border rounded p-1 -mx-1 border-transparent hover:border-gray-200 transition-colors"
+                    <React.Fragment key={locationId}>
+                      {index !== 0 && (
+                        <li>
+                          <TravelTime isEditing={isEditing} dayId={id} locationId={locationId} />
+                        </li>
                       )}
-                    >
-                      <MarkerWithIcon
-                        showStroke={false}
-                        icon={(location as any)?.icon || "hotspot"}
-                        className="inline-block scale-[.8] flex-shrink-0 print:hidden"
-                      />
-                      <span className="truncate font-medium">{location?.name || "Unknown Location"}</span>
-                      {isEditing && (
-                        <div className="flex items-center gap-1.5 ml-auto">
-                          {index !== locations.length - 1 && (
+                      <li
+                        key={locationId}
+                        className="flex items-center gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
+                      >
+                        <MarkerWithIcon
+                          showStroke={false}
+                          icon={(location as any)?.icon || "hotspot"}
+                          className="inline-block scale-[.85] flex-shrink-0 print:hidden"
+                        />
+                        <span className="truncate font-medium">{location?.name || "Unknown Location"}</span>
+                        {isEditing && (
+                          <div className="flex items-center gap-1.5 ml-auto">
+                            {index !== locations.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={() => moveItineraryDayLocation(id, locationId, "down")}
+                                className="text-[16px] p-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
+                              >
+                                <AngleDownBold />
+                              </button>
+                            )}
+                            {index !== 0 && (
+                              <button
+                                type="button"
+                                onClick={() => moveItineraryDayLocation(id, locationId, "up")}
+                                className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <AngleDownBold className="rotate-180" />
+                              </button>
+                            )}
                             <button
                               type="button"
-                              onClick={() => moveItineraryDayLocation(id, locationId, "down")}
-                              className="text-[16px] p-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
-                            >
-                              <AngleDownBold />
-                            </button>
-                          )}
-                          {index !== 0 && (
-                            <button
-                              type="button"
-                              onClick={() => moveItineraryDayLocation(id, locationId, "up")}
+                              onClick={() => removeItineraryDayLocation(id, locationId)}
                               className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
                             >
-                              <AngleDownBold className="rotate-180" />
+                              <XMarkBold />
                             </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => removeItineraryDayLocation(id, locationId)}
-                            className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <XMarkBold />
-                          </button>
-                        </div>
-                      )}
-                    </li>
+                          </div>
+                        )}
+                      </li>
+                    </React.Fragment>
                   );
                 })}
               </ul>
             )}
             {isEditing && (
-              <div className="flex justify-between items-center gap-2">
+              <div className="flex justify-between items-center gap-2 mt-1">
                 <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId: id })}>
                   + Add Location
                 </Button>

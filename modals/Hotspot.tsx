@@ -3,8 +3,6 @@ import { Body } from "providers/modals";
 import { Hotspot as HotspotT } from "lib/types";
 import Button from "components/Button";
 import Feather from "icons/Feather";
-import Star from "icons/Star";
-import StarOutline from "icons/StarOutline";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
@@ -18,9 +16,7 @@ import { Menu } from "@headlessui/react";
 import VerticalDots from "icons/VerticalDots";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
-import XMark from "icons/XMark";
 import PlusIcon from "icons/Plus";
-import Trash from "icons/Trash";
 
 type Props = {
   hotspot: HotspotT;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Hotspot, Trip, Targets, CustomMarker, Invite } from "lib/types";
+import { Hotspot, Trip, Targets, CustomMarker, Invite, TravelData } from "lib/types";
 import {
   subscribeToTrip,
   subscribeToTripTargets,
@@ -38,6 +38,7 @@ type ContextT = {
   addItineraryDayLocation: (dayId: string, type: "hotspot" | "marker", locationId: string) => Promise<void>;
   removeItineraryDayLocation: (dayId: string, locationId: string) => Promise<void>;
   moveItineraryDayLocation: (dayId: string, locationId: string, direction: "up" | "down") => Promise<void>;
+  saveItineraryTravelData: (dayId: string, locationId: string, data: TravelData) => Promise<void>;
   saveHotspotNotes: (id: string, notes: string) => Promise<void>;
   setHotspotTargetsId: (hotspotId: string, targetsId: string) => Promise<void>;
   saveMarkerNotes: (id: string, notes: string) => Promise<void>;
@@ -77,6 +78,7 @@ export const TripContext = React.createContext<ContextT>({
   addItineraryDayLocation: async () => {},
   removeItineraryDayLocation: async () => {},
   moveItineraryDayLocation: async () => {},
+  saveItineraryTravelData: async () => {},
   saveHotspotNotes: async () => {},
   addHotspotFav: async () => {},
   setHotspotTargetsId: async () => {},
@@ -299,6 +301,21 @@ const TripProvider = ({ children }: Props) => {
     await updateItinerary(trip.id, newItinerary);
   };
 
+  const saveItineraryTravelData = async (dayId: string, locationId: string, data: TravelData) => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.map((it) => {
+      if (it.id === dayId) {
+        const locations = it.locations?.map((it) => {
+          if (it.locationId === locationId) return { ...it, travel: data };
+          return it;
+        });
+        return { ...it, locations };
+      }
+      return it;
+    });
+    await updateItinerary(trip.id, newItinerary);
+  };
+
   return (
     <TripContext.Provider
       value={{
@@ -323,6 +340,7 @@ const TripProvider = ({ children }: Props) => {
         addItineraryDayLocation,
         removeItineraryDayLocation,
         moveItineraryDayLocation,
+        saveItineraryTravelData,
         saveHotspotNotes,
         setHotspotTargetsId,
         saveMarkerNotes,

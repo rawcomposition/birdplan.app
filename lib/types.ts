@@ -83,9 +83,17 @@ export type Bounds = {
   neLng: number;
 };
 
+export type TravelData = {
+  time: number;
+  distance: number;
+  method: "driving" | "walking" | "cycling";
+  locationId: string; // Traveling from this location
+};
+
 export type Day = {
   id: string;
   locations: {
+    travel?: TravelData;
     locationId: string;
     type: "hotspot" | "marker";
   }[];
