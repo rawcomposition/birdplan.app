@@ -137,7 +137,7 @@ export default function ItineraryBuilder() {
               </ul>
             )}
             {isEditing && (
-              <div className="flex justify-between items-center gap-2 mt-1">
+              <div className="flex justify-between items-center gap-2 mt-3">
                 <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId: id })}>
                   + Add Location
                 </Button>

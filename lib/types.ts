@@ -88,6 +88,7 @@ export type TravelData = {
   distance: number;
   method: "driving" | "walking" | "cycling";
   locationId: string; // Traveling from this location
+  isDeleted?: boolean;
 };
 
 export type Day = {

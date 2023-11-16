@@ -50,7 +50,7 @@ export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
 export const updateItinerary = async (tripId: string, itinerary: Day[]) => {
   const user = auth.currentUser;
   if (!user) return;
-  await fs.setDoc(fs.doc(db, "trip", tripId), { itinerary }, { merge: true });
+  const updatedTrip = await fs.setDoc(fs.doc(db, "trip", tripId), { itinerary }, { merge: true });
 };
 
 export const updateTargets = async (id: string, data: Targets, shouldTimestamp?: boolean) => {

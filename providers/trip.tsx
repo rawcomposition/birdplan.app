@@ -15,6 +15,8 @@ import {
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
 import { randomId } from "lib/helpers";
+import { getTravelTime } from "lib/mapbox";
+import toast from "react-hot-toast";
 
 type ContextT = {
   trip: Trip | null;
@@ -38,7 +40,14 @@ type ContextT = {
   addItineraryDayLocation: (dayId: string, type: "hotspot" | "marker", locationId: string) => Promise<void>;
   removeItineraryDayLocation: (dayId: string, locationId: string) => Promise<void>;
   moveItineraryDayLocation: (dayId: string, locationId: string, direction: "up" | "down") => Promise<void>;
-  saveItineraryTravelData: (dayId: string, locationId: string, data: TravelData) => Promise<void>;
+  markTravelTimeDeleted: (dayId: string, locationId: string) => Promise<void>;
+  calcTravelTime: (props: {
+    dayId: string;
+    locationId1: string;
+    locationId2: string;
+    method: "walking" | "driving" | "cycling";
+    save?: boolean;
+  }) => Promise<TravelData | undefined>;
   saveHotspotNotes: (id: string, notes: string) => Promise<void>;
   setHotspotTargetsId: (hotspotId: string, targetsId: string) => Promise<void>;
   saveMarkerNotes: (id: string, notes: string) => Promise<void>;
@@ -78,7 +87,8 @@ export const TripContext = React.createContext<ContextT>({
   addItineraryDayLocation: async () => {},
   removeItineraryDayLocation: async () => {},
   moveItineraryDayLocation: async () => {},
-  saveItineraryTravelData: async () => {},
+  markTravelTimeDeleted: async () => {},
+  calcTravelTime: async () => undefined,
   saveHotspotNotes: async () => {},
   addHotspotFav: async () => {},
   setHotspotTargetsId: async () => {},
@@ -271,6 +281,7 @@ const TripProvider = ({ children }: Props) => {
       return it;
     });
     await updateItinerary(trip.id, newItinerary);
+    await recalcTravelTime(newItinerary);
   };
 
   const removeItineraryDayLocation = async (dayId: string, locationId: string) => {
@@ -283,6 +294,7 @@ const TripProvider = ({ children }: Props) => {
       return it;
     });
     await updateItinerary(trip.id, newItinerary);
+    await recalcTravelTime(newItinerary);
   };
 
   const moveItineraryDayLocation = async (dayId: string, locationId: string, direction: "up" | "down") => {
@@ -294,6 +306,47 @@ const TripProvider = ({ children }: Props) => {
         const location = locations.splice(locationIndex, 1)[0];
         const newIndex = direction === "up" ? locationIndex - 1 : locationIndex + 1;
         locations.splice(newIndex, 0, location);
+        return { ...it, locations };
+      }
+      return it;
+    });
+    await updateItinerary(trip.id, newItinerary);
+    await recalcTravelTime(newItinerary);
+  };
+
+  const recalcTravelTime = async (itinerary: Trip["itinerary"]) => {
+    if (!trip) return;
+    const newItinerary = await Promise.all(
+      itinerary.map(async (day) => {
+        const locations = await Promise.all(
+          day.locations?.map(async ({ travel, ...it }, index) => {
+            const prevLocation = day.locations[index - 1];
+            if (!prevLocation) return it;
+            if (travel?.locationId === prevLocation.locationId) return { ...it, travel };
+            const travelData = await calcTravelTime({
+              dayId: day.id,
+              locationId1: prevLocation.locationId,
+              locationId2: it.locationId,
+              method: travel?.method || "driving",
+            });
+            return { ...it, travel: travelData };
+          }) || []
+        );
+        return { ...day, locations };
+      })
+    );
+    await updateItinerary(trip.id, newItinerary);
+  };
+
+  const markTravelTimeDeleted = async (dayId: string, locationId: string) => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.map((it) => {
+      if (it.id === dayId) {
+        const locations = it.locations?.map((it) => {
+          if (it.locationId === locationId)
+            return { ...it, travel: it.travel ? { ...it.travel, isDeleted: true } : undefined };
+          return it;
+        });
         return { ...it, locations };
       }
       return it;
@@ -314,6 +367,45 @@ const TripProvider = ({ children }: Props) => {
       return it;
     });
     await updateItinerary(trip.id, newItinerary);
+  };
+
+  type CalcTravelTimePropsType = {
+    dayId: string;
+    locationId1: string;
+    locationId2: string;
+    method: "walking" | "driving" | "cycling";
+    save?: boolean;
+  };
+
+  const calcTravelTime = async ({ dayId, locationId1, locationId2, method, save }: CalcTravelTimePropsType) => {
+    const location1 =
+      trip?.hotspots?.find((h) => h.id === locationId1 || "") || trip?.markers?.find((m) => m.id === locationId1 || "");
+
+    const location2 =
+      trip?.hotspots?.find((h) => h.id === locationId2 || "") || trip?.markers?.find((m) => m.id === locationId2 || "");
+
+    if (!location1 || !location2) {
+      toast.error("Unable to calculate travel time");
+      return;
+    }
+    console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
+    const { lat: lat1, lng: lng1 } = location1;
+    const { lat: lat2, lng: lng2 } = location2;
+    const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
+    if (!data) {
+      toast.error("Unable to calculate travel time");
+      return;
+    }
+    const travelData = {
+      distance: data.distance,
+      time: data.time,
+      method,
+      locationId: locationId1,
+    };
+    if (save) {
+      await saveItineraryTravelData(dayId, locationId2, travelData);
+    }
+    return travelData;
   };
 
   return (
@@ -340,7 +432,8 @@ const TripProvider = ({ children }: Props) => {
         addItineraryDayLocation,
         removeItineraryDayLocation,
         moveItineraryDayLocation,
-        saveItineraryTravelData,
+        markTravelTimeDeleted,
+        calcTravelTime,
         saveHotspotNotes,
         setHotspotTargetsId,
         saveMarkerNotes,
