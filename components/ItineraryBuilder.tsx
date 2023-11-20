@@ -108,10 +108,13 @@ export default function ItineraryBuilder() {
                       <li
                         key={locationId}
                         className="flex items-center gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
-                        onClick={() =>
-                          type === "hotspot"
-                            ? open("hotspot", { hotspot: location })
-                            : open("viewMarker", { marker: location })
+                        onClick={
+                          !isEditing
+                            ? () =>
+                                type === "hotspot"
+                                  ? open("hotspot", { hotspot: location })
+                                  : open("viewMarker", { marker: location })
+                            : undefined
                         }
                         aria-label="View location"
                         role="button"

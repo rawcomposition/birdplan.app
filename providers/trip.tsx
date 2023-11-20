@@ -14,7 +14,7 @@ import {
 } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
-import { randomId } from "lib/helpers";
+import { mostFrequentValue, randomId } from "lib/helpers";
 import { getTravelTime } from "lib/mapbox";
 import toast from "react-hot-toast";
 
@@ -281,7 +281,7 @@ const TripProvider = ({ children }: Props) => {
       return it;
     });
     await updateItinerary(trip.id, newItinerary);
-    await recalcTravelTime(newItinerary);
+    await recalcTravelTime(newItinerary, dayId);
   };
 
   const removeItineraryDayLocation = async (dayId: string, locationId: string) => {
@@ -294,7 +294,7 @@ const TripProvider = ({ children }: Props) => {
       return it;
     });
     await updateItinerary(trip.id, newItinerary);
-    await recalcTravelTime(newItinerary);
+    await recalcTravelTime(newItinerary, dayId);
   };
 
   const moveItineraryDayLocation = async (dayId: string, locationId: string, direction: "up" | "down") => {
@@ -311,11 +311,14 @@ const TripProvider = ({ children }: Props) => {
       return it;
     });
     await updateItinerary(trip.id, newItinerary);
-    await recalcTravelTime(newItinerary);
+    await recalcTravelTime(newItinerary, dayId);
   };
 
-  const recalcTravelTime = async (itinerary: Trip["itinerary"]) => {
+  const recalcTravelTime = async (itinerary: Trip["itinerary"], dayId: string) => {
     if (!trip) return;
+    const existingMethods =
+      itinerary.find((it) => it.id === dayId)?.locations?.map((it) => it.travel?.method || null) || [];
+    const defaultMethod = mostFrequentValue(existingMethods) as "walking" | "driving" | "cycling" | null;
     const newItinerary = await Promise.all(
       itinerary.map(async (day) => {
         const locations = await Promise.all(
@@ -327,7 +330,7 @@ const TripProvider = ({ children }: Props) => {
               dayId: day.id,
               locationId1: prevLocation.locationId,
               locationId2: it.locationId,
-              method: travel?.method || "driving",
+              method: travel?.method || defaultMethod || "driving",
             });
             return { ...it, travel: travelData };
           }) || []

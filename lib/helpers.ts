@@ -386,3 +386,13 @@ export const formatDistance = (meters: number, metric: boolean) => {
       : Math.round(distance * 100) / 100;
   return `${rounded} ${units}`;
 };
+
+export const mostFrequentValue = (arr: any[]) => {
+  if (!arr.length) return null;
+  const counts: any = {};
+  arr.forEach((it) => {
+    counts[it] = counts[it] ? counts[it] + 1 : 1;
+  });
+  const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  return sorted[0];
+};
