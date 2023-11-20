@@ -133,7 +133,7 @@ export default function ItineraryBuilder() {
                                 <button
                                   type="button"
                                   onClick={() => moveItineraryDayLocation(id, locationId, "down")}
-                                  className="text-[16px] p-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
+                                  className="text-[16px] p-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
                                 >
                                   <AngleDownBold />
                                 </button>
@@ -142,7 +142,7 @@ export default function ItineraryBuilder() {
                                 <button
                                   type="button"
                                   onClick={() => moveItineraryDayLocation(id, locationId, "up")}
-                                  className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                   <AngleDownBold className="rotate-180" />
                                 </button>
@@ -150,7 +150,7 @@ export default function ItineraryBuilder() {
                               <button
                                 type="button"
                                 onClick={() => removeItineraryDayLocation(id, locationId)}
-                                className="text-[16px] p-1 -mt-1 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 <XMarkBold />
                               </button>
