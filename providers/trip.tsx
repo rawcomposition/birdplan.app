@@ -388,15 +388,15 @@ const TripProvider = ({ children }: Props) => {
       trip?.hotspots?.find((h) => h.id === locationId2 || "") || trip?.markers?.find((m) => m.id === locationId2 || "");
 
     if (!location1 || !location2) {
-      toast.error("Unable to calculate travel time");
+      toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
       return;
     }
     console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
     const { lat: lat1, lng: lng1 } = location1;
     const { lat: lat2, lng: lng2 } = location2;
     const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
-    if (!data) {
-      toast.error("Unable to calculate travel time");
+    if (!data || !data.distance || !data.time) {
+      toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
       return;
     }
     const travelData = {
