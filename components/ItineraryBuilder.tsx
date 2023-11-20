@@ -10,7 +10,7 @@ import Pencil from "icons/Pencil";
 import CheckIcon from "icons/Check";
 import XMarkBold from "icons/XMarkBold";
 import AngleDownBold from "icons/AngleDownBold";
-import TravelTime from "./TravelTime";
+import TravelTime from "components/TravelTime";
 
 export default function ItineraryBuilder() {
   const {
@@ -40,6 +40,14 @@ export default function ItineraryBuilder() {
     if (!confirm("Are you sure you want to remove this day?")) return;
     removeItineraryDay(dayId);
   };
+
+  const hotspotClick = (id: string) => {
+    const hotspot = trip?.hotspots.find((it) => it.id === id);
+    if (!hotspot) return toast.error("Hotspot not found");
+    open("hotspot", { hotspot });
+  };
+
+  const markerClick = (id: string) => {};
 
   return (
     <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
@@ -81,7 +89,7 @@ export default function ItineraryBuilder() {
             </div>
             {!!locations?.length && (
               <ul className="flex flex-col">
-                {locations?.map(({ locationId }, index) => {
+                {locations?.map(({ locationId, type }, index) => {
                   const location =
                     trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
                   return (
@@ -94,6 +102,13 @@ export default function ItineraryBuilder() {
                       <li
                         key={locationId}
                         className="flex items-center gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
+                        onClick={() =>
+                          type === "hotspot"
+                            ? open("hotspot", { hotspot: location })
+                            : open("viewMarker", { marker: location })
+                        }
+                        aria-label="View location"
+                        role="button"
                       >
                         <MarkerWithIcon
                           showStroke={false}
