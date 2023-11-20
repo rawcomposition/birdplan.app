@@ -24,6 +24,7 @@ export default function ItineraryBuilder() {
   } = useTrip();
   const { open } = useModal();
 
+  const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
   const isEditing = canEdit && editing;
 
@@ -34,6 +35,7 @@ export default function ItineraryBuilder() {
     if (!date) return toast.error("Please choose a date");
     setStartDate(date);
     appendItineraryDay();
+    setEditingStartDate(false);
   };
 
   const handleRemoveDay = (dayId: string) => {
@@ -41,35 +43,39 @@ export default function ItineraryBuilder() {
     removeItineraryDay(dayId);
   };
 
-  const hotspotClick = (id: string) => {
-    const hotspot = trip?.hotspots.find((it) => it.id === id);
-    if (!hotspot) return toast.error("Hotspot not found");
-    open("hotspot", { hotspot });
-  };
-
-  const markerClick = (id: string) => {};
-
   return (
     <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
-      <div className="flex justify-between items-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-700">Trip Itinerary</h1>
-        {canEdit && (
-          <Button
-            size="smPill"
-            color="pillOutlineGray"
-            className="flex items-center gap-2 print:hidden"
-            onClick={() => setEditing((prev) => !prev)}
+      <div className="mb-12">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-700">Trip Itinerary</h1>
+          {canEdit && (
+            <Button
+              size="smPill"
+              color="pillOutlineGray"
+              className="flex items-center gap-2 print:hidden"
+              onClick={() => setEditing((prev) => !prev)}
+            >
+              {isEditing ? <CheckIcon className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+              <span>{isEditing ? "Done" : "Edit"}</span>
+            </Button>
+          )}
+        </div>
+        {canEdit && !!trip?.startDate && !editingStartDate && (
+          <button
+            type="button"
+            onClick={() => setEditingStartDate(true)}
+            className="text-[14px] text-gray-600 hover:text-gray-700 block mt-2 hover:underline"
           >
-            {isEditing ? <CheckIcon className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-            <span>{isEditing ? "Done" : "Edit"}</span>
-          </Button>
+            Edit start date
+          </button>
         )}
       </div>
-      {canEdit && !trip?.startDate && (
+
+      {canEdit && (!trip?.startDate || editingStartDate) && (
         <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
           <h2 className="text-xl font-bold text-gray-700 mb-4">Choose start date</h2>
           <form className="flex gap-2" onSubmit={submitStartDate}>
-            <Input name="date" type="date" />
+            <Input name="date" type="date" defaultValue={trip?.startDate} />
             <Button type="submit" color="primary">
               Set
             </Button>
