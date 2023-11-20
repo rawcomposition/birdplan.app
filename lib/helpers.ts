@@ -365,3 +365,34 @@ export const debounce = (fn: Function, ms = 300) => {
     timeoutId = setTimeout(() => fn.apply(this, args), ms);
   };
 };
+
+export const formatTime = (time: number) => {
+  const rounded = Math.round(time);
+  const hours = Math.floor(rounded / 60);
+  const minutes = rounded % 60;
+  if (hours === 0) return `${minutes} min`;
+  if (minutes === 0) return `${hours} hr`;
+  return `${hours} hr ${minutes} min`;
+};
+
+export const formatDistance = (meters: number, metric: boolean) => {
+  const distance = metric ? meters / 1000 : meters / 1609;
+  const units = metric ? "km" : "mi";
+  const rounded =
+    distance > 10
+      ? Math.round(distance)
+      : distance > 1
+      ? Math.round(distance * 10) / 10
+      : Math.round(distance * 100) / 100;
+  return `${rounded} ${units}`;
+};
+
+export const mostFrequentValue = (arr: any[]) => {
+  if (!arr.length) return null;
+  const counts: any = {};
+  arr.forEach((it) => {
+    counts[it] = counts[it] ? counts[it] + 1 : 1;
+  });
+  const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  return sorted[0];
+};

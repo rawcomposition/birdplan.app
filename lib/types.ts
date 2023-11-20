@@ -83,6 +83,23 @@ export type Bounds = {
   neLng: number;
 };
 
+export type TravelData = {
+  time: number;
+  distance: number;
+  method: "driving" | "walking" | "cycling";
+  locationId: string; // Traveling from this location
+  isDeleted?: boolean;
+};
+
+export type Day = {
+  id: string;
+  locations: {
+    travel?: TravelData;
+    locationId: string;
+    type: "hotspot" | "marker";
+  }[];
+};
+
 export type Trip = {
   id: string;
   userIds: string[];
@@ -98,6 +115,8 @@ export type Trip = {
   };
   hotspots: Hotspot[];
   markers: CustomMarker[];
+  itinerary: Day[];
+  startDate?: string;
   startMonth: number;
   endMonth: number;
   timezone: string;
@@ -126,6 +145,7 @@ export enum MarkerIcon {
   TENT = "tent",
   HOUSE = "house",
   BOAT = "boat",
+  CAR = "car",
   AIRBNB = "airbnb",
   BINS = "bins",
   HIKE = "hike",

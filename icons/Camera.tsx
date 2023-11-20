@@ -2,7 +2,7 @@ type Props = {
   className?: string;
 };
 
-export default function CameraIcon({ className }: Props) {
+export default function Camera({ className }: Props) {
   return (
     <svg
       width="1em"

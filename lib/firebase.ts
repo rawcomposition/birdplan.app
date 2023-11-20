@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import * as fs from "firebase/firestore";
-import { Profile, Hotspot, Trip, TripInput, Target, Targets, CustomMarker, Invite } from "lib/types";
+import { Profile, Hotspot, Trip, TripInput, Target, Targets, CustomMarker, Invite, Day } from "lib/types";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
@@ -45,6 +45,12 @@ export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
   const user = auth.currentUser;
   if (!user) return;
   await fs.setDoc(fs.doc(db, "trip", tripId), { hotspots }, { merge: true });
+};
+
+export const updateItinerary = async (tripId: string, itinerary: Day[]) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  const updatedTrip = await fs.setDoc(fs.doc(db, "trip", tripId), { itinerary }, { merge: true });
 };
 
 export const updateTargets = async (id: string, data: Targets, shouldTimestamp?: boolean) => {
@@ -121,6 +127,12 @@ export const removeUserFromTrip = async (tripId: string, userId: string) => {
     },
     { merge: true }
   );
+};
+
+export const setTripStartDate = async (tripId: string, startDate: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.setDoc(fs.doc(db, "trip", tripId), { startDate }, { merge: true });
 };
 
 export const deleteInvite = async (id: string) => {

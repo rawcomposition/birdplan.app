@@ -1,16 +1,15 @@
-import * as React from "react";
+import React from "react";
 
 type Props = {
   heading: string;
   children: React.ReactNode;
   className?: string;
-  defaultOpen?: boolean;
   count?: number;
   focusInput?: boolean;
 };
 
-export default function Expand({ heading, children, className, defaultOpen, count, focusInput }: Props) {
-  const [open, setOpen] = React.useState(!!defaultOpen);
+export default function Expand({ heading, children, className, count, focusInput }: Props) {
+  const [open, setOpen] = React.useState(true);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
 
   const onToggle = () => {

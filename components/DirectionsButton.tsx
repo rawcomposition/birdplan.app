@@ -41,7 +41,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700"
           target="_blank"
         >
-          <GoogleMaps className="text-lg ml-3.5 mr-1.5" />
+          <GoogleMaps className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
           View on Google Maps
         </Link>
         {(!!filteredHotspots?.length || !!filteredMarkers?.length) && (
@@ -55,7 +55,11 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
                     className="flex items-center gap-2 text-sm cursor-pointer text-gray-700"
                     target="_blank"
                   >
-                    <MarkerWithIcon showStroke={false} icon={marker.icon} className="inline-block ml-1 scale-75" />
+                    <MarkerWithIcon
+                      showStroke={false}
+                      icon={marker.icon}
+                      className="inline-block ml-1 scale-75 flex-shrink-0"
+                    />
                     <span className="truncate">{marker.name}</span>
                   </Link>
                 </li>

@@ -14,7 +14,7 @@ class MyDocument extends Document {
           <meta name="theme-color" content="#0f172a" />
           <link rel="manifest" href="/manifest.json"></link>
           <link
-            href="https://fonts.googleapis.com/css2?family=Lobster&family=Ubuntu:wght@300;400&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Lobster&family=Ubuntu:wght@400;500;700&display=swap"
             rel="stylesheet"
           />
           <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet" />

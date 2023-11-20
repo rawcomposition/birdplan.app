@@ -1,8 +1,8 @@
 type Props = {
-  className?: string,
+  className?: string;
 };
 
-export default function CogIcon({ className }: Props) {
+export default function Cog({ className }: Props) {
   return (
     <svg
       width="1em"

@@ -2,7 +2,7 @@ type Props = {
   className?: string;
 };
 
-export default function MapIcon({ className }: Props) {
+export default function Map({ className }: Props) {
   return (
     <svg
       width="1em"

@@ -9,13 +9,13 @@ import { useTrip } from "providers/trip";
 
 type Props = {
   bounds: Trip["bounds"];
-  markers: MarkerT[];
-  customMarkers: CustomMarker[];
-  hotspotLayer: any;
-  obsLayer: any;
-  addingMarker: boolean;
-  onHotspotClick: (id: string) => void;
-  onDisableAddingMarker: () => void;
+  markers?: MarkerT[];
+  customMarkers?: CustomMarker[];
+  hotspotLayer?: any;
+  obsLayer?: any;
+  addingMarker?: boolean;
+  onHotspotClick?: (id: string) => void;
+  onDisableAddingMarker?: () => void;
 };
 
 export default function Mapbox({
@@ -35,7 +35,7 @@ export default function Mapbox({
 
   const handleHotspotClick = (id: string) => {
     isOpeningModal.current = true;
-    onHotspotClick(id);
+    onHotspotClick?.(id);
     setTimeout(() => {
       isOpeningModal.current = false;
     }, 500);
@@ -124,7 +124,7 @@ export default function Mapbox({
         onClick={(e) => {
           if (addingMarker) {
             open("addMarker", { lat: e.lngLat.lat, lng: e.lngLat.lng });
-            onDisableAddingMarker();
+            onDisableAddingMarker?.();
             return;
           }
           const features = e.target.queryRenderedFeatures(e.point, { layers: activeLayers });
@@ -142,7 +142,7 @@ export default function Mapbox({
       >
         <NavigationControl showCompass={false} />
         <GeolocateControl positionOptions={{ enableHighAccuracy: true }} trackUserLocation={true} />
-        {markers.map((marker) => (
+        {markers?.map((marker) => (
           <Marker
             key={marker.id}
             latitude={marker.lat}
@@ -154,7 +154,7 @@ export default function Mapbox({
             <MarkerWithIcon icon={MarkerIcon.HOTSPOT} highlight={marker.id === selectedMarkerId} />
           </Marker>
         ))}
-        {customMarkers.map((marker) => (
+        {customMarkers?.map((marker) => (
           <Marker
             key={marker.id}
             latitude={marker.lat}

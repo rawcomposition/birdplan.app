@@ -79,6 +79,7 @@ export default function CreateTrip() {
         region: region,
         hotspots: [],
         markers: [],
+        itinerary: [],
         bounds,
         startMonth: Number(startMonth.value),
         endMonth: Number(endMonth.value),
