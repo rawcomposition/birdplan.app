@@ -31,6 +31,14 @@ export default function TravelTime({ isEditing, dayId, locationId }: Props) {
     });
   };
 
+  const marker1 =
+    trip?.hotspots?.find((h) => h.id === location1?.locationId || "") ||
+    trip?.markers?.find((m) => m.id === location1?.locationId || "");
+
+  const marker2 =
+    trip?.hotspots?.find((h) => h.id === location2?.locationId || "") ||
+    trip?.markers?.find((m) => m.id === location2?.locationId || "");
+
   const travelInfo = travelData && (
     <span className="flex items-center gap-2">
       {travelData.method === "walking" ? (
@@ -104,7 +112,12 @@ export default function TravelTime({ isEditing, dayId, locationId }: Props) {
           )}
         </div>
       ) : (
-        <>{!travelData?.isDeleted && <div className="text-gray-500 text-xs relative">{travelInfo}</div>}</>
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&origin=${marker1?.lat},${marker1?.lng}&destination=${marker2?.lat},${marker2?.lng}&travelmode=${travelData?.method}`}
+          target="_blank"
+        >
+          {!travelData?.isDeleted && <div className="text-gray-500 text-xs relative">{travelInfo}</div>}
+        </a>
       )}
     </div>
   );
