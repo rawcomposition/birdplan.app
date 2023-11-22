@@ -84,7 +84,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
                     <MarkerWithIcon
                       showStroke={false}
                       icon={MarkerIcon.HOTSPOT}
-                      className="inline-block ml-1 scale-75"
+                      className="inline-block ml-1 scale-75 flex-shrink-0"
                     />
                     <span className="truncate">{hotspot.name}</span>
                   </Link>
