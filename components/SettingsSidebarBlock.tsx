@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useModal } from "providers/modals";
 import { deleteTrip } from "lib/firebase";
 import { useProfile } from "providers/profile";
+import Export from "icons/Export";
 
 export default function SettingsSidebarBlock() {
   const { open } = useModal();
@@ -47,6 +48,10 @@ export default function SettingsSidebarBlock() {
             Share Trip
           </button>
         )}
+        <Link href={`/api/trips/${trip?.id}/export`} target="_blank" className="flex items-center gap-2 text-gray-300">
+          <Export aria-hidden="true" />
+          Export KML
+        </Link>
         <button onClick={handleDelete} className="flex items-center gap-2 text-red-500">
           <Trash aria-hidden="true" />
           Delete Trip

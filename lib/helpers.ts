@@ -396,3 +396,51 @@ export const mostFrequentValue = (arr: any[]) => {
   const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
   return sorted[0];
 };
+
+export const tripToGeoJson = (trip: Trip) => {
+  const hotspots = trip?.hotspots || [];
+  const markers = trip?.markers || [];
+
+  const tripRangeLabel =
+    trip?.startMonth && trip?.endMonth
+      ? trip.startMonth === trip.endMonth
+        ? months[trip.startMonth - 1]
+        : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`
+      : "";
+
+  const geojson = {
+    type: "FeatureCollection",
+    features: [
+      ...hotspots.map((it) => ({
+        type: "Feature",
+        properties: {
+          name: it.name,
+          description: `<b>Targets</b><br/><a href='https://ebird.org/targets?r1=${
+            it.id
+          }&bmo=1&emo=12&r2=world&t2=life'>All Year</a> • <a href='https://ebird.org/targets?r1=${it.id}&bmo=${
+            trip?.startMonth
+          }&emo=${trip?.endMonth}&r2=world&t2=life'>${tripRangeLabel}</a><br/><br/>${
+            it.notes ? `<b>Notes</b><br/>${it.notes}<br/><br/>` : ""
+          }`,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [it.lng, it.lat],
+        },
+      })),
+      ...markers.map((it) => ({
+        type: "Feature",
+        properties: {
+          name: it.name,
+          type: "marker",
+          notes: it.notes,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [it.lng, it.lat],
+        },
+      })),
+    ],
+  };
+  return geojson;
+};
