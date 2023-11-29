@@ -16,7 +16,7 @@ import Export from "icons/Export";
 export default function SettingsSidebarBlock() {
   const { open } = useModal();
   const router = useRouter();
-  const { lifelist } = useProfile();
+  const { lifelist, id } = useProfile();
   const { targets, trip, isOwner } = useTrip();
 
   const handleDelete = async () => {
@@ -48,7 +48,11 @@ export default function SettingsSidebarBlock() {
             Share Trip
           </button>
         )}
-        <Link href={`/api/trips/${trip?.id}/export`} target="_blank" className="flex items-center gap-2 text-gray-300">
+        <Link
+          href={`/api/trips/${trip?.id}/export?profileId=${id}`}
+          target="_blank"
+          className="flex items-center gap-2 text-gray-300"
+        >
           <Export aria-hidden="true" />
           Export KML
         </Link>

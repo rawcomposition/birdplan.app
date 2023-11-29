@@ -1,4 +1,4 @@
-import { Trip, Target } from "lib/types";
+import { Trip, Target, Targets } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import { uploadFile } from "lib/firebase";
@@ -397,7 +397,24 @@ export const mostFrequentValue = (arr: any[]) => {
   return sorted[0];
 };
 
-export const tripToGeoJson = (trip: Trip) => {
+const targetsToHtml = (targets: Targets[], id?: string) => {
+  const items = targets.find((it) => it.id === id)?.items;
+  if (!items?.length) {
+    console.log("No items", id);
+    return "";
+  }
+  let html = "<b>Targets</b><br/>";
+  items.forEach((it) => {
+    html += `<b>${it.name}</b> (${it.percentYr}%)<br/>`;
+    const percent = it.percentYr;
+    const numBlocks = Math.round(percent / 10) * 1;
+    const blocks = "🟩".repeat(numBlocks) + "⬜".repeat(10 - numBlocks);
+    html += `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a><br/><br/>`;
+  });
+  return html;
+};
+
+export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
   const hotspots = trip?.hotspots || [];
   const markers = trip?.markers || [];
 
@@ -419,9 +436,9 @@ export const tripToGeoJson = (trip: Trip) => {
             it.id
           }&bmo=1&emo=12&r2=world&t2=life'>All Year</a> • <a href='https://ebird.org/targets?r1=${it.id}&bmo=${
             trip?.startMonth
-          }&emo=${trip?.endMonth}&r2=world&t2=life'>${tripRangeLabel}</a><br/><br/>${
-            it.notes ? `<b>Notes</b><br/>${it.notes}<br/><br/>` : ""
-          }`,
+          }&emo=${trip?.endMonth}&r2=world&t2=life'>${tripRangeLabel}</a><br/><br/>${`<b>Notes</b><br/>${
+            it.notes || "None"
+          }<br/><br/>`}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
         },
         geometry: {
           type: "Point",
@@ -432,8 +449,7 @@ export const tripToGeoJson = (trip: Trip) => {
         type: "Feature",
         properties: {
           name: it.name,
-          type: "marker",
-          notes: it.notes,
+          description: it.notes,
         },
         geometry: {
           type: "Point",

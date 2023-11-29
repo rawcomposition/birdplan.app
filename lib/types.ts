@@ -213,6 +213,7 @@ export type RecentSpecies = {
 };
 
 export type Targets = {
+  id?: string;
   items: Target[];
   N: number;
   yrN: number;
