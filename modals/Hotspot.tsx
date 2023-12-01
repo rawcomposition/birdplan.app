@@ -176,7 +176,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </button>
         )}
 
-        {isSaved && <InputNotes value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
+        {isSaved && <InputNotes key={id} value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id, title }) => (

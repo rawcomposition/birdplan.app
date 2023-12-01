@@ -58,7 +58,7 @@ export default function ViewMarker({ marker }: Props) {
             </Menu.Items>
           </Menu>
         </div>
-        <InputNotes value={marker.notes} onBlur={(value) => saveMarkerNotes(id, value)} />
+        <InputNotes value={marker.notes} onBlur={(value) => saveMarkerNotes(id, value)} key={id} />
       </Body>
     </>
   );
