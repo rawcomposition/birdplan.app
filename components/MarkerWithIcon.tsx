@@ -8,6 +8,7 @@ import Bins from "icons/Bins";
 import Airplane from "icons/Airplane";
 import Boat from "icons/Boat";
 import Car from "icons/Car";
+import Bus from "icons/Bus";
 import clsx from "clsx";
 
 type Props = {
@@ -29,6 +30,7 @@ const iconMap: Record<MarkerIcon, any> = {
   [MarkerIcon.AIRPORT]: Airplane,
   [MarkerIcon.BOAT]: Boat,
   [MarkerIcon.CAR]: Car,
+  [MarkerIcon.BUS]: Bus,
 };
 
 const defaultColors: Record<MarkerIcon, string> = {
@@ -41,6 +43,7 @@ const defaultColors: Record<MarkerIcon, string> = {
   [MarkerIcon.AIRPORT]: "#64748b",
   [MarkerIcon.BOAT]: "#0369a1",
   [MarkerIcon.CAR]: "#6a4ca7",
+  [MarkerIcon.BUS]: "#d97706",
 };
 
 export default function MarkerWithIcon({ icon, darkIcon, color, showStroke = true, className, highlight }: Props) {
