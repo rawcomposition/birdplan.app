@@ -48,14 +48,14 @@ export default function SettingsSidebarBlock() {
             Share Trip
           </button>
         )}
-        <Link
+        <a
           href={`/api/trips/${trip?.id}/export?profileId=${id}`}
           target="_blank"
           className="flex items-center gap-2 text-gray-300"
         >
           <Export aria-hidden="true" />
           Export KML
-        </Link>
+        </a>
         <button onClick={handleDelete} className="flex items-center gap-2 text-red-500">
           <Trash aria-hidden="true" />
           Delete Trip

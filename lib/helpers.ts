@@ -388,9 +388,10 @@ export const formatDistance = (meters: number, metric: boolean) => {
 };
 
 export const mostFrequentValue = (arr: any[]) => {
-  if (!arr.length) return null;
+  const filteredArr = arr.filter(Boolean);
+  if (!filteredArr.length) return null;
   const counts: any = {};
-  arr.forEach((it) => {
+  filteredArr.forEach((it) => {
     counts[it] = counts[it] ? counts[it] + 1 : 1;
   });
   const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);

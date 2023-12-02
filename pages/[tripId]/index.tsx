@@ -181,7 +181,20 @@ export default function Trip() {
                 )}
                 {isAddingMarker && (
                   <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
-                    Click anywhere on map to add marker
+                    <div>
+                      Click anywhere on map to add marker
+                      <br />
+                      or{" "}
+                      <button
+                        className="underline"
+                        onClick={() => {
+                          setIsAddingMarker(false);
+                          open("addMarker");
+                        }}
+                      >
+                        enter coordinates
+                      </button>
+                    </div>
                     <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
                   </div>
                 )}
