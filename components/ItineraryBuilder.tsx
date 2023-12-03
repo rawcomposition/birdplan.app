@@ -11,6 +11,7 @@ import CheckIcon from "icons/Check";
 import XMarkBold from "icons/XMarkBold";
 import AngleDownBold from "icons/AngleDownBold";
 import TravelTime from "components/TravelTime";
+import InputItineraryNotes from "components/InputItineraryNotes";
 
 export default function ItineraryBuilder() {
   const {
@@ -21,6 +22,7 @@ export default function ItineraryBuilder() {
     removeItineraryDay,
     removeItineraryDayLocation,
     moveItineraryDayLocation,
+    setItineraryDayNotes,
   } = useTrip();
   const { open } = useModal();
 
@@ -86,13 +88,21 @@ export default function ItineraryBuilder() {
         {!canEdit && !trip?.startDate && (
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">No itinerary has been set for this trip yet.</div>
         )}
-        {trip?.itinerary.map(({ id, locations }, i) => {
+        {trip?.itinerary.map(({ id, notes, locations }, i) => {
           const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
           return (
             <div key={id} className="mb-8">
               <div className="mb-3">
-                <h1 className="text-xl font-bold text-gray-700">Day {i + 1}</h1>
-                <span className="text-gray-500 text-sm">{date}</span>
+                <div className="flex flex-col">
+                  <h1 className="text-xl font-bold text-gray-700">Day {i + 1}</h1>
+                  <span className="text-gray-500 text-[13px]">{date}</span>
+                </div>
+                <InputItineraryNotes
+                  value={notes}
+                  onBlur={(value) => setItineraryDayNotes(id, value)}
+                  className="mt-1 mb-4"
+                  canEdit={isEditing}
+                />
               </div>
               {!!locations?.length && (
                 <ul className="flex flex-col">
@@ -109,7 +119,7 @@ export default function ItineraryBuilder() {
                         )}
                         <li
                           key={locationId}
-                          className="flex items-center gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
+                          className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
                           onClick={
                             !isEditing
                               ? () =>
@@ -126,7 +136,14 @@ export default function ItineraryBuilder() {
                             icon={(location as any)?.icon || "hotspot"}
                             className="inline-block scale-[.85] flex-shrink-0 print:hidden"
                           />
-                          <span className="truncate font-medium">{location?.name || "Unknown Location"}</span>
+                          <div>
+                            <div className="truncate font-medium mt-1">{location?.name || "Unknown Location"}</div>
+                            {location?.notes && (
+                              <div className="text-gray-700 text-sm relative group whitespace-pre-wrap">
+                                {location.notes}
+                              </div>
+                            )}
+                          </div>
                           {isEditing && (
                             <div className="flex items-center gap-1.5 ml-auto">
                               {index !== locations.length - 1 && (

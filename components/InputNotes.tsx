@@ -8,6 +8,7 @@ type Props = {
 };
 
 export default function InputNotes({ value, onBlur }: Props) {
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const [canRender, setCanRender] = React.useState(false);
   const { canEdit } = useTrip();
   const [notes, setNotes] = React.useState(value);
@@ -36,6 +37,7 @@ export default function InputNotes({ value, onBlur }: Props) {
             onBlur={(e) => onBlur(e.target.value)}
             minRows={1}
             maxRows={15}
+            ref={inputRef}
           />
         </div>
       ) : (
@@ -45,7 +47,16 @@ export default function InputNotes({ value, onBlur }: Props) {
         {showToggleBtn && (
           <button
             type="button"
-            onClick={() => setIsEditing((isEditing) => !isEditing)}
+            onClick={() => {
+              if (isEditing) {
+                setIsEditing(false);
+              } else {
+                setIsEditing(true);
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 0);
+              }
+            }}
             className="text-sky-600 text-[12px] font-bold px-3 py-1"
           >
             {isEditing ? "Done" : "Edit"}

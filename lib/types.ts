@@ -93,6 +93,7 @@ export type TravelData = {
 
 export type Day = {
   id: string;
+  notes?: string;
   locations: {
     travel?: TravelData;
     locationId: string;

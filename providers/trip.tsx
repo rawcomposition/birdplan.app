@@ -40,6 +40,7 @@ type ContextT = {
   addItineraryDayLocation: (dayId: string, type: "hotspot" | "marker", locationId: string) => Promise<void>;
   removeItineraryDayLocation: (dayId: string, locationId: string) => Promise<void>;
   moveItineraryDayLocation: (dayId: string, locationId: string, direction: "up" | "down") => Promise<void>;
+  setItineraryDayNotes: (dayId: string, notes: string) => Promise<void>;
   markTravelTimeDeleted: (dayId: string, locationId: string) => Promise<void>;
   calcTravelTime: (props: {
     dayId: string;
@@ -87,6 +88,7 @@ export const TripContext = React.createContext<ContextT>({
   addItineraryDayLocation: async () => {},
   removeItineraryDayLocation: async () => {},
   moveItineraryDayLocation: async () => {},
+  setItineraryDayNotes: async () => {},
   markTravelTimeDeleted: async () => {},
   calcTravelTime: async () => undefined,
   saveHotspotNotes: async () => {},
@@ -314,6 +316,15 @@ const TripProvider = ({ children }: Props) => {
     await recalcTravelTime(newItinerary, dayId);
   };
 
+  const setItineraryDayNotes = async (dayId: string, notes: string) => {
+    if (!trip) return;
+    const newItinerary = trip.itinerary?.map((it) => {
+      if (it.id === dayId) return { ...it, notes };
+      return it;
+    });
+    await updateItinerary(trip.id, newItinerary);
+  };
+
   const recalcTravelTime = async (itinerary: Trip["itinerary"], dayId: string) => {
     if (!trip) return;
     const existingMethods =
@@ -435,6 +446,7 @@ const TripProvider = ({ children }: Props) => {
         addItineraryDayLocation,
         removeItineraryDayLocation,
         moveItineraryDayLocation,
+        setItineraryDayNotes,
         markTravelTimeDeleted,
         calcTravelTime,
         saveHotspotNotes,
