@@ -7,15 +7,33 @@ type Props = Target & {
   view: string;
   locId: string;
   range: string;
+  onClick: () => void;
 };
 
-export default function HotspotTargetRow({ code, name, percent, percentYr, index, view, locId, range }: Props) {
+export default function HotspotTargetRow({
+  code,
+  name,
+  percent,
+  percentYr,
+  index,
+  view,
+  locId,
+  range,
+  onClick,
+}: Props) {
   const actualPercent = view === "all" ? percentYr : percent;
   return (
     <div className="border-t border-gray-100 py-1.5 text-gray-500/80 text-[13px] grid gap-2 grid-cols-1 sm:grid-cols-5 mx-1">
       <div className="sm:col-span-3 pt-2">
         <span className="mr-2">{index + 1}.</span>
-        <span className="text-gray-900 text-sm ml-3">{name}</span>
+        <button
+          type="button"
+          className="text-left hover:underline text-gray-900 text-sm ml-3"
+          onClick={onClick}
+          title="Click to view recent reports"
+        >
+          {name}
+        </button>
       </div>
       <div className="flex gap-5 sm:col-span-2">
         <FavButton

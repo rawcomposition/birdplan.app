@@ -7,14 +7,15 @@ import HeartSolid from "icons/HeartSolid";
 
 type Props = {
   locId: string;
+  onSpeciesClick: () => void;
 };
 
 const previewCount = 10;
 
-export default function RecentSpeciesList({ locId }: Props) {
+export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
   const { recentSpecies, isLoading, error } = useFetchRecentSpecies(locId);
   const [viewAll, setViewAll] = React.useState(false);
-  const { trip } = useTrip();
+  const { trip, setSelectedSpecies } = useTrip();
   const timezone = trip?.timezone;
   const hotspot = trip?.hotspots.find((it) => it.id === locId);
   const favCodes = hotspot?.favs?.map((it) => it.code) || [];
@@ -40,7 +41,17 @@ export default function RecentSpeciesList({ locId }: Props) {
                   {favCodes.includes(code) && (
                     <HeartSolid className="text-pink-700 absolute top-[12px] left-[-9px] text-[8px]" />
                   )}
-                  {name}
+                  <button
+                    type="button"
+                    className="text-left hover:underline"
+                    onClick={() => {
+                      setSelectedSpecies({ code, name });
+                      onSpeciesClick();
+                    }}
+                    title="Click to view recent reports"
+                  >
+                    {name}
+                  </button>
                 </td>
                 <td>
                   <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>

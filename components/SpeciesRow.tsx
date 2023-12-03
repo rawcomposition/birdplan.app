@@ -14,11 +14,11 @@ type Props = {
 
 export default function SpeciesRow({ name, code, percent, ...props }: Props) {
   const { closeSidebar } = useUI();
-  const { selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
-  const selected = selectedSpeciesCode === code;
+  const { selectedSpecies, setSelectedSpecies } = useTrip();
+  const selected = selectedSpecies?.code === code;
 
   const handleSelect = (code: string) => {
-    setSelectedSpeciesCode(code);
+    setSelectedSpecies({ code, name });
     closeSidebar();
   };
 
@@ -33,7 +33,7 @@ export default function SpeciesRow({ name, code, percent, ...props }: Props) {
       <span className="truncate">{name}</span>
       <span className="text-gray-500 ml-auto text-xs">
         {selected && (
-          <button type="button" onClick={() => setSelectedSpeciesCode(undefined)} title="Reset map to hotspot view">
+          <button type="button" onClick={() => setSelectedSpecies(undefined)} title="Reset map to hotspot view">
             Clear
           </button>
         )}

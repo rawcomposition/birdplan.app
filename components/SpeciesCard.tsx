@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function Trip({ name, code }: Props) {
-  const { targets, setSelectedSpeciesCode, trip } = useTrip();
+  const { targets, setSelectedSpecies, trip } = useTrip();
   const isTarget = targets?.items?.findIndex((it) => it.code === code) !== -1;
 
   return (
@@ -19,7 +19,7 @@ export default function Trip({ name, code }: Props) {
           {isTarget && <Bullseye className="text-[#c2410d] text-sm" />}
           {name}
         </h2>
-        <CloseButton onClick={() => setSelectedSpeciesCode(undefined)} className="ml-auto" />
+        <CloseButton onClick={() => setSelectedSpecies(undefined)} className="ml-auto" />
       </div>
       <p className="text-xs text-gray-500 mt-1.5">
         Showing reports over the last 30 days.{" "}

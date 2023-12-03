@@ -20,17 +20,16 @@ import PlusIcon from "icons/Plus";
 
 type Props = {
   hotspot: HotspotT;
-  speciesName?: string;
 };
 
-export default function Hotspot({ hotspot, speciesName }: Props) {
+export default function Hotspot({ hotspot }: Props) {
   const {
     trip,
     canEdit,
     appendHotspot,
     removeHotspot,
     saveHotspotNotes,
-    selectedSpeciesCode,
+    selectedSpecies,
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
   } = useTrip();
@@ -41,7 +40,7 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
-  const [tab, setTab] = React.useState(speciesName ? "checklists" : "needs");
+  const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "needs");
 
   const tabs = [
     {
@@ -196,11 +195,13 @@ export default function Hotspot({ hotspot, speciesName }: Props) {
           </nav>
         </div>
         <div className="sm:-mx-1.5">
-          {tab === "needs" && <RecentSpeciesList locId={id} />}
+          {tab === "needs" && <RecentSpeciesList locId={id} onSpeciesClick={() => setTab("checklists")} />}
           {tab === "checklists" && (
-            <RecentChecklistList locId={id} speciesCode={selectedSpeciesCode} speciesName={speciesName} />
+            <RecentChecklistList locId={id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
           )}
-          {tab === "targets" && <HotspotTargets locId={id} tripRangeLabel={tripRangeLabel} />}
+          {tab === "targets" && (
+            <HotspotTargets locId={id} tripRangeLabel={tripRangeLabel} onSpeciesClick={() => setTab("checklists")} />
+          )}
         </div>
       </Body>
     </>

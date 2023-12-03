@@ -31,7 +31,7 @@ export default function Trip() {
   const { open } = useModal();
   const [view, setView] = React.useState<string>("");
   const [showAll, setShowAll] = React.useState(false);
-  const { targets, trip, canEdit, selectedSpeciesCode, setSelectedSpeciesCode } = useTrip();
+  const { trip, canEdit, selectedSpecies, setSelectedSpecies } = useTrip();
   const { closeSidebar, openSidebar, sidebarOpen } = useUI();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
@@ -40,8 +40,7 @@ export default function Trip() {
   const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
   const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const selectedSpecies = [...recentSpecies, ...targets.items].find((it) => it.code === selectedSpeciesCode);
-  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpeciesCode });
+  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,
@@ -50,14 +49,14 @@ export default function Trip() {
     id: it.id,
   }));
 
-  const markers = selectedSpeciesCode ? [] : [...savedHotspotMarkers];
-  const customMarkers = selectedSpeciesCode ? [] : trip?.markers || [];
+  const markers = selectedSpecies ? [] : [...savedHotspotMarkers];
+  const customMarkers = selectedSpecies ? [] : trip?.markers || [];
 
   const hotspotClick = (id: string) => {
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
     const hotspot = allHotspots.find((it) => it.id === id);
     if (!hotspot) return toast.error("Hotspot not found");
-    open("hotspot", { hotspot, speciesCode: selectedSpeciesCode });
+    open("hotspot", { hotspot, speciesCode: selectedSpecies });
   };
 
   const obsClick = (id: string) => {
@@ -66,7 +65,7 @@ export default function Trip() {
     observation.isPersonal
       ? open(observation.isPersonal ? "personalLocation" : "hotspot", {
           hotspot: observation,
-          speciesCode: selectedSpeciesCode,
+          speciesCode: selectedSpecies?.code,
           speciesName: selectedSpecies?.name,
         })
       : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
@@ -74,7 +73,7 @@ export default function Trip() {
 
   const handleEnableAddingMarker = () => {
     setIsAddingMarker(true);
-    setSelectedSpeciesCode(undefined);
+    setSelectedSpecies(undefined);
     closeSidebar();
   };
 
@@ -169,11 +168,11 @@ export default function Trip() {
                 {trip?.bounds && (
                   <MapBox
                     key={trip.id}
-                    onHotspotClick={selectedSpeciesCode ? obsClick : hotspotClick}
+                    onHotspotClick={selectedSpecies ? obsClick : hotspotClick}
                     markers={markers}
                     customMarkers={customMarkers}
-                    hotspotLayer={showAll && !selectedSpeciesCode && hotspotLayer}
-                    obsLayer={selectedSpeciesCode && obsLayer}
+                    hotspotLayer={showAll && !selectedSpecies && hotspotLayer}
+                    obsLayer={selectedSpecies && obsLayer}
                     bounds={trip.bounds}
                     addingMarker={isAddingMarker}
                     onDisableAddingMarker={() => setIsAddingMarker(false)}

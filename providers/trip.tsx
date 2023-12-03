@@ -18,15 +18,20 @@ import { mostFrequentValue, randomId } from "lib/helpers";
 import { getTravelTime } from "lib/mapbox";
 import toast from "react-hot-toast";
 
+type SelectedSpecies = {
+  code: string;
+  name: string;
+};
+
 type ContextT = {
   trip: Trip | null;
   invites: Invite[];
   targets: Targets;
-  selectedSpeciesCode?: string;
+  selectedSpecies?: SelectedSpecies;
   canEdit: boolean;
   isOwner: boolean;
   selectedMarkerId?: string;
-  setSelectedSpeciesCode: (code?: string) => void;
+  setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   appendHotspot: (hotspot: Hotspot) => Promise<void>;
   removeHotspot: (id: string) => Promise<void>;
@@ -74,7 +79,7 @@ const initialState = {
 
 export const TripContext = React.createContext<ContextT>({
   ...initialState,
-  setSelectedSpeciesCode: () => {},
+  setSelectedSpecies: () => {},
   setSelectedMarkerId: () => {},
   appendHotspot: async () => {},
   removeHotspot: async () => {},
@@ -109,7 +114,7 @@ const TripProvider = ({ children }: Props) => {
   const [trip, setTrip] = React.useState<Trip | null>(null);
   const [targets, setTripTargets] = React.useState<Targets>(initialState.targets);
   const [invites, setInvites] = React.useState<Invite[]>([]);
-  const [selectedSpeciesCode, setSelectedSpeciesCode] = React.useState<string>();
+  const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const id = useRouter().query.tripId?.toString();
   const { user } = useUser();
@@ -119,7 +124,7 @@ const TripProvider = ({ children }: Props) => {
   React.useEffect(() => {
     return () => {
       setTrip(null);
-      setSelectedSpeciesCode(undefined);
+      setSelectedSpecies(undefined);
       setTripTargets(initialState.targets);
     };
   }, [id]);
@@ -429,10 +434,10 @@ const TripProvider = ({ children }: Props) => {
         isOwner,
         trip,
         targets,
-        selectedSpeciesCode,
+        selectedSpecies,
         selectedMarkerId,
         invites,
-        setSelectedSpeciesCode,
+        setSelectedSpecies,
         setSelectedMarkerId,
         appendHotspot,
         removeHotspot,

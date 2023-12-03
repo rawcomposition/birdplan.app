@@ -14,12 +14,13 @@ import XMarkCircle from "icons/XMarkCircle";
 type Props = {
   locId: string;
   tripRangeLabel: string;
+  onSpeciesClick: () => void;
 };
 
-export default function HotspotTargets({ locId, tripRangeLabel }: Props) {
+export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }: Props) {
   const { lifelist } = useProfile();
   const [view, setView] = React.useState<string>("all");
-  const { trip, setHotspotTargetsId } = useTrip();
+  const { trip, setHotspotTargetsId, setSelectedSpecies } = useTrip();
   const hotspot = trip?.hotspots.find((it) => it.id === locId);
   const hasTargets = !!hotspot?.targetsId;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -112,7 +113,18 @@ export default function HotspotTargets({ locId, tripRangeLabel }: Props) {
       {!sortedItems?.length && <p className="text-gray-500 text-sm">No targets found &gt; 5%</p>}
       {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
       {sortedItems.map((it, index) => (
-        <HotspotTargetRow key={it.code} {...it} index={index} view={view} locId={locId} range={tripRangeLabel} />
+        <HotspotTargetRow
+          key={it.code}
+          {...it}
+          index={index}
+          view={view}
+          locId={locId}
+          range={tripRangeLabel}
+          onClick={() => {
+            setSelectedSpecies({ code: it.code, name: it.name });
+            onSpeciesClick();
+          }}
+        />
       ))}
       <div className="flex items-center justify-between">
         <a
