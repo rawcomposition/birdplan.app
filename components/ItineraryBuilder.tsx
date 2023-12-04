@@ -120,30 +120,29 @@ export default function ItineraryBuilder() {
                         <li
                           key={locationId}
                           className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
-                          onClick={
-                            !isEditing
-                              ? () =>
-                                  type === "hotspot"
-                                    ? open("hotspot", { hotspot: location })
-                                    : open("viewMarker", { marker: location })
-                              : undefined
-                          }
-                          aria-label="View location"
-                          role="button"
                         >
-                          <MarkerWithIcon
-                            showStroke={false}
-                            icon={(location as any)?.icon || "hotspot"}
-                            className="inline-block scale-[.85] flex-shrink-0 print:hidden"
-                          />
-                          <div>
-                            <div className="truncate font-medium mt-1">{location?.name || "Unknown Location"}</div>
-                            {location?.notes && (
-                              <div className="text-gray-700 text-sm relative group whitespace-pre-wrap">
-                                {location.notes}
-                              </div>
-                            )}
-                          </div>
+                          <button
+                            className="flex gap-2 text-left -my-3 py-3 -ml-4 pl-4 grow"
+                            onClick={() =>
+                              type === "hotspot"
+                                ? open("hotspot", { hotspot: location })
+                                : open("viewMarker", { marker: location })
+                            }
+                          >
+                            <MarkerWithIcon
+                              showStroke={false}
+                              icon={(location as any)?.icon || "hotspot"}
+                              className="inline-block scale-[.85] flex-shrink-0 print:hidden"
+                            />
+                            <span>
+                              <div className="truncate font-medium mt-1">{location?.name || "Unknown Location"}</div>
+                              {location?.notes && (
+                                <span className="text-gray-700 text-sm relative group whitespace-pre-wrap">
+                                  {location.notes}
+                                </span>
+                              )}
+                            </span>
+                          </button>
                           {isEditing && (
                             <div className="flex items-center gap-1.5 ml-auto">
                               {index !== locations.length - 1 && (
