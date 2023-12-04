@@ -22,12 +22,10 @@ export const getTravelTime = async ({ method, lat1, lng1, lat2, lng2 }: TravelTi
     const distance = response?.distances[0][1];
 
     if (!duration || !distance) {
-      toast.error("Error getting travel time");
       return null;
     }
     return { time: (duration as number) / 60, distance: distance as number };
   } catch (error) {
-    toast.error("Error getting travel time");
     return null;
   }
 };

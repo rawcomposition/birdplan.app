@@ -386,21 +386,23 @@ const useTrip = () => {
     console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
     const { lat: lat1, lng: lng1 } = location1;
     const { lat: lat2, lng: lng2 } = location2;
-    const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
-    if (!data || !data.distance || !data.time) {
+    try {
+      const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
+      if (!data || !data.distance || !data.time) throw new Error("No data");
+      const travelData = {
+        distance: data.distance,
+        time: data.time,
+        method,
+        locationId: locationId1,
+      };
+      if (save) {
+        await saveItineraryTravelData(dayId, locationId2, travelData);
+      }
+      return travelData;
+    } catch (e) {
       toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
       return;
     }
-    const travelData = {
-      distance: data.distance,
-      time: data.time,
-      method,
-      locationId: locationId1,
-    };
-    if (save) {
-      await saveItineraryTravelData(dayId, locationId2, travelData);
-    }
-    return travelData;
   };
 
   return {
