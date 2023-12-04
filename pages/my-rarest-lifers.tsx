@@ -1,7 +1,6 @@
 import React from "react";
 import Papa from "papaparse";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import Header from "components/Header";
 import Head from "next/head";
 import Sidebar from "components/Sidebar";
@@ -21,8 +20,6 @@ export default function ImportLifelist() {
   const [items, setItems] = React.useState<Item[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { closeSidebar } = useUI();
-
-  const router = useRouter();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
