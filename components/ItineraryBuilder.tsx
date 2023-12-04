@@ -88,7 +88,7 @@ export default function ItineraryBuilder() {
         {!canEdit && !trip?.startDate && (
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">No itinerary has been set for this trip yet.</div>
         )}
-        {trip?.itinerary.map(({ id, notes, locations }, i) => {
+        {trip?.itinerary?.map(({ id, notes, locations }, i) => {
           const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
           return (
             <div key={id} className="mb-8">

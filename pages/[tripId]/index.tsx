@@ -26,6 +26,7 @@ import ListIcon from "icons/List";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import ItineraryBuilder from "components/ItineraryBuilder";
+import ErrorBoundary from "components/ErrorBoundary";
 
 export default function Trip() {
   const { open } = useModal();
@@ -98,119 +99,121 @@ export default function Trip() {
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active={view} onChange={setView} />
       <main className="flex h-[calc(100%-60px-52px)]">
-        {view !== "itinerary" && (
-          <Sidebar noPadding fullWidth noAnimation noAccount extraMenuHeight={52}>
-            {view === "" && (
-              <div className="mb-4 px-6 pt-4 border-t border-gray-700">
-                <label className="text-white text-sm flex items-center gap-1">
-                  <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={showAll}
-                    onChange={() => setShowAll((prev) => !prev)}
-                  />
-                  Show all hotspots
-                </label>
-              </div>
-            )}
-            <div>
+        <ErrorBoundary>
+          {view !== "itinerary" && (
+            <Sidebar noPadding fullWidth noAnimation noAccount extraMenuHeight={52}>
               {view === "" && (
-                <Expand heading="Trip Hotspots" count={savedHotspots.length}>
-                  <HotspotList />
-                </Expand>
+                <div className="mb-4 px-6 pt-4 border-t border-gray-700">
+                  <label className="text-white text-sm flex items-center gap-1">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={showAll}
+                      onChange={() => setShowAll((prev) => !prev)}
+                    />
+                    Show all hotspots
+                  </label>
+                </div>
               )}
-
-              {view === "" && (
-                <Expand heading="Custom Markers" count={trip?.markers?.length}>
-                  <ul className="space-y-2 mb-4 text-gray-200">
-                    {trip?.markers?.map((marker) => (
-                      <CustomMarkerRow key={marker.id} {...marker} />
-                    ))}
-                  </ul>
-                  {canEdit && (
-                    <>
-                      {isAddingMarker ? (
-                        <Button size="xs" color="gray" onClick={() => setIsAddingMarker(false)}>
-                          Cancel Adding Marker
-                        </Button>
-                      ) : (
-                        <Button size="xs" color="primary" onClick={handleEnableAddingMarker}>
-                          + Add Marker
-                        </Button>
-                      )}
-                    </>
-                  )}
-                </Expand>
-              )}
-              {view === "targets" && <TargetSpeciesSidebarBlock />}
-              {view === "targets" && canEdit && <RecentSpeciesSidebarBlock recentSpecies={recentSpecies} />}
-              {view === "" && canEdit && <SettingsSidebarBlock />}
-            </div>
-            <TripLinks />
-            {sidebarOpen && (
-              <Button
-                color="pillWhite"
-                className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-                onClick={closeSidebar}
-              >
-                Map <MapFlatIcon className="w-4 h-4" />
-              </Button>
-            )}
-          </Sidebar>
-        )}
-
-        <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
-          {view === "itinerary" ? (
-            <ItineraryBuilder />
-          ) : (
-            <>
-              {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
-              <div className="w-full grow relative">
-                {trip?.bounds && (
-                  <MapBox
-                    key={trip.id}
-                    onHotspotClick={selectedSpecies ? obsClick : hotspotClick}
-                    markers={markers}
-                    customMarkers={customMarkers}
-                    hotspotLayer={showAll && !selectedSpecies && hotspotLayer}
-                    obsLayer={selectedSpecies && obsLayer}
-                    bounds={trip.bounds}
-                    addingMarker={isAddingMarker}
-                    onDisableAddingMarker={() => setIsAddingMarker(false)}
-                  />
+              <div>
+                {view === "" && (
+                  <Expand heading="Trip Hotspots" count={savedHotspots.length}>
+                    <HotspotList />
+                  </Expand>
                 )}
-                {isAddingMarker && (
-                  <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
-                    <div>
-                      Click anywhere on map to add marker
-                      <br />
-                      or{" "}
-                      <button
-                        className="underline"
-                        onClick={() => {
-                          setIsAddingMarker(false);
-                          open("addMarker");
-                        }}
-                      >
-                        enter coordinates
-                      </button>
-                    </div>
-                    <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
-                  </div>
+
+                {view === "" && (
+                  <Expand heading="Custom Markers" count={trip?.markers?.length}>
+                    <ul className="space-y-2 mb-4 text-gray-200">
+                      {trip?.markers?.map((marker) => (
+                        <CustomMarkerRow key={marker.id} {...marker} />
+                      ))}
+                    </ul>
+                    {canEdit && (
+                      <>
+                        {isAddingMarker ? (
+                          <Button size="xs" color="gray" onClick={() => setIsAddingMarker(false)}>
+                            Cancel Adding Marker
+                          </Button>
+                        ) : (
+                          <Button size="xs" color="primary" onClick={handleEnableAddingMarker}>
+                            + Add Marker
+                          </Button>
+                        )}
+                      </>
+                    )}
+                  </Expand>
                 )}
+                {view === "targets" && <TargetSpeciesSidebarBlock />}
+                {view === "targets" && canEdit && <RecentSpeciesSidebarBlock recentSpecies={recentSpecies} />}
+                {view === "" && canEdit && <SettingsSidebarBlock />}
               </div>
-            </>
+              <TripLinks />
+              {sidebarOpen && (
+                <Button
+                  color="pillWhite"
+                  className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+                  onClick={closeSidebar}
+                >
+                  Map <MapFlatIcon className="w-4 h-4" />
+                </Button>
+              )}
+            </Sidebar>
           )}
-        </div>
-        {view !== "itinerary" && (
-          <Button
-            color="pillWhite"
-            className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-            onClick={openSidebar}
-          >
-            List <ListIcon className="w-4 h-4" />
-          </Button>
-        )}
+
+          <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
+            {view === "itinerary" ? (
+              <ItineraryBuilder />
+            ) : (
+              <>
+                {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
+                <div className="w-full grow relative">
+                  {trip?.bounds && (
+                    <MapBox
+                      key={trip.id}
+                      onHotspotClick={selectedSpecies ? obsClick : hotspotClick}
+                      markers={markers}
+                      customMarkers={customMarkers}
+                      hotspotLayer={showAll && !selectedSpecies && hotspotLayer}
+                      obsLayer={selectedSpecies && obsLayer}
+                      bounds={trip.bounds}
+                      addingMarker={isAddingMarker}
+                      onDisableAddingMarker={() => setIsAddingMarker(false)}
+                    />
+                  )}
+                  {isAddingMarker && (
+                    <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
+                      <div>
+                        Click anywhere on map to add marker
+                        <br />
+                        or{" "}
+                        <button
+                          className="underline"
+                          onClick={() => {
+                            setIsAddingMarker(false);
+                            open("addMarker");
+                          }}
+                        >
+                          enter coordinates
+                        </button>
+                      </div>
+                      <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          {view !== "itinerary" && (
+            <Button
+              color="pillWhite"
+              className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
+              onClick={openSidebar}
+            >
+              List <ListIcon className="w-4 h-4" />
+            </Button>
+          )}
+        </ErrorBoundary>
       </main>
     </div>
   );

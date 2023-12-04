@@ -116,7 +116,7 @@ export type Trip = {
   };
   hotspots: Hotspot[];
   markers: CustomMarker[];
-  itinerary: Day[];
+  itinerary?: Day[];
   startDate?: string;
   startMonth: number;
   endMonth: number;
