@@ -55,7 +55,6 @@ export default function Trip() {
   const hotspotClick = (id: string) => {
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
     const hotspot = allHotspots.find((it) => it.id === id);
-
     if (!hotspot) return toast.error("Hotspot not found");
     open("hotspot", { hotspot, speciesCode: selectedSpecies });
   };
