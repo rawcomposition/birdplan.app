@@ -33,35 +33,6 @@ type ContextT = {
   selectedMarkerId?: string;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
-  appendHotspot: (hotspot: Hotspot) => Promise<void>;
-  removeHotspot: (id: string) => Promise<void>;
-  appendMarker: (marker: CustomMarker) => Promise<void>;
-  removeMarker: (id: string) => Promise<void>;
-  setTargets: ({ items, N, yrN }: Targets) => Promise<void>;
-  removeTarget: (code: string) => Promise<void>;
-  setStartDate: (date: string) => Promise<void>;
-  appendItineraryDay: () => Promise<void>;
-  removeItineraryDay: (id: string) => Promise<void>;
-  addItineraryDayLocation: (dayId: string, type: "hotspot" | "marker", locationId: string) => Promise<void>;
-  removeItineraryDayLocation: (dayId: string, locationId: string) => Promise<void>;
-  moveItineraryDayLocation: (dayId: string, locationId: string, direction: "up" | "down") => Promise<void>;
-  setItineraryDayNotes: (dayId: string, notes: string) => Promise<void>;
-  markTravelTimeDeleted: (dayId: string, locationId: string) => Promise<void>;
-  calcTravelTime: (props: {
-    dayId: string;
-    locationId1: string;
-    locationId2: string;
-    method: "walking" | "driving" | "cycling";
-    save?: boolean;
-  }) => Promise<TravelData | undefined>;
-  saveHotspotNotes: (id: string, notes: string) => Promise<void>;
-  setHotspotTargetsId: (hotspotId: string, targetsId: string) => Promise<void>;
-  saveMarkerNotes: (id: string, notes: string) => Promise<void>;
-  addHotspotFav: (id: string, code: string, name: string, range: string, percent: number) => Promise<void>;
-  removeHotspotFav: (id: string, code: string) => Promise<void>;
-  setTranslatedHotspotName: (id: string, translatedName: string) => Promise<void>;
-  resetTranslatedHotspotName: (id: string) => Promise<void>;
-  removeInvite: (inviteId: string, uid?: string) => Promise<void>;
 };
 
 const initialState = {
@@ -81,29 +52,6 @@ export const TripContext = React.createContext<ContextT>({
   ...initialState,
   setSelectedSpecies: () => {},
   setSelectedMarkerId: () => {},
-  appendHotspot: async () => {},
-  removeHotspot: async () => {},
-  appendMarker: async () => {},
-  removeMarker: async () => {},
-  setTargets: async () => {},
-  removeTarget: async () => {},
-  setStartDate: async () => {},
-  appendItineraryDay: async () => {},
-  removeItineraryDay: async () => {},
-  addItineraryDayLocation: async () => {},
-  removeItineraryDayLocation: async () => {},
-  moveItineraryDayLocation: async () => {},
-  setItineraryDayNotes: async () => {},
-  markTravelTimeDeleted: async () => {},
-  calcTravelTime: async () => undefined,
-  saveHotspotNotes: async () => {},
-  addHotspotFav: async () => {},
-  setHotspotTargetsId: async () => {},
-  saveMarkerNotes: async () => {},
-  removeHotspotFav: async () => {},
-  setTranslatedHotspotName: async () => {},
-  resetTranslatedHotspotName: async () => {},
-  removeInvite: async () => {},
 });
 
 type Props = {
@@ -122,30 +70,58 @@ const TripProvider = ({ children }: Props) => {
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
   React.useEffect(() => {
-    return () => {
-      setTrip(null);
-      setSelectedSpecies(undefined);
-      setTripTargets(initialState.targets);
-    };
+    return () => setSelectedSpecies(undefined);
   }, [id]);
 
   React.useEffect(() => {
     if (!id) return;
     const unsubscribe = subscribeToTrip(id, (trip) => setTrip(trip));
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      setTrip(null);
+    };
   }, [id]);
 
   React.useEffect(() => {
     if (!id) return;
     const unsubscribe = subscribeToTripTargets(id, (targets) => setTripTargets(targets));
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      setTripTargets(initialState.targets);
+    };
   }, [id]);
 
   React.useEffect(() => {
     if (!id || !isOwner) return;
     const unsubscribe = subscribeToTripInvites(id, (invites) => setInvites(invites));
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      setInvites([]);
+    };
   }, [id, isOwner]);
+
+  return (
+    <TripContext.Provider
+      value={{
+        setSelectedSpecies,
+        setSelectedMarkerId,
+        canEdit,
+        isOwner,
+        trip,
+        targets,
+        selectedSpecies,
+        selectedMarkerId,
+        invites,
+      }}
+    >
+      {children}
+    </TripContext.Provider>
+  );
+};
+
+const useTrip = () => {
+  const state = React.useContext(TripContext);
+  const { trip } = state;
 
   const appendHotspot = async (hotspot: Hotspot) => {
     if (!trip) return;
@@ -209,12 +185,6 @@ const TripProvider = ({ children }: Props) => {
   const setTargets = async (data: Targets) => {
     if (!trip) return;
     await updateTargets(trip.id, data, true);
-  };
-
-  const removeTarget = async (code: string) => {
-    if (!trip) return;
-    const newTargets = { ...targets, items: targets.items.filter((it) => it.code !== code) };
-    await updateTargets(trip.id, newTargets);
   };
 
   const saveHotspotNotes = async (id: string, notes: string) => {
@@ -427,51 +397,31 @@ const TripProvider = ({ children }: Props) => {
     return travelData;
   };
 
-  return (
-    <TripContext.Provider
-      value={{
-        canEdit,
-        isOwner,
-        trip,
-        targets,
-        selectedSpecies,
-        selectedMarkerId,
-        invites,
-        setSelectedSpecies,
-        setSelectedMarkerId,
-        appendHotspot,
-        removeHotspot,
-        appendMarker,
-        removeMarker,
-        setTargets,
-        removeTarget,
-        setStartDate,
-        appendItineraryDay,
-        removeItineraryDay,
-        addItineraryDayLocation,
-        removeItineraryDayLocation,
-        moveItineraryDayLocation,
-        setItineraryDayNotes,
-        markTravelTimeDeleted,
-        calcTravelTime,
-        saveHotspotNotes,
-        setHotspotTargetsId,
-        saveMarkerNotes,
-        addHotspotFav,
-        removeHotspotFav,
-        setTranslatedHotspotName,
-        resetTranslatedHotspotName,
-        removeInvite,
-      }}
-    >
-      {children}
-    </TripContext.Provider>
-  );
-};
-
-const useTrip = () => {
-  const state = React.useContext(TripContext);
-  return { ...state };
+  return {
+    ...state,
+    appendHotspot,
+    removeHotspot,
+    appendMarker,
+    removeMarker,
+    setTargets,
+    setStartDate,
+    appendItineraryDay,
+    removeItineraryDay,
+    addItineraryDayLocation,
+    removeItineraryDayLocation,
+    moveItineraryDayLocation,
+    setItineraryDayNotes,
+    markTravelTimeDeleted,
+    calcTravelTime,
+    saveHotspotNotes,
+    setHotspotTargetsId,
+    saveMarkerNotes,
+    addHotspotFav,
+    removeHotspotFav,
+    setTranslatedHotspotName,
+    resetTranslatedHotspotName,
+    removeInvite,
+  };
 };
 
 export { TripProvider, useTrip };
