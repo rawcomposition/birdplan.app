@@ -9,6 +9,7 @@ import { UIProvider } from "providers/ui";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
 import { get } from "lib/helpers";
 import { toast } from "react-hot-toast";
+import ErrorBoundary from "components/ErrorBoundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,20 +33,22 @@ const queryClient = new QueryClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <UserProvider>
-        <Toaster containerStyle={{ zIndex: 10001 }} />
-        <ProfileProvider>
-          <TripProvider>
-            <UIProvider>
-              <ModalProvider>
-                <Component {...pageProps} />
-              </ModalProvider>
-            </UIProvider>
-          </TripProvider>
-        </ProfileProvider>
-      </UserProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <Toaster containerStyle={{ zIndex: 10001 }} />
+          <ProfileProvider>
+            <TripProvider>
+              <UIProvider>
+                <ModalProvider>
+                  <Component {...pageProps} />
+                </ModalProvider>
+              </UIProvider>
+            </TripProvider>
+          </ProfileProvider>
+        </UserProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
