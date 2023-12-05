@@ -63,11 +63,13 @@ type ModalId =
 type Context = {
   open: (id: ModalId, props?: KeyValue) => void;
   close: () => void;
+  modalId: ModalId | null;
 };
 
 export const FieldContext = React.createContext<Context>({
   open: (id, props) => {},
   close: () => {},
+  modalId: null,
 });
 
 type Props = {
@@ -100,7 +102,7 @@ const ModalProvider = ({ children }: Props) => {
   };
 
   return (
-    <FieldContext.Provider value={{ open, close }}>
+    <FieldContext.Provider value={{ open, close, modalId }}>
       {children}
       <ModalWrapper small={modal?.small} open={!!modal && !closing} onClose={handleDismiss}>
         {modal && <Component {...modalProps} />}

@@ -25,7 +25,7 @@ export default function ItineraryBuilder() {
     moveItineraryDayLocation,
     setItineraryDayNotes,
   } = useTrip();
-  const { open } = useModal();
+  const { open, close, modalId } = useModal();
 
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
@@ -46,8 +46,15 @@ export default function ItineraryBuilder() {
     removeItineraryDay(dayId);
   };
 
+  const handleDivClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!modalId) return;
+    const isButton = (e.target as HTMLElement).closest("button");
+    if (isButton) return;
+    modalId && close();
+  };
+
   return (
-    <div className="h-full overflow-auto">
+    <div className="h-full overflow-auto" onClick={handleDivClick}>
       <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
         <div className="mb-12">
           <div className="flex justify-between items-center">
