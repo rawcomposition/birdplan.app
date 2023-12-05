@@ -12,6 +12,7 @@ import XMarkBold from "icons/XMarkBold";
 import AngleDownBold from "icons/AngleDownBold";
 import TravelTime from "components/TravelTime";
 import InputItineraryNotes from "components/InputItineraryNotes";
+import Warning from "icons/Warning";
 
 export default function ItineraryBuilder() {
   const {
@@ -122,20 +123,30 @@ export default function ItineraryBuilder() {
                           className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
                         >
                           <button
-                            className="flex gap-2 text-left -my-3 py-3 -ml-4 pl-4 grow"
-                            onClick={() =>
-                              type === "hotspot"
-                                ? open("hotspot", { hotspot: location })
-                                : open("viewMarker", { marker: location })
+                            className="flex gap-2 text-left -my-[9px] py-3 -ml-4 pl-4 grow"
+                            onClick={
+                              location
+                                ? () =>
+                                    type === "hotspot"
+                                      ? open("hotspot", { hotspot: location })
+                                      : open("viewMarker", { marker: location })
+                                : undefined
                             }
+                            disabled={!location}
                           >
-                            <MarkerWithIcon
-                              showStroke={false}
-                              icon={(location as any)?.icon || "hotspot"}
-                              className="inline-block scale-[.85] flex-shrink-0 print:hidden"
-                            />
+                            {location ? (
+                              <MarkerWithIcon
+                                showStroke={false}
+                                icon={(location as any)?.icon || "hotspot"}
+                                className="inline-block scale-[.85] flex-shrink-0 print:hidden"
+                              />
+                            ) : (
+                              <Warning className="text-red-500 text-[22px]" />
+                            )}
                             <span>
-                              <div className="truncate font-medium mt-1">{location?.name || "Unknown Location"}</div>
+                              <div className="truncate font-medium mt-[2px]">
+                                {location?.name || "Unknown Location"}
+                              </div>
                               {location?.notes && (
                                 <span className="text-gray-700 text-sm relative group whitespace-pre-wrap">
                                   {location.notes}

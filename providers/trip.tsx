@@ -322,7 +322,7 @@ const useTrip = () => {
               locationId2: it.locationId,
               method: travel?.method || defaultMethod || "driving",
             });
-            return { ...it, travel: travelData };
+            return travelData ? { ...it, travel: travelData } : it;
           }) || []
         );
         return { ...day, locations };
@@ -395,13 +395,14 @@ const useTrip = () => {
         method,
         locationId: locationId1,
       };
+
       if (save) {
         await saveItineraryTravelData(dayId, locationId2, travelData);
       }
       return travelData;
     } catch (e) {
       toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
-      return;
+      return null;
     }
   };
 
