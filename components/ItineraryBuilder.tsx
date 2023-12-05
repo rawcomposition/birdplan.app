@@ -12,6 +12,7 @@ import XMarkBold from "icons/XMarkBold";
 import AngleDownBold from "icons/AngleDownBold";
 import TravelTime from "components/TravelTime";
 import InputItineraryNotes from "components/InputItineraryNotes";
+import Warning from "icons/Warning";
 
 export default function ItineraryBuilder() {
   const {
@@ -24,7 +25,7 @@ export default function ItineraryBuilder() {
     moveItineraryDayLocation,
     setItineraryDayNotes,
   } = useTrip();
-  const { open } = useModal();
+  const { open, close, modalId } = useModal();
 
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
@@ -45,8 +46,15 @@ export default function ItineraryBuilder() {
     removeItineraryDay(dayId);
   };
 
+  const handleDivClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!modalId) return;
+    const isButton = (e.target as HTMLElement).closest("button");
+    if (isButton) return;
+    modalId && close();
+  };
+
   return (
-    <div className="h-full overflow-auto">
+    <div className="h-full overflow-auto" onClick={handleDivClick}>
       <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
         <div className="mb-12">
           <div className="flex justify-between items-center">
@@ -88,7 +96,7 @@ export default function ItineraryBuilder() {
         {!canEdit && !trip?.startDate && (
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">No itinerary has been set for this trip yet.</div>
         )}
-        {trip?.itinerary.map(({ id, notes, locations }, i) => {
+        {trip?.itinerary?.map(({ id, notes, locations }, i) => {
           const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
           return (
             <div key={id} className="mb-8">
@@ -120,30 +128,39 @@ export default function ItineraryBuilder() {
                         <li
                           key={locationId}
                           className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
-                          onClick={
-                            !isEditing
-                              ? () =>
-                                  type === "hotspot"
-                                    ? open("hotspot", { hotspot: location })
-                                    : open("viewMarker", { marker: location })
-                              : undefined
-                          }
-                          aria-label="View location"
-                          role="button"
                         >
-                          <MarkerWithIcon
-                            showStroke={false}
-                            icon={(location as any)?.icon || "hotspot"}
-                            className="inline-block scale-[.85] flex-shrink-0 print:hidden"
-                          />
-                          <div>
-                            <div className="truncate font-medium mt-1">{location?.name || "Unknown Location"}</div>
-                            {location?.notes && (
-                              <div className="text-gray-700 text-sm relative group whitespace-pre-wrap">
-                                {location.notes}
-                              </div>
+                          <button
+                            className="flex gap-2 text-left -my-[9px] py-3 -ml-4 pl-4 grow"
+                            onClick={
+                              location
+                                ? () =>
+                                    type === "hotspot"
+                                      ? open("hotspot", { hotspot: location })
+                                      : open("viewMarker", { marker: location })
+                                : undefined
+                            }
+                            disabled={!location}
+                          >
+                            {location ? (
+                              <MarkerWithIcon
+                                showStroke={false}
+                                icon={(location as any)?.icon || "hotspot"}
+                                className="inline-block scale-[.85] flex-shrink-0 print:hidden"
+                              />
+                            ) : (
+                              <Warning className="text-red-500 text-[22px]" />
                             )}
-                          </div>
+                            <span>
+                              <div className="truncate font-medium mt-[2px]">
+                                {location?.name || "Unknown Location"}
+                              </div>
+                              {location?.notes && (
+                                <span className="text-gray-700 text-sm relative group whitespace-pre-wrap">
+                                  {location.notes}
+                                </span>
+                              )}
+                            </span>
+                          </button>
                           {isEditing && (
                             <div className="flex items-center gap-1.5 ml-auto">
                               {index !== locations.length - 1 && (

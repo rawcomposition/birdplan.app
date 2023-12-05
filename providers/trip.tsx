@@ -244,69 +244,73 @@ const useTrip = () => {
 
   const removeItineraryDay = async (id: string) => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.filter((it) => it.id !== id);
+    const newItinerary = trip.itinerary?.filter((it) => it.id !== id) || [];
     await updateItinerary(trip.id, newItinerary);
   };
 
   const addItineraryDayLocation = async (dayId: string, type: "hotspot" | "marker", locationId: string) => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.map((it) => {
-      if (it.id === dayId) {
-        const locations = [...(it.locations || []), { type, locationId }];
-        return { ...it, locations };
-      }
-      return it;
-    });
+    const newItinerary =
+      trip.itinerary?.map((it) => {
+        if (it.id === dayId) {
+          const locations = [...(it.locations || []), { type, locationId }];
+          return { ...it, locations };
+        }
+        return it;
+      }) || [];
     await updateItinerary(trip.id, newItinerary);
     await recalcTravelTime(newItinerary, dayId);
   };
 
   const removeItineraryDayLocation = async (dayId: string, locationId: string) => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.map((it) => {
-      if (it.id === dayId) {
-        const locations = it.locations?.filter((it) => it.locationId !== locationId);
-        return { ...it, locations };
-      }
-      return it;
-    });
+    const newItinerary =
+      trip.itinerary?.map((it) => {
+        if (it.id === dayId) {
+          const locations = it.locations?.filter((it) => it.locationId !== locationId);
+          return { ...it, locations };
+        }
+        return it;
+      }) || [];
     await updateItinerary(trip.id, newItinerary);
     await recalcTravelTime(newItinerary, dayId);
   };
 
   const moveItineraryDayLocation = async (dayId: string, locationId: string, direction: "up" | "down") => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.map((it) => {
-      if (it.id === dayId) {
-        const locations = [...(it.locations || [])];
-        const locationIndex = locations.findIndex((it) => it.locationId === locationId);
-        const location = locations.splice(locationIndex, 1)[0];
-        const newIndex = direction === "up" ? locationIndex - 1 : locationIndex + 1;
-        locations.splice(newIndex, 0, location);
-        return { ...it, locations };
-      }
-      return it;
-    });
+    const newItinerary =
+      trip.itinerary?.map((it) => {
+        if (it.id === dayId) {
+          const locations = [...(it.locations || [])];
+          const locationIndex = locations.findIndex((it) => it.locationId === locationId);
+          const location = locations.splice(locationIndex, 1)[0];
+          const newIndex = direction === "up" ? locationIndex - 1 : locationIndex + 1;
+          locations.splice(newIndex, 0, location);
+          return { ...it, locations };
+        }
+        return it;
+      }) || [];
     await updateItinerary(trip.id, newItinerary);
     await recalcTravelTime(newItinerary, dayId);
   };
 
   const setItineraryDayNotes = async (dayId: string, notes: string) => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.map((it) => {
-      if (it.id === dayId) return { ...it, notes };
-      return it;
-    });
+    const newItinerary =
+      trip.itinerary?.map((it) => {
+        if (it.id === dayId) return { ...it, notes };
+        return it;
+      }) || [];
     await updateItinerary(trip.id, newItinerary);
   };
 
   const recalcTravelTime = async (itinerary: Trip["itinerary"], dayId: string) => {
     if (!trip) return;
     const existingMethods =
-      itinerary.find((it) => it.id === dayId)?.locations?.map((it) => it.travel?.method || null) || [];
+      itinerary?.find((it) => it.id === dayId)?.locations?.map((it) => it.travel?.method || null) || [];
     const defaultMethod = mostFrequentValue(existingMethods) as "walking" | "driving" | "cycling" | null;
     const newItinerary = await Promise.all(
-      itinerary.map(async (day) => {
+      itinerary?.map(async (day) => {
         const locations = await Promise.all(
           day.locations?.map(async ({ travel, ...it }, index) => {
             const prevLocation = day.locations[index - 1];
@@ -318,43 +322,45 @@ const useTrip = () => {
               locationId2: it.locationId,
               method: travel?.method || defaultMethod || "driving",
             });
-            return { ...it, travel: travelData };
+            return travelData ? { ...it, travel: travelData } : it;
           }) || []
         );
         return { ...day, locations };
-      })
+      }) || []
     );
     await updateItinerary(trip.id, newItinerary);
   };
 
   const markTravelTimeDeleted = async (dayId: string, locationId: string) => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.map((it) => {
-      if (it.id === dayId) {
-        const locations = it.locations?.map((it) => {
-          if (it.locationId === locationId)
-            return { ...it, travel: it.travel ? { ...it.travel, isDeleted: true } : undefined };
-          return it;
-        });
-        return { ...it, locations };
-      }
-      return it;
-    });
+    const newItinerary =
+      trip.itinerary?.map((it) => {
+        if (it.id === dayId) {
+          const locations = it.locations?.map((it) => {
+            if (it.locationId === locationId)
+              return { ...it, travel: it.travel ? { ...it.travel, isDeleted: true } : undefined };
+            return it;
+          });
+          return { ...it, locations };
+        }
+        return it;
+      }) || [];
     await updateItinerary(trip.id, newItinerary);
   };
 
   const saveItineraryTravelData = async (dayId: string, locationId: string, data: TravelData) => {
     if (!trip) return;
-    const newItinerary = trip.itinerary?.map((it) => {
-      if (it.id === dayId) {
-        const locations = it.locations?.map((it) => {
-          if (it.locationId === locationId) return { ...it, travel: data };
-          return it;
-        });
-        return { ...it, locations };
-      }
-      return it;
-    });
+    const newItinerary =
+      trip.itinerary?.map((it) => {
+        if (it.id === dayId) {
+          const locations = it.locations?.map((it) => {
+            if (it.locationId === locationId) return { ...it, travel: data };
+            return it;
+          });
+          return { ...it, locations };
+        }
+        return it;
+      }) || [];
     await updateItinerary(trip.id, newItinerary);
   };
 
@@ -374,27 +380,30 @@ const useTrip = () => {
       trip?.hotspots?.find((h) => h.id === locationId2 || "") || trip?.markers?.find((m) => m.id === locationId2 || "");
 
     if (!location1 || !location2) {
-      toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
+      toast.error(`Unable to calculate travel time to ${location2?.name || "unknown location"}`);
       return;
     }
     console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
     const { lat: lat1, lng: lng1 } = location1;
     const { lat: lat2, lng: lng2 } = location2;
-    const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
-    if (!data || !data.distance || !data.time) {
+    try {
+      const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
+      if (!data || !data.distance || !data.time) throw new Error("No data");
+      const travelData = {
+        distance: data.distance,
+        time: data.time,
+        method,
+        locationId: locationId1,
+      };
+
+      if (save) {
+        await saveItineraryTravelData(dayId, locationId2, travelData);
+      }
+      return travelData;
+    } catch (e) {
       toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
-      return;
+      return null;
     }
-    const travelData = {
-      distance: data.distance,
-      time: data.time,
-      method,
-      locationId: locationId1,
-    };
-    if (save) {
-      await saveItineraryTravelData(dayId, locationId2, travelData);
-    }
-    return travelData;
   };
 
   return {

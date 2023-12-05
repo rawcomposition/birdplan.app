@@ -68,7 +68,7 @@ export default function TravelTime({ isEditing, dayId, locationId }: Props) {
             <Menu.Button
               className={clsx(" cursor-pointer", !!travelData?.isDeleted && "hover:text-gray-700 hover:underline")}
             >
-              {!!travelData?.isDeleted && <>Calculate travel time</>}
+              {(!travelData || !!travelData?.isDeleted) && <>Calculate travel time</>}
               {!travelData?.isDeleted && travelInfo}
             </Menu.Button>
             <Menu.Items className="absolute text-sm -right-2 top-6 rounded bg-white shadow-lg py-1 w-[130px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
