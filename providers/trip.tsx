@@ -380,7 +380,7 @@ const useTrip = () => {
       trip?.hotspots?.find((h) => h.id === locationId2 || "") || trip?.markers?.find((m) => m.id === locationId2 || "");
 
     if (!location1 || !location2) {
-      toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
+      toast.error(`Unable to calculate travel time to ${location2?.name || "unknown location"}`);
       return;
     }
     console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
