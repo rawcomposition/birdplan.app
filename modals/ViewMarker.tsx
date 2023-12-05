@@ -1,9 +1,7 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
-import Button from "components/Button";
 import { CustomMarker } from "lib/types";
 import { useTrip } from "providers/trip";
-import Trash from "icons/Trash";
 import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import DirectionsButton from "components/DirectionsButton";
@@ -35,16 +33,11 @@ export default function ViewMarker({ marker }: Props) {
       <Body className="relative min-h-[200px]">
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} markerId={id} />
-          {canEdit && (
-            <Button color="gray" size="sm" onClick={handleRemoveMarker}>
-              <Trash className="mr-1 -mt-[3px] text-red-700" /> Delete
-            </Button>
-          )}
           <Menu as="div" className="relative inline-block text-left">
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <VerticalDots />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
+            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
               <Menu.Item>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
@@ -55,6 +48,17 @@ export default function ViewMarker({ marker }: Props) {
                   View on Google Maps
                 </a>
               </Menu.Item>
+              {canEdit && (
+                <Menu.Item>
+                  <button
+                    type="button"
+                    onClick={handleRemoveMarker}
+                    className="inline-flex items-center gap-1 text-red-700"
+                  >
+                    Remove from trip
+                  </button>
+                </Menu.Item>
+              )}
             </Menu.Items>
           </Menu>
         </div>
