@@ -5,7 +5,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { region } = req.query;
 
-    const response = await fetch(`https://api.ebird.org/v2/ref/hotspot/${region}?fmt=json`);
+    const response = await fetch(
+      `https://api.ebird.org/v2/ref/hotspot/${region}?fmt=json&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    );
     const json: EbirdHotspot[] = await response.json();
 
     const formatted = json.map((it) => ({
