@@ -11,6 +11,7 @@ import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import Select from "components/ReactSelectStyled";
 import { getRandomItemsFromArray } from "lib/helpers";
+import Link from "next/link";
 
 type StepT = {
   code: string;
@@ -19,6 +20,8 @@ type StepT = {
   guessName: string;
   isCorrect: boolean;
 };
+
+const quizLength = 5;
 
 export default function Quiz() {
   const [index, setIndex] = React.useState(0);
@@ -32,29 +35,34 @@ export default function Quiz() {
   const options = liferTargets.map(({ code, name }) => ({ value: code, label: name }));
   const step = steps[index];
 
+  const initQuiz = React.useCallback(async () => {
+    console.log("Initializing quiz...");
+    setSteps([]);
+    setIndex(0);
+    const targetCodes = targets.items.filter((target) => !lifelist.includes(target.code)).map((target) => target.code);
+
+    const randomCodes = getRandomItemsFromArray(targetCodes, quizLength);
+    try {
+      const res = await fetch(`/api/generate-quiz`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ codes: randomCodes }),
+      });
+      const data = await res.json();
+      setSteps(data);
+      setTimeout(() => {
+        selectRef.current?.focus();
+      }, 100);
+    } catch (error) {
+      toast.error("Error generating quiz");
+      return;
+    }
+  }, [targets, lifelist]);
+
   React.useEffect(() => {
     if (!trip || !lifelist?.length) return;
-    console.log("Initializing quiz...");
-    (async () => {
-      const targetCodes = targets.items
-        .filter((target) => !lifelist.includes(target.code))
-        .map((target) => target.code);
-
-      const randomCodes = getRandomItemsFromArray(targetCodes, 2);
-      try {
-        const res = await fetch(`/api/generate-quiz`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ codes: randomCodes }),
-        });
-        const data = await res.json();
-        setSteps(data);
-      } catch (error) {
-        toast.error("Error generating quiz");
-        return;
-      }
-    })();
-  }, [trip, targets, lifelist]);
+    initQuiz();
+  }, [trip, lifelist, initQuiz]);
 
   const isComplete = index === steps.length && steps.length > 0;
 
@@ -63,10 +71,6 @@ export default function Quiz() {
     setTimeout(() => {
       selectRef.current?.focus();
     }, 100);
-  };
-
-  const handleStartOver = () => {
-    setIndex(0);
   };
 
   const handleGuess = (code: string, name: string) => {
@@ -86,6 +90,28 @@ export default function Quiz() {
     });
   };
 
+  React.useEffect(() => {
+    const handleLeft = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        setIndex((prevIndex) => prevIndex - 1);
+      }
+    };
+    const handleRight = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        setIndex((prevIndex) => prevIndex + 1);
+        setTimeout(() => {
+          selectRef.current?.focus();
+        }, 500);
+      }
+    };
+    window.addEventListener("keydown", handleLeft);
+    window.addEventListener("keydown", handleRight);
+    return () => {
+      window.removeEventListener("keydown", handleLeft);
+      window.removeEventListener("keydown", handleRight);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col h-full">
       <Head>
@@ -93,9 +119,12 @@ export default function Quiz() {
       </Head>
 
       <Header showAccountOnSmScreens />
-      <main className="max-w-2xl w-full mx-auto pb-12">
+      <main className="max-w-2xl w-full mx-auto">
         <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-6 mb-52" onClick={closeSidebar}>
+          <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mb-8 inline-flex items-center">
+            ← Back to trip
+          </Link>
           <h1 className="text-3xl font-bold text-gray-700 mb-8">🤔 Bird Quiz</h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             {isComplete ? (
@@ -104,8 +133,8 @@ export default function Quiz() {
                 <p className="mb-6 text-gray-700 text-lg">
                   You answered {steps.filter((step) => step.isCorrect).length} out of {steps.length} correctly.
                 </p>
-                <Button color="primary" className="inline-flex items-center" onClick={handleStartOver}>
-                  Start Over
+                <Button color="primary" className="inline-flex items-center" onClick={initQuiz}>
+                  Play Again
                 </Button>
               </div>
             ) : !!step ? (
@@ -122,7 +151,7 @@ export default function Quiz() {
                   key={step.mlId}
                 />
                 {!step.guessName && (
-                  <div className="absolute bottom-0 left-0 right-0 z-10 bg-white h-32 p-10">
+                  <div className="absolute bottom-0 left-0 right-0 z-10 bg-white h-40 p-10">
                     <label className="max-w-2xl mx-auto">
                       <Select
                         ref={selectRef}
@@ -145,9 +174,12 @@ export default function Quiz() {
 
           <div className="flex justify-center">
             {step?.guessName && (
-              <Button color="primary" className="w-48 text-center" onClick={handleNext}>
-                Continue
-              </Button>
+              <div className="flex flex-col items-center gap-1">
+                <Button color="primary" className="w-48 text-center" onClick={handleNext}>
+                  Continue
+                </Button>
+                <span className="text-xs text-gray-600">(right arrow key)</span>
+              </div>
             )}
           </div>
         </div>

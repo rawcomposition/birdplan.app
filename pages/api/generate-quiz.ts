@@ -14,12 +14,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           let savedItem = savedImages.find((it) => it.code === code);
           if (!savedItem) {
             const res = await fetch(
-              `https://search.macaulaylibrary.org/api/v1/search?count=30&sort=rating_rank_desc&mediaType=p&regionCode=&taxonCode=${code}&taxaLocale=en`
+              `https://search.macaulaylibrary.org/api/v1/search?count=20&sort=rating_rank_desc&mediaType=p&regionCode=&taxonCode=${code}&taxaLocale=en`
             );
             const data = await res.json();
             const results = data.results.content;
-            const ids = results.map((it: any) => it.assetId);
-            const name = results[0].commonName;
+            const filteredResults = results.filter((it: any) => it.height > 800 && it.width / it.height <= 1.6);
+            const ids = filteredResults.map((it: any) => it.assetId);
+            const name = filteredResults[0].commonName;
             const newItem = { code, ids, name };
             await db.collection("quizImages").doc(code).set(newItem);
             savedItem = newItem;
