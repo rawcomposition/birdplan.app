@@ -1,8 +1,10 @@
+import React, { forwardRef } from "react";
 import ReactSelect from "react-select";
 
-const ReactSelectStyled = (props: any) => {
+const ReactSelectStyled = forwardRef((props: any, ref: any) => {
   return (
     <ReactSelect
+      ref={ref}
       styles={{
         singleValue: (base) => ({
           ...base,
@@ -31,6 +33,8 @@ const ReactSelectStyled = (props: any) => {
       {...props}
     />
   );
-};
+});
+
+ReactSelectStyled.displayName = "ReactSelectStyled";
 
 export default ReactSelectStyled;

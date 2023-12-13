@@ -461,3 +461,14 @@ export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
   };
   return geojson;
 };
+
+export function getRandomItemsFromArray(arr: any[], count: number): any[] {
+  const result: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    result.push(arr[randomIndex]);
+  }
+
+  return result;
+}
