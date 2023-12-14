@@ -26,6 +26,7 @@ const quizLength = 5;
 export default function Quiz() {
   const [index, setIndex] = React.useState(0);
   const [steps, setSteps] = React.useState<StepT[]>([]);
+  const [isInitialized, setIsInitialized] = React.useState(false);
   const { trip, targets } = useTrip();
   const { lifelist } = useProfile();
   const { closeSidebar } = useUI();
@@ -60,9 +61,10 @@ export default function Quiz() {
   }, [targets, lifelist]);
 
   React.useEffect(() => {
-    if (!trip || !lifelist?.length) return;
+    if (!trip || !lifelist?.length || isInitialized) return;
     initQuiz();
-  }, [trip, lifelist, initQuiz]);
+    setIsInitialized(true);
+  }, [trip, lifelist, initQuiz, isInitialized]);
 
   const isComplete = index === steps.length && steps.length > 0;
 
@@ -142,16 +144,26 @@ export default function Quiz() {
                 <h2 className="text-2xl font-bold text-gray-700 mb-4">
                   {step.guessName ? step.name : "What species is this?"}
                 </h2>
-                <iframe
-                  src={`https://macaulaylibrary.org/asset/${step.mlId}/embed`}
-                  height="555"
-                  width="640"
-                  className="w-full"
-                  allowFullScreen
-                  key={step.mlId}
+                <img
+                  src={`https://cdn.download.ams.birds.cornell.edu/api/v1/asset/${step.mlId}/1200`}
+                  className="w-full aspect-[1.5] object-contain"
                 />
+                {step.guessName && (
+                  <div className="flex flex-col gap-2 mt-4">
+                    <p className="font-bold text-gray-700">{step.isCorrect ? "✅ Correct!" : "❌ Incorrect"}</p>
+                    <p className="text-sm">
+                      <Link href={`https://ebird.org/species/vihhum1`} target="_blank">
+                        {step.name}
+                      </Link>
+                      &nbsp; • &nbsp;
+                      <Link href={`https://macaulaylibrary.org/asset/${step.mlId}`} target="_blank">
+                        ML{step.mlId}
+                      </Link>
+                    </p>
+                  </div>
+                )}
                 {!step.guessName && (
-                  <div className="absolute bottom-0 left-0 right-0 z-10 bg-white h-40 p-10">
+                  <div className="px-10 py-6">
                     <label className="max-w-2xl mx-auto">
                       <Select
                         ref={selectRef}

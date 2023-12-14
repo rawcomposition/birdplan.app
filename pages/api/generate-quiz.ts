@@ -18,9 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             );
             const data = await res.json();
             const results = data.results.content;
-            const filteredResults = results.filter((it: any) => it.height > 800 && it.width / it.height <= 1.6);
-            const ids = filteredResults.map((it: any) => it.assetId);
-            const name = filteredResults[0].commonName;
+            const ids = results.map((it: any) => it.assetId);
+            const name = results[0].commonName;
             const newItem = { code, ids, name };
             await db.collection("quizImages").doc(code).set(newItem);
             savedItem = newItem;
