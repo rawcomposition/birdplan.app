@@ -21,7 +21,7 @@ type StepT = {
   isCorrect: boolean;
 };
 
-const quizLength = 5;
+const quizLength = 10;
 
 export default function Quiz() {
   const [index, setIndex] = React.useState(0);
