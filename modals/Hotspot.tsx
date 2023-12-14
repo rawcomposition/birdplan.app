@@ -6,7 +6,7 @@ import Feather from "icons/Feather";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish, fullMonths } from "lib/helpers";
+import { translate, isRegionEnglish, fullMonths, months } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -91,7 +91,7 @@ export default function Hotspot({ hotspot }: Props) {
     trip?.startMonth && trip?.endMonth
       ? trip.startMonth === trip.endMonth
         ? fullMonths[trip.startMonth - 1]
-        : `${fullMonths[trip.startMonth - 1]} - ${fullMonths[trip.endMonth - 1]}`
+        : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`
       : "";
 
   return (
