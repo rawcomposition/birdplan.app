@@ -1,4 +1,4 @@
-import { Trip, Target, Targets } from "lib/types";
+import { Trip, Target, Targets, Hotspot } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import { uploadFile } from "lib/firebase";
@@ -401,7 +401,6 @@ export const mostFrequentValue = (arr: any[]) => {
 const targetsToHtml = (targets: Targets[], id?: string) => {
   const items = targets.find((it) => it.id === id)?.items;
   if (!items?.length) {
-    console.log("No items", id);
     return "";
   }
   let html = "<b>Targets</b><br/>";
@@ -413,6 +412,21 @@ const targetsToHtml = (targets: Targets[], id?: string) => {
     html += `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a><br/><br/>`;
   });
   return html;
+};
+
+const favsToHtml = (favs: Hotspot["favs"]) => {
+  if (!favs?.length) {
+    return "";
+  }
+  let html = "<b>Favorites</b><br/>";
+  favs.forEach((it) => {
+    const percent = it.percent > 1 ? Math.round(it.percent) : it.percent;
+    html += `<b>${it.name}</b> (${percent}% ${it.range})<br/>`;
+    const numBlocks = Math.round(percent / 10) * 1;
+    const blocks = "🟩".repeat(numBlocks) + "⬜".repeat(10 - numBlocks);
+    html += `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a><br/><br/>`;
+  });
+  return html + "<br/><br/>";
 };
 
 export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
@@ -439,7 +453,7 @@ export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
             trip?.startMonth
           }&emo=${trip?.endMonth}&r2=world&t2=life'>${tripRangeLabel}</a><br/><br/>${`<b>Notes</b><br/>${
             it.notes || "None"
-          }<br/><br/>`}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
+          }<br/><br/>`}${favsToHtml(it.favs)}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
         },
         geometry: {
           type: "Point",
