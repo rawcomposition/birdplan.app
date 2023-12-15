@@ -16,7 +16,6 @@ import SpeciesCard from "components/SpeciesCard";
 import Button from "components/Button";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
-import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
 import SettingsSidebarBlock from "components/SettingsSidebarBlock";
 import TripLinks from "components/TripLinks";
 import MapFlatIcon from "icons/MapFlat";
@@ -160,7 +159,7 @@ export default function Trip() {
           <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
             {view === "itinerary" ? (
               <ItineraryBuilder />
-            ) : view === "targets" ? (
+            ) : view === "targets" && !selectedSpecies ? (
               <Targets />
             ) : (
               <>
