@@ -8,7 +8,7 @@ type Props = {
   className?: string;
   children?: React.ReactNode;
   noPadding?: boolean;
-  fullWidth?: boolean;
+  widthClass?: string;
   noAnimation?: boolean;
   noAccount?: boolean;
   extraMenuHeight?: number;
@@ -18,7 +18,7 @@ export default function Sidebar({
   children,
   className,
   noPadding,
-  fullWidth,
+  widthClass,
   noAnimation,
   noAccount,
   extraMenuHeight,
@@ -37,7 +37,7 @@ export default function Sidebar({
         "flex flex-shrink-0 flex-col md:h-full md:ml-0 bg-[#1e263a] absolute md:relative shadow-2xl md:shadow-none z-10 overflow-y-auto dark-scrollbar",
         noPadding ? "" : "p-6",
         !sidebarOpen && "-ml-[600px]",
-        fullWidth ? "w-full sm:w-80" : "w-80",
+        widthClass || "w-80",
         noAnimation ? "" : "transition-all",
         className
       )}

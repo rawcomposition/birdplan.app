@@ -152,7 +152,7 @@ export default function Quiz() {
                   <div className="flex flex-col gap-2 mt-4">
                     <p className="font-bold text-gray-700">{step.isCorrect ? "✅ Correct!" : "❌ Incorrect"}</p>
                     <p className="text-sm">
-                      <Link href={`https://ebird.org/species/vihhum1`} target="_blank">
+                      <Link href={`https://ebird.org/species/${step.code}`} target="_blank">
                         {step.name}
                       </Link>
                       &nbsp; • &nbsp;

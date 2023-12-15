@@ -6,7 +6,6 @@ import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
 import Expand from "components/Expand";
 import useFetchHotspots from "hooks/useFetchHotspots";
-import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import { getMarkerColorIndex } from "lib/helpers";
 import HotspotList from "components/HotspotList";
@@ -18,7 +17,6 @@ import Button from "components/Button";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
 import TargetSpeciesSidebarBlock from "components/TargetSpeciesSidebarBlock";
-import RecentSpeciesSidebarBlock from "components/RecentSpeciesSidebarBlock";
 import SettingsSidebarBlock from "components/SettingsSidebarBlock";
 import TripLinks from "components/TripLinks";
 import MapFlatIcon from "icons/MapFlat";
@@ -26,6 +24,7 @@ import ListIcon from "icons/List";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import ItineraryBuilder from "components/ItineraryBuilder";
+import Targets from "components/Targets";
 import ErrorBoundary from "components/ErrorBoundary";
 
 export default function Trip() {
@@ -40,7 +39,6 @@ export default function Trip() {
   const savedHotspots = trip?.hotspots || [];
   const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
-  const { recentSpecies } = useFetchRecentSpecies(trip?.region);
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
@@ -100,8 +98,8 @@ export default function Trip() {
       <TripNav active={view} onChange={setView} />
       <main className="flex h-[calc(100%-60px-52px)]">
         <ErrorBoundary>
-          {view !== "itinerary" && (
-            <Sidebar noPadding fullWidth noAnimation noAccount extraMenuHeight={52}>
+          {view === "" && (
+            <Sidebar noPadding noAnimation noAccount extraMenuHeight={52} widthClass="w-full sm:w-80">
               {view === "" && (
                 <div className="mb-4 px-6 pt-4 border-t border-gray-700">
                   <label className="text-white text-sm flex items-center gap-1">
@@ -144,8 +142,6 @@ export default function Trip() {
                     )}
                   </Expand>
                 )}
-                {view === "targets" && <TargetSpeciesSidebarBlock />}
-                {view === "targets" && canEdit && <RecentSpeciesSidebarBlock recentSpecies={recentSpecies} />}
                 {view === "" && canEdit && <SettingsSidebarBlock />}
               </div>
               <TripLinks />
@@ -164,6 +160,8 @@ export default function Trip() {
           <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
             {view === "itinerary" ? (
               <ItineraryBuilder />
+            ) : view === "targets" ? (
+              <Targets />
             ) : (
               <>
                 {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
@@ -204,7 +202,7 @@ export default function Trip() {
               </>
             )}
           </div>
-          {view !== "itinerary" && (
+          {view === "" && (
             <Button
               color="pillWhite"
               className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"

@@ -1,5 +1,4 @@
 import React from "react";
-import Expand from "components/Expand";
 import SpeciesRow from "components/SpeciesRow";
 import { useTrip } from "providers/trip";
 import useProfiles from "hooks/useProfiles";
@@ -40,7 +39,7 @@ export default function TargetSpeciesSidebarBlock() {
   const selectedOption = options.find((it) => it.uid === actualUid);
 
   return (
-    <Expand heading="Target Species" className="text-white" count={targetSpecies.length} focusInput>
+    <div className="print:break-inside-avoid bg-gray-900/80 border-t border-gray-700/80 px-4 py-3.5">
       {!user?.uid && (trip?.userIds?.length || 0) > 1 && (
         <p className="text-gray-400/80 text-[12px] mb-2.5">Showing targets for {trip?.ownerName}</p>
       )}
@@ -92,6 +91,6 @@ export default function TargetSpeciesSidebarBlock() {
           Import Targets
         </Button>
       )}
-    </Expand>
+    </div>
   );
 }
