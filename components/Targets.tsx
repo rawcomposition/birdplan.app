@@ -61,6 +61,53 @@ export default function Targets() {
   return (
     <div className="h-full overflow-auto" onClick={handleDivClick}>
       <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
+        </div>
+        {options.length > 1 && (
+          <Menu as="div" className="mb-3 text-left relative">
+            <div>
+              <Menu.Button className="">
+                <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
+                <span className="text-gray-600 text-[13px] hover:text-gray-600">
+                  {selectedOption?.name} <AngleDown />
+                </span>
+              </Menu.Button>
+            </div>
+
+            <Transition
+              as={React.Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute left-12 top-7 z-10 w-44 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-gray-700 focus:outline-none">
+                <div className="py-2">
+                  {options?.map(({ name, uid }) => (
+                    <Menu.Item key={uid}>
+                      <button
+                        onClick={() => setSelectedUid(uid || "")}
+                        className="w-full px-4 py-1 text-left text-[13px] hover:text-gray-200 text-gray-300"
+                      >
+                        {name}
+                      </button>
+                    </Menu.Item>
+                  ))}
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
+        )}
+        <Input
+          type="search"
+          value={search}
+          onChange={(e: any) => setSearch(e.target.value)}
+          placeholder="Search species"
+          className="mb-4"
+        />
         {filteredTargets?.map((it) => {
           const imgUrl = images?.find((image) => image.code === it.code)?.url;
           return (
