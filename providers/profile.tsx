@@ -5,6 +5,7 @@ import { subscribeToProfile, setProfileValue } from "lib/firebase";
 
 interface ContextT extends Profile {
   setLifelist: (lifelist: string[]) => Promise<void>;
+  addToLifeList: (code: string) => Promise<void>;
   setCountryLifelist: (lifelist: string[]) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
   setLat: (lat: number) => Promise<void>;
@@ -25,6 +26,7 @@ const initialState: Profile = {
 export const ProfileContext = React.createContext<ContextT>({
   ...initialState,
   setLifelist: async () => {},
+  addToLifeList: async () => {},
   setCountryLifelist: async () => {},
   setRadius: async () => {},
   setLat: async () => {},
@@ -50,6 +52,11 @@ const ProfileProvider = ({ children }: Props) => {
   const setLifelist = async (lifelist: string[]) => {
     setState((state) => ({ ...state, lifelist }));
     await setProfileValue("lifelist", lifelist);
+  };
+
+  const addToLifeList = async (code: string) => {
+    setState((state) => ({ ...state, lifelist: [...state.lifelist, code] }));
+    await setProfileValue("lifelist", [...state.lifelist, code]);
   };
 
   const setCountryLifelist = async (countryLifelist: string[]) => {
@@ -89,6 +96,7 @@ const ProfileProvider = ({ children }: Props) => {
         setLat,
         setLng,
         setLifelist,
+        addToLifeList,
         setCountryLifelist,
         setRadius,
         reset,

@@ -2,6 +2,7 @@ import React from "react";
 import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import useProfiles from "hooks/useProfiles";
+import { useProfile } from "providers/profile";
 import { useUser } from "providers/user";
 import { Menu, Transition } from "@headlessui/react";
 import useTripTargetImages from "hooks/useTripTargetImages";
@@ -10,20 +11,17 @@ import clsx from "clsx";
 import Map from "icons/map";
 import Input from "components/Input";
 import InputNotesSimple from "components/InputNotesSimple";
-import Button from "components/Button";
 import CheckIcon from "icons/Check";
-import Pencil from "icons/Pencil";
 
 export default function Targets() {
   const [search, setSearch] = React.useState("");
   const [selectedUid, setSelectedUid] = React.useState("");
   const { targets, trip, invites, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
   const { profiles } = useProfiles(trip?.userIds);
+  const { addToLifeList } = useProfile();
   const { user } = useUser();
   const { close, modalId } = useModal();
   const images = useTripTargetImages();
-  const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
-  const isEditing = canEdit && editing;
   const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
 
@@ -53,6 +51,11 @@ export default function Targets() {
     const isButton = (e.target as HTMLElement).closest("button");
     if (isButton) return;
     modalId && close();
+  };
+
+  const handleSeen = (code: string, name: string) => {
+    if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
+    addToLifeList(code);
   };
 
   return (
@@ -147,7 +150,7 @@ export default function Targets() {
                   className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
                   onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
                 >
-                  <Map />
+                  <Map className="text-red-500/80" />
                   View Map
                 </button>
                 <a
@@ -158,6 +161,14 @@ export default function Targets() {
                   <span className="sr-only">View on eBird</span>
                   <img src="/ebird.png" width={42} alt="eBird Logo" />
                 </a>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
+                  onClick={() => handleSeen(it.code, it.name)}
+                >
+                  <CheckIcon className="text-green-500/80" />
+                  Mark as seen
+                </button>
               </div>
             </article>
           );
