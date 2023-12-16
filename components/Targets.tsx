@@ -61,53 +61,6 @@ export default function Targets() {
   return (
     <div className="h-full overflow-auto" onClick={handleDivClick}>
       <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
-        </div>
-        {options.length > 1 && (
-          <Menu as="div" className="mb-3 text-left relative">
-            <div>
-              <Menu.Button className="">
-                <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
-                <span className="text-gray-600 text-[13px] hover:text-gray-600">
-                  {selectedOption?.name} <AngleDown />
-                </span>
-              </Menu.Button>
-            </div>
-
-            <Transition
-              as={React.Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute left-12 top-7 z-10 w-44 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-gray-700 focus:outline-none">
-                <div className="py-2">
-                  {options?.map(({ name, uid }) => (
-                    <Menu.Item key={uid}>
-                      <button
-                        onClick={() => setSelectedUid(uid || "")}
-                        className="w-full px-4 py-1 text-left text-[13px] hover:text-gray-200 text-gray-300"
-                      >
-                        {name}
-                      </button>
-                    </Menu.Item>
-                  ))}
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        )}
-        <Input
-          type="search"
-          value={search}
-          onChange={(e: any) => setSearch(e.target.value)}
-          placeholder="Search species"
-          className="mb-4"
-        />
         {filteredTargets?.map((it) => {
           const imgUrl = images?.find((image) => image.code === it.code)?.url;
           return (
@@ -116,17 +69,19 @@ export default function Targets() {
               className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col"
             >
               <div className="flex items-start">
-                <div className="flex-shrink-0 p-4 mr-4">
+                <a href={`https://ebird.org/species/${it.code}`} target="_blank" className="flex-shrink-0">
                   <img
                     src={imgUrl || "/placeholder.png"}
                     alt={it.name}
-                    className={clsx("w-16 h-16 rounded-lg object-cover", !imgUrl && "opacity-60")}
+                    className={clsx("w-16 h-16 rounded-lg object-cover m-4 mr-8", !imgUrl && "opacity-60")}
                     loading="lazy"
                   />
-                </div>
+                </a>
                 <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex justify-between items-start flex-grow gap-4">
                   <div className="flex flex-col gap-1 w-full mt-1">
-                    <h3 className="font-bold text-gray-800">{it.name}</h3>
+                    <a href={`https://ebird.org/species/${it.code}`} target="_blank">
+                      <h3 className="font-bold text-gray-800">{it.name}</h3>
+                    </a>
                     <div className="text-[13px] text-gray-600 flex items-center gap-2">
                       <InputNotesSimple
                         value={it.notes}
@@ -153,14 +108,6 @@ export default function Targets() {
                   <Map className="text-red-500/80" />
                   View Map
                 </button>
-                <a
-                  href={`https://ebird.org/species/${it.code}`}
-                  target="_blank"
-                  className="flex items-center py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
-                >
-                  <span className="sr-only">View on eBird</span>
-                  <img src="/ebird.png" width={42} alt="eBird Logo" />
-                </a>
                 <button
                   type="button"
                   className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
