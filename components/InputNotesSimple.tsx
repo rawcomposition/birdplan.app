@@ -8,7 +8,7 @@ type Props = {
   canEdit?: boolean;
 };
 
-export default function InputItineraryNotes({ value, onBlur, className, canEdit }: Props) {
+export default function InputNotesSimple({ value, onBlur, className, canEdit }: Props) {
   const [notes, setNotes] = React.useState(value);
   const [showInput, setShowInput] = React.useState<boolean>();
   const notsRef = React.useRef<HTMLTextAreaElement>(null);

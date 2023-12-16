@@ -9,15 +9,21 @@ import AngleDown from "icons/AngleDown";
 import clsx from "clsx";
 import Map from "icons/map";
 import Input from "components/Input";
+import InputNotesSimple from "components/InputNotesSimple";
+import Button from "components/Button";
+import CheckIcon from "icons/Check";
+import Pencil from "icons/Pencil";
 
 export default function Targets() {
   const [search, setSearch] = React.useState("");
   const [selectedUid, setSelectedUid] = React.useState("");
-  const { targets, trip, invites, setSelectedSpecies } = useTrip();
+  const { targets, trip, invites, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
   const { profiles } = useProfiles(trip?.userIds);
   const { user } = useUser();
   const { close, modalId } = useModal();
   const images = useTripTargetImages();
+  const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
+  const isEditing = canEdit && editing;
   const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
 
@@ -55,6 +61,17 @@ export default function Targets() {
         <div className="mb-10">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
+            {canEdit && (
+              <Button
+                size="smPill"
+                color="pillOutlineGray"
+                className="flex items-center gap-2 print:hidden"
+                onClick={() => setEditing((prev) => !prev)}
+              >
+                {isEditing ? <CheckIcon className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+                <span>{isEditing ? "Done" : "Edit"}</span>
+              </Button>
+            )}
           </div>
         </div>
         {options.length > 1 && (
@@ -108,7 +125,7 @@ export default function Targets() {
               key={it.code}
               className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col"
             >
-              <div className="flex">
+              <div className="flex items-start">
                 <div className="flex-shrink-0 p-4 mr-4">
                   <img
                     src={imgUrl || "/placeholder.png"}
@@ -117,14 +134,19 @@ export default function Targets() {
                     loading="lazy"
                   />
                 </div>
-                <div className="pr-2 pt-3 xs:pr-4 w-full py-4 xs:flex xs:justify-between items-center">
-                  <div className="flex flex-col gap-1">
+                <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex justify-between items-start flex-grow gap-4">
+                  <div className="flex flex-col gap-1 w-full mt-0.5">
                     <h3 className="font-bold text-gray-800">{it.name}</h3>
                     <div className="text-[13px] text-gray-600 flex items-center gap-2">
-                      <span>Hola</span>
+                      <InputNotesSimple
+                        value={it.notes}
+                        onBlur={(value) => setTargetNotes(it.code, value)}
+                        className="mt-1 mb-4 w-full"
+                        canEdit={isEditing}
+                      />
                     </div>
                   </div>
-                  <div className="whitespace-nowrap flex gap-2 items-center mt-2 xs:mt-0">
+                  <div className="whitespace-nowrap mt-1">
                     <span className="rounded-sm px-2 py-1 text-xs whitespace-nowrap bg-gray-300 text-gray-600">
                       {it.percent}%
                     </span>
@@ -145,7 +167,8 @@ export default function Targets() {
                   target="_blank"
                   className="flex items-center py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
                 >
-                  <img src="/ebird.png" width={42} />
+                  <span className="sr-only">View on eBird</span>
+                  <img src="/ebird.png" width={42} alt="eBird Logo" />
                 </a>
               </div>
             </article>

@@ -11,7 +11,7 @@ import CheckIcon from "icons/Check";
 import XMarkBold from "icons/XMarkBold";
 import AngleDownBold from "icons/AngleDownBold";
 import TravelTime from "components/TravelTime";
-import InputItineraryNotes from "components/InputItineraryNotes";
+import InputNotesSimple from "components/InputNotesSimple";
 import Warning from "icons/Warning";
 
 export default function ItineraryBuilder() {
@@ -105,7 +105,7 @@ export default function ItineraryBuilder() {
                   <h1 className="text-xl font-bold text-gray-700">Day {i + 1}</h1>
                   <span className="text-gray-500 text-[13px]">{date}</span>
                 </div>
-                <InputItineraryNotes
+                <InputNotesSimple
                   value={notes}
                   onBlur={(value) => setItineraryDayNotes(id, value)}
                   className="mt-1 mb-4"

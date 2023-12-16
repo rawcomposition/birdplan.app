@@ -139,6 +139,7 @@ export type Target = {
   name: string;
   percent: number;
   percentYr: number;
+  notes?: string;
 };
 
 export enum MarkerIcon {

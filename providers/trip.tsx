@@ -187,6 +187,16 @@ const useTrip = () => {
     await updateTargets(trip.id, data, true);
   };
 
+  const setTargetNotes = async (code: string, notes: string) => {
+    if (!trip || !state.targets) return;
+    const newItems =
+      state.targets.items?.map((it) => {
+        if (it.code === code) return { ...it, notes };
+        return it;
+      }) || [];
+    await setTargets({ ...state.targets, items: newItems });
+  };
+
   const saveHotspotNotes = async (id: string, notes: string) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.map((it) => {
@@ -414,6 +424,7 @@ const useTrip = () => {
     removeMarker,
     setTargets,
     setStartDate,
+    setTargetNotes,
     appendItineraryDay,
     removeItineraryDay,
     addItineraryDayLocation,
