@@ -59,20 +59,7 @@ export default function Targets() {
     <div className="h-full overflow-auto" onClick={handleDivClick}>
       <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
         <div className="mb-10">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
-            {canEdit && (
-              <Button
-                size="smPill"
-                color="pillOutlineGray"
-                className="flex items-center gap-2 print:hidden"
-                onClick={() => setEditing((prev) => !prev)}
-              >
-                {isEditing ? <CheckIcon className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-                <span>{isEditing ? "Done" : "Edit"}</span>
-              </Button>
-            )}
-          </div>
+          <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
         </div>
         {options.length > 1 && (
           <Menu as="div" className="mb-3 text-left relative">
@@ -135,14 +122,15 @@ export default function Targets() {
                   />
                 </div>
                 <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex justify-between items-start flex-grow gap-4">
-                  <div className="flex flex-col gap-1 w-full mt-0.5">
+                  <div className="flex flex-col gap-1 w-full mt-1">
                     <h3 className="font-bold text-gray-800">{it.name}</h3>
                     <div className="text-[13px] text-gray-600 flex items-center gap-2">
                       <InputNotesSimple
                         value={it.notes}
                         onBlur={(value) => setTargetNotes(it.code, value)}
                         className="mt-1 mb-4 w-full"
-                        canEdit={isEditing}
+                        canEdit={canEdit}
+                        showDone
                       />
                     </div>
                   </div>

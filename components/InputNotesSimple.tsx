@@ -6,14 +6,15 @@ type Props = {
   onBlur: (value: string) => void;
   className?: string;
   canEdit?: boolean;
+  showDone?: boolean;
 };
 
-export default function InputNotesSimple({ value, onBlur, className, canEdit }: Props) {
+export default function InputNotesSimple({ value, onBlur, className, canEdit, showDone }: Props) {
   const [notes, setNotes] = React.useState(value);
   const [showInput, setShowInput] = React.useState<boolean>();
   const notsRef = React.useRef<HTMLTextAreaElement>(null);
 
-  const inEditMode = (canEdit && !!notes) || (canEdit && showInput);
+  const inEditMode = showDone ? canEdit && showInput : (canEdit && !!notes) || (canEdit && showInput);
 
   const handleBlur = (value: string) => {
     onBlur(value);
@@ -48,7 +49,16 @@ export default function InputNotesSimple({ value, onBlur, className, canEdit }: 
             }}
             className="text-sky-600 text-[12px] font-bold px-3 py-1"
           >
-            Add notes
+            {notes ? "Edit" : "Add notes"}
+          </button>
+        )}
+        {showDone && inEditMode && (
+          <button
+            type="button"
+            onClick={() => setShowInput(false)}
+            className="text-sky-600 text-[12px] font-bold px-3 py-1"
+          >
+            Done
           </button>
         )}
       </div>
