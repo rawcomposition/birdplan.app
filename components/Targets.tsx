@@ -69,19 +69,19 @@ export default function Targets() {
               className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col"
             >
               <div className="flex items-start">
-                <a href={`https://ebird.org/species/${it.code}`} target="_blank" className="flex-shrink-0">
+                <MerlinkLink code={it.code} className="flex-shrink-0">
                   <img
                     src={imgUrl || "/placeholder.png"}
                     alt={it.name}
                     className={clsx("w-16 h-16 rounded-lg object-cover m-4 mr-8", !imgUrl && "opacity-60")}
                     loading="lazy"
                   />
-                </a>
+                </MerlinkLink>
                 <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex justify-between items-start flex-grow gap-4">
                   <div className="flex flex-col gap-1 w-full mt-1">
-                    <a href={`https://ebird.org/species/${it.code}`} target="_blank">
+                    <MerlinkLink code={it.code}>
                       <h3 className="font-bold text-gray-800">{it.name}</h3>
-                    </a>
+                    </MerlinkLink>
                     <div className="text-[13px] text-gray-600 flex items-center gap-2">
                       <InputNotesSimple
                         value={it.notes}
@@ -124,3 +124,20 @@ export default function Targets() {
     </div>
   );
 }
+
+type MerlinLinkPropsT = {
+  children: React.ReactNode;
+  className?: string;
+  code: string;
+};
+
+const MerlinkLink = ({ code, children, className }: MerlinLinkPropsT) => (
+  <>
+    <a href={`https://ebird.org/species/${code}`} target="_blank" className={clsx(className, "hidden md:inline")}>
+      {children}
+    </a>
+    <a href={`merlinbirdid://species/${code}'`} target="_blank" className={clsx(className, "md:hidden")}>
+      {children}
+    </a>
+  </>
+);
