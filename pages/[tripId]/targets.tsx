@@ -175,13 +175,16 @@ export default function TripTargets() {
                       className="mb-4"
                     />
                   )}
-                  {filteredTargets?.map((it) => {
+                  {filteredTargets?.map((it, index) => {
                     const imgUrl = images?.find((image) => image.code === it.code)?.url;
                     return (
                       <article
                         key={it.code}
-                        className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col"
+                        className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col relative"
                       >
+                        <span className="absolute top-0 right-0 bg-gray-200 text-gray-600 text-[12px] px-2 py-1 rounded-bl-md">
+                          {index + 1}
+                        </span>
                         <div className="flex items-start">
                           <MerlinkLink code={it.code} className="flex-shrink-0">
                             <img
@@ -191,11 +194,16 @@ export default function TripTargets() {
                               loading="lazy"
                             />
                           </MerlinkLink>
-                          <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex justify-between items-start flex-grow gap-4">
+                          <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex items-start flex-grow gap-4">
                             <div className="flex flex-col gap-1 w-full mt-1">
-                              <MerlinkLink code={it.code}>
-                                <h3 className="font-bold text-gray-800">{it.name}</h3>
-                              </MerlinkLink>
+                              <div className="flex items-center gap-3">
+                                <MerlinkLink code={it.code}>
+                                  <h3 className="font-bold text-gray-800">
+                                    <span className="sm:hidden">{index + 1}.</span> {it.name}
+                                  </h3>
+                                </MerlinkLink>
+                                <span className="text-gray-600 text-[13px]">{it.percent}%</span>
+                              </div>
                               <div className="text-[13px] text-gray-600 flex items-center gap-2">
                                 <InputNotesSimple
                                   value={it.notes}
@@ -205,11 +213,6 @@ export default function TripTargets() {
                                   showDone
                                 />
                               </div>
-                            </div>
-                            <div className="whitespace-nowrap mt-1">
-                              <span className="rounded-sm px-2 py-1 text-xs whitespace-nowrap bg-gray-300 text-gray-600">
-                                {it.percent}%
-                              </span>
                             </div>
                           </div>
                         </div>
