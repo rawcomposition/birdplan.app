@@ -198,14 +198,14 @@ export default function TripTargets() {
                         className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col relative"
                       >
                         <div className="flex items-center cursor-pointer" onClick={() => onToggleExpand(it.code)}>
-                          <MerlinkLink code={it.code} className="flex-shrink-0 mb-auto">
+                          <div className="flex-shrink-0 mb-auto">
                             <img
                               src={imgUrl || "/placeholder.png"}
                               alt={it.name}
                               className={clsx("w-16 h-16 rounded-lg object-cover m-4 mr-8", !imgUrl && "opacity-60")}
                               loading="lazy"
                             />
-                          </MerlinkLink>
+                          </div>
                           <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex items-start flex-grow gap-4">
                             <div className="flex flex-col gap-1 w-full mt-1">
                               <div className="flex items-center gap-3">
@@ -238,7 +238,7 @@ export default function TripTargets() {
                           </div>
                         </div>
                         {isExpanded && (
-                          <div className="px-4 pb-4 pt-2">
+                          <div className="px-4 pb-4 pt-1">
                             <div className="text-sm text-gray-600 bg-gray-50 px-4 pt-3 pb-2 mb-5 rounded-sm">
                               <InputNotesSimple
                                 value={it.notes}
