@@ -107,8 +107,8 @@ export default function TripTargets() {
               </>
             ) : (
               <div className="h-full overflow-auto">
-                <div className="mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
-                  <div className="mb-10">
+                <div className="mt-2 sm:mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
+                  <div className="mb-8 sm:mb-10">
                     <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
                   </div>
                   {options.length > 1 && (
