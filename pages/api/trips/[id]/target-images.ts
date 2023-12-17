@@ -8,6 +8,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const id = req.query.id as string;
 
     const targets = await db.collection("targets").doc(id).get();
+
+    if (!targets.exists) {
+      return res.status(200).json([]);
+    }
+
     const data = (targets.data() as Targets) || [];
 
     const targetCodes = data.items.map((t) => t.code);

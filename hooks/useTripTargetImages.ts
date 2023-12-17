@@ -13,7 +13,7 @@ export default function useTripTargetImages() {
   const { data } = useQuery<TargetImageT[]>([`/api/trips/${tripId}/target-images`], {
     enabled: !!tripId,
     meta: {
-      errorMessage: "Failed to load hotspot targets",
+      errorMessage: "Failed to load images",
     },
   });
 

@@ -21,6 +21,8 @@ import { useProfile } from "providers/profile";
 import useTripTargetImages from "hooks/useTripTargetImages";
 import AngleDown from "icons/AngleDown";
 import MerlinkLink from "components/MerlinLink";
+import Button from "components/Button";
+import Link from "next/link";
 
 export default function TripTargets() {
   const { open } = useModal();
@@ -146,13 +148,33 @@ export default function TripTargets() {
                       </Transition>
                     </Menu>
                   )}
-                  <Input
-                    type="search"
-                    value={search}
-                    onChange={(e: any) => setSearch(e.target.value)}
-                    placeholder="Search species"
-                    className="mb-4"
-                  />
+                  {!!targets?.N && !filteredTargets?.length && (
+                    <div className="bg-white rounded-lg shadow p-4 text-center">
+                      <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
+                      <p className="text-gray-500 text-sm">
+                        It looks like you have already seen all the species in this region.
+                      </p>
+                    </div>
+                  )}
+                  {!targets?.N && !filteredTargets?.length && (
+                    <div className="bg-white rounded-lg shadow p-4 text-center">
+                      <h3 className="text-lg font-medium mb-4 text-gray-700">
+                        You haven&apos;t imported your targets yet
+                      </h3>
+                      <Button href={`/${trip?.id}/import-targets?redirect=targets`} color="primary" size="sm">
+                        Import Targets
+                      </Button>
+                    </div>
+                  )}
+                  {!!filteredTargets?.length && (
+                    <Input
+                      type="search"
+                      value={search}
+                      onChange={(e: any) => setSearch(e.target.value)}
+                      placeholder="Search species"
+                      className="mb-4"
+                    />
+                  )}
                   {filteredTargets?.map((it) => {
                     const imgUrl = images?.find((image) => image.code === it.code)?.url;
                     return (
@@ -214,6 +236,16 @@ export default function TripTargets() {
                       </article>
                     );
                   })}
+                  {!!targets?.N && (
+                    <div className="my-4">
+                      <Link
+                        href={`/${trip?.id}/import-targets?redirect=targets`}
+                        className="text-sky-600 font-bold text-sm"
+                      >
+                        Re-import targets
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
