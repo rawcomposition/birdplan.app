@@ -202,7 +202,12 @@ export default function TripTargets() {
                                     <span className="sm:hidden">{index + 1}.</span> {it.name}
                                   </h3>
                                 </MerlinkLink>
-                                <span className="text-gray-600 text-[13px]">{it.percent}%</span>
+                                <span
+                                  className="text-gray-600 text-[13px]"
+                                  title="Percentage of checklists in the region that include this species"
+                                >
+                                  {it.percent}%
+                                </span>
                               </div>
                               <div className="text-[13px] text-gray-600 flex items-center gap-2">
                                 <InputNotesSimple
