@@ -34,7 +34,7 @@ export default function SettingsSidebarBlock() {
           <Feather aria-hidden="true" />
           {!!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List"}
         </Link>
-        <Link href={`/${trip?.id}/import-targets`} className="flex items-center gap-2 text-gray-300">
+        <Link href={`/${trip?.id}/import-targets?redirect=targets`} className="flex items-center gap-2 text-gray-300">
           <Bullseye aria-hidden="true" />
           {!!targets?.items?.length ? "Update Targets" : "Import Targets"}
         </Link>

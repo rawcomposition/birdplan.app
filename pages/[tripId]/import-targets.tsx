@@ -21,6 +21,7 @@ export default function ImportTargets() {
   const { trip, setTargets } = useTrip();
   const { lifelist } = useProfile();
   const router = useRouter();
+  const redirect = router.query.redirect || "";
   const { closeSidebar } = useUI();
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const region = trip?.region;
@@ -28,7 +29,7 @@ export default function ImportTargets() {
   const startMonth = trip?.startMonth || 1;
   const endMonth = trip?.endMonth || 12;
 
-  const redirectUrl = lifelist.length > 0 ? `/${trip?.id}` : `/import-lifelist?tripId=${trip?.id}`;
+  const redirectUrl = lifelist.length > 0 ? `/${trip?.id}/${redirect}` : `/import-lifelist?tripId=${trip?.id}`;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!trip) return;

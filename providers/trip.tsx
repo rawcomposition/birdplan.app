@@ -64,14 +64,15 @@ const TripProvider = ({ children }: Props) => {
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
-  const id = useRouter().query.tripId?.toString();
+  const { query, pathname } = useRouter();
+  const id = query.tripId?.toString();
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
   React.useEffect(() => {
     return () => setSelectedSpecies(undefined);
-  }, [id]);
+  }, [id, pathname]);
 
   React.useEffect(() => {
     if (!id) return;
@@ -185,6 +186,16 @@ const useTrip = () => {
   const setTargets = async (data: Targets) => {
     if (!trip) return;
     await updateTargets(trip.id, data, true);
+  };
+
+  const setTargetNotes = async (code: string, notes: string) => {
+    if (!trip || !state.targets) return;
+    const newItems =
+      state.targets.items?.map((it) => {
+        if (it.code === code) return { ...it, notes };
+        return it;
+      }) || [];
+    await setTargets({ ...state.targets, items: newItems });
   };
 
   const saveHotspotNotes = async (id: string, notes: string) => {
@@ -414,6 +425,7 @@ const useTrip = () => {
     removeMarker,
     setTargets,
     setStartDate,
+    setTargetNotes,
     appendItineraryDay,
     removeItineraryDay,
     addItineraryDayLocation,
