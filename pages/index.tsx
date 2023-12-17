@@ -8,7 +8,7 @@ import Star from "icons/Star";
 import MapMarker from "icons/MapMarker";
 import Bins from "icons/Bins";
 import User from "icons/User";
-import Phone from "icons/Phone";
+import Calendar from "icons/Calendar";
 import { useUser } from "providers/user";
 import Footer from "components/Footer";
 
@@ -34,9 +34,9 @@ const features = [
     icon: MapMarker,
   },
   {
-    name: "Mobile friendly.",
-    description: "Though we don't have an app yet, BirdPlan.app is mobile friendly and works on any device.",
-    icon: Phone,
+    name: "Manage itinerary.",
+    description: "Plan your daily schedule by adding hotspots. Travel time is auto calculated between locations",
+    icon: Calendar,
   },
   {
     name: "Invite collaborators.",
@@ -94,7 +94,7 @@ export default function Planner() {
         <div className="relative overflow-hidden pt-8 md:pt-16 mb-12 md:mb-32">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <img
-              src="/screenshot.jpg"
+              src="/screenshot2.jpg"
               alt="App screenshot"
               className="mb-[-12%] rounded-xl shadow-2xl ring-1 ring-gray-900/10"
               width="2400"

@@ -26,7 +26,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
-  const { trip, canEdit, selectedSpecies, setSelectedSpecies } = useTrip();
+  const { trip, canEdit, setSelectedSpecies } = useTrip();
   const { closeSidebar, openSidebar, sidebarOpen } = useUI();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
@@ -41,20 +41,20 @@ export default function Trip() {
     id: it.id,
   }));
 
-  const markers = selectedSpecies ? [] : [...savedHotspotMarkers];
-  const customMarkers = selectedSpecies ? [] : trip?.markers || [];
+  const markers = [...savedHotspotMarkers];
+  const customMarkers = trip?.markers || [];
 
   const hotspotClick = (id: string) => {
+    setSelectedSpecies(undefined);
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
     const hotspot = allHotspots.find((it) => it.id === id);
 
     if (!hotspot) return toast.error("Hotspot not found");
-    open("hotspot", { hotspot, speciesCode: selectedSpecies });
+    open("hotspot", { hotspot });
   };
 
   const handleEnableAddingMarker = () => {
     setIsAddingMarker(true);
-    setSelectedSpecies(undefined);
     closeSidebar();
   };
 
@@ -133,7 +133,6 @@ export default function Trip() {
 
           <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
             <>
-              {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
               <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox
@@ -141,7 +140,7 @@ export default function Trip() {
                     onHotspotClick={hotspotClick}
                     markers={markers}
                     customMarkers={customMarkers}
-                    hotspotLayer={showAll && !selectedSpecies && hotspotLayer}
+                    hotspotLayer={showAll && hotspotLayer}
                     bounds={trip.bounds}
                     addingMarker={isAddingMarker}
                     onDisableAddingMarker={() => setIsAddingMarker(false)}
