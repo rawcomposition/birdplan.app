@@ -12,7 +12,7 @@ export default function MerlinkLink({ code, children, className }: MerlinLinkPro
       <a href={`https://ebird.org/species/${code}`} target="_blank" className={clsx(className, "hidden md:inline")}>
         {children}
       </a>
-      <a href={`merlinbirdid://species/${code}'`} target="_blank" className={clsx(className, "md:hidden")}>
+      <a href={`merlinbirdid://species/${code}`} target="_blank" className={clsx(className, "md:hidden")}>
         {children}
       </a>
     </>
