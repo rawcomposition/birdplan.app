@@ -23,10 +23,13 @@ import AngleDown from "icons/AngleDown";
 import MerlinkLink from "components/MerlinLink";
 import Button from "components/Button";
 import Link from "next/link";
+import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
+import { dateTimeToRelative } from "lib/helpers";
 
 export default function TripTargets() {
   const { open } = useModal();
   const { user } = useUser();
+  const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const { targets, trip, invites, canEdit, selectedSpecies, setSelectedSpecies, setTargetNotes } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
@@ -37,6 +40,8 @@ export default function TripTargets() {
   const images = useTripTargetImages();
   const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
+
+  const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
 
   const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
@@ -74,6 +79,14 @@ export default function TripTargets() {
   const handleSeen = (code: string, name: string) => {
     if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
     addToLifeList(code);
+  };
+
+  const onToggleExpand = (code: string) => {
+    if (expandedCodes.includes(code)) {
+      setExpandedCodes(expandedCodes.filter((it) => it !== code));
+    } else {
+      setExpandedCodes([...expandedCodes, code]);
+    }
   };
 
   return (
@@ -177,16 +190,15 @@ export default function TripTargets() {
                   )}
                   {filteredTargets?.map((it, index) => {
                     const imgUrl = images?.find((image) => image.code === it.code)?.url;
+                    const isExpanded = expandedCodes.includes(it.code);
+                    const lastReport = recentSpecies?.find((species) => species.code === it.code);
                     return (
                       <article
                         key={it.code}
                         className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col relative"
                       >
-                        <span className="absolute top-0 right-0 bg-gray-200 text-gray-600 text-[12px] px-2 py-1 rounded-bl-md">
-                          {index + 1}
-                        </span>
-                        <div className="flex items-start">
-                          <MerlinkLink code={it.code} className="flex-shrink-0">
+                        <div className="flex items-center cursor-pointer" onClick={() => onToggleExpand(it.code)}>
+                          <MerlinkLink code={it.code} className="flex-shrink-0 mb-auto">
                             <img
                               src={imgUrl || "/placeholder.png"}
                               alt={it.name}
@@ -199,7 +211,7 @@ export default function TripTargets() {
                               <div className="flex items-center gap-3">
                                 <MerlinkLink code={it.code}>
                                   <h3 className="font-bold text-gray-800">
-                                    <span className="sm:hidden">{index + 1}.</span> {it.name}
+                                    <span className="font-normal">{index + 1}.</span> {it.name}
                                   </h3>
                                 </MerlinkLink>
                                 <span
@@ -209,38 +221,59 @@ export default function TripTargets() {
                                   {it.percent}%
                                 </span>
                               </div>
-                              <div className="text-[13px] text-gray-600 flex items-center gap-2">
-                                <InputNotesSimple
-                                  value={it.notes}
-                                  onBlur={(value) => setTargetNotes(it.code, value)}
-                                  className="mt-1 mb-4 w-full"
-                                  canEdit={canEdit}
-                                  showDone
-                                />
-                              </div>
+                              <p className="text-[14px] text-gray-600">
+                                {lastReport?.date
+                                  ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
+                                  : "> 30 days ago"}
+                              </p>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex border-t border-gray-200 text-sm">
-                          <button
-                            type="button"
-                            className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
-                            onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
-                          >
-                            <Map className="text-red-500/80" />
-                            View Map
-                          </button>
-                          {canEdit && (
+                          <div className="flex items-center pr-4 pl-1">
                             <button
                               type="button"
-                              className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
-                              onClick={() => handleSeen(it.code, it.name)}
+                              className={clsx("w-5 h-5 transition-all ease-in-out", isExpanded && "rotate-180")}
                             >
-                              <CheckIcon className="text-green-500/80" />
-                              Mark as seen
+                              <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                                <path d="M239 401c9.4 9.4 24.6 9.4 33.9 0L465 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-175 175L81 175c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L239 401z" />
+                              </svg>
                             </button>
-                          )}
+                          </div>
                         </div>
+                        {isExpanded && (
+                          <div className="px-4 pb-4 pt-2">
+                            <div className="text-sm text-gray-600 bg-gray-50 px-4 pt-3 pb-2 mb-4 rounded-sm">
+                              <InputNotesSimple
+                                value={it.notes}
+                                onBlur={(value) => setTargetNotes(it.code, value)}
+                                className=" w-full"
+                                canEdit={canEdit}
+                                showDone
+                              />
+                            </div>
+                            <div className="flex text-sm gap-2">
+                              <Button
+                                color="pillOutlineGray"
+                                type="button"
+                                className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4"
+                                onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
+                              >
+                                <Map className="text-red-500/80" />
+                                View Map
+                              </Button>
+                              {canEdit && (
+                                <Button
+                                  color="pillOutlineGray"
+                                  type="button"
+                                  className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4"
+                                  onClick={() => handleSeen(it.code, it.name)}
+                                >
+                                  <CheckIcon className="text-green-500/80" />
+                                  Mark as seen
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </article>
                     );
                   })}

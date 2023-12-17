@@ -211,14 +211,19 @@ export const getTzFromLatLng = async (lat: number, lng: number) => {
   return null;
 };
 
-export const dateTimeToRelative = (date: string, timezone?: string) => {
+export const dateTimeToRelative = (date: string, timezone?: string, includeAgo?: boolean) => {
   if (!timezone || !date) return "";
   const today = dayjs().tz(timezone).format("YYYY-MM-DD");
   const yesterday = dayjs().tz(timezone).subtract(1, "day").format("YYYY-MM-DD");
   const dateFormatted = dayjs(date).tz(timezone).format("YYYY-MM-DD");
   if (dateFormatted === today) return "Today";
   if (dateFormatted === yesterday) return "Yesterday";
-  const result = dayjs.tz(date, timezone).fromNow().replace(" ago", "").replace("an ", "1 ").replace("a ", "1 ");
+  const result = dayjs
+    .tz(date, timezone)
+    .fromNow()
+    .replace(includeAgo ? "" : " ago", "")
+    .replace("an ", "1 ")
+    .replace("a ", "1 ");
 
   return result;
 };
