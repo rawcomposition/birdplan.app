@@ -202,11 +202,13 @@ export default function TripTargets() {
                                 {it.percent}%
                               </span>
                             </div>
-                            <p className="text-[14px] text-gray-600">
+                            <span className="text-[14px] text-gray-600" title="Last reported">
                               {lastReport?.date
                                 ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
+                                : loadingRecent
+                                ? "loading last report..."
                                 : "> 30 days ago"}
-                            </p>
+                            </span>
                           </div>
                         </div>
                         <div className="flex items-center pr-4 pl-1">
