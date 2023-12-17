@@ -209,11 +209,9 @@ export default function TripTargets() {
                           <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex items-start flex-grow gap-4">
                             <div className="flex flex-col gap-1 w-full mt-1">
                               <div className="flex items-center gap-3">
-                                <MerlinkLink code={it.code}>
-                                  <h3 className="font-bold text-gray-800">
-                                    <span className="font-normal">{index + 1}.</span> {it.name}
-                                  </h3>
-                                </MerlinkLink>
+                                <h3 className="font-bold text-gray-800">
+                                  <span className="font-normal">{index + 1}.</span> {it.name}
+                                </h3>
                                 <span
                                   className="text-gray-600 text-[13px]"
                                   title="Percentage of checklists in the region that include this species"
@@ -241,7 +239,7 @@ export default function TripTargets() {
                         </div>
                         {isExpanded && (
                           <div className="px-4 pb-4 pt-2">
-                            <div className="text-sm text-gray-600 bg-gray-50 px-4 pt-3 pb-2 mb-4 rounded-sm">
+                            <div className="text-sm text-gray-600 bg-gray-50 px-4 pt-3 pb-2 mb-5 rounded-sm">
                               <InputNotesSimple
                                 value={it.notes}
                                 onBlur={(value) => setTargetNotes(it.code, value)}
@@ -258,8 +256,16 @@ export default function TripTargets() {
                                 onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
                               >
                                 <Map className="text-red-500/80" />
-                                View Map
+                                <span className="hidden md:inline">View Map</span>
+                                <span className="md:hidden">Map</span>
                               </Button>
+                              <MerlinkLink
+                                code={it.code}
+                                className="items-center justify-center gap-0.5 whitespace-nowrap font-semibold text-md py-2 px-5 bg-transparent text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors rounded-full"
+                              >
+                                <span className="hidden md:inline">View on </span>
+                                <img src="/ebird.png" alt="eBird" width={40} />
+                              </MerlinkLink>
                               {canEdit && (
                                 <Button
                                   color="pillOutlineGray"
@@ -268,7 +274,8 @@ export default function TripTargets() {
                                   onClick={() => handleSeen(it.code, it.name)}
                                 >
                                   <CheckIcon className="text-green-500/80" />
-                                  Mark as seen
+                                  <span className="hidden md:inline">Mark as seen</span>
+                                  <span className="md:hidden">Seen</span>
                                 </Button>
                               )}
                             </div>
