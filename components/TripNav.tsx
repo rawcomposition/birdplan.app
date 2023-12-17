@@ -1,9 +1,12 @@
+import React from "react";
 import MapFlatIcon from "icons/MapFlat";
 import Bullseye from "icons/Bullseye";
 import Calendar from "icons/Calendar";
 import clsx from "clsx";
 import { useTrip } from "providers/trip";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useModal } from "providers/modals";
 
 const links = [
   { name: "Hotspots", slug: "", Icon: MapFlatIcon },
@@ -17,6 +20,13 @@ type Props = {
 
 export default function TripNav({ active }: Props) {
   const { trip } = useTrip();
+  const { pathname } = useRouter();
+  const { close } = useModal();
+
+  React.useEffect(() => {
+    close();
+  }, [pathname]);
+
   return (
     <div className="flex gap-1.5 items-center flex-shrink-0 px-3 bg-[#1e263a] justify-start h-[52px]">
       {links.map(({ name, slug, Icon }) => (
