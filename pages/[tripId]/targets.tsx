@@ -7,8 +7,6 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
-import Button from "components/Button";
-import ListIcon from "icons/List";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import clsx from "clsx";
@@ -26,7 +24,6 @@ import MerlinkLink from "components/MerlinLink";
 
 export default function TripTargets() {
   const { open } = useModal();
-  const [view, setView] = React.useState<string>("");
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
   const { targets, trip, invites, canEdit, selectedSpecies, setSelectedSpecies, setTargetNotes } = useTrip();
@@ -35,7 +32,6 @@ export default function TripTargets() {
   const [selectedUid, setSelectedUid] = React.useState("");
   const { profiles } = useProfiles(trip?.userIds);
   const { addToLifeList } = useProfile();
-  const { close, modalId } = useModal();
   const images = useTripTargetImages();
   const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
@@ -204,14 +200,16 @@ export default function TripTargets() {
                             <Map className="text-red-500/80" />
                             View Map
                           </button>
-                          <button
-                            type="button"
-                            className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
-                            onClick={() => handleSeen(it.code, it.name)}
-                          >
-                            <CheckIcon className="text-green-500/80" />
-                            Mark as seen
-                          </button>
+                          {canEdit && (
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4 border-r border-gray-200"
+                              onClick={() => handleSeen(it.code, it.name)}
+                            >
+                              <CheckIcon className="text-green-500/80" />
+                              Mark as seen
+                            </button>
+                          )}
                         </div>
                       </article>
                     );
@@ -220,15 +218,6 @@ export default function TripTargets() {
               </div>
             )}
           </div>
-          {view === "" && (
-            <Button
-              color="pillWhite"
-              className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-              onClick={() => setSelectedSpecies(undefined)}
-            >
-              List <ListIcon className="w-4 h-4" />
-            </Button>
-          )}
         </ErrorBoundary>
       </main>
     </div>

@@ -28,7 +28,7 @@ export default function ImportTargets() {
   const startMonth = trip?.startMonth || 1;
   const endMonth = trip?.endMonth || 12;
 
-  const redirectUrl = lifelist.length > 0 ? `/${trip?.id}` : `/import-lifelist?tripId=${trip?.id}`;
+  const redirectUrl = lifelist.length > 0 ? `/${trip?.id}/targets` : `/import-lifelist?tripId=${trip?.id}`;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!trip) return;

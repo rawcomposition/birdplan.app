@@ -64,14 +64,15 @@ const TripProvider = ({ children }: Props) => {
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
-  const id = useRouter().query.tripId?.toString();
+  const { query, pathname } = useRouter();
+  const id = query.tripId?.toString();
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
   React.useEffect(() => {
     return () => setSelectedSpecies(undefined);
-  }, [id]);
+  }, [id, pathname]);
 
   React.useEffect(() => {
     if (!id) return;
