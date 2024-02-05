@@ -14,7 +14,7 @@ import LoginModal from "components/LoginModal";
 import Feather from "icons/Feather";
 
 export default function ImportLifelist() {
-  const { setLifelist, setCountryLifelist } = useProfile();
+  const { setLifelist, setExceptions, exceptions, setCountryLifelist } = useProfile();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { closeSidebar } = useUI();
 
@@ -87,8 +87,20 @@ export default function ImportLifelist() {
               <Download /> Download Life List
             </Button>
           </div>
+          {!isCountry && (
+            <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
+              <h3 className="text-lg font-medium mb-4 text-gray-700">2. Enter Exceptions (optional)</h3>
+              <p className="text-sm text-gray-600 mb-2">Enter comma separated list of eBird species codes to ignore.</p>
+              <input
+                type="text"
+                className="input text-xs"
+                onBlur={(e) => setExceptions(e.target.value)}
+                defaultValue={exceptions?.join(", ")}
+              />
+            </div>
+          )}
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">2. Upload file</h3>
+            <h3 className="text-lg font-medium mb-4 text-gray-700">{isCountry ? "2." : "3."} Upload file</h3>
             <p className="text-sm text-gray-600 mb-2">Upload the CSV file you downloaded in step 1.</p>
             <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
           </div>

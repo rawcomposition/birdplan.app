@@ -1,6 +1,7 @@
 export type Profile = {
   id: string;
   lifelist: string[];
+  exceptions?: string[];
   countryLifelist: string[];
   radius: number;
   lat?: number;
