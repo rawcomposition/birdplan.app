@@ -144,11 +144,22 @@ export default function TripTargets() {
                     </Transition>
                   </Menu>
                 )}
+                {!!targetSpecies?.length && (
+                  <Input
+                    type="search"
+                    value={search}
+                    onChange={(e: any) => setSearch(e.target.value)}
+                    placeholder="Search species"
+                    className="mb-4"
+                  />
+                )}
                 {!!targets?.N && !filteredTargets?.length && (
                   <div className="bg-white rounded-lg shadow p-4 text-center">
                     <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                     <p className="text-gray-500 text-sm">
-                      It looks like you have already seen all the species in this region.
+                      {filteredTargets?.length === targetSpecies?.length
+                        ? "It looks like you have already seen all the species in this region."
+                        : "No targets found for your search."}
                     </p>
                   </div>
                 )}
@@ -161,15 +172,6 @@ export default function TripTargets() {
                       Import Targets
                     </Button>
                   </div>
-                )}
-                {!!filteredTargets?.length && (
-                  <Input
-                    type="search"
-                    value={search}
-                    onChange={(e: any) => setSearch(e.target.value)}
-                    placeholder="Search species"
-                    className="mb-4"
-                  />
                 )}
                 {filteredTargets?.map((it, index) => {
                   const imgUrl = images?.find((image) => image.code === it.code)?.url;
