@@ -57,7 +57,7 @@ export default function Hotspot({ hotspot }: Props) {
 
   if (isSaved) {
     tabs.push({
-      label: hotspot?.targetsId ? "Targets" : "Import Targets",
+      label: savedHotspot?.targetsId ? "Targets" : "Import Targets",
       title: "",
       id: "targets",
     });
