@@ -10,13 +10,13 @@ import XMarkBold from "icons/XMarkBold";
 type Props = {
   isEditing: boolean;
   dayId: string;
-  locationId: string;
+  id: string;
 };
 
-export default function TravelTime({ isEditing, dayId, locationId }: Props) {
+export default function TravelTime({ isEditing, dayId, id }: Props) {
   const { trip, calcTravelTime, markTravelTimeDeleted } = useTrip();
   const locations = trip?.itinerary?.find((day) => day.id === dayId)?.locations || [];
-  const thisLocationIndex = locations.findIndex((it) => it.locationId === locationId);
+  const thisLocationIndex = locations.findIndex((it) => it.id === id);
   const location1 = locations[thisLocationIndex - 1];
   const location2 = locations[thisLocationIndex]; // current location
   const travelData = location2?.travel;
@@ -24,6 +24,7 @@ export default function TravelTime({ isEditing, dayId, locationId }: Props) {
   const calculate = async (method: "walking" | "driving" | "cycling") => {
     await calcTravelTime({
       dayId,
+      id,
       locationId1: location1?.locationId,
       locationId2: location2?.locationId,
       method,
@@ -104,7 +105,7 @@ export default function TravelTime({ isEditing, dayId, locationId }: Props) {
           {travelData && !travelData?.isDeleted && (
             <button
               type="button"
-              onClick={() => markTravelTimeDeleted(dayId, locationId)}
+              onClick={() => markTravelTimeDeleted(dayId, id)}
               className="text-[16px] p-1 -mt-1.5 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <XMarkBold />

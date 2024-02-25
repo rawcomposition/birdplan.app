@@ -261,10 +261,11 @@ const useTrip = () => {
 
   const addItineraryDayLocation = async (dayId: string, type: "hotspot" | "marker", locationId: string) => {
     if (!trip) return;
+    const id = randomId(6);
     const newItinerary =
       trip.itinerary?.map((it) => {
         if (it.id === dayId) {
-          const locations = [...(it.locations || []), { type, locationId }];
+          const locations = [...(it.locations || []), { type, locationId, id }];
           return { ...it, locations };
         }
         return it;
@@ -273,12 +274,12 @@ const useTrip = () => {
     await recalcTravelTime(newItinerary, dayId);
   };
 
-  const removeItineraryDayLocation = async (dayId: string, locationId: string) => {
+  const removeItineraryDayLocation = async (dayId: string, id: string) => {
     if (!trip) return;
     const newItinerary =
       trip.itinerary?.map((it) => {
         if (it.id === dayId) {
-          const locations = it.locations?.filter((it) => it.locationId !== locationId);
+          const locations = it.locations?.filter((it) => it.id !== id);
           return { ...it, locations };
         }
         return it;
@@ -287,13 +288,13 @@ const useTrip = () => {
     await recalcTravelTime(newItinerary, dayId);
   };
 
-  const moveItineraryDayLocation = async (dayId: string, locationId: string, direction: "up" | "down") => {
+  const moveItineraryDayLocation = async (dayId: string, id: string, direction: "up" | "down") => {
     if (!trip) return;
     const newItinerary =
       trip.itinerary?.map((it) => {
         if (it.id === dayId) {
           const locations = [...(it.locations || [])];
-          const locationIndex = locations.findIndex((it) => it.locationId === locationId);
+          const locationIndex = locations.findIndex((it) => it.id === id);
           const location = locations.splice(locationIndex, 1)[0];
           const newIndex = direction === "up" ? locationIndex - 1 : locationIndex + 1;
           locations.splice(newIndex, 0, location);
@@ -326,9 +327,20 @@ const useTrip = () => {
           day.locations?.map(async ({ travel, ...it }, index) => {
             const prevLocation = day.locations[index - 1];
             if (!prevLocation) return it;
-            if (travel?.locationId === prevLocation.locationId) return { ...it, travel };
+            if (prevLocation.locationId && prevLocation.locationId == it.locationId) {
+              return {
+                ...it,
+                travel: {
+                  distance: 0,
+                  time: 0,
+                  method: travel?.method || defaultMethod || "driving",
+                  locationId: prevLocation.locationId,
+                },
+              };
+            }
             const travelData = await calcTravelTime({
               dayId: day.id,
+              id: it.id,
               locationId1: prevLocation.locationId,
               locationId2: it.locationId,
               method: travel?.method || defaultMethod || "driving",
@@ -342,14 +354,13 @@ const useTrip = () => {
     await updateItinerary(trip.id, newItinerary);
   };
 
-  const markTravelTimeDeleted = async (dayId: string, locationId: string) => {
+  const markTravelTimeDeleted = async (dayId: string, id: string) => {
     if (!trip) return;
     const newItinerary =
       trip.itinerary?.map((it) => {
         if (it.id === dayId) {
           const locations = it.locations?.map((it) => {
-            if (it.locationId === locationId)
-              return { ...it, travel: it.travel ? { ...it.travel, isDeleted: true } : undefined };
+            if (it.id === id) return { ...it, travel: it.travel ? { ...it.travel, isDeleted: true } : undefined };
             return it;
           });
           return { ...it, locations };
@@ -359,13 +370,13 @@ const useTrip = () => {
     await updateItinerary(trip.id, newItinerary);
   };
 
-  const saveItineraryTravelData = async (dayId: string, locationId: string, data: TravelData) => {
+  const saveItineraryTravelData = async (dayId: string, id: string, data: TravelData) => {
     if (!trip) return;
     const newItinerary =
       trip.itinerary?.map((it) => {
         if (it.id === dayId) {
           const locations = it.locations?.map((it) => {
-            if (it.locationId === locationId) return { ...it, travel: data };
+            if (it.id === id) return { ...it, travel: data };
             return it;
           });
           return { ...it, locations };
@@ -377,13 +388,14 @@ const useTrip = () => {
 
   type CalcTravelTimePropsType = {
     dayId: string;
+    id: string;
     locationId1: string;
     locationId2: string;
     method: "walking" | "driving" | "cycling";
     save?: boolean;
   };
 
-  const calcTravelTime = async ({ dayId, locationId1, locationId2, method, save }: CalcTravelTimePropsType) => {
+  const calcTravelTime = async ({ dayId, id, locationId1, locationId2, method, save }: CalcTravelTimePropsType) => {
     const location1 =
       trip?.hotspots?.find((h) => h.id === locationId1 || "") || trip?.markers?.find((m) => m.id === locationId1 || "");
 
@@ -394,6 +406,20 @@ const useTrip = () => {
       toast.error(`Unable to calculate travel time to ${location2?.name || "unknown location"}`);
       return;
     }
+
+    if (locationId1 && locationId1 === locationId2) {
+      const travelData = {
+        distance: 0,
+        time: 0,
+        method,
+        locationId: locationId1,
+      };
+      if (save) {
+        await saveItineraryTravelData(dayId, id, travelData);
+      }
+      return travelData;
+    }
+
     console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
     const { lat: lat1, lng: lng1 } = location1;
     const { lat: lat2, lng: lng2 } = location2;
@@ -408,7 +434,7 @@ const useTrip = () => {
       };
 
       if (save) {
-        await saveItineraryTravelData(dayId, locationId2, travelData);
+        await saveItineraryTravelData(dayId, id, travelData);
       }
       return travelData;
     } catch (e) {

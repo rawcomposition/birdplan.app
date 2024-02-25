@@ -34,7 +34,7 @@ export default function Trip() {
   const { open, close, modalId } = useModal();
 
   const [editingStartDate, setEditingStartDate] = React.useState(false);
-  const [editing, setEditing] = React.useState(!trip?.startDate || !trip?.itinerary?.length);
+  const [editing, setEditing] = React.useState(!!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length));
   const isEditing = canEdit && editing;
 
   const submitStartDate = (e: React.FormEvent<HTMLFormElement>) => {
@@ -116,10 +116,10 @@ export default function Trip() {
                     No itinerary has been set for this trip yet.
                   </div>
                 )}
-                {trip?.itinerary?.map(({ id, notes, locations }, i) => {
+                {trip?.itinerary?.map(({ id: dayId, notes, locations }, i) => {
                   const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
                   return (
-                    <div key={id} className="mb-8">
+                    <div key={dayId} className="mb-8">
                       <div className="mb-3">
                         <div className="flex flex-col">
                           <h1 className="text-xl font-bold text-gray-700">Day {i + 1}</h1>
@@ -127,28 +127,25 @@ export default function Trip() {
                         </div>
                         <InputNotesSimple
                           value={notes}
-                          onBlur={(value) => setItineraryDayNotes(id, value)}
+                          onBlur={(value) => setItineraryDayNotes(dayId, value)}
                           className="mt-1 mb-4"
                           canEdit={isEditing}
                         />
                       </div>
                       {!!locations?.length && (
                         <ul className="flex flex-col">
-                          {locations?.map(({ locationId, type }, index) => {
+                          {locations?.map(({ locationId, type, id }, index) => {
                             const location =
                               trip?.hotspots?.find((h) => h.id === locationId) ||
                               trip?.markers?.find((m) => m.id === locationId);
                             return (
-                              <React.Fragment key={locationId}>
+                              <React.Fragment key={id}>
                                 {index !== 0 && (
                                   <li>
-                                    <TravelTime isEditing={isEditing} dayId={id} locationId={locationId} />
+                                    <TravelTime isEditing={isEditing} dayId={dayId} id={id} />
                                   </li>
                                 )}
-                                <li
-                                  key={locationId}
-                                  className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow"
-                                >
+                                <li className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow">
                                   <button
                                     className="flex gap-2 text-left -my-[9px] py-3 -ml-4 pl-4 grow"
                                     onClick={
@@ -186,7 +183,7 @@ export default function Trip() {
                                       {index !== locations.length - 1 && (
                                         <button
                                           type="button"
-                                          onClick={() => moveItineraryDayLocation(id, locationId, "down")}
+                                          onClick={() => moveItineraryDayLocation(dayId, id, "down")}
                                           className="text-[16px] p-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
                                         >
                                           <AngleDownBold />
@@ -195,7 +192,7 @@ export default function Trip() {
                                       {index !== 0 && (
                                         <button
                                           type="button"
-                                          onClick={() => moveItineraryDayLocation(id, locationId, "up")}
+                                          onClick={() => moveItineraryDayLocation(dayId, id, "up")}
                                           className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                                         >
                                           <AngleDownBold className="rotate-180" />
@@ -203,7 +200,7 @@ export default function Trip() {
                                       )}
                                       <button
                                         type="button"
-                                        onClick={() => removeItineraryDayLocation(id, locationId)}
+                                        onClick={() => removeItineraryDayLocation(dayId, id)}
                                         className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                                       >
                                         <XMarkBold />
@@ -218,12 +215,12 @@ export default function Trip() {
                       )}
                       {isEditing && (
                         <div className="flex justify-between items-center gap-2 mt-3">
-                          <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId: id })}>
+                          <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId })}>
                             + Add Location
                           </Button>
                           <button
                             type="button"
-                            onClick={() => handleRemoveDay(id)}
+                            onClick={() => handleRemoveDay(dayId)}
                             className="text-[12px] py-0.5 px-1.5 text-red-700"
                           >
                             Remove day

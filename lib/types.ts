@@ -99,6 +99,7 @@ export type Day = {
     travel?: TravelData;
     locationId: string;
     type: "hotspot" | "marker";
+    id: string;
   }[];
 };
 

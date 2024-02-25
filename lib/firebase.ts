@@ -16,7 +16,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = fs.getFirestore(app);
+export const db = fs.initializeFirestore(app, { ignoreUndefinedProperties: true });
 
 export const setProfileValue = async (key: string, value: Profile[keyof Profile]) => {
   const user = auth.currentUser;
