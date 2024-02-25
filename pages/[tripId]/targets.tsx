@@ -18,7 +18,6 @@ import { Menu, Transition } from "@headlessui/react";
 import ErrorBoundary from "components/ErrorBoundary";
 import useProfiles from "hooks/useProfiles";
 import { useProfile } from "providers/profile";
-import useTripTargetImages from "hooks/useTripTargetImages";
 import AngleDown from "icons/AngleDown";
 import MerlinkLink from "components/MerlinLink";
 import Button from "components/Button";
@@ -37,7 +36,6 @@ export default function TripTargets() {
   const [selectedUid, setSelectedUid] = React.useState("");
   const { profiles } = useProfiles(trip?.userIds);
   const { addToLifeList } = useProfile();
-  const images = useTripTargetImages();
   const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
 
@@ -174,7 +172,6 @@ export default function TripTargets() {
                   </div>
                 )}
                 {filteredTargets?.map((it, index) => {
-                  const imgUrl = images?.find((image) => image.code === it.code)?.url;
                   const isExpanded = expandedCodes.includes(it.code);
                   const lastReport = recentSpecies?.find((species) => species.code === it.code);
                   return (
@@ -185,9 +182,9 @@ export default function TripTargets() {
                       <div className="flex items-center cursor-pointer" onClick={() => onToggleExpand(it.code)}>
                         <div className="flex-shrink-0 mb-auto">
                           <img
-                            src={imgUrl || "/placeholder.png"}
+                            src={`/api/species-img/${it.code}`}
                             alt={it.name}
-                            className={clsx("w-16 h-16 rounded-lg object-cover m-4 mr-8", !imgUrl && "opacity-60")}
+                            className="w-16 h-16 rounded-lg object-cover m-4 mr-8"
                             loading="lazy"
                           />
                         </div>
