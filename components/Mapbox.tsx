@@ -204,7 +204,7 @@ export default function Mapbox({
           </span>
         </div>
       )}
-      <div className="absolute bottom-0 left-16 right-16 h-12 pointer-events-none touch-none sm:hidden">
+      <div className="absolute bottom-0 left-16 right-16 h-12 sm:hidden">
         {/* Prevents map from panning when close PWA on iOS with no home button */}
       </div>
     </div>
