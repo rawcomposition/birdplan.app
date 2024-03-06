@@ -1,31 +1,26 @@
 import React from "react";
-import Sidebar from "components/Sidebar";
 import Header from "components/Header";
 import Head from "next/head";
 import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
-import Expand from "components/Expand";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { getMarkerColorIndex } from "lib/helpers";
-import HotspotList from "components/HotspotList";
-import CustomMarkerRow from "components/CustomMarkerRow";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
-import Button from "components/Button";
-import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
-import TripLinks from "components/TripLinks";
-import MapFlatIcon from "icons/MapFlat";
-import ListIcon from "icons/List";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import ErrorBoundary from "components/ErrorBoundary";
+import MapButton from "components/MapButton";
+import MapFlatPinIcon from "icons/MapFlatPin";
+import MarkerPlusIcon from "icons/MarkerPlus";
+import LayersIcon from "icons/Layers";
 
 export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
+  const [showSatellite, setShowSatellite] = React.useState(false);
   const { trip, canEdit, setSelectedSpecies } = useTrip();
-  const { closeSidebar, openSidebar, sidebarOpen } = useUI();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
@@ -50,11 +45,6 @@ export default function Trip() {
     open("hotspot", { hotspot });
   };
 
-  const handleEnableAddingMarker = () => {
-    setIsAddingMarker(true);
-    closeSidebar();
-  };
-
   const tripIsLoaded = !!trip;
   const tripIsNew = trip?.hotspots.length === 0;
 
@@ -74,60 +64,30 @@ export default function Trip() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="" />
-      <main className="flex h-[calc(100%-60px-52px)]">
+      <main className="flex h-[calc(100%-60px-52px)] relative">
+        <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
+          <MapButton
+            onClick={() => setShowAll((prev) => !prev)}
+            tooltip={showAll ? "Hide hotspots" : "Show hotspots"}
+            active={showAll}
+          >
+            <MapFlatPinIcon />
+          </MapButton>
+          <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>
+            <LayersIcon />
+          </MapButton>
+          {canEdit && (
+            <MapButton
+              onClick={() => setIsAddingMarker((prev) => !prev)}
+              tooltip={isAddingMarker ? "Cancel add marker" : "Add marker"}
+              active={isAddingMarker}
+            >
+              <MarkerPlusIcon />
+            </MapButton>
+          )}
+        </div>
         <ErrorBoundary>
-          <Sidebar noPadding noAnimation noAccount extraMenuHeight={52} widthClass="w-full sm:w-80">
-            <div className="mb-4 px-6 pt-4 border-t border-gray-700">
-              <label className="text-white text-sm flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={showAll}
-                  onChange={() => setShowAll((prev) => !prev)}
-                />
-                Show all hotspots
-              </label>
-            </div>
-
-            <div>
-              <Expand heading="Trip Hotspots" count={savedHotspots.length}>
-                <HotspotList />
-              </Expand>
-
-              <Expand heading="Custom Markers" count={trip?.markers?.length}>
-                <ul className="space-y-2 mb-4 text-gray-200">
-                  {trip?.markers?.map((marker) => (
-                    <CustomMarkerRow key={marker.id} {...marker} />
-                  ))}
-                </ul>
-                {canEdit && (
-                  <>
-                    {isAddingMarker ? (
-                      <Button size="xs" color="gray" onClick={() => setIsAddingMarker(false)}>
-                        Cancel Adding Marker
-                      </Button>
-                    ) : (
-                      <Button size="xs" color="primary" onClick={handleEnableAddingMarker}>
-                        + Add Marker
-                      </Button>
-                    )}
-                  </>
-                )}
-              </Expand>
-            </div>
-            <TripLinks />
-            {sidebarOpen && (
-              <Button
-                color="pillWhite"
-                className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-                onClick={closeSidebar}
-              >
-                Map <MapFlatIcon className="w-4 h-4" />
-              </Button>
-            )}
-          </Sidebar>
-
-          <div className="h-full grow flex sm:relative flex-col w-full" onClick={closeSidebar}>
+          <div className="h-full grow flex sm:relative flex-col w-full">
             <>
               <div className="w-full grow relative">
                 {trip?.bounds && (
@@ -140,6 +100,7 @@ export default function Trip() {
                     bounds={trip.bounds}
                     addingMarker={isAddingMarker}
                     onDisableAddingMarker={() => setIsAddingMarker(false)}
+                    showSatellite={showSatellite}
                   />
                 )}
                 {isAddingMarker && (
@@ -164,13 +125,6 @@ export default function Trip() {
               </div>
             </>
           </div>
-          <Button
-            color="pillWhite"
-            className="sm:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2"
-            onClick={openSidebar}
-          >
-            List <ListIcon className="w-4 h-4" />
-          </Button>
         </ErrorBoundary>
       </main>
     </div>

@@ -10,7 +10,7 @@ import { useModal } from "providers/modals";
 import TripOptionsDropdown from "components/TripOptionsDropdown";
 
 const links = [
-  { name: "Hotspots", slug: "", Icon: MapFlatIcon },
+  { name: "Map", slug: "", Icon: MapFlatIcon },
   { name: "Targets", slug: "targets", Icon: Bullseye },
   { name: "Itinerary", slug: "itinerary", Icon: Calendar },
 ];

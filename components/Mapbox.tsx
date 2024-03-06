@@ -1,5 +1,5 @@
 import React from "react";
-import Map, { NavigationControl, Marker, Source, Layer, GeolocateControl } from "react-map-gl";
+import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
 import { Marker as MarkerT, Trip, MarkerIcon, CustomMarker } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
@@ -14,6 +14,7 @@ type Props = {
   hotspotLayer?: any;
   obsLayer?: any;
   addingMarker?: boolean;
+  showSatellite?: boolean;
   onHotspotClick?: (id: string) => void;
   onDisableAddingMarker?: () => void;
 };
@@ -26,9 +27,9 @@ export default function Mapbox({
   hotspotLayer,
   obsLayer,
   addingMarker,
+  showSatellite,
   onDisableAddingMarker,
 }: Props) {
-  const [satellite, setSatellite] = React.useState(false);
   const { open, close } = useModal();
   const { selectedMarkerId } = useTrip();
   const isOpeningModal = React.useRef(false);
@@ -112,7 +113,9 @@ export default function Mapbox({
           latitude: lat,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle={satellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"}
+        mapStyle={
+          showSatellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"
+        }
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
         interactiveLayerIds={activeLayers}
         onMouseLeave={(e) => {
@@ -123,7 +126,9 @@ export default function Mapbox({
         }}
         onClick={(e) => {
           if (addingMarker) {
-            open("addMarker", { lat: e.lngLat.lat, lng: e.lngLat.lng });
+            const lat = Math.round(e.lngLat.lat * 1000000) / 1000000;
+            const lng = Math.round(e.lngLat.lng * 1000000) / 1000000;
+            open("addMarker", { lat, lng });
             onDisableAddingMarker?.();
             return;
           }
@@ -140,8 +145,20 @@ export default function Mapbox({
           [bounds.maxX, bounds.maxY],
         ]}
       >
-        <NavigationControl showCompass={false} />
-        <GeolocateControl positionOptions={{ enableHighAccuracy: true }} trackUserLocation={true} />
+        <GeolocateControl
+          positionOptions={{ enableHighAccuracy: true }}
+          trackUserLocation={true}
+          position="bottom-right"
+          style={{
+            borderRadius: "50%",
+            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+            border: "none",
+            padding: 0,
+            color: "#374151",
+            marginRight: "1rem",
+            marginBottom: "1rem",
+          }}
+        />
         {markers?.map((marker) => (
           <Marker
             key={marker.id}
@@ -177,15 +194,6 @@ export default function Mapbox({
           </Source>
         )}
       </Map>
-      <div className="flex gap-2 absolute top-2 left-2">
-        <button
-          type="button"
-          className="bg-white shadow text-black rounded-sm px-4"
-          onClick={() => setSatellite((prev) => !prev)}
-        >
-          {satellite ? "Terrain" : "Satellite"}
-        </button>
-      </div>
       {obsLayer && (
         <div className="flex absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-2 z-10 rounded-tr-sm">
           <span className="flex items-center gap-1">

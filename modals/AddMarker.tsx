@@ -39,35 +39,33 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
             <Field label="Name">
               <Input type="text" name="name" value={name} autoFocus onChange={(e: any) => setName(e.target.value)} />
             </Field>
-            {!defaultLat && (
-              <div className="flex gap-2">
-                <Field label="Latitude">
-                  <Input
-                    type="string"
-                    name="lat"
-                    value={lat || ""}
-                    onChange={(e: any) => {
-                      const value = e.target.value;
-                      if (value.includes(",")) {
-                        const [lat, lng] = value.split(",");
-                        setLat(Number(lat));
-                        setLng(Number(lng));
-                      } else {
-                        setLat(Number(e.target.value));
-                      }
-                    }}
-                  />
-                </Field>
-                <Field label="Longitude">
-                  <Input
-                    type="string"
-                    name="lng"
-                    value={lng || ""}
-                    onChange={(e: any) => setLng(Number(e.target.value))}
-                  />
-                </Field>
-              </div>
-            )}
+            <div className="flex gap-2">
+              <Field label="Latitude">
+                <Input
+                  type="string"
+                  name="lat"
+                  value={lat || ""}
+                  onChange={(e: any) => {
+                    const value = e.target.value;
+                    if (value.includes(",")) {
+                      const [lat, lng] = value.split(",");
+                      setLat(Number(lat));
+                      setLng(Number(lng));
+                    } else {
+                      setLat(Number(e.target.value));
+                    }
+                  }}
+                />
+              </Field>
+              <Field label="Longitude">
+                <Input
+                  type="string"
+                  name="lng"
+                  value={lng || ""}
+                  onChange={(e: any) => setLng(Number(e.target.value))}
+                />
+              </Field>
+            </div>
             <div>
               <label>Choose icon</label>
               <div className="flex gap-2 mt-2 flex-wrap">
