@@ -33,7 +33,7 @@ export default function MapButton({
     >
       {children}
       {tooltip && (
-        <span className="absolute top-1/2 right-14 sm:left-14 sm:right-auto transform -translate-y-1/2 bg-black/80 text-white text-sm whitespace-nowrap px-2.5 py-1 rounded-lg hidden group-hover:block">
+        <span className="absolute top-1/2 right-14 sm:left-14 sm:right-auto transform -translate-y-1/2 bg-black/80 text-white text-sm whitespace-nowrap px-2.5 py-1 rounded-lg hidden sm:group-hover:block">
           {tooltip}
         </span>
       )}
