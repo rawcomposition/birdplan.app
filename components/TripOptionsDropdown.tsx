@@ -65,7 +65,7 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
   const filteredLinks = links.filter((it) => !it.hidden);
 
   return (
-    <Menu as="div" className="relative z-10 ml-auto">
+    <Menu as="div" className="relative z-20 ml-auto">
       <Menu.Button
         className={
           className ||
