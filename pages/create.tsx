@@ -30,6 +30,8 @@ export default function CreateTrip() {
   const [country, setCountry] = React.useState<Option>();
   const [state, setState] = React.useState<Option[]>();
   const [county, setCounty] = React.useState<Option[]>();
+  const [manualRegion, setManualRegion] = React.useState<string>("");
+  const [isManualRegion, setIsManualRegion] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
@@ -40,6 +42,10 @@ export default function CreateTrip() {
   const requireSubregion = largeRegions.includes(country?.value || "");
 
   const getRegionCode = () => {
+    if (isManualRegion) {
+      if (!manualRegion) return null;
+      return manualRegion.trim().replaceAll(" ", "");
+    }
     if (county && county.length > 0)
       return county
         .map((it) => it.value)
@@ -138,38 +144,70 @@ export default function CreateTrip() {
                   />
                 </div>
               </div>
-              <Field label="Country Region">
-                <RegionSelect
-                  type="country"
-                  parent="world"
-                  onChange={setCountry}
-                  value={country}
-                  menuPortalTarget={typeof document !== "undefined" && document.body}
-                />
-              </Field>
-              <Field label="State/Province Region" isOptional={!requireSubregion}>
-                <RegionSelect
-                  type="subnational1"
-                  parent={country?.value}
-                  onChange={setState}
-                  value={state}
-                  menuPortalTarget={typeof document !== "undefined" && document.body}
-                  isClearable={!requireSubregion}
-                  isMulti
-                />
-              </Field>
-              {state?.length === 1 && (
-                <Field label="County Region" isOptional>
-                  <RegionSelect
-                    type="subnational2"
-                    parent={state?.[0].value}
-                    onChange={setCounty}
-                    value={county}
-                    menuPortalTarget={typeof document !== "undefined" && document.body}
-                    isClearable
-                    isMulti
+              {!isManualRegion && (
+                <>
+                  <Field label="Country Region">
+                    <RegionSelect
+                      type="country"
+                      parent="world"
+                      onChange={setCountry}
+                      value={country}
+                      menuPortalTarget={typeof document !== "undefined" && document.body}
+                    />
+                  </Field>
+                  <Field label="State/Province Region" isOptional={!requireSubregion}>
+                    <RegionSelect
+                      type="subnational1"
+                      parent={country?.value}
+                      onChange={setState}
+                      value={state}
+                      menuPortalTarget={typeof document !== "undefined" && document.body}
+                      isClearable={!requireSubregion}
+                      isMulti
+                    />
+                  </Field>
+                  {state?.length === 1 && (
+                    <Field label="County Region" isOptional>
+                      <RegionSelect
+                        type="subnational2"
+                        parent={state?.[0].value}
+                        onChange={setCounty}
+                        value={county}
+                        menuPortalTarget={typeof document !== "undefined" && document.body}
+                        isClearable
+                        isMulti
+                      />
+                    </Field>
+                  )}
+                </>
+              )}
+              {isManualRegion && (
+                <Field label="ebird region code(s), comma separated">
+                  <Input
+                    type="text"
+                    name="manualRegion"
+                    placeholder="E.g. US-OH-001,US-OH-003"
+                    value={manualRegion}
+                    onChange={(e: any) => setManualRegion(e.target.value)}
                   />
                 </Field>
+              )}
+              {isManualRegion ? (
+                <button
+                  type="button"
+                  onClick={() => setIsManualRegion(false)}
+                  className="text-gray-600 text-sm text-left -mt-2"
+                >
+                  Choose regions from dropdown
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsManualRegion(true)}
+                  className="text-gray-600 text-sm text-left -mt-2"
+                >
+                  Or manually enter regions
+                </button>
               )}
               <div className="flex justify-between">
                 <Button href="/trips" color="gray">
