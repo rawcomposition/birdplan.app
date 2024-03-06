@@ -33,6 +33,7 @@ export default function Trip() {
   } = useTrip();
   const { open, close, modalId } = useModal();
 
+  const hasStartDate = !!trip?.startDate;
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length));
   const isEditing = canEdit && editing;
@@ -77,7 +78,7 @@ export default function Trip() {
                 <div className="mb-8 sm:mb-10">
                   <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold text-gray-700">Trip Itinerary</h1>
-                    {canEdit && (
+                    {canEdit && hasStartDate && (
                       <Button
                         size="smPill"
                         color="pillOutlineGray"
@@ -230,7 +231,7 @@ export default function Trip() {
                     </div>
                   );
                 })}
-                {isEditing && (
+                {isEditing && hasStartDate && (
                   <Button color="primary" onClick={appendItineraryDay} className="mb-8">
                     Add Day
                   </Button>
