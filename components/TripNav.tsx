@@ -7,6 +7,7 @@ import { useTrip } from "providers/trip";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useModal } from "providers/modals";
+import TripOptionsDropdown from "components/TripOptionsDropdown";
 
 const links = [
   { name: "Hotspots", slug: "", Icon: MapFlatIcon },
@@ -38,10 +39,13 @@ export default function TripNav({ active }: Props) {
             active === slug ? "bg-sky-600/80 text-white" : "hover:bg-white/10 text-gray-300"
           )}
         >
-          <Icon />
+          <div className="hidden xs:block">
+            <Icon />
+          </div>
           {name}
         </Link>
       ))}
+      <TripOptionsDropdown />
     </div>
   );
 }

@@ -11,11 +11,9 @@ import HotspotList from "components/HotspotList";
 import CustomMarkerRow from "components/CustomMarkerRow";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
-import SpeciesCard from "components/SpeciesCard";
 import Button from "components/Button";
 import { useUI } from "providers/ui";
 import CloseButton from "components/CloseButton";
-import SettingsSidebarBlock from "components/SettingsSidebarBlock";
 import TripLinks from "components/TripLinks";
 import MapFlatIcon from "icons/MapFlat";
 import ListIcon from "icons/List";
@@ -116,7 +114,6 @@ export default function Trip() {
                   </>
                 )}
               </Expand>
-              {canEdit && <SettingsSidebarBlock />}
             </div>
             <TripLinks />
             {sidebarOpen && (
