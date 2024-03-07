@@ -79,7 +79,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
           Share
         </button>
       )}
-      <AccountDropdown className="ml-auto md:ml-0 mr-6 block" />
+      <AccountDropdown className="ml-auto md:ml-0 sm:mr-8 mr-6 block" />
     </header>
   );
 }
