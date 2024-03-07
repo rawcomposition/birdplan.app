@@ -4,8 +4,6 @@ import Head from "next/head";
 import { useTrip } from "providers/trip";
 import toast from "react-hot-toast";
 import Button from "components/Button";
-import Sidebar from "components/Sidebar";
-import { useUI } from "providers/ui";
 import { useProfile } from "providers/profile";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
@@ -24,7 +22,6 @@ export default function ImportTargets() {
   const router = useRouter();
   const redirect = router.query.redirect || "";
   const showBack = router.query.back === "true";
-  const { closeSidebar } = useUI();
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const region = trip?.region;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -66,8 +63,7 @@ export default function ImportTargets() {
             ← Back to trip
           </Link>
         )}
-        <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-8" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">🎯 Import Targets</h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download targets from eBird</h3>

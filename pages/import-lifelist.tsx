@@ -5,11 +5,9 @@ import { useProfile } from "providers/profile";
 import { useRouter } from "next/router";
 import Header from "components/Header";
 import Head from "next/head";
-import Sidebar from "components/Sidebar";
 import Button from "components/Button";
 import Footer from "components/Footer";
 import Download from "icons/Download";
-import { useUI } from "providers/ui";
 import LoginModal from "components/LoginModal";
 import Feather from "icons/Feather";
 import Link from "next/link";
@@ -17,7 +15,6 @@ import Link from "next/link";
 export default function ImportLifelist() {
   const { setLifelist, setExceptions, exceptions, setCountryLifelist } = useProfile();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { closeSidebar } = useUI();
 
   const router = useRouter();
   const { tripId, isCountry } = router.query;
@@ -72,13 +69,12 @@ export default function ImportLifelist() {
 
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto pb-12">
-        <Sidebar className="sm:hidden" />
         {showBack && (
           <Link href={`/${tripId}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
             ← Back to trip
           </Link>
         )}
-        <div className="p-4 md:p-0 mt-8" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <Feather className="text-2xl text-lime-600" /> {isCountry ? "Import US Life List" : "Import Life List"}
           </h1>

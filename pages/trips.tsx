@@ -4,8 +4,6 @@ import Head from "next/head";
 import useTrips from "hooks/useTrips";
 import Button from "components/Button";
 import TripCard from "components/TripCard";
-import Sidebar from "components/Sidebar";
-import { useUI } from "providers/ui";
 import Link from "next/link";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
@@ -13,7 +11,6 @@ import RbaButton from "components/RbaButton";
 
 export default function Trips() {
   const { trips, loading } = useTrips();
-  const { closeSidebar } = useUI();
 
   return (
     <div className="flex flex-col h-full">
@@ -23,8 +20,7 @@ export default function Trips() {
 
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto pb-12">
-        <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0" onClick={closeSidebar}>
+        <div className="p-4 md:p-0">
           <RbaButton />
           <div className="flex gap-8 items-center mb-8 mt-4">
             <h1 className="text-3xl font-bold text-gray-700">My Trips</h1>

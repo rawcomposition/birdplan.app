@@ -3,11 +3,9 @@ import Papa from "papaparse";
 import toast from "react-hot-toast";
 import Header from "components/Header";
 import Head from "next/head";
-import Sidebar from "components/Sidebar";
 import Button from "components/Button";
 import Footer from "components/Footer";
 import Download from "icons/Download";
-import { useUI } from "providers/ui";
 import Feather from "icons/Feather";
 
 type Item = {
@@ -19,7 +17,6 @@ type Item = {
 export default function ImportLifelist() {
   const [items, setItems] = React.useState<Item[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { closeSidebar } = useUI();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -64,8 +61,7 @@ export default function ImportLifelist() {
 
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto pb-12">
-        <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-12">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <Feather className="text-2xl text-lime-600" /> My Rarest Lifers
           </h1>

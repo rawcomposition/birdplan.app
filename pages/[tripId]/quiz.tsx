@@ -4,8 +4,6 @@ import Head from "next/head";
 import { useTrip } from "providers/trip";
 import toast from "react-hot-toast";
 import Button from "components/Button";
-import Sidebar from "components/Sidebar";
-import { useUI } from "providers/ui";
 import { useProfile } from "providers/profile";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
@@ -29,7 +27,6 @@ export default function Quiz() {
   const [isInitialized, setIsInitialized] = React.useState(false);
   const { trip, targets } = useTrip();
   const { lifelist } = useProfile();
-  const { closeSidebar } = useUI();
   const selectRef = React.useRef<any>(null);
 
   const liferTargets = targets.items.filter((target) => !lifelist.includes(target.code));
@@ -122,8 +119,7 @@ export default function Quiz() {
 
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto">
-        <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-6 mb-52" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-6 mb-52">
           <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mb-8 inline-flex items-center">
             ← Back to trip
           </Link>

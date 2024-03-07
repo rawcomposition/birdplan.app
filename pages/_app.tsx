@@ -5,7 +5,6 @@ import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";
 import { Toaster } from "react-hot-toast";
-import { UIProvider } from "providers/ui";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
 import { get } from "lib/helpers";
 import { toast } from "react-hot-toast";
@@ -39,11 +38,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Toaster containerStyle={{ zIndex: 10001 }} />
           <ProfileProvider>
             <TripProvider>
-              <UIProvider>
-                <ModalProvider>
-                  <Component {...pageProps} />
-                </ModalProvider>
-              </UIProvider>
+              <ModalProvider>
+                <Component {...pageProps} />
+              </ModalProvider>
             </TripProvider>
           </ProfileProvider>
         </UserProvider>

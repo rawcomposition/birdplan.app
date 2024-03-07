@@ -3,7 +3,6 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import Header from "components/Header";
 import Head from "next/head";
-import Sidebar from "components/Sidebar";
 import Button from "components/Button";
 import Footer from "components/Footer";
 import RegionSelect from "components/RegionSelect";
@@ -16,7 +15,6 @@ import { Option, TripInput } from "lib/types";
 import { createTrip } from "lib/firebase";
 import { getBounds, getCenterOfBounds, getTzFromLatLng, uploadMapboxImg } from "lib/helpers";
 import { useModal } from "providers/modals";
-import { useUI } from "providers/ui";
 import dayjs from "dayjs";
 
 const largeRegions = ["MX", "US", "CA", "AU"];
@@ -37,7 +35,6 @@ export default function CreateTrip() {
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
   const router = useRouter();
   const { close } = useModal();
-  const { closeSidebar } = useUI();
 
   const requireSubregion = largeRegions.includes(country?.value || "");
 
@@ -114,8 +111,7 @@ export default function CreateTrip() {
 
       <Header showAccountOnSmScreens />
       <main className="max-w-lg w-full mx-auto pb-12">
-        <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-12">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <GenericMarker className="text-2xl text-[#fd1743] -mt-1" /> Create Trip
           </h1>

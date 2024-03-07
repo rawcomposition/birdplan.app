@@ -11,7 +11,6 @@ import Head from "next/head";
 import { useProfile } from "providers/profile";
 import Select from "components/ReactSelectStyled";
 import { radiusOptions } from "lib/helpers";
-import { useUI } from "providers/ui";
 import Expand from "components/Expand";
 import Button from "components/Button";
 import LoginModal from "components/LoginModal";
@@ -20,7 +19,6 @@ import { debounce } from "lib/helpers";
 import { distanceBetween } from "lib/helpers";
 
 export default function Rba() {
-  const { closeSidebar } = useUI();
   const { countryLifelist, radius, lat, lng, setRadius, setLat, setLng } = useProfile();
 
   const { species, loading, error, lastUpdate, call } = useFetchRBA();
@@ -98,7 +96,7 @@ export default function Rba() {
       </Head>
 
       <Header title="Lower 48 Rare Birds" />
-      <main className="flex h-[calc(100%-60px)]">
+      <main className="h-[calc(100%-60px)]">
         <Sidebar>
           <div className="mb-6">
             <label htmlFor="lat" className="text-gray-300 mb-2 font-medium block">
@@ -162,7 +160,7 @@ export default function Rba() {
           </div>
         </Sidebar>
 
-        <div className="h-full overflow-auto grow pt-6 px-4 pb-6" onClick={closeSidebar}>
+        <div className="h-full overflow-auto grow pt-6 px-4 pb-6">
           <div className="container mx-auto max-w-xl">
             {error && <FetchError reload={call} />}
 

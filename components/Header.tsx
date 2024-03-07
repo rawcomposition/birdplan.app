@@ -2,15 +2,14 @@ import React from "react";
 import Link from "next/link";
 import BreadcrumbArrow from "icons/BreadcrumbArrow";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
-import Account from "components/Account";
 import Bars from "icons/Bars";
-import { useUI } from "providers/ui";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useTrip } from "providers/trip";
 import AngleLeft from "icons/AngleLeft";
 import { useModal } from "providers/modals";
 import { useUser } from "providers/user";
+import AccountDropdown from "components/AccountDropdown";
 
 type Props = {
   title?: string;
@@ -23,7 +22,6 @@ type Props = {
 
 export default function Header({ title, parent, showAccountOnSmScreens }: Props) {
   const { isOnline } = useRealtimeStatus();
-  const { toggleSidebar, closeSidebar } = useUI();
   const { isOwner } = useTrip();
   const { open, close } = useModal();
   const { user } = useUser();
@@ -46,20 +44,19 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
       )}
       <Link
         href={user?.uid ? "/trips" : "/"}
-        className={clsx("w-80 flex items-center", isSubPage && "hidden md:flex")}
-        onClick={closeSidebar}
+        className={clsx("sm:w-60 flex items-center flex-shrink-0", isSubPage && "hidden md:flex")}
       >
         <img src="/icon.png" className="w-[50px] mx-4" width="50" height="50" />
         <h1 className="text-center text-[#757c8c] font-logo text-2xl">BirdPlan.app</h1>
       </Link>
       {isSubPage && (
-        <Link href={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3" onClick={closeSidebar}>
+        <Link href={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
           <AngleLeft className="text-gray-500 text-2xl flex items-center" />
         </Link>
       )}
-      <div className="mr-auto gap-8 items-center flex">
+      <div className="mr-auto gap-8 items-center flex min-w-0">
         {title && (
-          <nav className="text-lg flex items-center">
+          <nav className="text-lg flex items-center min-w-0">
             {parent && (
               <>
                 <Link href={parent.href} className="text-gray-400 px-5 py-1.5 hidden md:flex items-center">
@@ -68,7 +65,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
                 <BreadcrumbArrow className="hidden md:block" />
               </>
             )}
-            <h1 className="text-gray-400 pr-5 md:pl-5 py-1.5 flex items-center">{title}</h1>
+            <h1 className="text-gray-400 pr-5 md:pl-5 py-1.5 truncate">{title}</h1>
           </nav>
         )}
       </div>
@@ -82,18 +79,7 @@ export default function Header({ title, parent, showAccountOnSmScreens }: Props)
           Share
         </button>
       )}
-      <Account
-        className={clsx("ml-auto md:ml-0 hidden mr-8", showAccountOnSmScreens ? "sm:inline-block" : "lg:inline-block")}
-      />
-      <button
-        className={clsx(
-          showAccountOnSmScreens ? "sm:hidden" : "md:hidden",
-          "text-gray-500 text-2xl ml-auto mr-5 flex items-center"
-        )}
-        onClick={toggleSidebar}
-      >
-        <Bars />
-      </button>
+      <AccountDropdown className="ml-auto md:ml-0 mr-6 block" />
     </header>
   );
 }
