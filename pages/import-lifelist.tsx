@@ -21,6 +21,7 @@ export default function ImportLifelist() {
 
   const router = useRouter();
   const { tripId, isCountry } = router.query;
+  const showBack = router.query.back === "true" && tripId;
   const redirectUrl = tripId ? `/${tripId}` : `/`;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,12 +73,12 @@ export default function ImportLifelist() {
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Sidebar className="sm:hidden" />
-        {tripId && (
-          <Link href={`/${tripId}`} className="text-gray-500 hover:text-gray-600 mb-8 inline-flex items-center">
+        {showBack && (
+          <Link href={`/${tripId}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
             ← Back to trip
           </Link>
         )}
-        <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-8" onClick={closeSidebar}>
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <Feather className="text-2xl text-lime-600" /> {isCountry ? "Import US Life List" : "Import Life List"}
           </h1>

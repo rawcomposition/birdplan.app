@@ -166,7 +166,7 @@ export default function TripTargets() {
                     <h3 className="text-lg font-medium mb-4 text-gray-700">
                       You haven&apos;t imported your targets yet
                     </h3>
-                    <Button href={`/${trip?.id}/import-targets?redirect=targets`} color="primary" size="sm">
+                    <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
                       Import Targets
                     </Button>
                   </div>
@@ -271,7 +271,7 @@ export default function TripTargets() {
                 {!!targets?.N && (
                   <div className="my-4">
                     <Link
-                      href={`/${trip?.id}/import-targets?redirect=targets`}
+                      href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
                       className="text-sky-600 font-bold text-sm"
                     >
                       Re-import targets

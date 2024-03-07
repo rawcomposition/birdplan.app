@@ -26,12 +26,12 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
   const links = [
     {
       name: !!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List",
-      href: `/import-lifelist?tripId=${trip?.id}`,
+      href: `/import-lifelist?tripId=${trip?.id}&back=true`,
       icon: <Feather />,
     },
     {
       name: !!targets?.items?.length ? "Update Targets" : "Import Targets",
-      href: `/${trip?.id}/import-targets?redirect=targets`,
+      href: `/${trip?.id}/import-targets?redirect=targets&back=true`,
       icon: <Bullseye />,
     },
     {

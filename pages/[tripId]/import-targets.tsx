@@ -14,6 +14,7 @@ import Select from "components/ReactSelectStyled";
 import Download from "icons/Download";
 import { useRouter } from "next/router";
 import { parseTargets } from "lib/helpers";
+import Link from "next/link";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
@@ -22,14 +23,17 @@ export default function ImportTargets() {
   const { lifelist } = useProfile();
   const router = useRouter();
   const redirect = router.query.redirect || "";
+  const showBack = router.query.back === "true";
   const { closeSidebar } = useUI();
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const region = trip?.region;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const startMonth = trip?.startMonth || 1;
   const endMonth = trip?.endMonth || 12;
-
-  const redirectUrl = lifelist.length > 0 ? `/${trip?.id}/${redirect}` : `/import-lifelist?tripId=${trip?.id}`;
+  const redirectUrl =
+    lifelist.length > 0
+      ? `/${trip?.id}/${redirect}`
+      : `/import-lifelist?tripId=${trip?.id}&back=${showBack ? "true" : "false"}`;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!trip) return;
@@ -57,8 +61,13 @@ export default function ImportTargets() {
 
       <Header showAccountOnSmScreens />
       <main className="max-w-2xl w-full mx-auto pb-12">
+        {showBack && (
+          <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
+            ← Back to trip
+          </Link>
+        )}
         <Sidebar className="sm:hidden" />
-        <div className="p-4 md:p-0 mt-12" onClick={closeSidebar}>
+        <div className="p-4 md:p-0 mt-8" onClick={closeSidebar}>
           <h1 className="text-3xl font-bold text-gray-700 mb-8">🎯 Import Targets</h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download targets from eBird</h3>
