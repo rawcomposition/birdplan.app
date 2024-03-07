@@ -105,7 +105,12 @@ export default function Trip() {
                   <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
                     <h2 className="text-xl font-bold text-gray-700 mb-4">Choose start date</h2>
                     <form className="flex gap-2" onSubmit={submitStartDate}>
-                      <Input name="date" type="date" defaultValue={trip?.startDate} />
+                      <Input
+                        name="date"
+                        type="date"
+                        defaultValue={trip?.startDate}
+                        className="flex-grow flex xs:block"
+                      />
                       <Button type="submit" color="primary">
                         Set
                       </Button>
