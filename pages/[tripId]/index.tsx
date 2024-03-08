@@ -14,7 +14,10 @@ import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import MapFlatPinIcon from "icons/MapFlatPin";
 import MarkerPlusIcon from "icons/MarkerPlus";
+import UtensilsIcon from "icons/Utensils";
+import StarIcon from "icons/Star";
 import LayersIcon from "icons/Layers";
+import GenericMarker from "icons/GenericMarker";
 
 export default function Trip() {
   const { open } = useModal();
@@ -79,8 +82,25 @@ export default function Trip() {
           {canEdit && (
             <MapButton
               onClick={() => setIsAddingMarker((prev) => !prev)}
-              tooltip={isAddingMarker ? "Cancel add marker" : "Add marker"}
+              tooltip={isAddingMarker ? "Cancel add marker" : "Add location"}
               active={isAddingMarker}
+              childItems={[
+                {
+                  label: "eBird Hotspot",
+                  onClick: () => open("addHotspot"),
+                  icon: <StarIcon />,
+                },
+                /*{
+                  label: "Place",
+                  onClick: () => open("addPlace"),
+                  icon: <UtensilsIcon />,
+                },*/
+                {
+                  label: "Custom",
+                  onClick: () => setIsAddingMarker((prev) => !prev),
+                  icon: <GenericMarker />,
+                },
+              ]}
             >
               <MarkerPlusIcon />
             </MapButton>

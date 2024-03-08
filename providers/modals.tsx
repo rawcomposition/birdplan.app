@@ -15,6 +15,7 @@ import ViewMarker from "modals/ViewMarker";
 import Share from "modals/Share";
 import Rename from "modals/Rename";
 import AddItineraryLocation from "modals/AddItineraryLocation";
+import AddHotspot from "modals/AddHotspot";
 
 const modals = [
   {
@@ -29,6 +30,10 @@ const modals = [
     id: "addMarker",
     Component: AddMarker,
     small: true,
+  },
+  {
+    id: "addHotspot",
+    Component: AddHotspot,
   },
   {
     id: "viewMarker",
@@ -55,6 +60,7 @@ type ModalId =
   | "hotspot"
   | "personalLocation"
   | "addMarker"
+  | "addHotspot"
   | "viewMarker"
   | "share"
   | "renameTrip"
