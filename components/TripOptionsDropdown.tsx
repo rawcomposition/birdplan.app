@@ -53,11 +53,6 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
       icon: <ExportIcon />,
     },
     {
-      name: "Export KML",
-      onClick: () => window.open(`/api/trips/${trip?.id}/export?profileId=${id}`, "_blank"),
-      icon: <ExportIcon />,
-    },
-    {
       name: "Delete Trip",
       onClick: () => {
         if (!trip) return;
