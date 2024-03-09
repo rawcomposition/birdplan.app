@@ -1,4 +1,3 @@
-import { Observation } from "lib/types";
 import { useQuery } from "@tanstack/react-query";
 
 type Info = {
