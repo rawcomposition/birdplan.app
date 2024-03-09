@@ -15,7 +15,7 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { canEdit, removeMarker, saveMarkerNotes } = useTrip();
+  const { canEdit, removeMarker, saveMarkerNotes, setSelectedMarkerId } = useTrip();
   const { id, placeId, name, lat, lng, imgUrl } = marker;
 
   const handleRemoveMarker = () => {
@@ -23,6 +23,11 @@ export default function ViewMarker({ marker }: Props) {
     removeMarker(id);
     close();
   };
+
+  React.useEffect(() => {
+    setSelectedMarkerId(id);
+    return () => setSelectedMarkerId(undefined);
+  }, [id]);
 
   const googleUrl = placeId
     ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`

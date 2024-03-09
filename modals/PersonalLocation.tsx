@@ -5,6 +5,7 @@ import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
 import { Menu } from "@headlessui/react";
 import VerticalDots from "icons/VerticalDots";
+import { useTrip } from "providers/trip";
 
 type Props = {
   hotspot: HotspotT;
@@ -12,7 +13,14 @@ type Props = {
 };
 
 export default function PersonalLocation({ hotspot, speciesCode }: Props) {
+  const { setHalo } = useTrip();
   const { id, name, lat, lng } = hotspot;
+
+  React.useEffect(() => {
+    setHalo({ lat, lng, color: "#555" });
+    return () => setHalo(undefined);
+  }, [lat, lng]);
+
   return (
     <>
       <Header>

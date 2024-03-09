@@ -6,7 +6,7 @@ import Feather from "icons/Feather";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish, fullMonths, months } from "lib/helpers";
+import { translate, isRegionEnglish, fullMonths, months, getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -32,8 +32,10 @@ export default function Hotspot({ hotspot }: Props) {
     selectedSpecies,
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
+    setSelectedMarkerId,
+    setHalo,
   } = useTrip();
-  const { id, lat, lng } = hotspot;
+  const { id, lat, lng, species } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
@@ -85,6 +87,22 @@ export default function Hotspot({ hotspot }: Props) {
     }
     setTranslatedHotspotName(id, translatedName);
   };
+
+  const hasSpecies = !!selectedSpecies;
+  React.useEffect(() => {
+    if (hasSpecies) {
+      setHalo({ lat, lng, color: "#ce0d02" });
+    } else if (isSaved) {
+      setSelectedMarkerId(id);
+    } else if (!isSaved) {
+      setHalo({ lat, lng, color: getMarkerColor(species || 0) });
+    }
+    setSelectedMarkerId(id);
+    return () => {
+      setSelectedMarkerId(undefined);
+      setHalo(undefined);
+    };
+  }, [id, lat, lng, isSaved, species, hasSpecies]);
 
   const canTranslate = isSaved && !isRegionEnglish(trip?.region || "");
   const tripRangeLabel =

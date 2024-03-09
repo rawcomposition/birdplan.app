@@ -23,6 +23,12 @@ type SelectedSpecies = {
   name: string;
 };
 
+type HaloT = {
+  lat: number;
+  lng: number;
+  color: string;
+};
+
 type ContextT = {
   trip: Trip | null;
   invites: Invite[];
@@ -31,8 +37,10 @@ type ContextT = {
   canEdit: boolean;
   isOwner: boolean;
   selectedMarkerId?: string;
+  halo?: HaloT;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
+  setHalo: (data?: HaloT) => void;
 };
 
 const initialState = {
@@ -52,6 +60,7 @@ export const TripContext = React.createContext<ContextT>({
   ...initialState,
   setSelectedSpecies: () => {},
   setSelectedMarkerId: () => {},
+  setHalo: () => {},
 });
 
 type Props = {
@@ -64,6 +73,7 @@ const TripProvider = ({ children }: Props) => {
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
+  const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
   const { query, pathname } = useRouter();
   const id = query.tripId?.toString();
   const { user } = useUser();
@@ -106,12 +116,14 @@ const TripProvider = ({ children }: Props) => {
       value={{
         setSelectedSpecies,
         setSelectedMarkerId,
+        setHalo,
         canEdit,
         isOwner,
         trip,
         targets,
         selectedSpecies,
         selectedMarkerId,
+        halo,
         invites,
       }}
     >

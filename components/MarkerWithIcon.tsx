@@ -59,10 +59,10 @@ export default function MarkerWithIcon({ icon, darkIcon, color, showStroke = tru
         backgroundColor: color || defaultColors[icon],
       }}
     >
-      <Icon className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
       {highlight && (
-        <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 border-2 border-gray-600/90 rounded-full " />
+        <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 border-2 border-white/80 rounded-full bg-white/70 -z-[1]" />
       )}
+      <Icon className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
     </div>
   );
 }

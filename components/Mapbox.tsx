@@ -31,7 +31,7 @@ export default function Mapbox({
   onDisableAddingMarker,
 }: Props) {
   const { open, close } = useModal();
-  const { selectedMarkerId } = useTrip();
+  const { selectedMarkerId, halo } = useTrip();
   const isOpeningModal = React.useRef(false);
 
   const handleHotspotClick = (id: string) => {
@@ -192,6 +192,20 @@ export default function Mapbox({
             {/* @ts-ignore */}
             <Layer {...obsLayerStyle} />
           </Source>
+        )}
+        {halo && (
+          <Marker latitude={halo.lat} longitude={halo.lng}>
+            <div className="w-9 h-9 rounded-full border-2 border-white/80 bg-white/70 flex items-center justify-center">
+              <div
+                className="rounded-full border-[#555] border-[0.75px] cursor-pointer"
+                style={{
+                  backgroundColor: halo.color,
+                  width: isMobile ? "17px" : "15px",
+                  height: isMobile ? "17px" : "15px",
+                }}
+              />
+            </div>
+          </Marker>
         )}
       </Map>
       {obsLayer && (
