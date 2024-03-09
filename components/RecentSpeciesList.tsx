@@ -77,7 +77,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
         )}
       </p>
       {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {!isLoading && recentSpecies.length === 0 && (
+      {!isLoading && recentSpecies.length === 0 && !error && (
         <p className="text-gray-500 text-sm">No needs in the last 30 days</p>
       )}
       {error && <p className="text-gray-500 text-sm">Failed to load recent reports</p>}
