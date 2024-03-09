@@ -7,6 +7,7 @@ import { useTrip } from "providers/trip";
 import { Hotspot } from "lib/types";
 import Check from "icons/Check";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 
 export default function AddHotspot() {
   const [query, setQuery] = React.useState("");
@@ -27,6 +28,7 @@ export default function AddHotspot() {
   const selectHotspot = (hotspot: Hotspot, isSaved: boolean) => {
     if (!isSaved) {
       appendHotspot(hotspot);
+      toast.success("Hotspot added to trip");
     }
     open("hotspot", { hotspot });
   };

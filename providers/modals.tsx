@@ -16,6 +16,7 @@ import Share from "modals/Share";
 import Rename from "modals/Rename";
 import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
+import AddPlace from "modals/AddPlace";
 
 const modals = [
   {
@@ -30,6 +31,10 @@ const modals = [
     id: "addMarker",
     Component: AddMarker,
     small: true,
+  },
+  {
+    id: "addPlace",
+    Component: AddPlace,
   },
   {
     id: "addHotspot",
@@ -64,7 +69,8 @@ type ModalId =
   | "viewMarker"
   | "share"
   | "renameTrip"
-  | "addItineraryLocation";
+  | "addItineraryLocation"
+  | "addPlace";
 
 type Context = {
   open: (id: ModalId, props?: KeyValue) => void;
@@ -130,8 +136,14 @@ const Header = ({ children }: { children: React.ReactNode }) => (
   <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
 );
 
-const Body = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={clsx("px-4 sm:px-6 pt-4", className)}>{children}</div>
-);
+const Body = ({
+  children,
+  className,
+  noPadding,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  noPadding?: boolean;
+}) => <div className={clsx(!noPadding && "px-4 sm:px-6 pt-4", className)}>{children}</div>;
 
 export { ModalProvider, useModal, Footer, Header, Body };

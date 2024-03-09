@@ -164,6 +164,9 @@ export type CustomMarker = {
   icon: MarkerIcon;
   id: string;
   notes?: string;
+  imgUrl?: string;
+  placeId?: string;
+  placeType?: string;
 };
 
 export type Option = {
@@ -225,4 +228,13 @@ export type Targets = {
   tripId: string;
   hotspotId?: string;
   updatedAt?: string;
+};
+
+export type GooglePlaceT = {
+  id?: string;
+  name: string;
+  lat: number;
+  lng: number;
+  imgUrl?: string;
+  type?: string;
 };

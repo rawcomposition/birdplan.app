@@ -90,11 +90,11 @@ export default function Trip() {
                   onClick: () => open("addHotspot"),
                   icon: <StarIcon />,
                 },
-                /*{
+                {
                   label: "Place",
                   onClick: () => open("addPlace"),
                   icon: <UtensilsIcon />,
-                },*/
+                },
                 {
                   label: "Custom",
                   onClick: () => setIsAddingMarker((prev) => !prev),

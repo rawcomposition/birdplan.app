@@ -14,9 +14,10 @@ type Props = {
   lng: number;
   hotspotId?: string;
   markerId?: string;
+  googleUrl?: string;
 };
 
-export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Props) {
+export default function DirectionsButton({ lat, lng, hotspotId, markerId, googleUrl }: Props) {
   const [open, setOpen] = React.useState(false);
   const { trip } = useTrip();
 
@@ -39,7 +40,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId }: Prop
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
         <a
-          href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
+          href={googleUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700"
           target="_blank"
         >
