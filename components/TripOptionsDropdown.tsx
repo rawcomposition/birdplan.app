@@ -6,6 +6,8 @@ import VerticalDots from "icons/VerticalDots";
 import Feather from "icons/Feather";
 import Bullseye from "icons/Bullseye";
 import Pencil from "icons/Pencil";
+import ShareIcon from "icons/Share";
+import ExportIcon from "icons/Export";
 import Trash from "icons/Trash";
 import { useModal } from "providers/modals";
 import { deleteTrip } from "lib/firebase";
@@ -42,13 +44,18 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
     {
       name: "Share Trip",
       onClick: () => open("share"),
-      icon: <Feather />,
+      icon: <ShareIcon />,
       hidden: !isOwner,
     },
     {
       name: "Export KML",
       href: `/api/trips/${trip?.id}/export?profileId=${id}`,
-      icon: <Feather />,
+      icon: <ExportIcon />,
+    },
+    {
+      name: "Export KML",
+      onClick: () => window.open(`/api/trips/${trip?.id}/export?profileId=${id}`, "_blank"),
+      icon: <ExportIcon />,
     },
     {
       name: "Delete Trip",
