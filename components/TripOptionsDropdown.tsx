@@ -49,7 +49,12 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
       name: "Export KML",
       href: `/api/trips/${trip?.id}/export?profileId=${id}`,
       icon: <Feather />,
-      target: "_blank",
+      download: "Trip Data.kml",
+    },
+    {
+      name: "Export KML",
+      href: `/${trip?.id}/export/?profileId=${id}`,
+      icon: <Feather />,
     },
     {
       name: "Delete Trip",
@@ -90,7 +95,7 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
           )}
         >
           <Menu.Items>
-            {filteredLinks.map(({ name, href, onClick, icon, target }) => (
+            {filteredLinks.map(({ name, href, onClick, icon, download }) => (
               <Menu.Item key={name}>
                 {({ active }) =>
                   onClick ? (
@@ -103,14 +108,14 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
                       <span>{name}</span>
                     </button>
                   ) : (
-                    <a
+                    <Link
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
                       href={href}
-                      target="_blank"
+                      download={download || undefined}
                     >
                       {icon}
                       <span>{name}</span>
-                    </a>
+                    </Link>
                   )
                 }
               </Menu.Item>
