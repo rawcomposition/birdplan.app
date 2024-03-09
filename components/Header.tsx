@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import BreadcrumbArrow from "icons/BreadcrumbArrow";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
-import Bars from "icons/Bars";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useTrip } from "providers/trip";
@@ -13,14 +12,13 @@ import AccountDropdown from "components/AccountDropdown";
 
 type Props = {
   title?: string;
-  showAccountOnSmScreens?: boolean;
   parent?: {
     title: string;
     href: string;
   };
 };
 
-export default function Header({ title, parent, showAccountOnSmScreens }: Props) {
+export default function Header({ title, parent }: Props) {
   const { isOnline } = useRealtimeStatus();
   const { isOwner } = useTrip();
   const { open, close } = useModal();

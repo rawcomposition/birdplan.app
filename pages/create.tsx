@@ -109,7 +109,7 @@ export default function CreateTrip() {
         <title>Create Trip | BirdPlan.app</title>
       </Head>
 
-      <Header showAccountOnSmScreens />
+      <Header />
       <main className="max-w-lg w-full mx-auto pb-12">
         <div className="p-4 md:p-0 mt-12">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">

@@ -39,7 +39,7 @@ export default function Accept() {
         <title>Accept Invite | BirdPlan.app</title>
       </Head>
 
-      <Header showAccountOnSmScreens />
+      <Header />
       <main className="flex items-center justify-center h-full">
         {uid && <span className="text-2xl text-gray-600">One moment...</span>}
       </main>

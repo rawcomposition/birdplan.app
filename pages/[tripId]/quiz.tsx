@@ -117,7 +117,7 @@ export default function Quiz() {
         <title>Quiz | BirdPlan.app</title>
       </Head>
 
-      <Header showAccountOnSmScreens />
+      <Header />
       <main className="max-w-2xl w-full mx-auto">
         <div className="p-4 md:p-0 mt-6 mb-52">
           <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mb-8 inline-flex items-center">

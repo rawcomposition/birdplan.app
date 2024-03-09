@@ -18,7 +18,7 @@ export default function Trips() {
         <title>My Trips | BirdPlan.app</title>
       </Head>
 
-      <Header showAccountOnSmScreens />
+      <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <div className="p-4 md:p-0">
           <RbaButton />

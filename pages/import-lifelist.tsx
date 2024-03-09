@@ -67,7 +67,7 @@ export default function ImportLifelist() {
         <title>Import Life List | BirdPlan.app</title>
       </Head>
 
-      <Header showAccountOnSmScreens />
+      <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         {showBack && (
           <Link href={`/${tripId}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
