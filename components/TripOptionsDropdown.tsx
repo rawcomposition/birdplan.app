@@ -103,14 +103,14 @@ export default function TripOptionsDropdown({ className, children, dropUp }: Pro
                       <span>{name}</span>
                     </button>
                   ) : (
-                    <Link
+                    <a
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
                       href={href}
-                      target={target || ""}
+                      target="_blank"
                     >
                       {icon}
                       <span>{name}</span>
-                    </Link>
+                    </a>
                   )
                 }
               </Menu.Item>

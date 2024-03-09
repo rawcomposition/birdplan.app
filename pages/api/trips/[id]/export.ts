@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const kml = tokml(geoJson);
 
     res.setHeader("Content-Type", "application/vnd.google-earth.kml+xml");
-    res.setHeader("Content-Disposition", `attachment; filename=${tripData.name}.kml`);
+    res.setHeader("Content-Disposition", `attachment; filename=Trip Data.kml`);
     res.status(200).send(kml);
   } catch (error: any) {
     console.log(error);
