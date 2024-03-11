@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "lib/firebaseAdmin";
 import { Targets, Trip } from "lib/types";
-import { tripToGeoJson } from "lib/helpers";
+import { tripToGeoJson, sanitizeFileName } from "lib/helpers";
 // @ts-ignore
 import * as tokml from "@maphubs/tokml";
 
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const kml = tokml(geoJson);
 
     res.setHeader("Content-Type", "application/vnd.google-earth.kml+xml");
-    res.setHeader("Content-Disposition", `attachment; filename=Trip Data.kml`);
+    res.setHeader("Content-Disposition", `attachment; filename="${sanitizeFileName(tripData.name)}.kml"`);
     res.status(200).send(kml);
   } catch (error: any) {
     console.log(error);

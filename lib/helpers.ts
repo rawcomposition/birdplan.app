@@ -438,13 +438,6 @@ export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
   const hotspots = trip?.hotspots || [];
   const markers = trip?.markers || [];
 
-  const tripRangeLabel =
-    trip?.startMonth && trip?.endMonth
-      ? trip.startMonth === trip.endMonth
-        ? months[trip.startMonth - 1]
-        : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`
-      : "";
-
   const geojson = {
     type: "FeatureCollection",
     features: [
@@ -499,4 +492,10 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
   return placeId
     ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+}
+
+export function sanitizeFileName(fileName: string): string {
+  let sanitized = fileName.replace(/[^a-zA-Z0-9_-]/g, " ");
+  sanitized = sanitized.replace(/\s+/g, " ");
+  return sanitized.trim();
 }
