@@ -1,11 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
+import dayjs from "dayjs";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { locId, speciesCode } = req.query;
 
-    const url = `https://ebird.org/mapServices/getLocInfo.do?fmt=json&locID=${locId}&speciesCodes=${speciesCode}&evidSort=false&excludeExX=false&excludeExAll=false&byr=1900&eyr=2023&yr=all&bmo=1&emo=12`;
+    const year = dayjs().year();
+    const url = `https://ebird.org/mapServices/getLocInfo.do?fmt=json&locID=${locId}&speciesCodes=${speciesCode}&evidSort=false&excludeExX=false&excludeExAll=false&byr=1900&eyr=${year}&yr=all&bmo=1&emo=12`;
 
     const json = await axios.get(url, {
       headers: {
