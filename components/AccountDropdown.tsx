@@ -19,7 +19,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
   if (!user) return null;
 
   return (
-    <Menu as="div" className="relative z-10 flex-shrink-0">
+    <Menu as="div" className="relative z-20 flex-shrink-0">
       <Menu.Button
         className={
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
