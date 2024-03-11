@@ -8,6 +8,7 @@ import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
 import VerticalDots from "icons/VerticalDots";
+import { getGooglePlaceUrl } from "lib/helpers";
 
 type Props = {
   marker: CustomMarker;
@@ -29,9 +30,7 @@ export default function ViewMarker({ marker }: Props) {
     return () => setSelectedMarkerId(undefined);
   }, [id]);
 
-  const googleUrl = placeId
-    ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
-    : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+  const googleUrl = getGooglePlaceUrl(lat, lng, placeId);
 
   return (
     <>

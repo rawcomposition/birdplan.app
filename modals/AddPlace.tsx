@@ -11,6 +11,7 @@ import clsx from "clsx";
 import toast from "react-hot-toast";
 import PlaceSearch from "components/PlaceSearch";
 import XMark from "icons/XMark";
+import { getGooglePlaceUrl } from "lib/helpers";
 
 export default function AddPlace() {
   const [icon, setIcon] = React.useState<MarkerIcon>();
@@ -36,9 +37,7 @@ export default function AddPlace() {
     close();
   };
 
-  const googleUrl = place?.id
-    ? `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}&query_place_id=${place.id}`
-    : `https://www.google.com/maps/search/?api=1&query=${place?.lat},${place?.lng}`;
+  const googleUrl = place && getGooglePlaceUrl(place.lat, place.lng, place.id);
 
   return (
     <>

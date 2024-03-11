@@ -452,13 +452,14 @@ export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
         type: "Feature",
         properties: {
           name: it.name,
-          description: `<b>Targets</b><br/><a href='https://ebird.org/targets?r1=${
+          description: `<b>Links</b><br/><a href=${getGooglePlaceUrl(
+            it.lat,
+            it.lng
+          )}>Directions</a> • <a href='https://ebird.org/targets?r1=${
             it.id
-          }&bmo=1&emo=12&r2=world&t2=life'>All Year</a> • <a href='https://ebird.org/targets?r1=${it.id}&bmo=${
-            trip?.startMonth
-          }&emo=${trip?.endMonth}&r2=world&t2=life'>${tripRangeLabel}</a><br/><br/>${`<b>Notes</b><br/>${
+          }&bmo=1&emo=12&r2=world&t2=life'>Targets</a><br/><br/><b>Notes</b><br/>${
             it.notes || "None"
-          }<br/><br/>`}${favsToHtml(it.favs)}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
+          }<br/><br/>${favsToHtml(it.favs)}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
         },
         geometry: {
           type: "Point",
@@ -469,7 +470,9 @@ export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
         type: "Feature",
         properties: {
           name: it.name,
-          description: it.notes,
+          description: `<b>Links</b><br/><a href=${getGooglePlaceUrl(it.lat, it.lng)}>Directions</a><b>Notes</b><br/>${
+            it.notes || "None"
+          }`,
         },
         geometry: {
           type: "Point",
@@ -490,4 +493,10 @@ export function getRandomItemsFromArray(arr: any[], count: number): any[] {
   }
 
   return result;
+}
+
+export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
+  return placeId
+    ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
+    : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 }
