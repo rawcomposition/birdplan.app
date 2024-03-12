@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import * as fs from "firebase/firestore";
-import { Profile, Hotspot, Trip, TripInput, Target, Targets, CustomMarker, Invite, Day } from "lib/types";
+import { Profile, Hotspot, Trip, TripInput, Targets, CustomMarker, Invite, Day } from "lib/types";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
