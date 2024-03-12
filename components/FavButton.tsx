@@ -1,6 +1,5 @@
 import React from "react";
-import Heart from "icons/Heart";
-import HeartSolid from "icons/HeartSolid";
+import Icon from "components/Icon";
 import { useTrip } from "providers/trip";
 
 type Props = {
@@ -25,7 +24,7 @@ export default function FavButton({ locId, code, name, range, percent }: Props) 
   };
   return (
     <button type="button" onClick={onClick} className="text-base">
-      {isFav ? <HeartSolid className="text-pink-700" /> : <Heart />}
+      {isFav ? <Icon name="heartSolid" className="text-pink-700" /> : <Icon name="heart" />}
     </button>
   );
 }

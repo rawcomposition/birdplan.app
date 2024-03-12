@@ -1,6 +1,6 @@
 import { truncate } from "lib/helpers";
 import Timeago from "components/Timeago";
-import CameraIcon from "icons/Camera";
+import Icon from "components/Icon";
 import { RareObservation } from "lib/types";
 
 type Props = {
@@ -37,7 +37,7 @@ export default function ObservationList({ userLat, userLng, items }: Props) {
             </div>
 
             <p className="text-gray-500 text-xs">
-              {hasRichMedia && <CameraIcon className="mr-1.5 text-lime-600" />}
+              {hasRichMedia && <Icon name="camera" className="mr-1.5 text-lime-600" />}
               <Timeago datetime={obsDt} /> by {userDisplayName}
             </p>
             <div className="text-[0.85em] mt-2 space-x-3">

@@ -1,5 +1,5 @@
 import React from "react";
-import XMark from "icons/XMark";
+import Icon from "components/Icon";
 import clsx from "clsx";
 
 type Props = {
@@ -13,9 +13,9 @@ export default function CloseButton({ className, onClick }: Props) {
       type="button"
       className={clsx("text-gray-400 hover:text-gray-500 focus:outline-none", className)}
       onClick={onClick}
+      aria-label="Close"
     >
-      <span className="sr-only">Close</span>
-      <XMark className="text-2xl" aria-hidden="true" />
+      <Icon name="xMark" className="text-2xl" />
     </button>
   );
 }

@@ -3,12 +3,7 @@ import Head from "next/head";
 import Button from "components/Button";
 import Link from "next/link";
 import clsx from "clsx";
-import Feather from "icons/Feather";
-import Star from "icons/Star";
-import MapMarker from "icons/MapMarker";
-import Bins from "icons/Bins";
-import User from "icons/User";
-import Calendar from "icons/Calendar";
+import Icon from "components/Icon";
 import { useUser } from "providers/user";
 import Footer from "components/Footer";
 
@@ -16,32 +11,32 @@ const features = [
   {
     name: "Find your targets.",
     description: "Import your life list and regional targets from eBird to filter results by your target species.",
-    icon: Bins,
+    icon: "bins",
   },
   {
     name: "Save hotspots.",
     description: "Save interesting hotspots to your trip to easily find them later. You can also add notes.",
-    icon: Star,
+    icon: "star",
   },
   {
     name: "Find recent sightings.",
     description: "With your life list uploaded, view recent sightings of your target species.",
-    icon: Feather,
+    icon: "feather",
   },
   {
     name: "Save custom markers.",
     description: "Add your hotel, Airbnb, airport, or other points of interest.",
-    icon: MapMarker,
+    icon: "markerPlus",
   },
   {
     name: "Manage itinerary.",
     description: "Plan your daily schedule by adding hotspots. Travel time is auto calculated between locations",
-    icon: Calendar,
+    icon: "calendar",
   },
   {
     name: "Invite collaborators.",
     description: "Easily invite editors to help you plan your trip. You can also share a view-only link.",
-    icon: User,
+    icon: "user",
   },
 ];
 
@@ -111,7 +106,11 @@ export default function Planner() {
             {features.map((feature) => (
               <div key={feature.name} className="relative pl-11">
                 <dt className="inline font-semibold text-gray-900">
-                  <feature.icon className="absolute left-1 top-1 text-2xl text-blue-600" aria-hidden="true" />
+                  <Icon
+                    name={feature.icon as any}
+                    className="absolute left-1 top-1 text-2xl text-blue-600"
+                    aria-hidden="true"
+                  />
                   {feature.name}
                 </dt>{" "}
                 <dd className="inline">{feature.description}</dd>

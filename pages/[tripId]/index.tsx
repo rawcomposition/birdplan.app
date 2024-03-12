@@ -12,12 +12,7 @@ import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
-import MapFlatPinIcon from "icons/MapFlatPin";
-import MarkerPlusIcon from "icons/MarkerPlus";
-import UtensilsIcon from "icons/Utensils";
-import StarIcon from "icons/Star";
-import LayersIcon from "icons/Layers";
-import GenericMarker from "icons/GenericMarker";
+import Icon from "components/Icon";
 
 export default function Trip() {
   const { open } = useModal();
@@ -74,10 +69,10 @@ export default function Trip() {
             tooltip={showAll ? "Hide hotspots" : "Show hotspots"}
             active={showAll}
           >
-            <MapFlatPinIcon />
+            <Icon name="mapFlatPin" />
           </MapButton>
           <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>
-            <LayersIcon />
+            <Icon name="layers" />
           </MapButton>
           {canEdit && (
             <MapButton
@@ -88,21 +83,21 @@ export default function Trip() {
                 {
                   label: "eBird Hotspot",
                   onClick: () => open("addHotspot"),
-                  icon: <StarIcon />,
+                  icon: <Icon name="star" />,
                 },
                 {
                   label: "Place",
                   onClick: () => open("addPlace"),
-                  icon: <UtensilsIcon />,
+                  icon: <Icon name="utensils" />,
                 },
                 {
                   label: "Custom",
                   onClick: () => setIsAddingMarker((prev) => !prev),
-                  icon: <GenericMarker />,
+                  icon: <Icon name="genericMarker" />,
                 },
               ]}
             >
-              <MarkerPlusIcon />
+              <Icon name="markerPlus" />
             </MapButton>
           )}
         </div>

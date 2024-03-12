@@ -1,7 +1,7 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import Button from "components/Button";
-import Download from "icons/Download";
+import Icon from "components/Icon";
 import useHotspotTargets from "hooks/useHotspotTargets";
 import toast from "react-hot-toast";
 import { parseTargets } from "lib/helpers";
@@ -9,7 +9,6 @@ import HotspotTargetRow from "components/HotspotTargetRow";
 import FilterTabs from "components/FilterTabs";
 import { useProfile } from "providers/profile";
 import { deleteTargets } from "lib/firebase";
-import XMarkCircle from "icons/XMarkCircle";
 
 type Props = {
   locId: string;
@@ -78,7 +77,7 @@ export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }
             size="xs"
             className="inline-flex items-center gap-2"
           >
-            <Download /> Download Targets
+            <Icon name="download" /> Download Targets
           </Button>
           <p className="bg-amber-100 text-amber-800 p-2 rounded text-[12px] mt-2">
             <strong>Note:</strong> Your{" "}
@@ -144,7 +143,7 @@ export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }
           className="text-sky-600 text-[12px] font-bold pl-3 py-1 inline-flex items-center gap-1"
           onClick={handleReset}
         >
-          <XMarkCircle />
+          <Icon name="xMarkCircle" />
           Reset Targets
         </button>
       </div>

@@ -8,7 +8,7 @@ import Footer from "components/Footer";
 import RegionSelect from "components/RegionSelect";
 import MonthSelect from "components/MonthSelect";
 import LoginModal from "components/LoginModal";
-import GenericMarker from "icons/GenericMarker";
+import Icon from "components/Icon";
 import Field from "components/Field";
 import Input from "components/Input";
 import { Option, TripInput } from "lib/types";
@@ -113,7 +113,7 @@ export default function CreateTrip() {
       <main className="max-w-lg w-full mx-auto pb-12">
         <div className="p-4 md:p-0 mt-12">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <GenericMarker className="text-2xl text-[#fd1743] -mt-1" /> Create Trip
+            <Icon name="genericMarker" className="text-2xl text-[#fd1743] -mt-1" /> Create Trip
           </h1>
           <div className="flex gap-2 mb-2">
             <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>

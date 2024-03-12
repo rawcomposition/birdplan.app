@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
-import HeartSolid from "icons/HeartSolid";
+import Icon from "components/Icon";
 
 type Props = {
   locId: string;
@@ -39,7 +39,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
               <tr key={`${code}-${checklistId}`} className="even:bg-neutral-50">
                 <td className="pl-1.5 py-[5px] relative">
                   {favCodes.includes(code) && (
-                    <HeartSolid className="text-pink-700 absolute top-[12px] left-[-9px] text-[8px]" />
+                    <Icon name="heartSolid" className="text-pink-700 absolute top-[12px] left-[-9px] text-[8px]" />
                   )}
                   <button
                     type="button"

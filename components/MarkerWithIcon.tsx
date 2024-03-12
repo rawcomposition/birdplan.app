@@ -1,18 +1,9 @@
-import { MarkerIcon } from "lib/types";
-import Hike from "icons/Hike";
-import Star from "icons/Star";
-import House from "icons/House";
-import Airbnb from "icons/Airbnb";
-import Campground from "icons/Campground";
-import Bins from "icons/Bins";
-import Airplane from "icons/Airplane";
-import Boat from "icons/Boat";
-import Car from "icons/Car";
-import Bus from "icons/Bus";
+import Icon from "components/Icon";
+import { markerIcons, MarkerIconT } from "lib/icons";
 import clsx from "clsx";
 
 type Props = {
-  icon: MarkerIcon;
+  icon: MarkerIconT;
   darkIcon?: boolean;
   color?: string;
   className?: string;
@@ -20,34 +11,9 @@ type Props = {
   highlight?: boolean;
 };
 
-const iconMap: Record<MarkerIcon, any> = {
-  [MarkerIcon.HOTSPOT]: Star,
-  [MarkerIcon.HOUSE]: House,
-  [MarkerIcon.TENT]: Campground,
-  [MarkerIcon.AIRBNB]: Airbnb,
-  [MarkerIcon.BINS]: Bins,
-  [MarkerIcon.HIKE]: Hike,
-  [MarkerIcon.AIRPORT]: Airplane,
-  [MarkerIcon.BOAT]: Boat,
-  [MarkerIcon.CAR]: Car,
-  [MarkerIcon.BUS]: Bus,
-};
-
-const defaultColors: Record<MarkerIcon, string> = {
-  [MarkerIcon.HOTSPOT]: "#0284c7",
-  [MarkerIcon.HOUSE]: "#334155",
-  [MarkerIcon.TENT]: "#b45309",
-  [MarkerIcon.AIRBNB]: "#ff385b",
-  [MarkerIcon.BINS]: "#0d9488",
-  [MarkerIcon.HIKE]: "#15803d",
-  [MarkerIcon.AIRPORT]: "#64748b",
-  [MarkerIcon.BOAT]: "#0369a1",
-  [MarkerIcon.CAR]: "#6a4ca7",
-  [MarkerIcon.BUS]: "#d97706",
-};
-
-export default function MarkerWithIcon({ icon, darkIcon, color, showStroke = true, className, highlight }: Props) {
-  const Icon = iconMap[icon];
+export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, className, highlight }: Props) {
+  const iconData = markerIcons[icon];
+  if (!iconData) return null;
   return (
     <div
       className={clsx(
@@ -56,13 +22,13 @@ export default function MarkerWithIcon({ icon, darkIcon, color, showStroke = tru
         className
       )}
       style={{
-        backgroundColor: color || defaultColors[icon],
+        backgroundColor: iconData.color,
       }}
     >
       {highlight && (
         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 border-2 border-white/80 rounded-full bg-white/70 -z-[1]" />
       )}
-      <Icon className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
+      <Icon name={iconData.icon} className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
     </div>
   );
 }

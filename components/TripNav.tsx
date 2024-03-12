@@ -1,18 +1,16 @@
 import React from "react";
-import MapFlatIcon from "icons/MapFlat";
-import Bullseye from "icons/Bullseye";
-import Calendar from "icons/Calendar";
 import clsx from "clsx";
 import { useTrip } from "providers/trip";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useModal } from "providers/modals";
 import TripOptionsDropdown from "components/TripOptionsDropdown";
+import Icon from "components/Icon";
 
 const links = [
-  { name: "Map", slug: "", Icon: MapFlatIcon },
-  { name: "Targets", slug: "targets", Icon: Bullseye },
-  { name: "Itinerary", slug: "itinerary", Icon: Calendar },
+  { name: "Map", slug: "", icon: "mapFlat" },
+  { name: "Targets", slug: "targets", icon: "bullseye" },
+  { name: "Itinerary", slug: "itinerary", icon: "calendar" },
 ];
 
 type Props = {
@@ -30,7 +28,7 @@ export default function TripNav({ active }: Props) {
 
   return (
     <div className="flex gap-1.5 items-center flex-shrink-0 px-3 bg-[#1e263a] justify-start h-[52px]">
-      {links.map(({ name, slug, Icon }) => (
+      {links.map(({ name, slug, icon }) => (
         <Link
           href={`/${trip?.id}/${slug}`}
           key={slug}
@@ -40,7 +38,7 @@ export default function TripNav({ active }: Props) {
           )}
         >
           <div className="hidden xs:block">
-            <Icon />
+            <Icon name={icon as any} />
           </div>
           {name}
         </Link>

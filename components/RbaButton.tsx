@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import ArrowRight from "icons/ArrowRight";
+import Icon from "components/Icon";
 import { useProfile } from "providers/profile";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -31,7 +31,7 @@ export default function RbaButton() {
         <span className="text-xl font-bold mr-3">🔥</span>
         View the lower 48 RBA
       </span>{" "}
-      <ArrowRight className="inline-block" />
+      <Icon name="arrowRight" className="inline-block" />
     </Link>
   );
 }

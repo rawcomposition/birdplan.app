@@ -1,6 +1,6 @@
 import React from "react";
 import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
-import { Marker as MarkerT, Trip, MarkerIcon, CustomMarker } from "lib/types";
+import { Marker as MarkerT, Trip, CustomMarker } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
@@ -168,7 +168,7 @@ export default function Mapbox({
               handleHotspotClick(marker.id);
             }}
           >
-            <MarkerWithIcon icon={MarkerIcon.HOTSPOT} highlight={marker.id === selectedMarkerId} />
+            <MarkerWithIcon icon="hotspot" highlight={marker.id === selectedMarkerId} />
           </Marker>
         ))}
         {customMarkers?.map((marker) => (

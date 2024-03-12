@@ -1,6 +1,6 @@
 import React from "react";
 import { Transition } from "@headlessui/react";
-import AngleLeft from "icons/AngleLeft";
+import Icon from "components/Icon";
 
 type Props = {
   open: boolean;
@@ -27,7 +27,7 @@ export default function ColModal({ open, onClose, children }: Props) {
               className="flex gap-2 items-center py-1 font-bold text-sm px-2 bg-gray-100 border-b w-full"
               onClick={onClose}
             >
-              <AngleLeft /> Back
+              <Icon name="angleLeft" /> Back
             </button>
             <div className="px-6 py-4 flex-grow overflow-y-auto">{children}</div>
           </div>

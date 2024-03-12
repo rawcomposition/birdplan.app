@@ -5,7 +5,7 @@ import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
 import { Hotspot } from "lib/types";
-import Check from "icons/Check";
+import Icon from "components/Icon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 
@@ -101,7 +101,7 @@ export default function AddHotspot() {
                     </span>
                     {isSaved && (
                       <span className="flex flex-col text-green-600 items-center text-sm">
-                        <Check />
+                        <Icon name="check" />
                         <span className="uppercase text-[9px]">Added</span>
                       </span>
                     )}

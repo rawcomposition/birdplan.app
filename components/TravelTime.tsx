@@ -1,11 +1,8 @@
 import { useTrip } from "providers/trip";
-import Walking from "icons/Walking";
-import Car from "icons/Car";
-import Cycling from "icons/Cycling";
+import Icon from "components/Icon";
 import { formatTime, formatDistance } from "lib/helpers";
 import { Menu } from "@headlessui/react";
 import clsx from "clsx";
-import XMarkBold from "icons/XMarkBold";
 
 type Props = {
   isEditing: boolean;
@@ -43,11 +40,11 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
   const travelInfo = travelData && (
     <span className="flex items-center gap-2">
       {travelData.method === "walking" ? (
-        <Walking className="text-gray-400" />
+        <Icon name="walking" className="text-gray-400" />
       ) : travelData.method === "driving" ? (
-        <Car className="text-gray-400" />
+        <Icon name="car" className="text-gray-400" />
       ) : (
-        <Cycling className="text-gray-400" />
+        <Icon name="cycling" className="text-gray-400" />
       )}
       <span className="font-medium">{formatTime(travelData.time)}</span>•
       <span className="text-gray-500 text-xs">{formatDistance(travelData.distance, false)}</span>
@@ -79,7 +76,7 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
                   onClick={() => calculate("walking")}
                   className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
                 >
-                  <Walking /> Walk
+                  <Icon name="walking" /> Walk
                 </button>
               </Menu.Item>
               <Menu.Item>
@@ -88,7 +85,7 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
                   onClick={() => calculate("driving")}
                   className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
                 >
-                  <Car /> Drive
+                  <Icon name="car" /> Drive
                 </button>
               </Menu.Item>
               <Menu.Item>
@@ -97,7 +94,7 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
                   onClick={() => calculate("cycling")}
                   className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
                 >
-                  <Cycling /> Bike
+                  <Icon name="cycling" /> Bike
                 </button>
               </Menu.Item>
             </Menu.Items>
@@ -108,7 +105,7 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
               onClick={() => markTravelTimeDeleted(dayId, id)}
               className="text-[16px] p-1 -mt-1.5 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <XMarkBold />
+              <Icon name="xMarkBold" />
             </button>
           )}
         </div>

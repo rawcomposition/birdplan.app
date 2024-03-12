@@ -7,7 +7,7 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
-import VerticalDots from "icons/VerticalDots";
+import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
 
 type Props = {
@@ -45,7 +45,7 @@ export default function ViewMarker({ marker }: Props) {
             <DirectionsButton lat={lat} lng={lng} markerId={id} googleUrl={googleUrl} />
             <Menu as="div" className="relative inline-block text-left">
               <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
-                <VerticalDots />
+                <Icon name="verticalDots" />
               </Menu.Button>
               <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
                 <Menu.Item>

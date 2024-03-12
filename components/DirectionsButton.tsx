@@ -1,13 +1,12 @@
 import React from "react";
 import Button from "components/Button";
-import Directions from "icons/Directions";
 import SlideOver from "components/SlideOver";
 import { useTrip } from "providers/trip";
 import MarkerWithIcon from "components/MarkerWithIcon";
-import GoogleMaps from "icons/GoogleMaps";
 import Link from "next/link";
-import { MarkerIcon } from "lib/types";
-import OrganicMaps from "icons/OrganicMaps";
+import Icon from "components/Icon";
+import OrganicMapsIcon from "components/OrganicMapsIcon";
+import GoogleMapsIcon from "components/GoogleMapsIcon";
 
 type Props = {
   lat: number;
@@ -36,7 +35,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
         size="sm"
         href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
       >
-        <Directions className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
+        <Icon name="directions" className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
         <a
@@ -44,7 +43,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700"
           target="_blank"
         >
-          <GoogleMaps className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
+          <GoogleMapsIcon className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
           View in Google Maps
         </a>
         <a
@@ -52,7 +51,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700 sm:hidden"
           target="_blank"
         >
-          <OrganicMaps className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
+          <OrganicMapsIcon className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
           View in Organic Maps
         </a>
         {(!!filteredHotspots?.length || !!filteredMarkers?.length) && (
@@ -84,7 +83,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                   >
                     <MarkerWithIcon
                       showStroke={false}
-                      icon={MarkerIcon.HOTSPOT}
+                      icon="hotspot"
                       className="inline-block ml-1 scale-75 flex-shrink-0"
                     />
                     <span className="truncate">{hotspot.name}</span>

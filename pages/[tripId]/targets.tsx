@@ -10,15 +10,13 @@ import SpeciesCard from "components/SpeciesCard";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import clsx from "clsx";
-import Map from "icons/map";
 import Input from "components/Input";
 import InputNotesSimple from "components/InputNotesSimple";
-import CheckIcon from "icons/Check";
 import { Menu, Transition } from "@headlessui/react";
 import ErrorBoundary from "components/ErrorBoundary";
 import useProfiles from "hooks/useProfiles";
 import { useProfile } from "providers/profile";
-import AngleDown from "icons/AngleDown";
+import Icon from "components/Icon";
 import MerlinkLink from "components/MerlinLink";
 import Button from "components/Button";
 import Link from "next/link";
@@ -111,7 +109,7 @@ export default function TripTargets() {
                       <Menu.Button className="">
                         <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
                         <span className="text-gray-600 text-[13px] hover:text-gray-600">
-                          {selectedOption?.name} <AngleDown />
+                          {selectedOption?.name} <Icon name="angleDown" />
                         </span>
                       </Menu.Button>
                     </div>
@@ -239,7 +237,7 @@ export default function TripTargets() {
                               className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4"
                               onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
                             >
-                              <Map className="text-red-500/80" />
+                              <Icon name="map" className="text-red-500/80" />
                               <span className="hidden md:inline">View Map</span>
                               <span className="md:hidden">Map</span>
                             </Button>
@@ -257,7 +255,7 @@ export default function TripTargets() {
                                 className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4"
                                 onClick={() => handleSeen(it.code, it.name)}
                               >
-                                <CheckIcon className="text-green-500/80" />
+                                <Icon name="check" className="text-green-500/80" />
                                 <span className="hidden md:inline">Mark as seen</span>
                                 <span className="md:hidden">Seen</span>
                               </Button>

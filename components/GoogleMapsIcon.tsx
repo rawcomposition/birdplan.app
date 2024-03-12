@@ -2,7 +2,7 @@ type Props = {
   className?: string;
 };
 
-export default function GoogleMaps({ className }: Props) {
+export default function GoogleMapsIcon({ className }: Props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92.3 132.3" className={`icon ${className || ""}`}>
       <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z" />

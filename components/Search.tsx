@@ -1,5 +1,5 @@
 import React from "react";
-import XMark from "icons/XMark";
+import Icon from "components/Icon";
 
 type Props = {
   value: string;
@@ -29,7 +29,7 @@ export default function Search({ value, onChange }: Props) {
           onClick={onClear}
         >
           <span className="sr-only">Clear search</span>
-          <XMark aria-hidden="true" />
+          <Icon name="xMark" aria-hidden="true" />
         </button>
       )}
     </div>

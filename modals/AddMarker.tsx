@@ -6,7 +6,7 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import { randomId } from "lib/helpers";
-import { MarkerIcon } from "lib/types";
+import { MarkerIconT, markerIcons } from "lib/icons";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
-  const [icon, setIcon] = React.useState<MarkerIcon>();
+  const [icon, setIcon] = React.useState<MarkerIconT>();
   const [name, setName] = React.useState("");
   const [lat, setLat] = React.useState<number>(defaultLat || 0);
   const [lng, setLng] = React.useState<number>(defaultLng || 0);
@@ -69,7 +69,7 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
             <div>
               <label>Choose icon</label>
               <div className="flex gap-2 mt-2 flex-wrap">
-                {Object.values(MarkerIcon).map((it) => (
+                {Object.keys(markerIcons).map((it) => (
                   <button
                     type="button"
                     key={it}

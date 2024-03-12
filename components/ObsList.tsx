@@ -1,7 +1,5 @@
 import React from "react";
-import CameraIcon from "icons/Camera";
-import CommentIcon from "icons/Comment";
-import SpeakerIcon from "icons/Speaker";
+import Icon from "components/Icon";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import dayjs from "dayjs";
@@ -59,9 +57,9 @@ export default function ObsList({ locId, speciesCode }: Props) {
               <td>{count}</td>
               <td className="text-center">
                 <a href={`https://ebird.org/checklist/${checklistId}#${speciesCode}`} target="_blank" rel="noreferrer">
-                  {evidence === "N" && <CommentIcon className="text-gray-600 text-xs" />}
-                  {evidence === "P" && <CameraIcon className="text-lime-700" />}
-                  {evidence === "A" && <SpeakerIcon className="text-sky-700" />}
+                  {evidence === "N" && <Icon name="comment" className="text-gray-600 text-xs" />}
+                  {evidence === "P" && <Icon name="camera" className="text-lime-700" />}
+                  {evidence === "A" && <Icon name="speaker" className="text-sky-700" />}
                 </a>
               </td>
               <td className="text-right">

@@ -9,7 +9,7 @@ import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Select from "components/ReactSelectStyled";
-import Download from "icons/Download";
+import Icon from "components/Icon";
 import { useRouter } from "next/router";
 import { parseTargets } from "lib/helpers";
 import Link from "next/link";
@@ -74,7 +74,7 @@ export default function ImportTargets() {
               size="sm"
               className="inline-flex items-center gap-2"
             >
-              <Download /> Download Targets
+              <Icon name="download" /> Download Targets
             </Button>
             <p className="bg-amber-100 text-amber-800 p-2 rounded text-[12px] mt-4">
               <strong>Note:</strong> Your{" "}

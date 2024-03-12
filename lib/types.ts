@@ -1,3 +1,5 @@
+import { MarkerIconT } from "lib/icons";
+
 export type Profile = {
   id: string;
   lifelist: string[];
@@ -144,24 +146,11 @@ export type Target = {
   notes?: string;
 };
 
-export enum MarkerIcon {
-  HOTSPOT = "hotspot",
-  TENT = "tent",
-  HOUSE = "house",
-  BOAT = "boat",
-  CAR = "car",
-  BUS = "bus",
-  AIRBNB = "airbnb",
-  BINS = "bins",
-  HIKE = "hike",
-  AIRPORT = "airport",
-}
-
 export type CustomMarker = {
   name: string;
   lat: number;
   lng: number;
-  icon: MarkerIcon;
+  icon: MarkerIconT;
   id: string;
   notes?: string;
   imgUrl?: string;

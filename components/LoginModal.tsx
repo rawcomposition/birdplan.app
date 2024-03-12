@@ -1,6 +1,6 @@
 import React from "react";
 import { useUser } from "providers/user";
-import Loading from "icons/Loading";
+import Icon from "components/Icon";
 import useFirebaseLogin from "hooks/useFirebaseLogin";
 
 type Props = {
@@ -20,7 +20,7 @@ const LoginModal = ({ showLoader = true }: Props) => {
         <div className="max-w-sm mx-auto sm:max-w-md shadow rounded-lg bg-white border p-8 pt-6">
           {loading || authLoading ? (
             <div className="text-center">
-              <Loading className="animate-spin text-4xl text-slate-500" />
+              <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
             </div>
           ) : (
             <>

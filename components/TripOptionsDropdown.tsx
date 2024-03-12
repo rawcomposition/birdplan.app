@@ -1,18 +1,11 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
-import VerticalDots from "icons/VerticalDots";
-import Feather from "icons/Feather";
-import Bullseye from "icons/Bullseye";
-import Pencil from "icons/Pencil";
-import ShareIcon from "icons/Share";
-import ExportIcon from "icons/Export";
-import Trash from "icons/Trash";
 import { useModal } from "providers/modals";
 import { deleteTrip } from "lib/firebase";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
-import QuestionMarkIcon from "icons/QuestionMark";
+import Icon from "components/Icon";
 
 type Props = {
   className?: string;
@@ -27,33 +20,33 @@ export default function TripOptionsDropdown({ className }: Props) {
     {
       name: !!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List",
       href: `/import-lifelist?tripId=${trip?.id}&back=true`,
-      icon: <Feather />,
+      icon: "feather",
     },
     {
       name: !!targets?.items?.length ? "Update Targets" : "Import Targets",
       href: `/${trip?.id}/import-targets?redirect=targets&back=true`,
-      icon: <Bullseye />,
+      icon: "bullseye",
     },
     {
       name: "Bird Quiz",
       href: `/${trip?.id}/quiz`,
-      icon: <QuestionMarkIcon />,
+      icon: "questionMark",
     },
     {
       name: "Rename Trip",
       onClick: () => open("renameTrip", { trip }),
-      icon: <Pencil />,
+      icon: "pencil",
     },
     {
       name: "Share Trip",
       onClick: () => open("share"),
-      icon: <ShareIcon />,
+      icon: "share",
       hidden: !isOwner,
     },
     {
       name: "Export KML",
       href: `/api/trips/${trip?.id}/export?profileId=${id}`,
-      icon: <ExportIcon />,
+      icon: "export",
     },
     {
       name: "Delete Trip",
@@ -63,7 +56,7 @@ export default function TripOptionsDropdown({ className }: Props) {
           deleteTrip(trip.id);
         }
       },
-      icon: <Trash />,
+      icon: "trash",
     },
   ];
 
@@ -77,7 +70,7 @@ export default function TripOptionsDropdown({ className }: Props) {
           "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-1 hover:bg-white/10 text-gray-300"
         }
       >
-        <VerticalDots className="text-lg" />
+        <Icon name="verticalDots" className="text-lg" />
       </Menu.Button>
 
       <Transition>
@@ -100,7 +93,7 @@ export default function TripOptionsDropdown({ className }: Props) {
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50 w-full"
                       onClick={onClick}
                     >
-                      {icon}
+                      <Icon name={icon as any} />
                       <span>{name}</span>
                     </button>
                   ) : (
@@ -108,7 +101,7 @@ export default function TripOptionsDropdown({ className }: Props) {
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
                       href={href}
                     >
-                      {icon}
+                      <Icon name={icon as any} />
                       <span>{name}</span>
                     </Link>
                   )

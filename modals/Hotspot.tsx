@@ -2,7 +2,6 @@ import React from "react";
 import { Body } from "providers/modals";
 import { Hotspot as HotspotT } from "lib/types";
 import Button from "components/Button";
-import Feather from "icons/Feather";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
@@ -13,10 +12,9 @@ import RecentChecklistList from "components/RecentChecklistList";
 import clsx from "clsx";
 import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
-import VerticalDots from "icons/VerticalDots";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
-import PlusIcon from "icons/Plus";
+import Icon from "components/Icon";
 
 type Props = {
   hotspot: HotspotT;
@@ -143,7 +141,7 @@ export default function Hotspot({ hotspot }: Props) {
             color="gray"
             size="sm"
           >
-            <Feather className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
+            <Icon name="feather" className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
@@ -157,7 +155,7 @@ export default function Hotspot({ hotspot }: Props) {
           </Button>
           <Menu as="div" className="relative inline-block text-left">
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
-              <VerticalDots />
+              <Icon name="verticalDots" />
             </Menu.Button>
             <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
               <Menu.Item>
@@ -189,7 +187,7 @@ export default function Hotspot({ hotspot }: Props) {
             onClick={handleSave}
             className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-sky-600 mt-4 flex items-center gap-2"
           >
-            <PlusIcon className="text-lg text-sky-600" /> Add to trip
+            <Icon name="pencil" className="text-lg text-sky-600" /> Add to trip
           </button>
         )}
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
-import Loading from "icons/Loading";
+import Icon from "components/Icon";
 import ObsList from "components/ObsList";
 import FilterTabs from "components/FilterTabs";
 
@@ -34,7 +34,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
         <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded">
           {speciesName}
           <br />
-          {isLoadingObs && <Loading className="text-xl animate-spin" />}
+          {isLoadingObs && <Icon name="loading" className="text-xl animate-spin" />}
           {successRate && (
             <>
               <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of{" "}

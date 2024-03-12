@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
-import BreadcrumbArrow from "icons/BreadcrumbArrow";
+import Icon from "components/Icon";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useTrip } from "providers/trip";
-import AngleLeft from "icons/AngleLeft";
 import { useModal } from "providers/modals";
 import { useUser } from "providers/user";
 import AccountDropdown from "components/AccountDropdown";
+import BreadcrumbArrow from "components/BreadcrumbArrow";
 
 type Props = {
   title?: string;
@@ -49,7 +49,7 @@ export default function Header({ title, parent }: Props) {
       </Link>
       {isSubPage && (
         <Link href={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
-          <AngleLeft className="text-gray-500 text-2xl flex items-center" />
+          <Icon name="angleLeft" className="text-gray-500 text-2xl flex items-center" />
         </Link>
       )}
       <div className="mr-auto gap-8 items-center flex min-w-0">

@@ -1,7 +1,6 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
-import LogoutIcon from "icons/Logout";
-import UserIcon from "icons/User";
+import Icon from "components/Icon";
 import { useUser } from "providers/user";
 import Link from "next/link";
 import clsx from "clsx";
@@ -54,7 +53,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
                 className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 href="/account"
               >
-                <UserIcon />
+                <Icon name="user" />
                 <span>Account</span>
               </Link>
             </Menu.Item>
@@ -64,7 +63,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
                 className="w-full flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 onClick={logout}
               >
-                <LogoutIcon />
+                <Icon name="logout" />
                 <span>Logout</span>
               </button>
             </Menu.Item>

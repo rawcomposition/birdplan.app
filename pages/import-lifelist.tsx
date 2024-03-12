@@ -7,9 +7,8 @@ import Header from "components/Header";
 import Head from "next/head";
 import Button from "components/Button";
 import Footer from "components/Footer";
-import Download from "icons/Download";
+import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
-import Feather from "icons/Feather";
 import Link from "next/link";
 
 export default function ImportLifelist() {
@@ -76,7 +75,8 @@ export default function ImportLifelist() {
         )}
         <div className="p-4 md:p-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <Feather className="text-2xl text-lime-600" /> {isCountry ? "Import US Life List" : "Import Life List"}
+            <Icon name="feather" className="text-2xl text-lime-600" />{" "}
+            {isCountry ? "Import US Life List" : "Import Life List"}
           </h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download life list from eBird</h3>
@@ -87,7 +87,7 @@ export default function ImportLifelist() {
               size="sm"
               className="inline-flex items-center gap-2"
             >
-              <Download /> Download Life List
+              <Icon name="download" /> Download Life List
             </Button>
           </div>
           {!isCountry && (

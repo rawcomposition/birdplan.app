@@ -11,13 +11,9 @@ import toast from "react-hot-toast";
 import dayjs from "dayjs";
 import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
-import Pencil from "icons/Pencil";
-import CheckIcon from "icons/Check";
-import XMarkBold from "icons/XMarkBold";
-import AngleDownBold from "icons/AngleDownBold";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
-import Warning from "icons/Warning";
+import Icon from "components/Icon";
 
 export default function Trip() {
   const { user } = useUser();
@@ -85,7 +81,11 @@ export default function Trip() {
                         className="flex items-center gap-2 print:hidden"
                         onClick={() => setEditing((prev) => !prev)}
                       >
-                        {isEditing ? <CheckIcon className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+                        {isEditing ? (
+                          <Icon name="check" className="w-4 h-4" />
+                        ) : (
+                          <Icon name="pencil" className="w-4 h-4" />
+                        )}
                         <span>{isEditing ? "Done" : "Edit"}</span>
                       </Button>
                     )}
@@ -171,7 +171,7 @@ export default function Trip() {
                                         className="inline-block scale-[.85] flex-shrink-0 print:hidden"
                                       />
                                     ) : (
-                                      <Warning className="text-red-500 text-[22px]" />
+                                      <Icon name="warning" className="text-red-500 text-[22px]" />
                                     )}
                                     <span>
                                       <div className="truncate font-medium mt-[2px]">
@@ -192,7 +192,7 @@ export default function Trip() {
                                           onClick={() => moveItineraryDayLocation(dayId, id, "down")}
                                           className="text-[16px] p-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
                                         >
-                                          <AngleDownBold />
+                                          <Icon name="angleDownBold" />
                                         </button>
                                       )}
                                       {index !== 0 && (
@@ -201,7 +201,7 @@ export default function Trip() {
                                           onClick={() => moveItineraryDayLocation(dayId, id, "up")}
                                           className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                                         >
-                                          <AngleDownBold className="rotate-180" />
+                                          <Icon name="angleDownBold" className="rotate-180" />
                                         </button>
                                       )}
                                       <button
@@ -209,7 +209,7 @@ export default function Trip() {
                                         onClick={() => removeItineraryDayLocation(dayId, id)}
                                         className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                                       >
-                                        <XMarkBold />
+                                        <Icon name="xMarkBold" />
                                       </button>
                                     </div>
                                   )}

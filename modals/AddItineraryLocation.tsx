@@ -2,7 +2,6 @@ import React from "react";
 import { Header, Body } from "providers/modals";
 import { useTrip } from "providers/trip";
 import MarkerWithIcon from "components/MarkerWithIcon";
-import { MarkerIcon } from "lib/types";
 import { useModal } from "providers/modals";
 
 type Props = {
@@ -46,11 +45,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                     close();
                   }}
                 >
-                  <MarkerWithIcon
-                    showStroke={false}
-                    icon={MarkerIcon.HOTSPOT}
-                    className="inline-block scale-75 flex-shrink-0"
-                  />
+                  <MarkerWithIcon showStroke={false} icon="hotspot" className="inline-block scale-75 flex-shrink-0" />
                   <span className="truncate">{hotspot.name}</span>
                 </button>
               </li>

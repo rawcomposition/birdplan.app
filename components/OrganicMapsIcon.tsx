@@ -2,7 +2,7 @@ type Props = {
   className?: string;
 };
 
-export default function OrganicMaps({ className }: Props) {
+export default function OrganicMapsIcon({ className }: Props) {
   return (
     <svg
       version="1.1"

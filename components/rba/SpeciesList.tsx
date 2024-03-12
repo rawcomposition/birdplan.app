@@ -2,7 +2,7 @@ import ObservationList from "./ObservationList";
 import { Species as SpeciesT } from "lib/types";
 import { truncate } from "lib/helpers";
 import Timeago from "components/Timeago";
-import MapIcon from "icons/map";
+import Icon from "components/Icon";
 import clsx from "clsx";
 
 type Props = {
@@ -72,7 +72,7 @@ export default function SpeciesList({ heading, items, expanded, onToggleExpand, 
                   </span>
                   {!!lat && !!lng && !!shortestDistance && (
                     <span className="rounded-sm px-2 py-1 text-xs whitespace-nowrap bg-gray-300 text-gray-600">
-                      <MapIcon className="mr-1 mt-[-2px] text-[0.85em]" />
+                      <Icon name="map" className="mr-1 mt-[-2px] text-[0.85em]" />
                       {shortestDistance} mi
                     </span>
                   )}

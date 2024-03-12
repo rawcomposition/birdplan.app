@@ -5,16 +5,17 @@ import Field from "components/Field";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import { randomId } from "lib/helpers";
-import { GooglePlaceT, MarkerIcon } from "lib/types";
+import { GooglePlaceT } from "lib/types";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import PlaceSearch from "components/PlaceSearch";
-import XMark from "icons/XMark";
+import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
+import { MarkerIconT, markerIcons } from "lib/icons";
 
 export default function AddPlace() {
-  const [icon, setIcon] = React.useState<MarkerIcon>();
+  const [icon, setIcon] = React.useState<MarkerIconT>();
   const [place, setPlace] = React.useState<GooglePlaceT>();
   const { close } = useModal();
   const { trip, appendMarker } = useTrip();
@@ -68,14 +69,14 @@ export default function AddPlace() {
                     className="flex flex-col text-gray-600 items-center text-sm"
                     onClick={() => setPlace(undefined)}
                   >
-                    <XMark />
+                    <Icon name="xMark" />
                     <span className="uppercase text-[9px]">Cancel</span>
                   </button>
                 </div>
                 <div>
                   <label>Choose icon</label>
                   <div className="flex gap-2 mt-2 flex-wrap">
-                    {Object.values(MarkerIcon).map((it) => (
+                    {Object.keys(markerIcons).map((it) => (
                       <button
                         type="button"
                         key={it}
