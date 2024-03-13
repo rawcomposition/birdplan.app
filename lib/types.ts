@@ -153,7 +153,6 @@ export type CustomMarker = {
   icon: MarkerIconT;
   id: string;
   notes?: string;
-  imgUrl?: string;
   placeId?: string;
   placeType?: string;
 };
@@ -224,6 +223,5 @@ export type GooglePlaceT = {
   name: string;
   lat: number;
   lng: number;
-  imgUrl?: string;
   type?: string;
 };

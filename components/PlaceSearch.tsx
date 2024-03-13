@@ -29,18 +29,17 @@ export default function PlaceSearch({ className, country, onChange, focus, ...pr
         lat: parseFloat(place.geometry.location.lat().toFixed(7)),
         lng: parseFloat(place.geometry.location.lng().toFixed(7)),
         id: place.place_id,
-        imgUrl: place.photos?.[0]?.getUrl({ maxWidth: 1200, maxHeight: 1200 }),
         type: place.types?.[0],
       });
     };
 
     const options = {
       componentRestrictions: { country: country.toLowerCase() },
-      fields: ["place_id", "name", "geometry", "photos", "types"],
+      fields: ["place_id", "name", "geometry", "types"],
     };
     //@ts-ignore
     const googlePlaces = new window.google.maps.places.Autocomplete(inputRef.current, options);
-    googlePlaces.setFields(["place_id", "name", "geometry", "photos", "types"]);
+    googlePlaces.setFields(["place_id", "name", "geometry", "types"]);
     googlePlaces.addListener("place_changed", () => {
       handlePlaceSelect(googlePlaces);
     });

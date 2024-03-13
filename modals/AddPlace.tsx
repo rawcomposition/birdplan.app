@@ -33,7 +33,6 @@ export default function AddPlace() {
       id: place.id || randomId(6),
       placeId: place.id,
       placeType: place.type,
-      imgUrl: place.imgUrl,
     });
     close();
   };

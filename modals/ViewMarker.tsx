@@ -17,7 +17,7 @@ type Props = {
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
   const { canEdit, removeMarker, saveMarkerNotes, setSelectedMarkerId } = useTrip();
-  const { id, placeId, name, lat, lng, imgUrl } = marker;
+  const { id, placeId, name, lat, lng } = marker;
 
   const handleRemoveMarker = () => {
     if (!confirm("Are you sure you want to delete this marker?")) return;
@@ -39,7 +39,6 @@ export default function ViewMarker({ marker }: Props) {
         {name}
       </Header>
       <Body className="relative min-h-[200px]" noPadding>
-        {/*imgUrl && <img src={imgUrl} alt={name} className="w-full h-[200px] object-cover" />*/}
         <div className="px-4 sm:px-6 pt-4">
           <div className="flex gap-2 mb-2">
             <DirectionsButton lat={lat} lng={lng} markerId={id} googleUrl={googleUrl} />
