@@ -137,6 +137,6 @@ const Body = ({
   children: React.ReactNode;
   className?: string;
   noPadding?: boolean;
-}) => <div className={clsx(!noPadding && "px-4 sm:px-6 pt-4", className)}>{children}</div>;
+}) => <div className={clsx(!noPadding && "px-4 sm:px-6 pt-4", className, "overflow-auto flex-grow")}>{children}</div>;
 
 export { ModalProvider, useModal, Footer, Header, Body };

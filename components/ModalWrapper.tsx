@@ -48,16 +48,16 @@ export default function ModalWrapper({ open, onClose, small, children }: Props) 
         leaveFrom="opacity-100 translate-y-0 sm:translate-x-0"
         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
         className={clsx(
-          "fixed bottom-0 left-0 right-0 sm:left-auto sm:top-[60px] z-20 w-full sm:max-w-md bg-black/10",
+          "fixed bottom-0 left-0 right-0 sm:left-auto sm:top-[60px] z-20 w-full sm:max-w-md bg-black/10 sm:bg-transparent",
           small ? "top-1/2" : "top-44"
         )}
       >
         <div className="items-center justify-center text-center h-full">
           <CloseButton
-            className="absolute z-20 top-2 right-2 sm:right-6 p-2 bg-gray-50 rounded-full"
+            className="absolute z-20 top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
             onClick={onClose}
           />
-          <div className="relative transform rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none bg-white text-left h-full sm:shadow-left overflow-auto">
+          <div className="relative transform rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none bg-white text-left h-full sm:shadow-left flex flex-col overflow-hidden">
             <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </div>
