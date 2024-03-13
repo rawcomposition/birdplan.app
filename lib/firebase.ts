@@ -104,11 +104,18 @@ export const createTrip = async (trip: TripInput): Promise<string | null> => {
   return doc.id;
 };
 
-export const renameTrip = async (tripId: string, name: string): Promise<string | null> => {
+type TripUpdateT = {
+  tripId: string;
+  name: string;
+  startMonth: number;
+  endMonth: number;
+};
+
+export const updateTrip = async ({ tripId, name, startMonth, endMonth }: TripUpdateT): Promise<boolean | null> => {
   const user = auth.currentUser;
   if (!user) return null;
-  await fs.setDoc(fs.doc(db, "trip", tripId), { name }, { merge: true });
-  return tripId;
+  await fs.setDoc(fs.doc(db, "trip", tripId), { name, startMonth, endMonth }, { merge: true });
+  return true;
 };
 
 export const deleteTrip = async (id: string) => {

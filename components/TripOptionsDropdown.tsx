@@ -2,7 +2,6 @@ import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useModal } from "providers/modals";
-import { deleteTrip } from "lib/firebase";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
@@ -33,30 +32,20 @@ export default function TripOptionsDropdown({ className }: Props) {
       icon: "questionMark",
     },
     {
-      name: "Rename Trip",
-      onClick: () => open("renameTrip", { trip }),
-      icon: "pencil",
-    },
-    {
       name: "Share Trip",
       onClick: () => open("share"),
       icon: "share",
       hidden: !isOwner,
     },
     {
+      name: "Trip Settings",
+      href: `/${trip?.id}/settings`,
+      icon: "cog",
+    },
+    {
       name: "Export KML",
       href: `/api/trips/${trip?.id}/export?profileId=${id}`,
       icon: "export",
-    },
-    {
-      name: "Delete Trip",
-      onClick: () => {
-        if (!trip) return;
-        if (confirm("Are you sure you want to delete this trip?")) {
-          deleteTrip(trip.id);
-        }
-      },
-      icon: "trash",
     },
   ];
 

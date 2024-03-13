@@ -13,7 +13,6 @@ import PersonalLocation from "modals/PersonalLocation";
 import AddMarker from "modals/AddMarker";
 import ViewMarker from "modals/ViewMarker";
 import Share from "modals/Share";
-import Rename from "modals/Rename";
 import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
@@ -50,11 +49,6 @@ const modals = [
     Component: Share,
   },
   {
-    id: "renameTrip",
-    Component: Rename,
-    small: true,
-  },
-  {
     id: "addItineraryLocation",
     Component: AddItineraryLocation,
     small: true,
@@ -68,7 +62,6 @@ type ModalId =
   | "addHotspot"
   | "viewMarker"
   | "share"
-  | "renameTrip"
   | "addItineraryLocation"
   | "addPlace";
 
