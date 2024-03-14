@@ -187,7 +187,7 @@ export default function Hotspot({ hotspot }: Props) {
             onClick={handleSave}
             className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-sky-600 mt-4 flex items-center gap-2"
           >
-            <Icon name="pencil" className="text-lg text-sky-600" /> Add to trip
+            <Icon name="plus" className="text-lg text-sky-600" /> Add to trip
           </button>
         )}
 
