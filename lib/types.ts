@@ -9,6 +9,7 @@ export type Profile = {
   lat?: number;
   lng?: number;
   enableExperimental?: boolean;
+  dismissedNoticeId?: string;
 };
 
 export type RareObservation = {

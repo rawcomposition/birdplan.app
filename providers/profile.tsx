@@ -12,6 +12,7 @@ interface ContextT extends Profile {
   setLat: (lat: number) => Promise<void>;
   setLng: (lng: number) => Promise<void>;
   reset: () => void;
+  dismissNotice: (id: string) => void;
 }
 
 const initialState: Profile = {
@@ -23,6 +24,7 @@ const initialState: Profile = {
   lat: undefined,
   lng: undefined,
   enableExperimental: false,
+  dismissedNoticeId: "",
 };
 
 export const ProfileContext = React.createContext<ContextT>({
@@ -35,6 +37,7 @@ export const ProfileContext = React.createContext<ContextT>({
   setLat: async () => {},
   setLng: async () => {},
   reset: () => {},
+  dismissNotice: () => {},
 });
 
 type Props = {
@@ -91,6 +94,11 @@ const ProfileProvider = ({ children }: Props) => {
     await setProfileValue("lng", lng);
   };
 
+  const dismissNotice = async (id: string) => {
+    setState((state) => ({ ...state, dismissedNoticeId: id }));
+    await setProfileValue("dismissedNoticeId", id);
+  };
+
   const reset = () => {
     setState(initialState);
   };
@@ -108,6 +116,7 @@ const ProfileProvider = ({ children }: Props) => {
         radius: state.radius || 50,
         lat: state.lat,
         lng: state.lng,
+        dismissedNoticeId: state.dismissedNoticeId,
         setLat,
         setLng,
         setLifelist,
@@ -116,6 +125,7 @@ const ProfileProvider = ({ children }: Props) => {
         setCountryLifelist,
         setRadius,
         reset,
+        dismissNotice,
       }}
     >
       {children}

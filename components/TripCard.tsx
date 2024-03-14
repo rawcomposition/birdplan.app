@@ -21,7 +21,15 @@ export default function TripCard({ trip }: Props) {
   return (
     <Link href={`/${id}`}>
       <div className="bg-white rounded-lg shadow relative p-4">
-        {trip?.imgUrl && <img src={trip?.imgUrl} className="w-full h-36 object-cover rounded-lg mb-3" alt="" />}
+        {trip?.imgUrl && (
+          <img
+            src={trip?.imgUrl}
+            className="w-full h-36 object-cover rounded-lg mb-3"
+            alt=""
+            width={600}
+            height={370}
+          />
+        )}
         <div>
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold text-gray-800 mb-2">{name}</h2>

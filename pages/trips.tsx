@@ -8,6 +8,7 @@ import Link from "next/link";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import RbaButton from "components/RbaButton";
+import Notice from "components/Notice";
 
 export default function Trips() {
   const { trips, loading } = useTrips();
@@ -28,6 +29,7 @@ export default function Trips() {
               <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
             </Button>
           </div>
+          <Notice />
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             {trips.map((trip) => (
               <TripCard key={trip.id} trip={trip} />
