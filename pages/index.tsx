@@ -1,11 +1,10 @@
 import React from "react";
 import Head from "next/head";
 import Button from "components/Button";
-import Link from "next/link";
-import clsx from "clsx";
 import Icon from "components/Icon";
 import { useUser } from "providers/user";
 import Footer from "components/Footer";
+import HomeHeader from "components/HomeHeader";
 
 const features = [
   {
@@ -40,7 +39,7 @@ const features = [
   },
 ];
 
-export default function Planner() {
+export default function BirdPlan() {
   const { user } = useUser();
   const isLoggedIn = !!user?.uid;
   return (
@@ -49,28 +48,7 @@ export default function Planner() {
         <title>BirdPlan.app - Plan Your Next Birding Adventure</title>
       </Head>
 
-      <header className="bg-white border-b border-gray-100 py-4 shrink-0 flex items-center">
-        <div className="container flex items-center px-4">
-          <Link href="/trips" className={clsx("flex items-center")}>
-            <img src="/icon.png" className="w-[50px] mr-4" width="50" height="50" />
-            <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
-          </Link>
-          {isLoggedIn ? (
-            <Button color="pillPrimary" href="/trips" className="ml-auto">
-              My Trips
-            </Button>
-          ) : (
-            <>
-              <Button color="pillOutlineGray" href="/login" className="ml-auto">
-                Login
-              </Button>
-              <Button color="pillPrimary" href="/signup" className="ml-4 hidden xs:flex">
-                Signup
-              </Button>
-            </>
-          )}
-        </div>
-      </header>
+      <HomeHeader />
       <main className="container px-4">
         <div className="flex flex-col items-center justify-center py-8 md:py-12 lg:py-16">
           <h1 className="text-gray-800 sm:leading-normal lg:leading-normal font-bold text-center mb-8 text-3xl sm:text-5xl lg:text-7xl">

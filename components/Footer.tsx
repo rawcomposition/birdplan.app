@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="mt-auto text-center text-[12px] opacity-80 text-gray-500 border-t py-4 hidden md:block">
@@ -12,6 +14,8 @@ export default function Footer() {
       >
         Feedback
       </a>
+      <span className="mx-2">•</span>
+      <Link href="/whats-new">What&apos;s New</Link>
       <span className="mx-2">•</span>
       <a href="https://github.com/rawcomposition/bird-planner" target="_blank">
         Github

@@ -34,6 +34,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "@types/jsdom": "^21.1.1",
     "@types/mapbox__mapbox-sdk": "^0.13.4",
     "@types/mapbox-gl": "^2.7.10",
