@@ -17,7 +17,7 @@ export default function Footer() {
       <span className="mx-2">•</span>
       <Link href="/whats-new">What&apos;s New</Link>
       <span className="mx-2">•</span>
-      <a href="https://github.com/rawcomposition/bird-planner" target="_blank">
+      <a href="https://github.com/rawcomposition/birdplan.app" target="_blank">
         Github
       </a>
     </footer>
