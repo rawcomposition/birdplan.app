@@ -10,7 +10,7 @@ type Props = {
   speciesTotal?: number;
 };
 
-export default function Hotspot({ id, speciesTotal }: Props) {
+export default function HotspotStats({ id, speciesTotal }: Props) {
   const { checklists } = useFetchRecentChecklists(id);
   const { data } = useFetchHotspotInfo(id);
   const { trip } = useTrip();

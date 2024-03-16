@@ -3,11 +3,11 @@ import { RecentChecklist } from "lib/types";
 import { randomId } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 
-export default function useFetchRecentChecklists(region?: string, count: number = 10) {
+export default function useFetchRecentChecklists(region?: string) {
   const { data, isLoading, error } = useQuery<RecentChecklist[]>({
     queryKey: [
       `https://api.ebird.org/v2/product/lists/${region}`,
-      { maxResults: count * 2, key: process.env.NEXT_PUBLIC_EBIRD_KEY },
+      { maxResults: 40, key: process.env.NEXT_PUBLIC_EBIRD_KEY },
     ],
     enabled: !!region,
   });

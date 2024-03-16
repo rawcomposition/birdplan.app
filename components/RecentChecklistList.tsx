@@ -18,13 +18,14 @@ type Props = {
 
 export default function RecentChecklistList({ locId, speciesCode, speciesName }: Props) {
   const [view, setView] = React.useState<string>("all");
+  const [expanded, setExpanded] = React.useState(false);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
   const { data: info } = useFetchHotspotInfo(locId);
   const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(locId);
   const { data: obs, isLoading: isLoadingObs, error: obsError } = useFetchHotspotObs(locId, speciesCode);
-  const checklists = groupedChecklists.slice(0, 10);
+  const checklists = expanded ? groupedChecklists : groupedChecklists.slice(0, 10);
 
   const successRate = info?.numChecklists && obs?.length ? obs.length / info.numChecklists : null;
 
@@ -97,14 +98,19 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
               </tbody>
             </table>
           )}
-          {checklists.length > 0 && (
+          {!expanded && groupedChecklists.length > 10 && (
+            <button onClick={() => setExpanded(true)} className="block w-full text-sm text-center mt-2 text-blue-900">
+              View more
+            </button>
+          )}
+          {expanded && (
             <p className="text-sm mt-2 text-center">
               <Link
                 target="_blank"
                 className="text-sm text-blue-900 mt-2"
                 href={`https://ebird.org/hotspot/${locId}/activity?yr=all&m=`}
               >
-                View all checklists
+                View more on eBird
               </Link>
             </p>
           )}
