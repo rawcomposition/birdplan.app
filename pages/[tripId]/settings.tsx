@@ -14,9 +14,10 @@ import Link from "next/link";
 import { months } from "lib/helpers";
 import Button from "components/Button";
 import { updateTrip, deleteTrip } from "lib/firebase";
+import NotFound from "components/NotFound";
 
 export default function TripSettings() {
-  const { trip } = useTrip();
+  const { trip, is404 } = useTrip();
   const [startMonth, setStartMonth] = React.useState<Option>();
   const [endMonth, setEndMonth] = React.useState<Option>();
   const [submitting, setSubmitting] = React.useState(false);
@@ -51,7 +52,7 @@ export default function TripSettings() {
     deleteTrip(trip.id);
   };
 
-  if (!trip) return null;
+  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">

@@ -14,10 +14,12 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
+import NotFound from "components/NotFound";
 
 export default function Trip() {
   const { user } = useUser();
   const {
+    is404,
     trip,
     canEdit,
     setStartDate,
@@ -55,6 +57,8 @@ export default function Trip() {
     if (isButton) return;
     modalId && close();
   };
+
+  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">

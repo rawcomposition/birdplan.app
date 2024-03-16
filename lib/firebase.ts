@@ -156,10 +156,16 @@ export const subscribeToTrip = (id: string, callback: (trip: Trip) => void): (()
   });
 };
 
-export const subscribeToTripTargets = (tripId: string, callback: (data: Targets) => void): (() => void) => {
+export const subscribeToTripTargets = (
+  tripId: string,
+  callback: (data: Targets) => void,
+  on404: () => void
+): (() => void) => {
   return fs.onSnapshot(fs.doc(db, "targets", tripId), (doc) => {
     if (doc.exists()) {
       callback(doc.data() as Targets);
+    } else {
+      on404();
     }
   });
 };

@@ -13,11 +13,12 @@ import Icon from "components/Icon";
 import { useRouter } from "next/router";
 import { parseTargets } from "lib/helpers";
 import Link from "next/link";
+import NotFound from "components/NotFound";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
 export default function ImportTargets() {
-  const { trip, setTargets } = useTrip();
+  const { is404, trip, setTargets } = useTrip();
   const { lifelist } = useProfile();
   const router = useRouter();
   const redirect = router.query.redirect || "";
@@ -49,6 +50,8 @@ export default function ImportTargets() {
       fileInputRef.current?.value && (fileInputRef.current.value = "");
     }
   };
+
+  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">

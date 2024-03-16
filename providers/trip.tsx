@@ -36,6 +36,7 @@ type ContextT = {
   selectedSpecies?: SelectedSpecies;
   canEdit: boolean;
   isOwner: boolean;
+  is404: boolean;
   selectedMarkerId?: string;
   halo?: HaloT;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
@@ -53,6 +54,7 @@ const initialState = {
   },
   canEdit: false,
   isOwner: false,
+  is404: false,
   invites: [],
 };
 
@@ -74,6 +76,7 @@ const TripProvider = ({ children }: Props) => {
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
+  const [is404, setIs404] = React.useState(false);
   const { query, pathname } = useRouter();
   const id = query.tripId?.toString();
   const { user } = useUser();
@@ -95,10 +98,18 @@ const TripProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (!id) return;
-    const unsubscribe = subscribeToTripTargets(id, (targets) => setTripTargets(targets));
+    const unsubscribe = subscribeToTripTargets(
+      id,
+      (targets) => {
+        setTripTargets(targets);
+        setIs404(false);
+      },
+      () => setIs404(true)
+    );
     return () => {
       unsubscribe();
       setTripTargets(initialState.targets);
+      setIs404(false);
     };
   }, [id]);
 
@@ -119,6 +130,7 @@ const TripProvider = ({ children }: Props) => {
         setHalo,
         canEdit,
         isOwner,
+        is404,
         trip,
         targets,
         selectedSpecies,

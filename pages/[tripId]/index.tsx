@@ -13,12 +13,13 @@ import { useUser } from "providers/user";
 import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
+import NotFound from "components/NotFound";
 
 export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
   const [showSatellite, setShowSatellite] = React.useState(false);
-  const { trip, canEdit, setSelectedSpecies } = useTrip();
+  const { trip, canEdit, is404, setSelectedSpecies } = useTrip();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
@@ -51,6 +52,8 @@ export default function Trip() {
       setShowAll(true);
     }
   }, [tripIsLoaded, tripIsNew]);
+
+  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">

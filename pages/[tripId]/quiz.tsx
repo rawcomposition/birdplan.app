@@ -10,6 +10,7 @@ import Footer from "components/Footer";
 import Select from "components/ReactSelectStyled";
 import { getRandomItemsFromArray } from "lib/helpers";
 import Link from "next/link";
+import NotFound from "components/NotFound";
 
 type StepT = {
   code: string;
@@ -25,7 +26,7 @@ export default function Quiz() {
   const [index, setIndex] = React.useState(0);
   const [steps, setSteps] = React.useState<StepT[]>([]);
   const [isInitialized, setIsInitialized] = React.useState(false);
-  const { trip, targets } = useTrip();
+  const { is404, trip, targets } = useTrip();
   const { lifelist } = useProfile();
   const selectRef = React.useRef<any>(null);
 
@@ -110,6 +111,8 @@ export default function Quiz() {
       window.removeEventListener("keydown", handleRight);
     };
   }, []);
+
+  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">

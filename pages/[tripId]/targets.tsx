@@ -22,13 +22,14 @@ import Button from "components/Button";
 import Link from "next/link";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
+import NotFound from "components/NotFound";
 
 export default function TripTargets() {
   const { open } = useModal();
   const { user } = useUser();
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
-  const { targets, trip, invites, canEdit, selectedSpecies, setSelectedSpecies, setTargetNotes } = useTrip();
+  const { is404, targets, trip, invites, canEdit, selectedSpecies, setSelectedSpecies, setTargetNotes } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const [search, setSearch] = React.useState("");
   const [selectedUid, setSelectedUid] = React.useState("");
@@ -84,6 +85,8 @@ export default function TripTargets() {
       setExpandedCodes([...expandedCodes, code]);
     }
   };
+
+  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">
