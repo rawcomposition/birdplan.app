@@ -15,6 +15,7 @@ import { Menu } from "@headlessui/react";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
+import { useRouter } from "next/router";
 
 type Props = {
   hotspot: HotspotT;
@@ -41,6 +42,7 @@ export default function Hotspot({ hotspot }: Props) {
   const originalName = savedHotspot?.originalName;
   const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "needs");
+  const router = useRouter();
 
   const tabs = [
     {
@@ -86,7 +88,7 @@ export default function Hotspot({ hotspot }: Props) {
     setTranslatedHotspotName(id, translatedName);
   };
 
-  const hasSpecies = !!selectedSpecies;
+  const hasSpecies = !!selectedSpecies && router.pathname.includes("targets");
   React.useEffect(() => {
     if (hasSpecies) {
       setHalo({ lat, lng, color: "#ce0d02" });
