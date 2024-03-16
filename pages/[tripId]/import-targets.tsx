@@ -84,8 +84,8 @@ export default function ImportTargets() {
               <a href="https://ebird.org/prefs" className="text-sky-600" target="_blank" rel="noreferrer">
                 eBird Preferences
               </a>{" "}
-              must be set to show species names in <strong>English</strong> or <strong>English (US)</strong> for this to
-              work.
+              must be set to show species names in <strong>English</strong> or <strong>English (US)</strong>. Or enable{" "}
+              showing <strong>both common and scientific names</strong>.
             </p>
           </div>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">

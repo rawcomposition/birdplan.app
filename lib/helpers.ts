@@ -309,7 +309,7 @@ export const parseTargets = async ({
           const N = sampleSizesInRange.reduce((acc, it) => acc + it, 0);
           const yrN = sampleSizes.reduce((acc: number, it: number) => acc + it, 0);
           const species = data.slice(3).map((it: any) => {
-            const name = it[""].split(" (")[0];
+            const name = parseTargetName(it[""]);
             const counts = it.__parsed_extra.slice(0, 48).map((it: string, i: number) => sampleSizes[i] * Number(it));
             const countsInRange = getDataInRange(counts, startWeek, endWeek);
             const sumCountsInRange = countsInRange.reduce((acc, it) => acc + it, 0);
@@ -360,6 +360,18 @@ export const parseTargets = async ({
       reject(error);
     }
   });
+};
+
+const parseTargetName = (name: string) => {
+  const hasScientific = name.includes('<em class="sci">');
+  if (!hasScientific) {
+    const regex = /<em[^>]*>(.*?)<\/em>/g;
+    const matches = name.matchAll(regex);
+    const contents = Array.from(matches).map((match) => match[1]);
+    return contents;
+  }
+  const split = name.split(" (");
+  return split[0];
 };
 
 //https://decipher.dev/30-seconds-of-typescript/docs/debounce/
