@@ -35,11 +35,6 @@ export type Species = {
   reports: RareObservation[];
 };
 
-export type DispatchAction = {
-  type: string;
-  payload?: any;
-};
-
 export type Marker = {
   lat: number;
   lng: number;

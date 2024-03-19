@@ -49,16 +49,6 @@
   }
 }
 
-@layer components {
-  .aside-bg {
-    background-image: url(/flock.svg),
-      radial-gradient(farthest-corner at 40% -10%, rgba(255, 255, 255, 0.2) 0%, transparent 40%, transparent 100%);
-    @apply bg-no-repeat;
-    @apply bg-[length:200%];
-    @apply bg-blend-luminosity;
-  }
-}
-
 .mapboxAddMarkerMode .mapboxgl-canvas-container {
   @apply cursor-crosshair;
 }
