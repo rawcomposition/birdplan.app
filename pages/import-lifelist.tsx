@@ -12,11 +12,11 @@ import LoginModal from "components/LoginModal";
 import Link from "next/link";
 
 export default function ImportLifelist() {
-  const { setLifelist, setExceptions, exceptions, setCountryLifelist } = useProfile();
+  const { setLifelist, setExceptions, exceptions } = useProfile();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const router = useRouter();
-  const { tripId, isCountry } = router.query;
+  const { tripId } = router.query;
   const showBack = router.query.back === "true" && tripId;
   const redirectUrl = tripId ? `/${tripId}` : `/`;
 
@@ -44,7 +44,7 @@ export default function ImportLifelist() {
           });
           const codes = await res.json();
           if (Array.isArray(codes)) {
-            isCountry ? setCountryLifelist(codes) : setLifelist(codes);
+            setLifelist(codes);
             toast.success("Life list uploaded");
           } else {
             toast.error("Error uploading life list");
@@ -75,13 +75,12 @@ export default function ImportLifelist() {
         )}
         <div className="p-4 md:p-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <Icon name="feather" className="text-2xl text-lime-600" />{" "}
-            {isCountry ? "Import US Life List" : "Import Life List"}
+            <Icon name="feather" className="text-2xl text-lime-600" /> {"Import Life List"}
           </h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download life list from eBird</h3>
             <Button
-              href={`https://ebird.org/lifelist?r=${isCountry ? "US" : "world"}&time=life&fmt=csv`}
+              href={`https://ebird.org/lifelist?r=world&time=life&fmt=csv`}
               target="_blank"
               color="primary"
               size="sm"
@@ -90,20 +89,18 @@ export default function ImportLifelist() {
               <Icon name="download" /> Download Life List
             </Button>
           </div>
-          {!isCountry && (
-            <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-              <h3 className="text-lg font-medium mb-4 text-gray-700">2. Enter Exceptions (optional)</h3>
-              <p className="text-sm text-gray-600 mb-2">Enter comma separated list of eBird species codes to ignore.</p>
-              <input
-                type="text"
-                className="input text-xs"
-                onBlur={(e) => setExceptions(e.target.value)}
-                defaultValue={exceptions?.join(", ")}
-              />
-            </div>
-          )}
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">{isCountry ? "2." : "3."} Upload file</h3>
+            <h3 className="text-lg font-medium mb-4 text-gray-700">2. Enter Exceptions (optional)</h3>
+            <p className="text-sm text-gray-600 mb-2">Enter comma separated list of eBird species codes to ignore.</p>
+            <input
+              type="text"
+              className="input text-xs"
+              onBlur={(e) => setExceptions(e.target.value)}
+              defaultValue={exceptions?.join(", ")}
+            />
+          </div>
+          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
+            <h3 className="text-lg font-medium mb-4 text-gray-700">3. Upload file</h3>
             <p className="text-sm text-gray-600 mb-2">Upload the CSV file you downloaded in step 1.</p>
             <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
           </div>

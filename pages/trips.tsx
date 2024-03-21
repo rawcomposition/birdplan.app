@@ -7,7 +7,6 @@ import TripCard from "components/TripCard";
 import Link from "next/link";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
-import RbaButton from "components/RbaButton";
 import Notice from "components/Notice";
 
 export default function Trips() {
@@ -22,7 +21,6 @@ export default function Trips() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <div className="p-4 md:p-0">
-          <RbaButton />
           <div className="flex gap-8 items-center mb-8 mt-4">
             <h1 className="text-3xl font-bold text-gray-700">My Trips</h1>
             <Button color="pillPrimary" size="md" href="/create" className="pr-6">

@@ -7,7 +7,6 @@ interface ContextT extends Profile {
   setLifelist: (lifelist: string[]) => Promise<void>;
   addToLifeList: (code: string) => Promise<void>;
   setExceptions: (exceptions: string) => Promise<void>;
-  setCountryLifelist: (lifelist: string[]) => Promise<void>;
   setRadius: (radius: number) => Promise<void>;
   setLat: (lat: number) => Promise<void>;
   setLng: (lng: number) => Promise<void>;
@@ -19,11 +18,9 @@ const initialState: Profile = {
   id: "",
   lifelist: [],
   exceptions: [],
-  countryLifelist: [],
   radius: 50,
   lat: undefined,
   lng: undefined,
-  enableExperimental: false,
   dismissedNoticeId: "",
 };
 
@@ -32,7 +29,6 @@ export const ProfileContext = React.createContext<ContextT>({
   setLifelist: async () => {},
   setExceptions: async () => {},
   addToLifeList: async () => {},
-  setCountryLifelist: async () => {},
   setRadius: async () => {},
   setLat: async () => {},
   setLng: async () => {},
@@ -74,11 +70,6 @@ const ProfileProvider = ({ children }: Props) => {
     await setProfileValue("lifelist", [...state.lifelist, code]);
   };
 
-  const setCountryLifelist = async (countryLifelist: string[]) => {
-    setState((state) => ({ ...state, countryLifelist }));
-    await setProfileValue("countryLifelist", countryLifelist);
-  };
-
   const setRadius = async (radius: number) => {
     setState((state) => ({ ...state, radius }));
     await setProfileValue("radius", radius);
@@ -109,10 +100,8 @@ const ProfileProvider = ({ children }: Props) => {
     <ProfileContext.Provider
       value={{
         id: state.id,
-        enableExperimental: state.enableExperimental,
         lifelist,
         exceptions: state.exceptions || [],
-        countryLifelist: state.countryLifelist || [],
         radius: state.radius || 50,
         lat: state.lat,
         lng: state.lng,
@@ -122,7 +111,6 @@ const ProfileProvider = ({ children }: Props) => {
         setLifelist,
         setExceptions,
         addToLifeList,
-        setCountryLifelist,
         setRadius,
         reset,
         dismissNotice,
