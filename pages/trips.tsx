@@ -21,7 +21,7 @@ export default function Trips() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <div className="p-4 md:p-0">
-          <div className="flex gap-8 items-center mb-8 mt-4">
+          <div className="flex gap-8 items-center mb-8 mt-4 md:mt-8">
             <h1 className="text-3xl font-bold text-gray-700">My Trips</h1>
             <Button color="pillPrimary" size="md" href="/create" className="pr-6">
               <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
