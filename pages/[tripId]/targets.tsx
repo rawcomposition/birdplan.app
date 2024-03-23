@@ -101,185 +101,168 @@ export default function TripTargets() {
       <main className="flex h-[calc(100%-60px-52px)]">
         <ErrorBoundary>
           <div className="h-full grow flex sm:relative flex-col w-full">
-            <div className="h-full overflow-auto">
-              <div className="mt-2 sm:mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
-                <div className="mb-8 sm:mb-10">
-                  <h1 className="text-3xl font-bold text-gray-700">Trip Targets</h1>
-                </div>
-                {options.length > 1 && (
-                  <Menu as="div" className="mb-3 text-left relative">
-                    <div>
-                      <Menu.Button className="">
-                        <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
-                        <span className="text-gray-600 text-[13px] hover:text-gray-600">
-                          {selectedOption?.name} <Icon name="angleDown" />
-                        </span>
-                      </Menu.Button>
-                    </div>
+            <div className="h-full w-full mx-auto max-w-6xl">
+              {options.length > 1 && (
+                <Menu as="div" className="mt-1 text-left relative">
+                  <div>
+                    <Menu.Button className="">
+                      <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
+                      <span className="text-gray-600 text-[13px] hover:text-gray-600">
+                        {selectedOption?.name} <Icon name="angleDown" />
+                      </span>
+                    </Menu.Button>
+                  </div>
 
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute left-12 top-7 z-10 w-44 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-gray-700 focus:outline-none">
-                        <div className="py-2">
-                          {options?.map(({ name, uid }) => (
-                            <Menu.Item key={uid}>
-                              <button
-                                onClick={() => setSelectedUid(uid || "")}
-                                className="w-full px-4 py-1 text-left text-[13px] hover:text-gray-200 text-gray-300"
-                              >
-                                {name}
-                              </button>
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-                )}
+                  <Transition
+                    as={React.Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute left-12 top-7 z-10 w-44 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-gray-700 focus:outline-none">
+                      <div className="py-2">
+                        {options?.map(({ name, uid }) => (
+                          <Menu.Item key={uid}>
+                            <button
+                              onClick={() => setSelectedUid(uid || "")}
+                              className="w-full px-4 py-1 text-left text-[13px] hover:text-gray-200 text-gray-300"
+                            >
+                              {name}
+                            </button>
+                          </Menu.Item>
+                        ))}
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              )}
+              <div className="flex items-center gap-4 mt-3">
                 {!!targetSpecies?.length && (
                   <Input
                     type="search"
                     value={search}
                     onChange={(e: any) => setSearch(e.target.value)}
                     placeholder="Search species"
-                    className="mb-4"
+                    className="mb-4 max-w-xs"
                   />
                 )}
-                {!!targets?.N && !filteredTargets?.length && (
-                  <div className="bg-white rounded-lg shadow p-4 text-center">
-                    <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
-                    <p className="text-gray-500 text-sm">
-                      {filteredTargets?.length === targetSpecies?.length
-                        ? "It looks like you have already seen all the species in this region."
-                        : "No targets found for your search."}
-                    </p>
-                  </div>
-                )}
-                {!targets?.N && !filteredTargets?.length && (
-                  <div className="bg-white rounded-lg shadow p-4 text-center">
-                    <h3 className="text-lg font-medium mb-4 text-gray-700">
-                      You haven&apos;t imported your targets yet
-                    </h3>
-                    <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
-                      Import Targets
-                    </Button>
-                  </div>
-                )}
-                {filteredTargets?.map((it, index) => {
-                  const isExpanded = expandedCodes.includes(it.code);
-                  const lastReport = recentSpecies?.find((species) => species.code === it.code);
-                  return (
-                    <article
-                      key={it.code}
-                      className="mb-4 border border-gray-200 bg-white shadow-sm rounded-md w-full flex flex-col relative"
-                    >
-                      <div className="flex items-center cursor-pointer" onClick={() => onToggleExpand(it.code)}>
-                        <div className="flex-shrink-0 mb-auto">
+              </div>
+              {!!targets?.N && !filteredTargets?.length && (
+                <div className="bg-white rounded-lg shadow p-4 text-center">
+                  <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
+                  <p className="text-gray-500 text-sm">
+                    {filteredTargets?.length === targetSpecies?.length
+                      ? "It looks like you have already seen all the species in this region."
+                      : "No targets found for your search."}
+                  </p>
+                </div>
+              )}
+              {!targets?.N && !filteredTargets?.length && (
+                <div className="bg-white rounded-lg shadow p-4 text-center">
+                  <h3 className="text-lg font-medium mb-4 text-gray-700">You haven&apos;t imported your targets yet</h3>
+                  <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
+                    Import Targets
+                  </Button>
+                </div>
+              )}
+              <table className="divide-y w-full">
+                <thead className="hidden sm:table-header-group">
+                  <tr>
+                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 px-4 w-0">#</th>
+                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-[4.3rem] lg:w-20">
+                      Image
+                    </th>
+                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Species</th>
+                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-0 hidden md:table-cell">
+                      Notes
+                    </th>
+                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-12 lg:w-20">%</th>
+                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Last seen</th>
+                    <th className="w-0" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredTargets?.map((it, index) => {
+                    const isExpanded = expandedCodes.includes(it.code);
+                    const lastReport = recentSpecies?.find((species) => species.code === it.code);
+                    return (
+                      <tr key={it.code} className="w-full relative">
+                        <td className="text-gray-500 px-4 hidden sm:table-cell">{index + 1}.</td>
+                        <td>
                           <img
                             src={`/api/species-img/${it.code}`}
                             alt={it.name}
-                            className="w-16 h-16 rounded-lg object-cover m-4 mr-8"
+                            className="w-14 h-14 min-w-[3.5rem] rounded-lg object-cover my-1 mx-1 sm:mx-0"
                             loading="lazy"
                           />
-                        </div>
-                        <div className="pr-2 pt-3 xs:pr-4 w-full py-4 flex items-start flex-grow gap-4">
+                        </td>
+                        <td>
                           <div className="flex flex-col gap-1 w-full mt-1">
-                            <div className="flex items-center gap-3">
-                              <h3 className="font-bold text-gray-800">
-                                <span className="font-normal">{index + 1}.</span> {it.name}
-                              </h3>
-                              <span
-                                className="text-gray-600 text-[13px]"
-                                title="Percentage of checklists in the region that include this species"
-                              >
-                                {it.percent}%
-                              </span>
-                            </div>
-                            <span className="text-[14px] text-gray-600" title="Last reported">
-                              {lastReport?.date
-                                ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
-                                : loadingRecent
-                                ? "loading last report..."
-                                : "> 30 days ago"}
-                            </span>
+                            <h3 className="text-sm lg:text-base font-bold text-gray-800 pl-2 sm:pl-0">{it.name}</h3>
                           </div>
-                        </div>
-                        <div className="flex items-center pr-4 pl-1">
-                          <button
-                            type="button"
-                            className={clsx("w-5 h-5 transition-all ease-in-out", isExpanded && "rotate-180")}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                              <path d="M239 401c9.4 9.4 24.6 9.4 33.9 0L465 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-175 175L81 175c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L239 401z" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                      {isExpanded && (
-                        <div className="px-4 pb-4 pt-1">
-                          <div className="text-sm text-gray-600 bg-gray-50 px-4 pt-3 pb-2 mb-5 rounded-sm">
-                            <InputNotesSimple
-                              value={it.notes}
-                              onBlur={(value) => setTargetNotes(it.code, value)}
-                              className=" w-full"
-                              canEdit={canEdit}
-                              showDone
-                            />
-                          </div>
-                          <div className="flex text-sm gap-2">
+                        </td>
+                        <td className="hidden md:table-cell">
+                          <textarea
+                            className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
+                            placeholder="Add notes..."
+                          />
+                        </td>
+                        <td className="text-gray-600 font-bold pr-4">{it.percent}%</td>
+                        <td className="text-[14px] text-gray-600 hidden sm:table-cell">
+                          {lastReport?.date
+                            ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
+                            : loadingRecent
+                            ? "loading last seen..."
+                            : "> 30 days ago"}
+                        </td>
+                        <td>
+                          <div className="flex items-center gap-6 mr-6 ml-2 justify-end whitespace-nowrap">
+                            <button
+                              type="button"
+                              onClick={() => null}
+                              className="items-center justify-cente hidden sm:flex"
+                            >
+                              <Icon name="starOutline" className="text-gray-500 text-lg" />
+                            </button>
                             <Button
                               color="pillOutlineGray"
                               type="button"
-                              className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4"
+                              size="xs"
+                              className="hidden sm:flex items-center gap-1.5 py-1.5 text-gray-600 hover:text-gray-800 font-semibold text-left px-3"
                               onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
                             >
                               <Icon name="map" className="text-red-500/80" />
                               <span className="hidden md:inline">View Map</span>
                               <span className="md:hidden">Map</span>
                             </Button>
-                            <MerlinkLink
-                              code={it.code}
-                              className="items-center justify-center gap-0.5 whitespace-nowrap font-semibold text-md py-2 px-5 bg-transparent text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors rounded-full"
+                            <button
+                              type="button"
+                              className={clsx("w-5 h-5 transition-all ease-in-out", isExpanded && "rotate-180")}
                             >
-                              <span className="hidden md:inline">View on </span>
-                              <img src="/ebird.png" alt="eBird" width={40} />
-                            </MerlinkLink>
-                            {canEdit && (
-                              <Button
-                                color="pillOutlineGray"
-                                type="button"
-                                className="flex items-center gap-2 py-2 text-gray-600 hover:text-gray-800 font-semibold text-left px-4"
-                                onClick={() => handleSeen(it.code, it.name)}
-                              >
-                                <Icon name="check" className="text-green-500/80" />
-                                <span className="hidden md:inline">Mark as seen</span>
-                                <span className="md:hidden">Seen</span>
-                              </Button>
-                            )}
+                              <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                                <path d="M239 401c9.4 9.4 24.6 9.4 33.9 0L465 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-175 175L81 175c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L239 401z" />
+                              </svg>
+                            </button>
                           </div>
-                        </div>
-                      )}
-                    </article>
-                  );
-                })}
-                {!!targets?.N && (
-                  <div className="my-4">
-                    <Link
-                      href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
-                      className="text-sky-600 font-bold text-sm"
-                    >
-                      Re-import targets
-                    </Link>
-                  </div>
-                )}
-              </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {!!targets?.N && (
+                <div className="my-4">
+                  <Link
+                    href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
+                    className="text-sky-600 font-bold text-sm"
+                  >
+                    Re-import targets
+                  </Link>
+                </div>
+              )}
             </div>
             {selectedSpecies && (
               <div className="absolute inset-0 z-10">
