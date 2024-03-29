@@ -89,27 +89,29 @@ const TripProvider = ({ children }: Props) => {
 
   React.useEffect(() => {
     if (!id) return;
-    const unsubscribe = subscribeToTrip(id, (trip) => setTrip(trip));
-    return () => {
-      unsubscribe();
-      setTrip(null);
-    };
-  }, [id]);
-
-  React.useEffect(() => {
-    if (!id) return;
-    const unsubscribe = subscribeToTripTargets(
+    const unsubscribe = subscribeToTrip(
       id,
-      (targets) => {
-        setTripTargets(targets);
+      (trip) => {
+        setTrip(trip);
         setIs404(false);
       },
       () => setIs404(true)
     );
     return () => {
       unsubscribe();
-      setTripTargets(initialState.targets);
+      setTrip(null);
       setIs404(false);
+    };
+  }, [id]);
+
+  React.useEffect(() => {
+    if (!id) return;
+    const unsubscribe = subscribeToTripTargets(id, (targets) => {
+      setTripTargets(targets);
+    });
+    return () => {
+      unsubscribe();
+      setTripTargets(initialState.targets);
     };
   }, [id]);
 

@@ -148,24 +148,20 @@ export const deleteInvite = async (id: string) => {
   await fs.deleteDoc(fs.doc(db, "invite", id));
 };
 
-export const subscribeToTrip = (id: string, callback: (trip: Trip) => void): (() => void) => {
+export const subscribeToTrip = (id: string, callback: (trip: Trip) => void, on404: () => void): (() => void) => {
   return fs.onSnapshot(fs.doc(db, "trip", id), (doc) => {
     if (doc.exists()) {
       callback({ ...doc.data(), id: doc.id } as Trip);
+    } else {
+      on404();
     }
   });
 };
 
-export const subscribeToTripTargets = (
-  tripId: string,
-  callback: (data: Targets) => void,
-  on404: () => void
-): (() => void) => {
+export const subscribeToTripTargets = (tripId: string, callback: (data: Targets) => void): (() => void) => {
   return fs.onSnapshot(fs.doc(db, "targets", tripId), (doc) => {
     if (doc.exists()) {
       callback(doc.data() as Targets);
-    } else {
-      on404();
     }
   });
 };
