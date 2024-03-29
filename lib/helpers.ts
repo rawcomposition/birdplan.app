@@ -364,7 +364,7 @@ export const parseTargets = async ({
 
 const parseTargetName = (name: string) => {
   const hasScientific = name.includes('<em class="sci">');
-  if (!hasScientific) {
+  if (hasScientific) {
     const regex = /<em[^>]*>(.*?)<\/em>/g;
     const matches = name.matchAll(regex);
     const contents = Array.from(matches).map((match) => match[1]);
