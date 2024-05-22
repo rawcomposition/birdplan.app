@@ -204,7 +204,11 @@ export default function TripTargets() {
                           </td>
                           <td>
                             <div className="flex flex-col gap-1 w-full mt-1">
-                              <h3 className="text-sm lg:text-base font-bold text-gray-800 pl-2 sm:pl-0">{it.name}</h3>
+                              <h3 className="text-sm lg:text-base font-bold pl-2 sm:pl-0">
+                                <MerlinkLink code={it.code} className="text-gray-800">
+                                  {it.name}
+                                </MerlinkLink>
+                              </h3>
                             </div>
                           </td>
                           <td className="hidden md:table-cell">
