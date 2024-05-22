@@ -14,7 +14,8 @@ type PropsT = Target & {
   index: number;
 };
 
-export default function TargetRow({ index, code, name, percent }: PropsT) {
+export default function TargetRow({ index, code, name, percent, notes }: PropsT) {
+  const [tempNotes, setTempNotes] = React.useState(notes);
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
   const { addToLifeList } = useProfile();
@@ -36,6 +37,10 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
 
   const isExpanded = expandedCodes.includes(code);
   const lastReport = recentSpecies?.find((species) => species.code === code);
+
+  const textareaBaseClasses =
+    "input border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5";
+
   return (
     <React.Fragment key={code}>
       <tr className="w-full relative">
@@ -60,9 +65,14 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
           </div>
         </td>
         <td className="hidden md:table-cell">
-          <textarea
-            className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
+          <TextareaAutosize
+            className={clsx(textareaBaseClasses, "w-[150px] md:w-[200px] lg:w-[300px] md:mr-2 lg:mr-8")}
             placeholder="Add notes..."
+            value={tempNotes}
+            onChange={(e) => setTempNotes(e.target.value)}
+            onBlur={(e) => setTargetNotes(code, e.target.value)}
+            minRows={2}
+            maxRows={6}
           />
         </td>
         <td className="text-gray-600 font-bold pr-4">{percent}%</td>
@@ -105,9 +115,14 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
         <tr className="!border-t-0">
           <td colSpan={2} className="hidden sm:table-cell" />
           <td colSpan={5} className="p-2 sm:hidden">
-            <textarea
-              className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
+            <TextareaAutosize
+              className={clsx(textareaBaseClasses, "w-full")}
               placeholder="Add notes..."
+              value={tempNotes}
+              onChange={(e) => setTempNotes(e.target.value)}
+              onBlur={(e) => setTargetNotes(code, e.target.value)}
+              minRows={2}
+              maxRows={6}
             />
             {canEdit && (
               <button
