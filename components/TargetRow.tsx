@@ -14,10 +14,10 @@ type PropsT = Target & {
   index: number;
 };
 
-export default function TargetRow({ index, code, name, percent, notes }: PropsT) {
+export default function TargetRow({ index, code, name, percent, notes, isStarred }: PropsT) {
   const [tempNotes, setTempNotes] = React.useState(notes);
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
-  const { trip, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
+  const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
   const { addToLifeList } = useProfile();
 
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
@@ -40,12 +40,17 @@ export default function TargetRow({ index, code, name, percent, notes }: PropsT)
 
   const textareaBaseClasses =
     "input border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5";
+  const mobileBtnClasses =
+    "flex gap-2 items-center justify-center w-full bg-gray-200 text-gray-700 font-medium text-[12px] py-1.5 px-2.5 rounded-md";
 
   return (
     <React.Fragment key={code}>
       <tr className="w-full relative">
         <td className="text-gray-500 px-4 hidden sm:table-cell">{index + 1}.</td>
-        <td>
+        <td className="relative">
+          <div className="sm:hidden absolute top-1 left-2">
+            {isStarred && <Icon name="star" className="text-yellow-500" />}
+          </div>
           <MerlinkLink code={code}>
             <img
               src={`/api/species-img/${code}`}
@@ -85,9 +90,23 @@ export default function TargetRow({ index, code, name, percent, notes }: PropsT)
         </td>
         <td>
           <div className="flex items-center gap-6 mr-6 ml-2 justify-end whitespace-nowrap">
-            <button type="button" onClick={() => null} className="items-center justify-cente hidden sm:flex">
-              <Icon name="starOutline" className="text-gray-500 text-lg" />
-            </button>
+            {isStarred ? (
+              <button
+                type="button"
+                onClick={() => removeTargetStar(code)}
+                className="items-center justify-cente hidden sm:flex"
+              >
+                <Icon name="star" className="text-yellow-500 text-lg" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => addTargetStar(code)}
+                className="items-center justify-cente hidden sm:flex"
+              >
+                <Icon name="starOutline" className="text-gray-500 text-lg" />
+              </button>
+            )}
             <Button
               color="pillOutlineGray"
               type="button"
@@ -124,15 +143,25 @@ export default function TargetRow({ index, code, name, percent, notes }: PropsT)
               minRows={2}
               maxRows={6}
             />
-            {canEdit && (
-              <button
-                type="button"
-                className="w-full bg-gray-200 text-gray-700 font-medium text-[12px] py-1.5 px-2.5 rounded-md"
-                onClick={() => handleSeen(code, name)}
-              >
-                Mark as seen
-              </button>
-            )}
+            <div className="flex gap-2 mt-4">
+              {isStarred ? (
+                <button type="button" onClick={() => removeTargetStar(code)} className={mobileBtnClasses}>
+                  <Icon name="star" className="text-yellow-500 text-lg" />
+                  Remove star
+                </button>
+              ) : (
+                <button type="button" onClick={() => addTargetStar(code)} className={mobileBtnClasses}>
+                  <Icon name="starOutline" className="text-gray-500 text-lg" />
+                  Add star
+                </button>
+              )}
+              {canEdit && (
+                <button type="button" className={mobileBtnClasses} onClick={() => handleSeen(code, name)}>
+                  <Icon name="check" className="text-gray-500 text-lg" />
+                  Mark as seen
+                </button>
+              )}
+            </div>
           </td>
           <td colSpan={7} className="pb-4 hidden sm:table-cell">
             {canEdit && (

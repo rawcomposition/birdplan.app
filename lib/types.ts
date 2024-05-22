@@ -115,6 +115,7 @@ export type Target = {
   percent: number;
   percentYr: number;
   notes?: string;
+  isStarred?: boolean;
 };
 
 export type CustomMarker = {
