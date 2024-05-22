@@ -1,0 +1,133 @@
+import React from "react";
+import { useTrip } from "providers/trip";
+import clsx from "clsx";
+import { useProfile } from "providers/profile";
+import Icon from "components/Icon";
+import MerlinkLink from "components/MerlinLink";
+import Button from "components/Button";
+import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
+import { dateTimeToRelative } from "lib/helpers";
+import TextareaAutosize from "react-textarea-autosize";
+import { Target } from "lib/types";
+
+type PropsT = Target & {
+  index: number;
+};
+
+export default function TargetRow({ index, code, name, percent }: PropsT) {
+  const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
+  const { trip, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
+  const { addToLifeList } = useProfile();
+
+  const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
+
+  const handleSeen = (code: string, name: string) => {
+    if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
+    addToLifeList(code);
+  };
+
+  const onToggleExpand = (code: string) => {
+    if (expandedCodes.includes(code)) {
+      setExpandedCodes(expandedCodes.filter((it) => it !== code));
+    } else {
+      setExpandedCodes([...expandedCodes, code]);
+    }
+  };
+
+  const isExpanded = expandedCodes.includes(code);
+  const lastReport = recentSpecies?.find((species) => species.code === code);
+  return (
+    <React.Fragment key={code}>
+      <tr className="w-full relative">
+        <td className="text-gray-500 px-4 hidden sm:table-cell">{index + 1}.</td>
+        <td>
+          <MerlinkLink code={code}>
+            <img
+              src={`/api/species-img/${code}`}
+              alt={name}
+              className="w-14 h-14 min-w-[3.5rem] rounded-lg object-cover my-1 mx-1 sm:mx-0"
+              loading="lazy"
+            />
+          </MerlinkLink>
+        </td>
+        <td>
+          <div className="flex flex-col gap-1 w-full mt-1">
+            <h3 className="text-sm lg:text-base font-bold pl-2 sm:pl-0">
+              <MerlinkLink code={code} className="text-gray-800">
+                {name}
+              </MerlinkLink>
+            </h3>
+          </div>
+        </td>
+        <td className="hidden md:table-cell">
+          <textarea
+            className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
+            placeholder="Add notes..."
+          />
+        </td>
+        <td className="text-gray-600 font-bold pr-4">{percent}%</td>
+        <td className="text-[14px] text-gray-600 hidden sm:table-cell">
+          {lastReport?.date
+            ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
+            : loadingRecent
+            ? "loading last seen..."
+            : "> 30 days ago"}
+        </td>
+        <td>
+          <div className="flex items-center gap-6 mr-6 ml-2 justify-end whitespace-nowrap">
+            <button type="button" onClick={() => null} className="items-center justify-cente hidden sm:flex">
+              <Icon name="starOutline" className="text-gray-500 text-lg" />
+            </button>
+            <Button
+              color="pillOutlineGray"
+              type="button"
+              size="xsPill"
+              className="flex items-center gap-2"
+              onClick={() => setSelectedSpecies({ code: code, name: name })}
+            >
+              <Icon name="map" className="text-red-500/80" />
+              <span className="hidden md:inline">View Map</span>
+              <span className="md:hidden">Map</span>
+            </Button>
+            <button
+              type="button"
+              className={clsx("w-5 h-5 transition-all ease-in-out", isExpanded && "rotate-180")}
+              onClick={() => onToggleExpand(code)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                <path d="M239 401c9.4 9.4 24.6 9.4 33.9 0L465 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-175 175L81 175c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L239 401z" />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+      {isExpanded && (
+        <tr className="!border-t-0">
+          <td colSpan={2} className="hidden sm:table-cell" />
+          <td colSpan={5} className="p-2 sm:hidden">
+            <textarea
+              className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
+              placeholder="Add notes..."
+            />
+            {canEdit && (
+              <button
+                type="button"
+                className="w-full bg-gray-200 text-gray-700 font-medium text-[12px] py-1.5 px-2.5 rounded-md"
+                onClick={() => handleSeen(code, name)}
+              >
+                Mark as seen
+              </button>
+            )}
+          </td>
+          <td colSpan={7} className="pb-4 hidden sm:table-cell">
+            {canEdit && (
+              <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => handleSeen(code, name)}>
+                Mark as seen
+              </button>
+            )}
+          </td>
+        </tr>
+      )}
+    </React.Fragment>
+  );
+}

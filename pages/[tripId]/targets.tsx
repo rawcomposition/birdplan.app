@@ -9,36 +9,27 @@ import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
-import clsx from "clsx";
 import Input from "components/Input";
-import InputNotesSimple from "components/InputNotesSimple";
 import { Menu, Transition } from "@headlessui/react";
 import ErrorBoundary from "components/ErrorBoundary";
 import useProfiles from "hooks/useProfiles";
-import { useProfile } from "providers/profile";
 import Icon from "components/Icon";
-import MerlinkLink from "components/MerlinLink";
 import Button from "components/Button";
 import Link from "next/link";
-import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
-import { dateTimeToRelative } from "lib/helpers";
 import NotFound from "components/NotFound";
+import TargetRow from "components/TargetRow";
 
 export default function TripTargets() {
   const { open } = useModal();
   const { user } = useUser();
-  const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
-  const { is404, targets, trip, invites, canEdit, selectedSpecies, setSelectedSpecies, setTargetNotes } = useTrip();
+  const { is404, targets, trip, invites, selectedSpecies } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const [search, setSearch] = React.useState("");
   const [selectedUid, setSelectedUid] = React.useState("");
   const { profiles } = useProfiles(trip?.userIds);
-  const { addToLifeList } = useProfile();
   const myUid = user?.uid || trip?.userIds?.[0];
   const actualUid = selectedUid || myUid;
-
-  const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
 
   const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
@@ -71,19 +62,6 @@ export default function TripTargets() {
           speciesName: selectedSpecies?.name,
         })
       : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
-  };
-
-  const handleSeen = (code: string, name: string) => {
-    if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
-    addToLifeList(code);
-  };
-
-  const onToggleExpand = (code: string) => {
-    if (expandedCodes.includes(code)) {
-      setExpandedCodes(expandedCodes.filter((it) => it !== code));
-    } else {
-      setExpandedCodes([...expandedCodes, code]);
-    }
   };
 
   if (is404) return <NotFound />;
@@ -185,112 +163,9 @@ export default function TripTargets() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {filteredTargets?.map((it, index) => {
-                    const isExpanded = expandedCodes.includes(it.code);
-                    const lastReport = recentSpecies?.find((species) => species.code === it.code);
-                    return (
-                      <React.Fragment key={it.code}>
-                        <tr className="w-full relative">
-                          <td className="text-gray-500 px-4 hidden sm:table-cell">{index + 1}.</td>
-                          <td>
-                            <MerlinkLink code={it.code}>
-                              <img
-                                src={`/api/species-img/${it.code}`}
-                                alt={it.name}
-                                className="w-14 h-14 min-w-[3.5rem] rounded-lg object-cover my-1 mx-1 sm:mx-0"
-                                loading="lazy"
-                              />
-                            </MerlinkLink>
-                          </td>
-                          <td>
-                            <div className="flex flex-col gap-1 w-full mt-1">
-                              <h3 className="text-sm lg:text-base font-bold pl-2 sm:pl-0">
-                                <MerlinkLink code={it.code} className="text-gray-800">
-                                  {it.name}
-                                </MerlinkLink>
-                              </h3>
-                            </div>
-                          </td>
-                          <td className="hidden md:table-cell">
-                            <textarea
-                              className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
-                              placeholder="Add notes..."
-                            />
-                          </td>
-                          <td className="text-gray-600 font-bold pr-4">{it.percent}%</td>
-                          <td className="text-[14px] text-gray-600 hidden sm:table-cell">
-                            {lastReport?.date
-                              ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
-                              : loadingRecent
-                              ? "loading last seen..."
-                              : "> 30 days ago"}
-                          </td>
-                          <td>
-                            <div className="flex items-center gap-6 mr-6 ml-2 justify-end whitespace-nowrap">
-                              <button
-                                type="button"
-                                onClick={() => null}
-                                className="items-center justify-cente hidden sm:flex"
-                              >
-                                <Icon name="starOutline" className="text-gray-500 text-lg" />
-                              </button>
-                              <Button
-                                color="pillOutlineGray"
-                                type="button"
-                                size="xsPill"
-                                className="flex items-center gap-2"
-                                onClick={() => setSelectedSpecies({ code: it.code, name: it.name })}
-                              >
-                                <Icon name="map" className="text-red-500/80" />
-                                <span className="hidden md:inline">View Map</span>
-                                <span className="md:hidden">Map</span>
-                              </Button>
-                              <button
-                                type="button"
-                                className={clsx("w-5 h-5 transition-all ease-in-out", isExpanded && "rotate-180")}
-                                onClick={() => onToggleExpand(it.code)}
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                                  <path d="M239 401c9.4 9.4 24.6 9.4 33.9 0L465 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-175 175L81 175c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L239 401z" />
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                        {isExpanded && (
-                          <tr className="!border-t-0">
-                            <td colSpan={2} className="hidden sm:table-cell" />
-                            <td colSpan={5} className="p-2 sm:hidden">
-                              <textarea
-                                className="input w-[150px] md:w-[200px] lg:w-[300px] border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5 md:mr-2 lg:mr-8"
-                                placeholder="Add notes..."
-                              />
-                              {canEdit && (
-                                <button
-                                  type="button"
-                                  className="w-full bg-gray-200 text-gray-700 font-medium text-[12px] py-1.5 px-2.5 rounded-md"
-                                  onClick={() => handleSeen(it.code, it.name)}
-                                >
-                                  Mark as seen
-                                </button>
-                              )}
-                            </td>
-                            <td colSpan={7} className="pb-4 hidden sm:table-cell">
-                              {canEdit && (
-                                <button
-                                  type="button"
-                                  className="text-sky-600 font-bold text-sm"
-                                  onClick={() => handleSeen(it.code, it.name)}
-                                >
-                                  Mark as seen
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
+                  {filteredTargets?.map((it, index) => (
+                    <TargetRow key={it.code} {...it} index={index} />
+                  ))}
                 </tbody>
               </table>
               {!!targets?.N && (
