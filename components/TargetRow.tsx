@@ -39,7 +39,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
   const lastReport = recentSpecies?.find((species) => species.code === code);
 
   const textareaBaseClasses =
-    "input border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block text-[13px] p-1.5";
+    "input border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block p-1.5";
   const mobileBtnClasses =
     "flex gap-2 items-center justify-center w-full bg-gray-200 text-gray-700 font-medium text-[12px] py-1.5 px-2.5 rounded-md";
 
@@ -71,7 +71,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
         </td>
         <td className="hidden md:table-cell">
           <TextareaAutosize
-            className={clsx(textareaBaseClasses, "w-[150px] md:w-[200px] lg:w-[300px] md:mr-2 lg:mr-8")}
+            className={clsx(textareaBaseClasses, "w-[150px] md:w-[200px] lg:w-[300px] md:mr-2 lg:mr-8 text-[13px]")}
             placeholder="Add notes..."
             value={tempNotes}
             onChange={(e) => setTempNotes(e.target.value)}
