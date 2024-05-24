@@ -80,7 +80,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
             maxRows={6}
           />
         </td>
-        <td className="text-gray-600 font-bold pr-4">{percent}%</td>
+        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{percent}%</td>
         <td className="text-[14px] text-gray-600 hidden sm:table-cell">
           {lastReport?.date
             ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
@@ -89,7 +89,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
             : "> 30 days ago"}
         </td>
         <td>
-          <div className="flex items-center gap-6 mr-6 ml-2 justify-end whitespace-nowrap">
+          <div className="flex items-center gap-4 sm:gap-6 mr-4 sm:mr-6 ml-2 justify-end whitespace-nowrap">
             {isStarred ? (
               <button
                 type="button"
