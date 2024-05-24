@@ -23,7 +23,7 @@ export default function TripTargets() {
   const { open } = useModal();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
-  const { is404, targets, trip, invites, selectedSpecies } = useTrip();
+  const { is404, targets, trip, invites, selectedSpecies, canEdit } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
@@ -151,11 +151,17 @@ export default function TripTargets() {
                 </div>
               )}
               {!targets?.N && !filteredTargets?.length && (
-                <div className="bg-white rounded-lg shadow p-4 text-center">
-                  <h3 className="text-lg font-medium mb-4 text-gray-700">You haven&apos;t imported your targets yet</h3>
-                  <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
-                    Import Targets
-                  </Button>
+                <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-4">
+                  {canEdit ? (
+                    <h3 className="text-lg font-medium text-gray-700">You haven&apos;t imported your targets yet</h3>
+                  ) : (
+                    <h3 className="text-lg font-medium text-gray-700">No targets have been imported yet</h3>
+                  )}
+                  {canEdit && (
+                    <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
+                      Import Targets
+                    </Button>
+                  )}
                 </div>
               )}
               {!!filteredTargets?.length && (
@@ -182,8 +188,8 @@ export default function TripTargets() {
                   </tbody>
                 </table>
               )}
-              {!!targets?.N && (
-                <div className="my-4 text-center sm:text-left">
+              {!!targets?.N && canEdit && (
+                <div className="my-4 text-center sm:text-left pb-4">
                   <Link
                     href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
                     className="text-sky-600 font-bold text-sm"
