@@ -38,6 +38,7 @@ export default function Button({
     smPill: "text-[14px] py-1.5 px-4",
     sm: "text-[14px] py-1.5 px-2.5",
     xs: "text-[12px] py-0.5 px-1.5",
+    xsPill: "text-[12px] py-1.5 px-3",
   };
 
   const colors: ColorTypes = {

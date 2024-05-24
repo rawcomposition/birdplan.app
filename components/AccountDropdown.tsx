@@ -18,7 +18,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
   if (!user) return null;
 
   return (
-    <Menu as="div" className="relative z-20 flex-shrink-0">
+    <Menu as="div" className="relative flex-shrink-0">
       <Menu.Button
         className={
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
@@ -37,7 +37,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           leaveTo="scale-95 opacity-0"
           className={clsx(
             dropUp ? "bottom-24 right-4" : "right-2 top-9 ",
-            "absolute  z-50 min-w-[240px] origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-700 shadow-lg"
+            "absolute z-20 z-50 min-w-[240px] origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-700 shadow-lg"
           )}
         >
           <Menu.Items>
