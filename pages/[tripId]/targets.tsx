@@ -26,6 +26,7 @@ export default function TripTargets() {
   const { is404, targets, trip, invites, selectedSpecies } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const [search, setSearch] = React.useState("");
+  const [showStarred, setShowStarred] = React.useState(false);
   const [selectedUid, setSelectedUid] = React.useState("");
   const { profiles } = useProfiles(trip?.userIds);
   const myUid = user?.uid || trip?.userIds?.[0];
@@ -33,7 +34,9 @@ export default function TripTargets() {
 
   const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
-  const filteredTargets = targetSpecies.filter((it) => it.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredTargets = targetSpecies.filter(
+    (it) => it.name.toLowerCase().includes(search.toLowerCase()) && (showStarred ? it.isStarred : true)
+  );
 
   const inviteOptions = invites
     ?.filter(({ uid }) => !!uid)
@@ -117,17 +120,26 @@ export default function TripTargets() {
                   </Transition>
                 </Menu>
               )}
-              <div className="flex items-center gap-4 mt-3">
-                {!!targetSpecies?.length && (
+              {!!targetSpecies?.length && (
+                <div className="flex items-center gap-2 my-2 sm:my-4 px-2">
                   <Input
                     type="search"
                     value={search}
                     onChange={(e: any) => setSearch(e.target.value)}
                     placeholder="Search species"
-                    className="mb-4 max-w-xs"
+                    className="max-w-xs"
                   />
-                )}
-              </div>
+                  <label className="flex items-center gap-2 py-2 px-3 text-gray-600 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={showStarred}
+                      onChange={() => setShowStarred(!showStarred)}
+                      className="form-checkbox text-sky-600"
+                    />
+                    <span className="text-gray-600 text-sm">Starred</span>
+                  </label>
+                </div>
+              )}
               {!!targets?.N && !filteredTargets?.length && (
                 <div className="bg-white rounded-lg shadow p-4 text-center">
                   <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
