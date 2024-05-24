@@ -84,9 +84,9 @@ export default function TripTargets() {
           <div className="h-full grow flex sm:relative flex-col w-full">
             <div className="h-full w-full mx-auto max-w-6xl">
               {options.length > 1 && (
-                <Menu as="div" className="mt-1 text-left relative">
+                <Menu as="div" className="mt-1 ml-2 text-left relative sm:-mb-1">
                   <div>
-                    <Menu.Button className="">
+                    <Menu.Button className="py-1 sm:py-0 sm:pt-2 ">
                       <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
                       <span className="text-gray-600 text-[13px] hover:text-gray-600">
                         {selectedOption?.name} <Icon name="angleDown" />
