@@ -84,7 +84,7 @@ export default function TripTargets() {
           <div className="h-full grow flex sm:relative flex-col w-full">
             <div className="h-full w-full mx-auto max-w-6xl">
               {options.length > 1 && (
-                <Menu as="div" className="mt-1 ml-2 text-left relative sm:-mb-1">
+                <Menu as="div" className="mt-1 ml-2 sm:ml-0 text-left relative sm:-mb-1">
                   <div>
                     <Menu.Button className="py-1 sm:py-0 sm:pt-2 ">
                       <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
@@ -121,7 +121,7 @@ export default function TripTargets() {
                 </Menu>
               )}
               {!!targetSpecies?.length && (
-                <div className="flex items-center gap-2 my-2 sm:my-4 px-2">
+                <div className="flex items-center gap-2 my-2 sm:my-4 px-2 sm:px-0">
                   <Input
                     type="search"
                     value={search}
@@ -141,7 +141,7 @@ export default function TripTargets() {
                 </div>
               )}
               {!!targets?.N && !filteredTargets?.length && (
-                <div className="bg-white rounded-lg shadow p-4 text-center">
+                <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4">
                   <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                   <p className="text-gray-500 text-sm">
                     {filteredTargets?.length === targetSpecies?.length
@@ -183,7 +183,7 @@ export default function TripTargets() {
                 </table>
               )}
               {!!targets?.N && (
-                <div className="my-4">
+                <div className="my-4 text-center sm:text-left">
                   <Link
                     href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
                     className="text-sky-600 font-bold text-sm"
