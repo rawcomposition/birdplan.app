@@ -22,6 +22,14 @@ export default function WhatsNew() {
               ✨ KML Export: Added a link to Google Maps when viewing a marker in other apps such as Organic Maps.
             </li>
           </ul>
+          <h2>March 12, 2024</h2>
+          <ul>
+            <li>✨ Added a trip settings page.</li>
+            <li>✨ Added a bunch of new icons to choose from when adding a new marker.</li>
+            <li>
+              ✨ KML Export: Added a link to Google Maps when viewing a marker in other apps such as Organic Maps.
+            </li>
+          </ul>
           <h2>March 9, 2024</h2>
           <ul>
             <li>✨ Highlight selected marker on the map.</li>
