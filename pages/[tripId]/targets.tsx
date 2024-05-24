@@ -158,28 +158,30 @@ export default function TripTargets() {
                   </Button>
                 </div>
               )}
-              <table className="divide-y w-full">
-                <thead className="hidden sm:table-header-group">
-                  <tr>
-                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 px-4 w-0">#</th>
-                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-[4.3rem] lg:w-20">
-                      Image
-                    </th>
-                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Species</th>
-                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-0 hidden md:table-cell">
-                      Notes
-                    </th>
-                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-12 lg:w-20">%</th>
-                    <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Last seen</th>
-                    <th className="w-0" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {filteredTargets?.map((it, index) => (
-                    <TargetRow key={it.code} {...it} index={index} />
-                  ))}
-                </tbody>
-              </table>
+              {!!filteredTargets?.length && (
+                <table className="divide-y w-full">
+                  <thead className="hidden sm:table-header-group">
+                    <tr>
+                      <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 px-4 w-0">#</th>
+                      <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-[4.3rem] lg:w-20">
+                        Image
+                      </th>
+                      <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Species</th>
+                      <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-0 hidden md:table-cell">
+                        Notes
+                      </th>
+                      <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-12 lg:w-20">%</th>
+                      <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Last seen</th>
+                      <th className="w-0" />
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {filteredTargets?.map((it, index) => (
+                      <TargetRow key={it.code} {...it} index={index} />
+                    ))}
+                  </tbody>
+                </table>
+              )}
               {!!targets?.N && (
                 <div className="my-4">
                   <Link
