@@ -36,7 +36,7 @@ export default function TripTargets() {
 
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
-  const { profiles } = useProfiles();
+  const { profiles } = useProfiles(trip?.userIds && trip.userIds.length > 1 ? trip.userIds : undefined);
   const lifelist = uid === myUid ? myLifelist : profiles?.find((it) => it.id === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
