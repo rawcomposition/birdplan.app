@@ -50,6 +50,7 @@ export default function TripSettings() {
     if (!trip) return;
     if (!confirm("Are you sure you want to delete this trip?")) return;
     deleteTrip(trip.id);
+    router.push("/trips");
   };
 
   if (is404) return <NotFound />;

@@ -7,25 +7,21 @@ import Button from "components/Button";
 import { useProfile } from "providers/profile";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
-import { Option } from "lib/types";
-import Select from "components/ReactSelectStyled";
+import { Target } from "lib/types";
 import Icon from "components/Icon";
 import { useRouter } from "next/router";
-import { parseTargets } from "lib/helpers";
 import Link from "next/link";
 import NotFound from "components/NotFound";
-
-const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
+import { useQuery } from "@tanstack/react-query";
 
 export default function ImportTargets() {
   const { is404, trip, setTargets } = useTrip();
   const { lifelist } = useProfile();
   const router = useRouter();
+  const tripId = trip?.id;
   const redirect = router.query.redirect || "";
   const showBack = router.query.back === "true";
-  const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const region = trip?.region;
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const startMonth = trip?.startMonth || 1;
   const endMonth = trip?.endMonth || 12;
   const redirectUrl =
@@ -33,23 +29,25 @@ export default function ImportTargets() {
       ? `/${trip?.id}/${redirect}`
       : `/import-lifelist?tripId=${trip?.id}&back=${showBack ? "true" : "false"}`;
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!trip) return;
-    try {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const toastId = toast.loading("Importing...");
-      const res = await parseTargets({ file, cutoff: cutoff.value, startMonth, endMonth });
-      setTargets({ ...res, tripId: trip.id });
-      toast.success("Targets imported");
-      toast.dismiss(toastId);
-      router.push(redirectUrl);
-    } catch (error) {
-      console.error(error);
-      toast.error("Error processing file");
-      fileInputRef.current?.value && (fileInputRef.current.value = "");
+  const { data, isLoading, isRefetching, error, refetch } = useQuery<{ items: Target[]; N: number; yrN: number }>({
+    queryKey: [
+      "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-6c6abe6c-b02b-4b79-a86e-f7633e99a025/targets/get",
+      { startMonth, endMonth, region },
+    ],
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    cacheTime: 0,
+    enabled: false,
+  });
+
+  React.useEffect(() => {
+    if (data && tripId) {
+      setTargets({ ...data, tripId });
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 1000);
     }
-  };
+  }, [data, tripId]);
 
   if (is404) return <NotFound />;
 
@@ -68,50 +66,35 @@ export default function ImportTargets() {
         )}
         <div className="p-4 md:p-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">🎯 Import Targets</h1>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download targets from eBird</h3>
-            <Button
-              href={`https://ebird.org/barchartData?r=${region}&bmo=${startMonth}&emo=${endMonth}&byr=1900&eyr=2023&fmt=tsv`}
-              target="_blank"
-              color="primary"
-              size="sm"
-              className="inline-flex items-center gap-2"
-            >
-              <Icon name="download" /> Download Targets
-            </Button>
-            <p className="bg-amber-100 text-amber-800 p-2 rounded text-[12px] mt-4">
-              <strong>Note:</strong> Your{" "}
-              <a href="https://ebird.org/prefs" className="text-sky-600" target="_blank" rel="noreferrer">
-                eBird Preferences
-              </a>{" "}
-              must be set to show species names in <strong>English</strong> or <strong>English (US)</strong>. Or enable{" "}
-              showing <strong>both common and scientific names</strong>.
-            </p>
-          </div>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">2. Choose a cutoff</h3>
-            <label htmlFor="cutoff" className="text-sm text-gray-600 mb-2 block">
-              Ignore targets below
-            </label>
-            <div className="max-w-xs">
-              <Select
-                id="cutoff"
-                options={cutoffs.map((it) => ({ value: it, label: it }))}
-                value={cutoff}
-                onChange={setCutoff}
-                menuPortalTarget={typeof document !== "undefined" && document.body}
-              />
+          {(isLoading || isRefetching) && (
+            <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8 flex flex-col items-center text-center gap-4">
+              <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+              <p className="text-md text-slate-600">Importing from eBird, this may take a minute...</p>
             </div>
-          </div>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">3. Upload file</h3>
-            <p className="text-sm text-gray-600 mb-2">Upload the TXT file you downloaded in step 1.</p>
-            <input ref={fileInputRef} type="file" accept=".txt,.xls" className="text-xs" onChange={handleFileUpload} />
-          </div>
+          )}
+          {!!error && !isRefetching && (
+            <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8 flex flex-col items-center text-center gap-4">
+              <p className="text-md text-red-600">Error importing from eBird.</p>
+              <Button onClick={() => refetch()}>Retry</Button>
+            </div>
+          )}
+          {!isLoading && !isRefetching && !!data && (
+            <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8 flex flex-col items-center text-center gap-2">
+              <Icon name="check" className="text-4xl text-slate-500" />
+              <p className="text-md text-slate-600">Targets imported!</p>
+            </div>
+          )}
+
           <div className="flex">
-            <Button href={redirectUrl} color="gray" className="inline-flex items-center ml-auto">
-              Skip
-            </Button>
+            {!!data ? (
+              <Button href={redirectUrl} color="primary" className="inline-flex items-center ml-auto">
+                Continue
+              </Button>
+            ) : (
+              <Button href={redirectUrl} color="gray" className="inline-flex items-center ml-auto">
+                Skip
+              </Button>
+            )}
           </div>
         </div>
       </main>
