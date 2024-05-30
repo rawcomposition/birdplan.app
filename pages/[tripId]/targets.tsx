@@ -30,7 +30,7 @@ export default function TripTargets() {
   // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
-  const [uid, setUid] = React.useState<string | undefined>(user?.uid); // TODO
+  const [uid, setUid] = React.useState<string | undefined>(myUid || trip?.ownerId);
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
 
