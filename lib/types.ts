@@ -97,6 +97,10 @@ export type Trip = {
   endMonth: number;
   timezone: string;
   imgUrl: string | null;
+  targetStars?: string[];
+  targetNotes?: {
+    [key: string]: string;
+  };
   createdAt: string;
 };
 
@@ -114,8 +118,6 @@ export type Target = {
   name: string;
   percent: number;
   percentYr: number;
-  notes?: string;
-  isStarred?: boolean;
 };
 
 export type CustomMarker = {
