@@ -19,7 +19,6 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
   const { addToLifeList } = useProfile();
-
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
 
   const handleSeen = (code: string, name: string) => {
@@ -44,7 +43,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
     "flex gap-2 items-center justify-center w-full bg-gray-200 text-gray-700 font-medium text-[12px] py-1.5 px-2.5 rounded-md";
 
   return (
-    <React.Fragment key={code}>
+    <React.Fragment>
       <tr className="w-full relative">
         <td className="text-gray-500 px-4 hidden sm:table-cell">{index + 1}.</td>
         <td className="relative">
@@ -78,6 +77,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
             onBlur={(e) => setTargetNotes(code, e.target.value)}
             minRows={2}
             maxRows={6}
+            cacheMeasurements
           />
         </td>
         <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{percent}%</td>
@@ -142,6 +142,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
               onBlur={(e) => setTargetNotes(code, e.target.value)}
               minRows={2}
               maxRows={6}
+              cacheMeasurements
             />
             <div className="flex gap-2 mt-4">
               {isStarred ? (
