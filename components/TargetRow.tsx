@@ -14,12 +14,14 @@ type PropsT = Target & {
   index: number;
 };
 
-export default function TargetRow({ index, code, name, percent, notes, isStarred }: PropsT) {
-  const [tempNotes, setTempNotes] = React.useState(notes);
+export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
+  console.log("trip", trip);
+  const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { addToLifeList } = useProfile();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
+  const isStarred = trip?.targetStars?.includes(code);
 
   const handleSeen = (code: string, name: string) => {
     if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
@@ -142,6 +144,7 @@ export default function TargetRow({ index, code, name, percent, notes, isStarred
               onBlur={(e) => setTargetNotes(code, e.target.value)}
               minRows={2}
               maxRows={6}
+              cacheMeasurements
             />
             <div className="flex gap-2 mt-4">
               {isStarred ? (

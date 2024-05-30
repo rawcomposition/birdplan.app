@@ -136,6 +136,36 @@ export const removeUserFromTrip = async (tripId: string, userId: string) => {
   );
 };
 
+export const addTargetStarToTrip = async (tripId: string, code: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.setDoc(
+    fs.doc(db, "trip", tripId),
+    {
+      targetStars: fs.arrayUnion(code),
+    },
+    { merge: true }
+  );
+};
+
+export const removeTargetStarFromTrip = async (tripId: string, code: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.setDoc(
+    fs.doc(db, "trip", tripId),
+    {
+      targetStars: fs.arrayRemove(code),
+    },
+    { merge: true }
+  );
+};
+
+export const setTargetNotesOnTrip = async (tripId: string, code: string, notes: string) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  await fs.updateDoc(fs.doc(db, "trip", tripId), { [`targetNotes.${code}`]: notes });
+};
+
 export const setTripStartDate = async (tripId: string, startDate: string) => {
   const user = auth.currentUser;
   if (!user) return;
