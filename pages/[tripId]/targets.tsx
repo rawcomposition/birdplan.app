@@ -42,7 +42,9 @@ export default function TripTargets() {
 
   // Filter targets
   const filteredTargets = targetSpecies?.filter(
-    (it) => it.name.toLowerCase().includes(search.toLowerCase()) && (showStarred ? it.isStarred : true)
+    (it) =>
+      it.name.toLowerCase().includes(search.toLowerCase()) &&
+      (showStarred ? trip?.targetStars?.includes(it.code) : true)
   );
 
   const truncatedTargets = filteredTargets?.slice(0, showCount);

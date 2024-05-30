@@ -11,6 +11,9 @@ import {
   deleteInvite,
   removeUserFromTrip,
   setTripStartDate,
+  addTargetStarToTrip,
+  removeTargetStarFromTrip,
+  setTargetNotesOnTrip,
 } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
@@ -216,32 +219,17 @@ const useTrip = () => {
 
   const setTargetNotes = async (code: string, notes: string) => {
     if (!trip || !state.targets) return;
-    const newItems =
-      state.targets.items?.map((it) => {
-        if (it.code === code) return { ...it, notes };
-        return it;
-      }) || [];
-    await setTargets({ ...state.targets, items: newItems });
+    await setTargetNotesOnTrip(trip.id, code, notes);
   };
 
   const addTargetStar = async (code: string) => {
     if (!trip || !state.targets) return;
-    const newItems =
-      state.targets.items?.map((it) => {
-        if (it.code === code) return { ...it, isStarred: true };
-        return it;
-      }) || [];
-    await setTargets({ ...state.targets, items: newItems });
+    await addTargetStarToTrip(trip.id, code);
   };
 
   const removeTargetStar = async (code: string) => {
     if (!trip || !state.targets) return;
-    const newItems =
-      state.targets.items?.map((it) => {
-        if (it.code === code) return { ...it, isStarred: false };
-        return it;
-      }) || [];
-    await setTargets({ ...state.targets, items: newItems });
+    await removeTargetStarFromTrip(trip.id, code);
   };
 
   const saveHotspotNotes = async (id: string, notes: string) => {
