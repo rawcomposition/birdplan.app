@@ -10,50 +10,42 @@ import SpeciesCard from "components/SpeciesCard";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import Input from "components/Input";
-import { Menu, Transition } from "@headlessui/react";
 import ErrorBoundary from "components/ErrorBoundary";
+import { useProfile } from "providers/profile";
 import useProfiles from "hooks/useProfiles";
-import Icon from "components/Icon";
 import Button from "components/Button";
-import Link from "next/link";
+import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
+
+const PAGE_SIZE = 50;
 
 export default function TripTargets() {
   const { open } = useModal();
   const { user } = useUser();
-  const [isAddingMarker, setIsAddingMarker] = React.useState(false);
-  const { is404, targets, trip, invites, selectedSpecies, canEdit } = useTrip();
+  const myUid = user?.uid;
+  const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
+
+  // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
-  const [selectedUid, setSelectedUid] = React.useState("");
-  const { profiles } = useProfiles(trip?.userIds);
-  const myUid = user?.uid || trip?.userIds?.[0];
-  const actualUid = selectedUid || myUid;
+  const [uid, setUid] = React.useState<string | undefined>(user?.uid); // TODO
+  const [page, setPage] = React.useState(1);
+  const showCount = page * PAGE_SIZE;
 
-  const lifelist = profiles.find((it) => it.id === actualUid)?.lifelist || [];
+  // Exclude non-lifers
+  const { lifelist: myLifelist } = useProfile();
+  const { profiles } = useProfiles();
+  const lifelist = uid === myUid ? myLifelist : profiles?.find((it) => it.id === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
-  const filteredTargets = targetSpecies.filter(
+
+  // Filter targets
+  const filteredTargets = targetSpecies?.filter(
     (it) => it.name.toLowerCase().includes(search.toLowerCase()) && (showStarred ? it.isStarred : true)
   );
 
-  const inviteOptions = invites
-    ?.filter(({ uid }) => !!uid)
-    .map(({ name, email, uid }) => ({
-      name: name || email,
-      uid,
-    }));
-
-  const options = [
-    {
-      name: `${user?.displayName} (me)`,
-      uid: myUid,
-    },
-    ...inviteOptions,
-  ];
-
-  const selectedOption = options.find((it) => it.uid === actualUid);
+  const truncatedTargets = filteredTargets?.slice(0, showCount);
 
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
@@ -66,6 +58,10 @@ export default function TripTargets() {
         })
       : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
   };
+
+  React.useEffect(() => {
+    setUid(myUid);
+  }, [myUid]);
 
   if (is404) return <NotFound />;
 
@@ -83,43 +79,7 @@ export default function TripTargets() {
         <ErrorBoundary>
           <div className="h-full grow flex sm:relative flex-col w-full">
             <div className="h-full w-full mx-auto max-w-6xl">
-              {options.length > 1 && (
-                <Menu as="div" className="mt-1 ml-2 sm:ml-0 text-left relative sm:-mb-1">
-                  <div>
-                    <Menu.Button className="py-1 sm:py-0 sm:pt-2 ">
-                      <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
-                      <span className="text-gray-600 text-[13px] hover:text-gray-600">
-                        {selectedOption?.name} <Icon name="angleDown" />
-                      </span>
-                    </Menu.Button>
-                  </div>
-
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute left-12 top-7 z-10 w-44 origin-top-left rounded-md bg-gray-800 shadow-lg ring-1 ring-gray-700 focus:outline-none">
-                      <div className="py-2">
-                        {options?.map(({ name, uid }) => (
-                          <Menu.Item key={uid}>
-                            <button
-                              onClick={() => setSelectedUid(uid || "")}
-                              className="w-full px-4 py-1 text-left text-[13px] hover:text-gray-200 text-gray-300"
-                            >
-                              {name}
-                            </button>
-                          </Menu.Item>
-                        ))}
-                      </div>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
-              )}
+              <ProfileSelect value={uid} onChange={setUid} />
               {!!targetSpecies?.length && (
                 <div className="flex items-center gap-2 my-2 sm:my-4 px-2 sm:px-0">
                   <Input
@@ -140,31 +100,33 @@ export default function TripTargets() {
                   </label>
                 </div>
               )}
-              {!!targets?.N && !filteredTargets?.length && (
+              {!!targets?.N && !truncatedTargets?.length && (
                 <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4">
                   <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                   <p className="text-gray-500 text-sm">
-                    {filteredTargets?.length === targetSpecies?.length
+                    {truncatedTargets?.length === truncatedTargets?.length
                       ? "It looks like you have already seen all the species in this region."
                       : "No targets found for your search."}
                   </p>
                 </div>
               )}
-              {!targets?.N && !filteredTargets?.length && (
-                <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-4">
+              {!targets?.N && !truncatedTargets?.length && (
+                <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-2">
                   {canEdit ? (
                     <h3 className="text-lg font-medium text-gray-700">You haven&apos;t imported your targets yet</h3>
                   ) : (
                     <h3 className="text-lg font-medium text-gray-700">No targets have been imported yet</h3>
                   )}
                   {canEdit && (
-                    <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
-                      Import Targets
-                    </Button>
+                    <p>
+                      <Button href={`/${trip?.id}/import-targets?redirect=targets&back=true`} color="primary" size="sm">
+                        Import Targets
+                      </Button>
+                    </p>
                   )}
                 </div>
               )}
-              {!!filteredTargets?.length && (
+              {!!truncatedTargets?.length && (
                 <table className="divide-y w-full">
                   <thead className="hidden sm:table-header-group">
                     <tr>
@@ -182,22 +144,20 @@ export default function TripTargets() {
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {filteredTargets?.map((it, index) => (
+                    {truncatedTargets?.map((it, index) => (
                       <TargetRow key={it.code} {...it} index={index} />
                     ))}
                   </tbody>
                 </table>
               )}
-              {!!targets?.N && canEdit && (
-                <div className="my-4 text-center sm:text-left pb-4">
-                  <Link
-                    href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
-                    className="text-sky-600 font-bold text-sm"
-                  >
-                    Re-import targets
-                  </Link>
-                </div>
-              )}
+
+              <div className="my-4 text-center pb-4">
+                {filteredTargets?.length > showCount && (
+                  <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => setPage(page + 1)}>
+                    Show {Math.min(filteredTargets.length - showCount, 50)} more
+                  </button>
+                )}
+              </div>
             </div>
             {selectedSpecies && (
               <div className="absolute inset-0 z-10">
@@ -209,8 +169,6 @@ export default function TripTargets() {
                       onHotspotClick={obsClick}
                       obsLayer={selectedSpecies && obsLayer}
                       bounds={trip.bounds}
-                      addingMarker={isAddingMarker}
-                      onDisableAddingMarker={() => setIsAddingMarker(false)}
                     />
                   )}
                 </div>
