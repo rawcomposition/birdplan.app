@@ -1,7 +1,6 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useTrip } from "providers/trip";
-import { useProfile } from "providers/profile";
 import { useUser } from "providers/user";
 import Icon from "components/Icon";
 

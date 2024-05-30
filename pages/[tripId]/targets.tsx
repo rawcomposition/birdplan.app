@@ -12,6 +12,7 @@ import { useUser } from "providers/user";
 import Input from "components/Input";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useProfile } from "providers/profile";
+import useProfiles from "hooks/useProfiles";
 import Button from "components/Button";
 import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
@@ -22,6 +23,7 @@ const PAGE_SIZE = 50;
 export default function TripTargets() {
   const { open } = useModal();
   const { user } = useUser();
+  const myUid = user?.uid;
   const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
 
@@ -33,7 +35,9 @@ export default function TripTargets() {
   const showCount = page * PAGE_SIZE;
 
   // Exclude non-lifers
-  const { lifelist } = useProfile();
+  const { lifelist: myLifelist } = useProfile();
+  const { profiles } = useProfiles();
+  const lifelist = uid === myUid ? myLifelist : profiles?.find((it) => it.id === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -54,6 +58,10 @@ export default function TripTargets() {
         })
       : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
   };
+
+  React.useEffect(() => {
+    setUid(myUid);
+  }, [myUid]);
 
   if (is404) return <NotFound />;
 
