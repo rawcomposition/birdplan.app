@@ -17,7 +17,6 @@ type PropsT = Target & {
 export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
-  console.log("trip", trip);
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { addToLifeList } = useProfile();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
