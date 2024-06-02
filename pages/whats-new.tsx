@@ -14,6 +14,13 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 2, 2024</h2>
+          <ul>
+            <li>
+              ✨ Target species are now automatically imported from eBird! You no longer have to manually upload a CSV
+              file. The same functionality will soon be brought over to hotspots targets.
+            </li>
+          </ul>
           <h2>May 24, 2024</h2>
           <ul>
             <li>✨ Redesigned trip targets page.</li>
