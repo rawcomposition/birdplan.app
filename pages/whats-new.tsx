@@ -20,6 +20,7 @@ export default function WhatsNew() {
               ✨ Target species are now automatically imported from eBird! You no longer have to manually upload a CSV
               file. The same functionality will soon be brought over to hotspots targets.
             </li>
+            <li>🐞 Fixed bug where opening map from target list would sometimes not be fully visible.</li>
           </ul>
           <h2>May 24, 2024</h2>
           <ul>
