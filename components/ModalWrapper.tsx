@@ -48,7 +48,7 @@ export default function ModalWrapper({ open, onClose, small, children }: Props) 
         leaveFrom="opacity-100 translate-y-0 sm:translate-x-0"
         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
         className={clsx(
-          "fixed bottom-0 left-0 right-0 sm:left-auto sm:top-[60px] z-20 w-full sm:max-w-md bg-black/10 sm:bg-transparent",
+          "fixed bottom-0 left-0 right-0 sm:left-auto sm:top-0 z-20 w-full sm:max-w-md bg-black/10 sm:bg-transparent",
           small ? "top-1/2" : "top-44"
         )}
       >

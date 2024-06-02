@@ -162,7 +162,7 @@ export default function TripTargets() {
               </div>
             </div>
             {selectedSpecies && (
-              <div className="absolute inset-0 z-10">
+              <div className="fixed inset-0 z-20">
                 {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
                 <div className="w-full h-full relative">
                   {trip?.bounds && (
