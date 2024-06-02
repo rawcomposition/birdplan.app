@@ -30,13 +30,13 @@ export default function TripTargets() {
   // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
-  const [uid, setUid] = React.useState<string | undefined>(user?.uid); // TODO
+  const [uid, setUid] = React.useState<string | undefined>(myUid || trip?.ownerId);
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
 
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
-  const { profiles } = useProfiles();
+  const { profiles } = useProfiles(trip?.userIds && trip.userIds.length > 1 ? trip.userIds : undefined);
   const lifelist = uid === myUid ? myLifelist : profiles?.find((it) => it.id === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
