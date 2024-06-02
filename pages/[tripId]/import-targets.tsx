@@ -15,15 +15,18 @@ import Link from "next/link";
 import NotFound from "components/NotFound";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
+import useConfirmNavigation from "hooks/useConfirmNavigation";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
 export default function ImportTargets() {
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const [isFinalizing, setIsFinalizing] = React.useState(false);
+  const [isDirty, setIsDirty] = React.useState(false);
   const { is404, trip, setTargets } = useTrip();
   const { lifelist } = useProfile();
   const router = useRouter();
+
   const tripId = trip?.id;
   const redirect = router.query.redirect || "";
   const showBack = router.query.back === "true";
@@ -46,12 +49,20 @@ export default function ImportTargets() {
     enabled: !!region,
   });
 
+  React.useEffect(() => {
+    setIsDirty(!!data);
+  }, [data]);
+
+  console.log("isDirty", isDirty);
+
+  useConfirmNavigation(isDirty);
+
   const handleSubmit = async () => {
     if (!tripId || !data) return;
     const filtered = data.items.filter(({ percent }) => percent >= Number(cutoff.value.replace("%", "")));
+    setIsDirty(false);
     setIsFinalizing(true);
     await setTargets({ ...data, tripId, items: filtered });
-    setIsFinalizing(false);
     router.push(redirectUrl);
   };
 
@@ -131,7 +142,7 @@ export default function ImportTargets() {
                     <span className="ml-2">Saving...</span>
                   </>
                 ) : (
-                  "Continue"
+                  "Save Targets"
                 )}
               </Button>
             ) : (
