@@ -22,7 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return acc;
     }, []);
 
-    res.setHeader("Cache-Control", "max-age=0, s-maxage=600"); //Cache for 10 minutes
+    const tenMinutes = 600;
+    res.setHeader("Cache-Control", `public, max-age=${tenMinutes}, s-maxage=${tenMinutes}`);
 
     res.status(200).json(formatted);
   } catch (error) {

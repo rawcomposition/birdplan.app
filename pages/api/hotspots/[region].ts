@@ -18,8 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       species: it.numSpeciesAllTime,
     }));
 
-    //Cache for 7 days
-    res.setHeader("Cache-Control", "s-maxage=604800");
+    const sevenDays = 604800;
+    res.setHeader("Cache-Control", `public, max-age=${sevenDays}, s-maxage=${sevenDays}`);
 
     res.status(200).json(formatted);
   } catch (error) {

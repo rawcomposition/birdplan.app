@@ -7,7 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch(`https://ebird.org/mapServices/getHsInfo.do?fmt=json&hs=${id}&yr=all&m=`);
     const json = await response.json();
 
-    res.setHeader("Cache-Control", "max-age=0, s-maxage=2592000"); //Cache for 30 days
+    const thirtyDays = 2592000;
+    res.setHeader("Cache-Control", `public, max-age=${thirtyDays}, s-maxage=${thirtyDays}`);
 
     res.status(200).json(json);
   } catch (error) {
