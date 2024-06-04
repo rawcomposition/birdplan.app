@@ -7,7 +7,7 @@ export default function WhatsNew() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>{`What's New`} | BirdPlan.app</title>
+        <title>{`What's New | BirdPlan.app`}</title>
       </Head>
 
       <HomeHeader />
