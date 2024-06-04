@@ -3,12 +3,10 @@ import { useTrip } from "providers/trip";
 import Button from "components/Button";
 import Icon from "components/Icon";
 import useHotspotTargets from "hooks/useHotspotTargets";
-import toast from "react-hot-toast";
-import { parseTargets } from "lib/helpers";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import FilterTabs from "components/FilterTabs";
 import { useProfile } from "providers/profile";
-import { deleteTargets } from "lib/firebase";
+import useDownloadTargets from "hooks/useDownloadTargets";
 
 type Props = {
   locId: string;
@@ -19,34 +17,25 @@ type Props = {
 export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }: Props) {
   const { lifelist } = useProfile();
   const [view, setView] = React.useState<string>("all");
-  const { trip, setHotspotTargetsId, setSelectedSpecies } = useTrip();
+  const { trip, setSelectedSpecies } = useTrip();
+  const tripId = trip?.id;
   const hotspot = trip?.hotspots.find((it) => it.id === locId);
   const hasTargets = !!hotspot?.targetsId;
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const needsTargets = !!hotspot && !hasTargets;
   const { addTargets, items, isLoading } = useHotspotTargets(locId);
-  const startMonth = trip?.startMonth || 1;
-  const endMonth = trip?.endMonth || 12;
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!trip) return;
-    try {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      if (!file.name?.includes(locId)) {
-        toast.error("The file you selected is not for this hotspot");
-        return;
-      }
-      const toastId = toast.loading("Importing...");
-      const res = await parseTargets({ file, startMonth, endMonth });
-      addTargets({ ...res, tripId: trip.id, hotspotId: locId });
-      toast.success("Targets imported");
-      toast.dismiss(toastId);
-    } catch (error) {
-      console.error(error);
-      toast.error("Error processing file");
-      fileInputRef.current?.value && (fileInputRef.current.value = "");
+  const { data, isFetching, isRefetching, error, refetch } = useDownloadTargets({
+    region: locId,
+    startMonth: trip?.startMonth,
+    endMonth: trip?.endMonth,
+    enabled: needsTargets,
+  });
+
+  React.useEffect(() => {
+    if (data && tripId) {
+      addTargets({ ...data, tripId, hotspotId: locId });
     }
-  };
+  }, [data, tripId]);
 
   const sortedItems = React.useMemo(() => {
     if (!items?.length) return [];
@@ -59,40 +48,24 @@ export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }
 
   const hasResults = !!items?.length;
 
-  const handleReset = async () => {
-    if (!confirm("Are you sure? Target data will be cleared and you will need to re-upload the CSV file.")) return;
-    await deleteTargets(locId);
-    await setHotspotTargetsId(locId, "");
-  };
-
-  if (!hasTargets) {
+  if (isFetching || isRefetching) {
     return (
-      <>
-        <div className="mb-8">
-          <h3 className="text-md font-medium mb-2 text-gray-700">1. Download targets from eBird</h3>
-          <Button
-            href={`https://ebird.org/barchartData?r=${locId}&bmo=1&emo=12&byr=1900&eyr=2023&fmt=tsv`}
-            target="_blank"
-            color="primary"
-            size="xs"
-            className="inline-flex items-center gap-2"
-          >
-            <Icon name="download" /> Download Targets
-          </Button>
-          <p className="bg-amber-100 text-amber-800 p-2 rounded text-[12px] mt-2">
-            <strong>Note:</strong> Your{" "}
-            <a href="https://ebird.org/prefs" className="text-sky-600" target="_blank" rel="noreferrer">
-              eBird Preferences
-            </a>{" "}
-            must be set to show species names in <strong>English</strong> or <strong>English (US)</strong>. Or enable{" "}
-            showing <strong>both common and scientific names</strong>.
-          </p>
-        </div>
-        <div className="mb-8">
-          <h3 className="text-md font-medium mb-2 text-gray-700">2. Upload the CSV file</h3>
-          <input ref={fileInputRef} type="file" accept=".txt" className="text-xs" onChange={handleFileUpload} />
-        </div>
-      </>
+      <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded flex items-center gap-2">
+        <Icon name="loading" className="text-xl animate-spin" />
+        Downloading targets from eBird...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-sm -mx-1 my-1 bg-red-100 text-red-800 py-2.5 px-3 rounded">
+        <Icon name="xMarkCircle" className="text-xl" />
+        Failed to download targets from eBird
+        <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+          Retry
+        </button>
+      </div>
     );
   }
 
@@ -141,7 +114,7 @@ export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }
         <button
           type="button"
           className="text-sky-600 text-[12px] font-bold pl-3 py-1 inline-flex items-center gap-1"
-          onClick={handleReset}
+          onClick={() => refetch()}
         >
           <Icon name="xMarkCircle" />
           Reset Targets
