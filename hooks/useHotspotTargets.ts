@@ -13,6 +13,9 @@ export default function useHotspotTargets(locId?: string) {
     async () => getTargets(targetsId || ""),
     {
       enabled: !!locId && !!targetsId,
+      refetchOnWindowFocus: false,
+      staleTime: 24 * 60 * 60 * 1000,
+      cacheTime: 24 * 60 * 60 * 1000,
       meta: {
         errorMessage: "Failed to load hotspot targets",
       },

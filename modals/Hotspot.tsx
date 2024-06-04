@@ -59,7 +59,7 @@ export default function Hotspot({ hotspot }: Props) {
 
   if (isSaved) {
     tabs.push({
-      label: savedHotspot?.targetsId ? "Targets" : "Import Targets",
+      label: savedHotspot?.targetsId ? "Targets" : "Targets (loading)",
       title: "",
       id: "targets",
     });
@@ -217,9 +217,9 @@ export default function Hotspot({ hotspot }: Props) {
           {tab === "checklists" && (
             <RecentChecklistList locId={id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
           )}
-          {tab === "targets" && (
+          <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
             <HotspotTargets locId={id} tripRangeLabel={tripRangeLabel} onSpeciesClick={() => setTab("checklists")} />
-          )}
+          </div>
         </div>
       </Body>
     </>

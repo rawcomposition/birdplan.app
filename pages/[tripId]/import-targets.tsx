@@ -16,6 +16,7 @@ import NotFound from "components/NotFound";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import useConfirmNavigation from "hooks/useConfirmNavigation";
+import useDownloadTargets from "hooks/useDownloadTargets";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
@@ -38,22 +39,16 @@ export default function ImportTargets() {
       ? `/${trip?.id}/${redirect}`
       : `/import-lifelist?tripId=${trip?.id}&back=${showBack ? "true" : "false"}`;
 
-  const { data, isLoading, isRefetching, error, refetch } = useQuery<{ items: Target[]; N: number; yrN: number }>({
-    queryKey: [
-      "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-6c6abe6c-b02b-4b79-a86e-f7633e99a025/targets/get",
-      { startMonth, endMonth, region },
-    ],
-    refetchOnWindowFocus: false,
-    staleTime: 0,
-    cacheTime: 0,
-    enabled: !!region,
+  const { data, isLoading, isRefetching, error, refetch } = useDownloadTargets({
+    region,
+    startMonth,
+    endMonth,
+    enabled: true,
   });
 
   React.useEffect(() => {
     setIsDirty(!!data);
   }, [data]);
-
-  console.log("isDirty", isDirty);
 
   useConfirmNavigation(isDirty);
 
