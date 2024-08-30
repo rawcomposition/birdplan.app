@@ -371,9 +371,10 @@ export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
         type: "Feature",
         properties: {
           name: it.name,
-          description: `<b>Links</b><br/><a href=${getGooglePlaceUrl(it.lat, it.lng)}>Directions</a><b>Notes</b><br/>${
-            it.notes || "None"
-          }`,
+          description: `<b>Links</b><br/><a href=${getGooglePlaceUrl(
+            it.lat,
+            it.lng
+          )}>Directions</a><br/><br/><b>Notes</b><br/>${it.notes || "None"}`,
         },
         geometry: {
           type: "Point",
