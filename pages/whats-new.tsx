@@ -14,6 +14,11 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>September 4, 2024</h2>
+          <ul>
+            <li>🐞 Fixed several user interface bugs on mobile devices.</li>
+            <li>🐞 Fixed bug where KML exports were not displaying descriptions correctly for certain places.</li>
+          </ul>
           <h2>June 4, 2024</h2>
           <ul>
             <li>
