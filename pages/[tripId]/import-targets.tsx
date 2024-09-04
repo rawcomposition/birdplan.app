@@ -72,11 +72,14 @@ export default function ImportTargets() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         {showBack && (
-          <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
+          <Link
+            href={`/${trip?.id}`}
+            className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
+          >
             ← Back to trip
           </Link>
         )}
-        <div className="p-4 md:p-0 mt-8">
+        <div className="px-4 md:px-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">🎯 Import Targets</h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8 flex flex-col gap-4">
             <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download from eBird</h3>

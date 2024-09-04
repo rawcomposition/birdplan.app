@@ -63,10 +63,13 @@ export default function TripSettings() {
 
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
-        <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
+        <Link
+          href={`/${trip?.id}`}
+          className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
+        >
           ← Back to trip
         </Link>
-        <div className="p-4 md:p-0 mt-8">
+        <div className="px-4 md:px-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">⚙️ Trip Settings</h1>
           <div className="flex gap-2 mb-2">
             <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>

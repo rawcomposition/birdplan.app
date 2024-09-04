@@ -69,11 +69,14 @@ export default function ImportLifelist() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         {showBack && (
-          <Link href={`/${tripId}`} className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
+          <Link
+            href={`/${tripId}`}
+            className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
+          >
             ← Back to trip
           </Link>
         )}
-        <div className="p-4 md:p-0 mt-8">
+        <div className="px-4 md:px-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <Icon name="feather" className="text-2xl text-lime-600" /> {"Import Life List"}
           </h1>
