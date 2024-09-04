@@ -171,9 +171,9 @@ export default function TripTargets() {
             </div>
           </div>
           {selectedSpecies && (
-            <div className="absolute inset-0 z-10">
+            <div className="absolute inset-0 z-10 flex flex-col">
               {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
-              <div className="w-full h-full relative">
+              <div className="w-full flex-grow relative">
                 {trip?.bounds && (
                   <MapBox
                     key={trip.id}
