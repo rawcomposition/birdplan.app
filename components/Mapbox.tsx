@@ -164,7 +164,8 @@ export default function Mapbox({
             key={marker.id}
             latitude={marker.lat}
             longitude={marker.lng}
-            onClick={() => {
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
               handleHotspotClick(marker.id);
             }}
           >
@@ -176,7 +177,10 @@ export default function Mapbox({
             key={marker.id}
             latitude={marker.lat}
             longitude={marker.lng}
-            onClick={() => handleMarkerClick(marker)}
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              handleMarkerClick(marker);
+            }}
           >
             <MarkerWithIcon icon={marker.icon} highlight={marker.id === selectedMarkerId} />
           </Marker>

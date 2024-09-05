@@ -18,6 +18,7 @@ export default function WhatsNew() {
           <ul>
             <li>🐞 Fixed several user interface bugs on mobile devices.</li>
             <li>🐞 Fixed bug where KML exports were not displaying descriptions correctly for certain places.</li>
+            <li>🐞 Made saved hotspots easier to click than surrounding markers on map.</li>
           </ul>
           <h2>June 4, 2024</h2>
           <ul>
