@@ -33,7 +33,7 @@ export default function HotspotTargets({ locId, tripRangeLabel, onSpeciesClick }
   });
 
   React.useEffect(() => {
-    if (data && tripId) {
+    if (data && !!data.items?.length && tripId) {
       addTargets({ ...data, tripId, hotspotId: locId });
     }
   }, [data, tripId]);

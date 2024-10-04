@@ -29,9 +29,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     // Filter targets
     const filteredTargets = targetsData.map((target) => {
-      const needs = target.items.filter((it) => !lifelist?.includes(it.code));
-      const filtered = needs.filter((it) => it.percentYr >= 5);
-      const items = filtered.sort((a, b) => b.percentYr - a.percentYr);
+      const needs = target.items?.filter((it) => !lifelist?.includes(it.code));
+      const filtered = needs?.filter((it) => it.percentYr >= 5);
+      const items = filtered?.sort((a, b) => b.percentYr - a.percentYr);
       return { ...target, items };
     });
 
