@@ -9,6 +9,7 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
 import { Target } from "lib/types";
+import { useSpeciesImages } from "providers/species-images";
 
 type PropsT = Target & {
   index: number;
@@ -18,6 +19,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
+  const { getSpeciesImg } = useSpeciesImages();
   const { addToLifeList } = useProfile();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
@@ -38,6 +40,8 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const isExpanded = expandedCodes.includes(code);
   const lastReport = recentSpecies?.find((species) => species.code === code);
 
+  const img = React.useMemo(() => getSpeciesImg(code), [code, getSpeciesImg]);
+
   const textareaBaseClasses =
     "input border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block p-1.5";
   const mobileBtnClasses =
@@ -53,10 +57,11 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
           </div>
           <MerlinkLink code={code}>
             <img
-              src={`/api/species-img/${code}`}
+              src={img ? img.url : "/placeholder.png"}
               alt={name}
-              className="w-14 h-14 min-w-[3.5rem] rounded-lg object-cover my-1 mx-1 sm:mx-0"
+              className="w-16 aspect-[4/3] min-w-[3.5rem] rounded object-cover my-1 mx-1 sm:mx-0"
               loading="lazy"
+              title={img?.by ? `Photo by ${img.by}` : ""}
             />
           </MerlinkLink>
         </td>

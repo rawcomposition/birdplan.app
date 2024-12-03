@@ -4,6 +4,7 @@ import { UserProvider } from "providers/user";
 import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";
+import { SpeciesImagesProvider } from "providers/species-images";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
 import { get } from "lib/helpers";
@@ -34,16 +35,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <UserProvider>
-          <Toaster containerStyle={{ zIndex: 10001 }} />
-          <ProfileProvider>
-            <TripProvider>
-              <ModalProvider>
-                <Component {...pageProps} />
-              </ModalProvider>
-            </TripProvider>
-          </ProfileProvider>
-        </UserProvider>
+        <SpeciesImagesProvider>
+          <UserProvider>
+            <Toaster containerStyle={{ zIndex: 10001 }} />
+            <ProfileProvider>
+              <TripProvider>
+                <ModalProvider>
+                  <Component {...pageProps} />
+                </ModalProvider>
+              </TripProvider>
+            </ProfileProvider>
+          </UserProvider>
+        </SpeciesImagesProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
