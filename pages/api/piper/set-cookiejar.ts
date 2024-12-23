@@ -5,6 +5,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const key = req.query.key;
     const body = req.body;
+    console.log("TYPEOF", typeof body);
+    console.log(body);
 
     if (!key || key !== process.env.PIPER_KEY) throw new Error("Invalid key");
     if (!body) throw new Error("Missing body");
