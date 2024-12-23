@@ -4,7 +4,7 @@ import { db } from "lib/firebaseAdmin";
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     const key = req.query.key;
-    const body = req.body;
+    const body = req.body.toString(); // Convert to string to avoid JSON parsing
     console.log("TYPEOF", typeof body);
     console.log(body);
 
