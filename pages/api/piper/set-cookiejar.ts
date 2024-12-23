@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     let rawBody = "";
     await new Promise<void>((resolve, reject) => {
       req.on("data", (chunk) => {
-        rawBody += chunk.toString(); // Collect raw body
+        rawBody += chunk.toString();
       });
       req.on("end", resolve);
       req.on("error", reject);
