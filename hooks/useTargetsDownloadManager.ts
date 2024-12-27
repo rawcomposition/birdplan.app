@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Targets } from "lib/types";
-import { addTargets } from "lib/firebase";
+import { addTargets, updateHotspots } from "lib/firebase";
 import { useTrip } from "providers/trip";
 import { useWindowActive } from "hooks/useWindowActive";
 
@@ -8,7 +8,7 @@ const CUTOFF = "5%";
 const RETRY_LIMIT = 1;
 
 export default function useTargetsDownloadManager() {
-  const { trip, setHotspotTargetsId } = useTrip();
+  const { trip } = useTrip();
   const [downloadingLocId, setDownloadingLocId] = useState<string | null>(null);
   const isDownloading = !!downloadingLocId;
 
@@ -24,6 +24,11 @@ export default function useTargetsDownloadManager() {
     },
   });
   const isPaused = !windowIsFocused;
+
+  const retryDownload = (locId: string) => {
+    pendingHotspotsRef.current.add(locId);
+    failedAttemptsRef.current.set(locId, 0);
+  };
 
   useEffect(() => {
     if (!trip?.hotspots) return;
@@ -65,9 +70,14 @@ export default function useTargetsDownloadManager() {
   };
 
   const handleAddTargets = async (locId: string, data: Targets) => {
-    const id = await addTargets(data);
-    if (id && locId) {
-      setHotspotTargetsId(locId, id.id);
+    const targetsId = await addTargets(data);
+    if (targetsId && locId) {
+      if (!trip) return;
+      const newHotspots = trip.hotspots.map((it) => {
+        if (it.id === locId) return { ...it, targetsId };
+        return it;
+      });
+      await updateHotspots(trip.id, newHotspots);
     }
   };
 
@@ -83,5 +93,9 @@ export default function useTargetsDownloadManager() {
   const pendingLocIds = Array.from(pendingHotspotsRef.current);
   if (downloadingLocId) pendingLocIds.push(downloadingLocId);
 
-  return { pendingLocIds, downloadingLocId, isDownloading };
+  const failedLocIds = Array.from(failedAttemptsRef.current.entries())
+    .filter(([_, attempts]) => attempts >= RETRY_LIMIT)
+    .map(([locId]) => locId);
+
+  return { pendingLocIds, failedLocIds, downloadingLocId, isDownloading, retryDownload };
 }

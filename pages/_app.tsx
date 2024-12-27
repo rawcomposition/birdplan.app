@@ -4,6 +4,7 @@ import { UserProvider } from "providers/user";
 import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";
+import { HotspotTargetsProvider } from "providers/hotspot-targets";
 import { SpeciesImagesProvider } from "providers/species-images";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
@@ -41,7 +42,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             <ProfileProvider>
               <TripProvider>
                 <ModalProvider>
-                  <Component {...pageProps} />
+                  <HotspotTargetsProvider>
+                    <Component {...pageProps} />
+                  </HotspotTargetsProvider>
                 </ModalProvider>
               </TripProvider>
             </ProfileProvider>

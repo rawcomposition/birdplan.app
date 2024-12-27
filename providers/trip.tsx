@@ -14,6 +14,7 @@ import {
   addTargetStarToTrip,
   removeTargetStarFromTrip,
   setTargetNotesOnTrip,
+  deleteTargets,
 } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
@@ -162,8 +163,9 @@ const useTrip = () => {
 
   const removeHotspot = async (id: string) => {
     if (!trip) return;
+    const hotspot = trip.hotspots.find((it) => it.id === id);
     const newHotspots = trip.hotspots.filter((it) => it.id !== id);
-    await updateHotspots(trip.id, newHotspots);
+    await Promise.all([updateHotspots(trip.id, newHotspots), hotspot?.targetsId && deleteTargets(hotspot.targetsId)]);
   };
 
   const appendMarker = async (marker: CustomMarker) => {
@@ -236,15 +238,6 @@ const useTrip = () => {
     if (!trip) return;
     const newHotspots = trip.hotspots.map((it) => {
       if (it.id === id) return { ...it, notes };
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
-
-  const setHotspotTargetsId = async (hotspotId: string, targetsId: string) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === hotspotId) return { ...it, targetsId };
       return it;
     });
     await updateHotspots(trip.id, newHotspots);
@@ -497,7 +490,6 @@ const useTrip = () => {
     markTravelTimeDeleted,
     calcTravelTime,
     saveHotspotNotes,
-    setHotspotTargetsId,
     saveMarkerNotes,
     addHotspotFav,
     removeHotspotFav,

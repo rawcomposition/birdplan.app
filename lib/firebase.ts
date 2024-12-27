@@ -62,14 +62,14 @@ export const updateTargets = async (id: string, data: Targets, shouldTimestamp?:
   });
 };
 
-export const addTargets = async (data: Targets): Promise<{ id: string } | null> => {
+export const addTargets = async (data: Targets): Promise<string | null> => {
   const user = auth.currentUser;
   if (!user) return null;
   const res = await fs.addDoc(fs.collection(db, "targets"), {
     ...data,
     updatedAt: fs.serverTimestamp(),
   });
-  return { id: res.id };
+  return res.id;
 };
 
 export const deleteTargets = async (id: string) => {
@@ -82,6 +82,7 @@ export const getTargets = async (id: string): Promise<Targets | null> => {
   const doc = await fs.getDoc(fs.doc(db, "targets", id));
   if (doc.exists()) {
     return doc.data() as Targets;
+  } else {
   }
   return null;
 };
@@ -234,4 +235,10 @@ export const subscribeToTripInvites = (id: string, callback: (invites: Invite[])
       callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Invite)));
     }
   );
+};
+
+export const subscribeToHotspotTargets = (tripId: string, callback: (targets: Targets[]) => void): (() => void) => {
+  return fs.onSnapshot(fs.query(fs.collection(db, "targets"), fs.where("tripId", "==", tripId)), (snapshot) => {
+    callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Targets)));
+  });
 };
