@@ -28,6 +28,11 @@ export default function useTargetsDownloadManager() {
   const retryDownload = (locId: string) => {
     pendingHotspotsRef.current.add(locId);
     failedAttemptsRef.current.set(locId, 0);
+    downloadPendingTargets();
+  };
+
+  const resetAttempts = (locId: string) => {
+    failedAttemptsRef.current.delete(locId);
   };
 
   const fetchTargetsForHotspot = async (locId: string): Promise<Targets> => {
@@ -104,5 +109,5 @@ export default function useTargetsDownloadManager() {
     .filter(([_, attempts]) => attempts >= RETRY_LIMIT)
     .map(([locId]) => locId);
 
-  return { pendingLocIds, failedLocIds, downloadingLocId, retryDownload };
+  return { pendingLocIds, failedLocIds, downloadingLocId, retryDownload, resetAttempts };
 }

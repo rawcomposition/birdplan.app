@@ -9,12 +9,14 @@ type ContextT = {
   failedLocIds: string[];
   pendingLocIds: string[];
   retryDownload: (locId: string) => void;
+  resetAttempts: (locId: string) => void;
 };
 
 const initialState = {
   failedLocIds: [],
   pendingLocIds: [],
   retryDownload: () => {},
+  resetAttempts: () => {},
 };
 
 export const HotspotTargetsContext = React.createContext<ContextT>({
@@ -26,7 +28,7 @@ type Props = {
 };
 
 const HotspotTargetsProvider = ({ children }: Props) => {
-  const { pendingLocIds, failedLocIds, retryDownload } = useTargetsDownloadManager();
+  const { pendingLocIds, failedLocIds, retryDownload, resetAttempts } = useTargetsDownloadManager();
 
   return (
     <HotspotTargetsContext.Provider
@@ -34,6 +36,7 @@ const HotspotTargetsProvider = ({ children }: Props) => {
         pendingLocIds,
         failedLocIds,
         retryDownload,
+        resetAttempts,
       }}
     >
       {children}
@@ -57,15 +60,6 @@ const useHotspotTargets = () => {
     };
   }, [tripId]);
 
-  const setHotspotTargetsId = async (hotspotId: string, targetsId: string) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === hotspotId) return { ...it, targetsId };
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
-
   const resetHotspotTargets = async (id: string) => {
     if (!trip) return;
     let oldTargetsId: string | undefined;
@@ -77,10 +71,11 @@ const useHotspotTargets = () => {
       }
       return it;
     });
+    state.resetAttempts(id);
     await Promise.all([updateHotspots(trip.id, newHotspots), oldTargetsId && deleteTargets(oldTargetsId)]);
   };
 
-  return { ...state, setHotspotTargetsId, resetHotspotTargets, allTargets: targets };
+  return { ...state, resetHotspotTargets, allTargets: targets };
 };
 
 export { HotspotTargetsProvider, useHotspotTargets };

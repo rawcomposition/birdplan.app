@@ -41,11 +41,11 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Toaster containerStyle={{ zIndex: 10001 }} />
             <ProfileProvider>
               <TripProvider>
-                <ModalProvider>
-                  <HotspotTargetsProvider>
+                <HotspotTargetsProvider>
+                  <ModalProvider>
                     <Component {...pageProps} />
-                  </HotspotTargetsProvider>
-                </ModalProvider>
+                  </ModalProvider>
+                </HotspotTargetsProvider>
               </TripProvider>
             </ProfileProvider>
           </UserProvider>
