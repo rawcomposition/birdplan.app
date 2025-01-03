@@ -31,10 +31,6 @@ export default function useTargetsDownloadManager() {
     downloadPendingTargets();
   };
 
-  const resetAttempts = (locId: string) => {
-    failedAttemptsRef.current.delete(locId);
-  };
-
   const fetchTargetsForHotspot = async (locId: string): Promise<Targets> => {
     const url = `https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-6c6abe6c-b02b-4b79-a86e-f7633e99a025/targets/get?startMonth=${trip?.startMonth}&endMonth=${trip?.endMonth}&region=${locId}&cutoff=${CUTOFF}`;
     const response = await fetch(url);
@@ -109,5 +105,5 @@ export default function useTargetsDownloadManager() {
     .filter(([_, attempts]) => attempts >= RETRY_LIMIT)
     .map(([locId]) => locId);
 
-  return { pendingLocIds, failedLocIds, downloadingLocId, retryDownload, resetAttempts };
+  return { pendingLocIds, failedLocIds, downloadingLocId, retryDownload };
 }
