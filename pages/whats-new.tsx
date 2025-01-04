@@ -14,6 +14,13 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>January 3, 2024</h2>
+          <ul>
+            <li>
+              ✨ Improved loading of hotspot targets from eBird. The process will now continue even if the hotspot
+              window is closed.
+            </li>
+          </ul>
           <h2>September 4, 2024</h2>
           <ul>
             <li>🐞 Fixed several user interface bugs on mobile devices.</li>
