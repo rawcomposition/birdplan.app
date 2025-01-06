@@ -10,6 +10,7 @@ import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
 import { Target } from "lib/types";
 import { useSpeciesImages } from "providers/species-images";
+import BestTargetHotspots from "components/BestTargetHotspots";
 
 type PropsT = Target & {
   index: number;
@@ -150,6 +151,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
               maxRows={6}
               cacheMeasurements
             />
+            <BestTargetHotspots />
             <div className="flex gap-2 mt-4">
               {isStarred ? (
                 <button type="button" onClick={() => removeTargetStar(code)} className={mobileBtnClasses}>
