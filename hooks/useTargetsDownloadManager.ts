@@ -8,7 +8,7 @@ const CUTOFF = "5"; // Percent
 const RETRY_LIMIT = 1;
 
 export default function useTargetsDownloadManager() {
-  const { trip } = useTrip();
+  const { trip, canEdit } = useTrip();
   const [downloadingLocId, setDownloadingLocId] = useState<string | null>(null);
 
   const processedHotspotsRef = useRef(new Set<string>());
@@ -26,6 +26,7 @@ export default function useTargetsDownloadManager() {
   const isPaused = !windowIsFocused;
 
   const retryDownload = (locId: string) => {
+    if (!canEdit) return;
     pendingHotspotsRef.current.add(locId);
     failedAttemptsRef.current.set(locId, 0);
     downloadPendingTargets();
@@ -85,7 +86,7 @@ export default function useTargetsDownloadManager() {
   };
 
   useEffect(() => {
-    if (!trip?.hotspots) return;
+    if (!trip?.hotspots || !canEdit) return;
 
     trip.hotspots
       .filter(
@@ -96,7 +97,7 @@ export default function useTargetsDownloadManager() {
     if (!downloadingRef.current && !isPaused) {
       downloadPendingTargets();
     }
-  }, [trip?.hotspots, isPaused]);
+  }, [trip?.hotspots, isPaused, canEdit]);
 
   const pendingLocIds = Array.from(pendingHotspotsRef.current);
   if (downloadingLocId) pendingLocIds.push(downloadingLocId);
