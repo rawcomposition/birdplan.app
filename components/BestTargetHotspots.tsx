@@ -14,6 +14,7 @@ type Props = {
 
 export default function BestTargetHotspots({ speciesCode, speciesName, className }: Props) {
   const [filter, setFilter] = React.useState("year");
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const { trip, dateRangeLabel } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { open } = useModal();
@@ -55,7 +56,9 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
     })
     .sort((a, b) => (filter === "year" ? b.percentYr - a.percentYr : b.percent - a.percent));
 
-  if (!topHotspots?.length) return <Alert style="warning">No hotspots found for {speciesName}</Alert>;
+  const slicedHotspots = isExpanded ? topHotspots : topHotspots.slice(0, 5);
+  if (!slicedHotspots?.length) return <Alert style="warning">No hotspots found for {speciesName}</Alert>;
+  const howManyMore = Math.max(0, topHotspots.length - slicedHotspots.length);
 
   return (
     <div className={className || ""}>
@@ -72,7 +75,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
         />
       </div>
       <div className="flex flex-col gap-2">
-        {topHotspots.map(({ hotspot, locationId, N, yrN, percent, percentYr }, index) => {
+        {slicedHotspots.map(({ hotspot, locationId, N, yrN, percent, percentYr }, index) => {
           const actualPercent = filter === "year" ? percentYr : percent;
           return (
             <div
@@ -106,6 +109,16 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
           );
         })}
       </div>
+      {howManyMore > 0 && (
+        <button onClick={() => setIsExpanded(true)} className="text-sky-600 font-bold text-sm mt-2">
+          View {howManyMore} more
+        </button>
+      )}
+      {isExpanded && (
+        <button onClick={() => setIsExpanded(false)} className="text-sky-600 font-bold text-sm mt-2">
+          View less
+        </button>
+      )}
     </div>
   );
 }
