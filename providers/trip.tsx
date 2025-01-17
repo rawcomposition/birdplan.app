@@ -18,7 +18,7 @@ import {
 } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
-import { mostFrequentValue, randomId } from "lib/helpers";
+import { mostFrequentValue, randomId, fullMonths, months } from "lib/helpers";
 import { getTravelTime } from "lib/mapbox";
 import toast from "react-hot-toast";
 
@@ -43,6 +43,7 @@ type ContextT = {
   is404: boolean;
   selectedMarkerId?: string;
   halo?: HaloT;
+  dateRangeLabel: string;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   setHalo: (data?: HaloT) => void;
@@ -60,6 +61,7 @@ const initialState = {
   isOwner: false,
   is404: false,
   invites: [],
+  dateRangeLabel: "",
 };
 
 export const TripContext = React.createContext<ContextT>({
@@ -86,6 +88,13 @@ const TripProvider = ({ children }: Props) => {
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
+
+  const dateRangeLabel =
+    trip?.startMonth && trip?.endMonth
+      ? trip.startMonth === trip.endMonth
+        ? fullMonths[trip.startMonth - 1]
+        : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`
+      : "";
 
   React.useEffect(() => {
     return () => setSelectedSpecies(undefined);
@@ -143,6 +152,7 @@ const TripProvider = ({ children }: Props) => {
         selectedMarkerId,
         halo,
         invites,
+        dateRangeLabel,
       }}
     >
       {children}

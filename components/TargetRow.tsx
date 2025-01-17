@@ -10,6 +10,7 @@ import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
 import { Target } from "lib/types";
 import { useSpeciesImages } from "providers/species-images";
+import BestTargetHotspots from "components/BestTargetHotspots";
 
 type PropsT = Target & {
   index: number;
@@ -138,8 +139,8 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
       </tr>
       {isExpanded && (
         <tr className="!border-t-0">
-          <td colSpan={2} className="hidden sm:table-cell" />
-          <td colSpan={5} className="p-2 sm:hidden">
+          <td colSpan={1} className="hidden sm:table-cell" />
+          <td colSpan={6} className="p-2 sm:hidden">
             <TextareaAutosize
               className={clsx(textareaBaseClasses, "w-full")}
               placeholder="Add notes..."
@@ -150,6 +151,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
               maxRows={6}
               cacheMeasurements
             />
+            <BestTargetHotspots speciesCode={code} speciesName={name} />
             <div className="flex gap-2 mt-4">
               {isStarred ? (
                 <button type="button" onClick={() => removeTargetStar(code)} className={mobileBtnClasses}>
@@ -171,6 +173,8 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             </div>
           </td>
           <td colSpan={7} className="pb-4 hidden sm:table-cell">
+            <BestTargetHotspots speciesCode={code} speciesName={name} className="mb-4" />
+            <span className="text-gray-600 font-medium text-sm">Species actions:</span>{" "}
             {canEdit && (
               <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => handleSeen(code, name)}>
                 Mark as seen

@@ -21,7 +21,7 @@ import TargetRow from "components/TargetRow";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {
-  const { open } = useModal();
+  const { open, close } = useModal();
   const { user } = useUser();
   const myUid = user?.uid;
   const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
@@ -65,10 +65,17 @@ export default function TripTargets() {
     setUid(myUid);
   }, [myUid]);
 
+  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest("button") && !target.closest("a") && !target.closest('[role="button"]')) {
+      close();
+    }
+  };
+
   if (is404) return <NotFound />;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" onClick={handleContainerClick}>
       {trip && (
         <Head>
           <title>{`${trip.name} | BirdPlan.app`}</title>

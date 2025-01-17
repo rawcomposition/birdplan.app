@@ -41,6 +41,16 @@ const HotspotTargetsProvider = ({ children }: Props) => {
   );
 };
 
+const cleanTargets = (targets: Targets[]) => {
+  const encounteredIds = new Set<string>();
+  return targets.filter((target) => {
+    if (!target.hotspotId) return false;
+    if (encounteredIds.has(target.hotspotId)) return false;
+    encounteredIds.add(target.hotspotId);
+    return true;
+  });
+};
+
 const useHotspotTargets = () => {
   const [targets, setTargets] = React.useState<Targets[]>([]);
   const { trip } = useTrip();
@@ -50,7 +60,9 @@ const useHotspotTargets = () => {
 
   React.useEffect(() => {
     if (!tripId) return;
-    const unsubscribe = subscribeToHotspotTargets(tripId, (targets) => setTargets(targets));
+    const unsubscribe = subscribeToHotspotTargets(tripId, (targets) => {
+      setTargets(cleanTargets(targets));
+    });
     return () => {
       unsubscribe();
       setTargets([]);

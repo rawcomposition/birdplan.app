@@ -238,7 +238,10 @@ export const subscribeToTripInvites = (id: string, callback: (invites: Invite[])
 };
 
 export const subscribeToHotspotTargets = (tripId: string, callback: (targets: Targets[]) => void): (() => void) => {
-  return fs.onSnapshot(fs.query(fs.collection(db, "targets"), fs.where("tripId", "==", tripId)), (snapshot) => {
-    callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Targets)));
-  });
+  return fs.onSnapshot(
+    fs.query(fs.collection(db, "targets"), fs.where("tripId", "==", tripId), fs.orderBy("updatedAt", "desc")),
+    (snapshot) => {
+      callback(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as Targets)));
+    }
+  );
 };
