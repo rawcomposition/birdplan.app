@@ -71,3 +71,14 @@
 .mapboxgl-ctrl-attrib.mapboxgl-compact {
   @apply bg-gray-600/60 text-white;
 }
+
+.light-scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+.light-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.light-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300;
+  border-radius: 10px;
+}

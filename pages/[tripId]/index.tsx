@@ -14,11 +14,13 @@ import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
+import HotspotList from "components/HotspotList";
 
 export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
   const [showSatellite, setShowSatellite] = React.useState(false);
+  const [isHotspotListOpen, setIsHotspotListOpen] = React.useState(false);
   const { trip, canEdit, is404, setSelectedSpecies } = useTrip();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
@@ -66,7 +68,7 @@ export default function Trip() {
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="" />
       <main className="flex h-[calc(100%-60px-52px)] relative">
-        <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
+        <div className="absolute top-4 right-4 flex flex-col gap-3 z-10">
           <MapButton
             onClick={() => setShowAll((prev) => !prev)}
             tooltip={showAll ? "Hide hotspots" : "Show hotspots"}
@@ -103,8 +105,16 @@ export default function Trip() {
               <Icon name="markerPlus" />
             </MapButton>
           )}
+          <MapButton
+            onClick={() => setIsHotspotListOpen((prev) => !prev)}
+            tooltip={isHotspotListOpen ? "Hide List" : "View List"}
+            active={isHotspotListOpen}
+          >
+            <Icon name="list" />
+          </MapButton>
         </div>
         <ErrorBoundary>
+          <HotspotList isOpen={isHotspotListOpen} />
           <div className="h-full grow flex sm:relative flex-col w-full">
             <>
               <div className="w-full grow relative">

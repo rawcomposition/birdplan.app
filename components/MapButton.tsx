@@ -66,7 +66,7 @@ export default function MapButton({
           leave="transition duration-150 ease-in"
           leaveFrom="scale-100 opacity-100"
           leaveTo="scale-95 opacity-0"
-          className="right-14 sm:right-auto sm:left-14 top-2 absolute  z-50 min-w-[200px] origin-top-right sm:origin-top-left ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white text-gray-700 shadow-md py-2"
+          className="right-14 top-2 absolute  z-50 min-w-[200px] origin-top-right ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white text-gray-700 shadow-md py-2"
         >
           <Menu.Items>
             {childItems.map(({ label, onClick, icon }) => (
@@ -90,7 +90,7 @@ export default function MapButton({
 
 const Tooltip = ({ children }: { children: React.ReactNode }) => {
   return (
-    <span className="absolute top-1/2 right-14 sm:left-14 sm:right-auto transform -translate-y-1/2 bg-black/80 text-white text-sm whitespace-nowrap px-2.5 py-1 rounded-lg hidden sm:group-hover:block">
+    <span className="absolute top-1/2 right-14 transform -translate-y-1/2 bg-black/80 text-white text-sm whitespace-nowrap px-2.5 py-1 rounded-lg hidden sm:group-hover:block">
       {children}
     </span>
   );
