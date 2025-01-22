@@ -1,5 +1,5 @@
 import React from "react";
-import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
+import Map, { Marker, Source, Layer, GeolocateControl, MapRef } from "react-map-gl";
 import { Marker as MarkerT, Trip, CustomMarker } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
@@ -33,6 +33,24 @@ export default function Mapbox({
   const { open, close } = useModal();
   const { selectedMarkerId, halo } = useTrip();
   const isOpeningModal = React.useRef(false);
+  const mapRef = React.useRef<MapRef | null>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   const handleHotspotClick = (id: string) => {
     isOpeningModal.current = true;
@@ -106,7 +124,7 @@ export default function Mapbox({
   if (!lat || !lng) return null;
 
   return (
-    <div className={clsx("relative w-full h-full", addingMarker && "mapboxAddMarkerMode")}>
+    <div ref={containerRef} className={clsx("relative w-full h-full", addingMarker && "mapboxAddMarkerMode")}>
       <Map
         initialViewState={{
           longitude: lng,
@@ -144,6 +162,7 @@ export default function Mapbox({
           [bounds.minX, bounds.minY],
           [bounds.maxX, bounds.maxY],
         ]}
+        ref={mapRef}
       >
         <GeolocateControl
           positionOptions={{ enableHighAccuracy: true }}

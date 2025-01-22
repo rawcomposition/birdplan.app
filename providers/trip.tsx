@@ -44,9 +44,11 @@ type ContextT = {
   selectedMarkerId?: string;
   halo?: HaloT;
   dateRangeLabel: string;
+  isHotspotListOpen: boolean;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   setHalo: (data?: HaloT) => void;
+  setIsHotspotListOpen: (open: boolean) => void;
 };
 
 const initialState = {
@@ -62,6 +64,7 @@ const initialState = {
   is404: false,
   invites: [],
   dateRangeLabel: "",
+  isHotspotListOpen: false,
 };
 
 export const TripContext = React.createContext<ContextT>({
@@ -69,6 +72,7 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpecies: () => {},
   setSelectedMarkerId: () => {},
   setHalo: () => {},
+  setIsHotspotListOpen: () => {},
 });
 
 type Props = {
@@ -83,6 +87,7 @@ const TripProvider = ({ children }: Props) => {
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
   const [is404, setIs404] = React.useState(false);
+  const [isHotspotListOpen, setIsHotspotListOpen] = React.useState(false);
   const { query, pathname } = useRouter();
   const id = query.tripId?.toString();
   const { user } = useUser();
@@ -153,6 +158,8 @@ const TripProvider = ({ children }: Props) => {
         halo,
         invites,
         dateRangeLabel,
+        isHotspotListOpen,
+        setIsHotspotListOpen,
       }}
     >
       {children}

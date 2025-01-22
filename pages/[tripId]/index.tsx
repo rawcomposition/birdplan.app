@@ -20,8 +20,7 @@ export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
   const [showSatellite, setShowSatellite] = React.useState(false);
-  const [isHotspotListOpen, setIsHotspotListOpen] = React.useState(false);
-  const { trip, canEdit, is404, setSelectedSpecies } = useTrip();
+  const { trip, canEdit, is404, setSelectedSpecies, isHotspotListOpen, setIsHotspotListOpen } = useTrip();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
@@ -106,7 +105,7 @@ export default function Trip() {
             </MapButton>
           )}
           <MapButton
-            onClick={() => setIsHotspotListOpen((prev) => !prev)}
+            onClick={() => setIsHotspotListOpen(!isHotspotListOpen)}
             tooltip={isHotspotListOpen ? "Hide List" : "View List"}
             active={isHotspotListOpen}
           >

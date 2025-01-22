@@ -15,7 +15,7 @@ type Props = {
 export default function HotspotList({ isOpen, onClose }: Props) {
   const [hotspotSearch, setHotspotSearch] = React.useState("");
   const [markerSearch, setMarkerSearch] = React.useState("");
-  const { open } = useModal();
+  const { open, close } = useModal();
   const { trip } = useTrip();
   const { allTargets } = useHotspotTargets();
   const hotspots = trip?.hotspots || [];
@@ -31,12 +31,25 @@ export default function HotspotList({ isOpen, onClose }: Props) {
       ? markers.filter((marker) => marker.name.toLowerCase().includes(markerSearch.toLowerCase().trim()))
       : markers;
 
+  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (
+      !target.closest("button") &&
+      !target.closest("a") &&
+      !target.closest('[role="button"]') &&
+      !target.closest("input")
+    ) {
+      close();
+    }
+  };
+
   return (
     <div
       className={clsx(
         "h-full flex relative flex-col w-full max-w-sm bg-white gap-4 pb-4 overflow-auto light-scrollbar",
         isOpen ? "block" : "hidden"
       )}
+      onClick={handleContainerClick}
     >
       <CloseButton
         className="absolute z-20 top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
