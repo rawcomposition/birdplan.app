@@ -46,7 +46,7 @@ export default function HotspotList({ isOpen, onClose }: Props) {
   return (
     <div
       className={clsx(
-        "h-full flex relative flex-col w-full max-w-sm bg-white gap-4 pb-4 overflow-auto light-scrollbar",
+        "h-full flex relative flex-col w-full max-w-sm bg-white gap-4 pb-4 overflow-auto",
         isOpen ? "block" : "hidden"
       )}
       onClick={handleContainerClick}
