@@ -114,7 +114,7 @@ export default function Trip() {
           </MapButton>
         </div>
         <ErrorBoundary>
-          <HotspotList isOpen={isHotspotListOpen} />
+          <HotspotList isOpen={isHotspotListOpen} onClose={() => setIsHotspotListOpen(false)} />
           <div className="h-full grow flex sm:relative flex-col w-full">
             <>
               <div className="w-full grow relative">

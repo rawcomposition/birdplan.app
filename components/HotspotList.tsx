@@ -1,35 +1,57 @@
+import React from "react";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import { useTrip } from "providers/trip";
 import { useHotspotTargets } from "providers/hotspot-targets";
 import { useModal } from "providers/modals";
 import clsx from "clsx";
+import Search from "components/Search";
+import CloseButton from "components/CloseButton";
 
 type Props = {
   isOpen: boolean;
+  onClose: () => void;
 };
 
-export default function HotspotList({ isOpen }: Props) {
+export default function HotspotList({ isOpen, onClose }: Props) {
+  const [hotspotSearch, setHotspotSearch] = React.useState("");
+  const [markerSearch, setMarkerSearch] = React.useState("");
   const { open } = useModal();
   const { trip } = useTrip();
   const { allTargets } = useHotspotTargets();
   const hotspots = trip?.hotspots || [];
   const markers = trip?.markers || [];
 
+  const filteredHotspots =
+    hotspotSearch.length > 0
+      ? hotspots.filter((hotspot) => hotspot.name.toLowerCase().includes(hotspotSearch.toLowerCase().trim()))
+      : hotspots;
+
+  const filteredMarkers =
+    markerSearch.length > 0
+      ? markers.filter((marker) => marker.name.toLowerCase().includes(markerSearch.toLowerCase().trim()))
+      : markers;
+
   return (
     <div
       className={clsx(
-        "h-full flex sm:relative flex-col w-full max-w-sm bg-white gap-4 py-4 overflow-auto light-scrollbar",
+        "h-full flex relative flex-col w-full max-w-sm bg-white gap-4 pb-4 overflow-auto light-scrollbar",
         isOpen ? "block" : "hidden"
       )}
     >
-      {hotspots.length > 0 && (
+      <CloseButton
+        className="absolute z-20 top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
+        onClick={onClose}
+        size="sm"
+      />
+      {filteredHotspots.length > 0 && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 px-4">
+          <div className="flex items-center gap-2 px-4 mt-4 mb-2">
             <h2 className="text-lg font-medium">Hotspots</h2>
             <span className="bg-gray-200 rounded-md px-2 py-1 text-xs leading-none">{hotspots.length}</span>
           </div>
-          <div className="flex flex-col divide-y divide-gray-100">
-            {hotspots.map((hotspot) => {
+          <Search value={hotspotSearch} onChange={setHotspotSearch} className="mx-2" />
+          <div className="flex flex-col divide-y divide-gray-100 -mt-1">
+            {filteredHotspots.map((hotspot) => {
               const targetsCount = allTargets.find((it) => it.hotspotId === hotspot.id)?.items?.length;
               const hasTargets = !!targetsCount;
               return (
@@ -55,14 +77,15 @@ export default function HotspotList({ isOpen }: Props) {
           </div>
         </div>
       )}
-      {markers.length > 0 && (
+      {filteredMarkers.length > 0 && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 px-4">
+          <div className="flex items-center gap-2 px-4 mt-4 mb-1">
             <h2 className="text-lg font-medium">Custom Locations</h2>
             <span className="bg-gray-200 rounded-md px-2 py-1 text-xs leading-none">{markers.length}</span>
           </div>
-          <div className="flex flex-col divide-y divide-gray-100">
-            {markers.map((marker) => (
+          <Search value={markerSearch} onChange={setMarkerSearch} className="mx-2" />
+          <div className="flex flex-col divide-y divide-gray-100 -mt-1">
+            {filteredMarkers.map((marker) => (
               <button
                 key={marker.id}
                 className="py-3 cursor-pointer hover:bg-gray-50 text-left px-4"
