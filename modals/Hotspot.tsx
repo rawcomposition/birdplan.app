@@ -11,7 +11,7 @@ import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
 import clsx from "clsx";
 import InputNotes from "components/InputNotes";
-import { Menu } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
@@ -153,25 +153,41 @@ export default function Hotspot({ hotspot }: Props) {
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <Icon name="verticalDots" />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
-              <Menu.Item>
-                <a
-                  href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sky-600"
-                >
-                  Illustrated Checklist
-                </a>
-              </Menu.Item>
-              {canEdit && isSaved && (
-                <Menu.Item>
-                  <button type="button" onClick={handleSave} className="inline-flex items-center gap-1 text-red-700">
-                    Remove from trip
-                  </button>
-                </Menu.Item>
-              )}
-            </Menu.Items>
+            <Transition>
+              <Transition.Child
+                enter="transition duration-200 ease-out"
+                enterFrom="scale-95 opacity-0"
+                enterTo="scale-100 opacity-100"
+                leave="transition duration-150 ease-in"
+                leaveFrom="scale-100 opacity-100"
+                leaveTo="scale-95 opacity-0"
+              >
+                <Menu.Items className="absolute text-sm -right-2 top-2 rounded bg-white shadow-lg py-1 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col">
+                  <Menu.Item>
+                    <a
+                      href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    >
+                      Illustrated Checklist
+                    </a>
+                  </Menu.Item>
+                  <hr className="border-gray-100" />
+                  {canEdit && isSaved && (
+                    <Menu.Item>
+                      <button
+                        type="button"
+                        onClick={handleSave}
+                        className="block px-4 py-2 text-sm text-red-700 hover:bg-gray-100 text-left"
+                      >
+                        Remove from trip
+                      </button>
+                    </Menu.Item>
+                  )}
+                </Menu.Items>
+              </Transition.Child>
+            </Transition>
           </Menu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} />

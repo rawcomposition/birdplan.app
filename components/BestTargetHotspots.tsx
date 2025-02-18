@@ -23,13 +23,14 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
   const hasHotspots = !!trip?.hotspots?.length;
 
   if (!hasHotspots) return <Alert style="warning">You have not saved any hotspots for this trip</Alert>;
-  if (!allTargets?.length)
+  if (!allTargets?.length) {
     return (
       <Alert style="warning">
         Uh oh, for some reason your saved hotspots do not have any target data downloaded. You should probably contact
         the developer.
       </Alert>
     );
+  }
 
   const topHotspots = allTargets
     .filter(
@@ -57,7 +58,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
     .sort((a, b) => (filter === "year" ? b.percentYr - a.percentYr : b.percent - a.percent));
 
   const slicedHotspots = isExpanded ? topHotspots : topHotspots.slice(0, 5);
-  if (!slicedHotspots?.length) return <Alert style="warning">No hotspots found for {speciesName}</Alert>;
+  if (!slicedHotspots?.length) return <Alert style="warning">No saved hotspots for {speciesName}</Alert>;
   const howManyMore = Math.max(0, topHotspots.length - slicedHotspots.length);
 
   return (
