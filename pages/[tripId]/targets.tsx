@@ -67,7 +67,12 @@ export default function TripTargets() {
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if (!target.closest("button") && !target.closest("a") && !target.closest('[role="button"]')) {
+    if (
+      !target.closest("button") &&
+      !target.closest("a") &&
+      !target.closest('[role="button"]') &&
+      !target.closest(".mapboxgl-canvas")
+    ) {
       close();
     }
   };
