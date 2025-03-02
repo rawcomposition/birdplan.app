@@ -1,9 +1,8 @@
-import { Trip, Target, Targets, Hotspot } from "lib/types";
+import { Trip, Targets, Hotspot } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
-import { uploadFile } from "lib/firebase";
+import { auth, uploadFile } from "lib/firebase";
 import { v4 as uuidv4 } from "uuid";
-import Papa from "papaparse";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -241,8 +240,12 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   const queryParams = new URLSearchParams(cleanParams).toString();
 
   if (showLoading) toast.loading("Loading...", { id: url });
+  const token = await auth.currentUser?.getIdToken();
   const res = await fetch(`${url}?${queryParams}`, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${token || ""}`,
+    },
   });
   if (showLoading) toast.dismiss(url);
 
@@ -252,6 +255,8 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
     json = await res.json();
   } catch (error) {}
   if (!res.ok) {
+    if (res.status === 401) throw new Error("Unauthorized");
+    if (res.status === 403) throw new Error("Forbidden");
     if (res.status === 404) throw new Error("Route not found");
     if (res.status === 405) throw new Error("Method not allowed");
     if (res.status === 504) throw new Error("Operation timed out. Please try again.");
