@@ -15,7 +15,7 @@ export default function useFetchRecentChecklists(region?: string) {
   const groupedChecklists = React.useMemo(() => {
     if (!data) return [];
     const grouped = data.reduce((acc, item) => {
-      const key = `${item.obsDt}-${item.obsTime || randomId(5)}`;
+      const key = `${item.obsDt}-${item.obsTime || nanoId(5)}`;
       if (!acc[key]) acc[key] = [];
       acc[key].push(item);
       return acc;

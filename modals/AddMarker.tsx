@@ -26,7 +26,7 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
 
   const handleAddMarker = () => {
     if (!icon) return toast.error("Please choose an icon");
-    appendMarker({ lat, lng, name, icon, id: randomId(6) });
+    appendMarker({ lat, lng, name, icon, id: nanoId(6) });
     close();
   };
 

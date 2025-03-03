@@ -1,3 +1,5 @@
+import Trip from "models/Trip";
+
 import mongoose from "mongoose";
 
 declare global {
@@ -42,3 +44,5 @@ export async function connect() {
 
   return cached.conn;
 }
+
+export { Trip };

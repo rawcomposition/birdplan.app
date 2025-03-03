@@ -30,7 +30,7 @@ export default function AddPlace() {
       lng: place.lng,
       name: place.name,
       icon,
-      id: place.id || randomId(6),
+      id: place.id || nanoId(6),
       placeId: place.id,
       placeType: place.type,
     });

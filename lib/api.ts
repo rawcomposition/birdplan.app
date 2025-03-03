@@ -12,6 +12,12 @@ export async function authenticate(req: Request) {
   try {
     return await auth.verifyIdToken(token);
   } catch (error) {
-    throw new Error("Invalid or expired token");
+    console.error("Firebase auth error:", error);
+    return null;
   }
 }
+
+export const APIError = (message: string, status: number) => {
+  console.error(message);
+  return new Response(JSON.stringify({ message }), { status });
+};

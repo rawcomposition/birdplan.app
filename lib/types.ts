@@ -77,7 +77,7 @@ export type Day = {
 };
 
 export type Trip = {
-  id: string;
+  _id: string;
   userIds: string[];
   ownerId: string;
   ownerName: string;
@@ -89,8 +89,6 @@ export type Trip = {
     minY: number;
     maxY: number;
   };
-  hotspots: Hotspot[];
-  markers: CustomMarker[];
   itinerary?: Day[];
   startDate?: string;
   startMonth: number;
@@ -102,9 +100,15 @@ export type Trip = {
     [key: string]: string;
   };
   createdAt: string;
+  updatedAt: string;
 };
 
-export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId" | "ownerName">;
+export type TripInput = {
+  name: string;
+  region: string;
+  startMonth: number;
+  endMonth: number;
+};
 
 export type Observation = {
   checklistId: string;

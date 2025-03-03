@@ -1,6 +1,7 @@
 import React from "react";
 import { Hotspot, Trip, Targets, CustomMarker, Invite, TravelData } from "lib/types";
 import {
+  auth,
   subscribeToTrip,
   subscribeToTripTargets,
   subscribeToTripInvites,
@@ -18,9 +19,10 @@ import {
 } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
-import { mostFrequentValue, randomId, fullMonths, months } from "lib/helpers";
+import { mostFrequentValue, nanoId, fullMonths, months } from "lib/helpers";
 import { getTravelTime } from "lib/mapbox";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 type SelectedSpecies = {
   code: string;
@@ -76,15 +78,23 @@ type Props = {
 };
 
 const TripProvider = ({ children }: Props) => {
-  const [trip, setTrip] = React.useState<Trip | null>(null);
+  const { query, pathname } = useRouter();
+  const id = query.tripId?.toString();
+  const {
+    data: trip,
+    isLoading,
+    error,
+  } = useQuery<Trip>({
+    queryKey: [`/api/trips/${id}`],
+    enabled: !!id && !!auth.currentUser,
+  });
+
   const [targets, setTripTargets] = React.useState<Targets>(initialState.targets);
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
   const [is404, setIs404] = React.useState(false);
-  const { query, pathname } = useRouter();
-  const id = query.tripId?.toString();
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
@@ -99,23 +109,6 @@ const TripProvider = ({ children }: Props) => {
   React.useEffect(() => {
     return () => setSelectedSpecies(undefined);
   }, [id, pathname]);
-
-  React.useEffect(() => {
-    if (!id) return;
-    const unsubscribe = subscribeToTrip(
-      id,
-      (trip) => {
-        setTrip(trip);
-        setIs404(false);
-      },
-      () => setIs404(true)
-    );
-    return () => {
-      unsubscribe();
-      setTrip(null);
-      setIs404(false);
-    };
-  }, [id]);
 
   React.useEffect(() => {
     if (!id) return;
@@ -286,7 +279,7 @@ const useTrip = () => {
 
   const appendItineraryDay = async () => {
     if (!trip) return;
-    const newItinerary = [...(trip.itinerary || []), { id: randomId(6), locations: [] }];
+    const newItinerary = [...(trip.itinerary || []), { id: nanoId(6), locations: [] }];
     await updateItinerary(trip.id, newItinerary);
   };
 
@@ -298,7 +291,7 @@ const useTrip = () => {
 
   const addItineraryDayLocation = async (dayId: string, type: "hotspot" | "marker", locationId: string) => {
     if (!trip) return;
-    const id = randomId(6);
+    const id = nanoId(6);
     const newItinerary =
       trip.itinerary?.map((it) => {
         if (it.id === dayId) {

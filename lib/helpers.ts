@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import { auth, uploadFile } from "lib/firebase";
 import { v4 as uuidv4 } from "uuid";
+import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -170,14 +171,8 @@ export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
   return { lat, lng };
 };
 
-export const randomId = (length: number) => {
-  let result = "";
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+export const nanoId = (length: number = 16) => {
+  return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
 
 export const translate = async (string: string) => {
@@ -196,18 +191,6 @@ export const translate = async (string: string) => {
     toast.error("Error translating");
     return string;
   }
-};
-
-export const getTzFromLatLng = async (lat: number, lng: number) => {
-  try {
-    const res = await fetch(`/api/get-tz?lat=${lat}&lng=${lng}`);
-    const json = await res.json();
-    if (!json.timezone) throw new Error();
-    return json.timezone;
-  } catch (error) {
-    console.log(error);
-  }
-  return null;
 };
 
 export const dateTimeToRelative = (date: string, timezone?: string, includeAgo?: boolean) => {
@@ -239,9 +222,14 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 
   const queryParams = new URLSearchParams(cleanParams).toString();
 
+  let urlWithParams = url;
+  if (queryParams) {
+    urlWithParams += url.includes("?") ? `&${queryParams}` : `?${queryParams}`;
+  }
+
   if (showLoading) toast.loading("Loading...", { id: url });
   const token = await auth.currentUser?.getIdToken();
-  const res = await fetch(`${url}?${queryParams}`, {
+  const res = await fetch(urlWithParams, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token || ""}`,
