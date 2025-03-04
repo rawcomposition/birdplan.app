@@ -42,6 +42,8 @@ export async function POST(request: Request) {
       timezone,
       imgUrl,
       itinerary: [],
+      hotspots: [],
+      markers: [],
     });
     return Response.json({ id: trip._id });
   } catch (error: any) {

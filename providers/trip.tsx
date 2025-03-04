@@ -1,8 +1,6 @@
 import React from "react";
 import { Hotspot, Trip, TargetList, CustomMarker, Invite, TravelData, HotspotInput } from "lib/types";
 import {
-  subscribeToTrip,
-  subscribeToTripTargets,
   subscribeToTripInvites,
   updateHotspots,
   updateItinerary,
@@ -151,26 +149,26 @@ const useTrip = () => {
   const { trip } = state;
   const queryClient = useQueryClient();
 
-  const addLocationMutation = useMutation({
-    url: `/api/trips/${trip?._id}/locations`,
+  const addHotspotMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots`,
     method: "POST",
     onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}/locations`]) || [];
-      queryClient.setQueryData([`/api/trips/${trip?._id}/locations`], (old: Location[]) => [...(old || []), data]);
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}/hotspots`]) || [];
+      queryClient.setQueryData([`/api/trips/${trip?._id}/hotspots`], (old: Hotspot[]) => [...(old || []), data]);
       return { prevData };
     },
     onSuccess: () => {
-      toast.success("Location added to trip");
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/locations`] });
+      toast.success("Hotspot added to trip");
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/hotspots`] });
     },
     onError: (error, data, context) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}/locations`], (context as any)?.prevData);
+      queryClient.setQueryData([`/api/trips/${trip?._id}/hotspots`], (context as any)?.prevData);
     },
   });
 
   const appendHotspot = async (data: HotspotInput) => {
     if (!trip) return;
-    addLocationMutation.mutate({ ...data, tripId: trip._id });
+    addHotspotMutation.mutate({ ...data, tripId: trip._id });
   };
 
   const removeHotspot = async (id: string) => {
