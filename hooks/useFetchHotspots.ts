@@ -5,7 +5,7 @@ import { useTrip } from "providers/trip";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useFetchHotspots(showHotspots: boolean) {
-  const { trip } = useTrip();
+  const { trip, locations } = useTrip();
   const region = trip?.region;
 
   const { data } = useQuery<Hotspot[]>({
@@ -25,7 +25,7 @@ export default function useFetchHotspots(showHotspots: boolean) {
 
   const layer = React.useMemo(() => {
     if (!hasFetched) return null;
-    const savedIds = trip?.hotspots?.map((it) => it.id) || [];
+    const savedIds = locations?.map((it) => it._id) || [];
     const layerHotspots = hotspotsRef.current.filter((it) => !savedIds.includes(it.id));
     return {
       type: "FeatureCollection",
@@ -46,7 +46,7 @@ export default function useFetchHotspots(showHotspots: boolean) {
         }),
       ],
     };
-  }, [trip?.hotspots, hasFetched]);
+  }, [locations, hasFetched]);
 
   return { hotspots, hotspotLayer: layer };
 }

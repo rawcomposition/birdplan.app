@@ -14,27 +14,28 @@ import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
+import { LocationType } from "lib/types";
 
 export default function Trip() {
   const { open } = useModal();
   const [showAll, setShowAll] = React.useState(false);
   const [showSatellite, setShowSatellite] = React.useState(false);
-  const { trip, canEdit, is404, setSelectedSpecies } = useTrip();
+  const { trip, canEdit, is404, setSelectedSpecies, locations } = useTrip();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
-  const savedHotspots = trip?.hotspots || [];
+  const savedHotspots = locations.filter((it) => it.type === LocationType.hotspot) || [];
   const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,
     lng: it.lng,
     shade: getMarkerColorIndex(it.species || 0),
-    id: it.id,
+    id: it._id,
   }));
 
   const markers = [...savedHotspotMarkers];
-  const customMarkers = trip?.markers || [];
+  const customMarkers = locations.filter((it) => it.type === LocationType.custom) || [];
 
   const hotspotClick = (id: string) => {
     setSelectedSpecies(undefined);
@@ -45,7 +46,7 @@ export default function Trip() {
   };
 
   const tripIsLoaded = !!trip;
-  const tripIsNew = trip?.hotspots.length === 0;
+  const tripIsNew = savedHotspots.length === 0;
 
   React.useEffect(() => {
     if (tripIsLoaded && tripIsNew) {
@@ -110,7 +111,7 @@ export default function Trip() {
               <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox
-                    key={trip.id}
+                    key={trip._id}
                     onHotspotClick={hotspotClick}
                     markers={markers}
                     customMarkers={customMarkers}

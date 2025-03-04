@@ -1,4 +1,6 @@
 import Trip from "models/Trip";
+import TargetList from "models/TargetList";
+import Location from "models/Location";
 
 import mongoose from "mongoose";
 
@@ -45,4 +47,4 @@ export async function connect() {
   return cached.conn;
 }
 
-export { Trip };
+export { Trip, TargetList, Location };

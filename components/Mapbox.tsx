@@ -1,16 +1,17 @@
 import React from "react";
 import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
-import { Marker as MarkerT, Trip, CustomMarker } from "lib/types";
+import { Marker as MarkerT, Trip, Location } from "lib/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
+import { defaultMarkerIcon } from "lib/icons";
 
 type Props = {
   bounds: Trip["bounds"];
   markers?: MarkerT[];
-  customMarkers?: CustomMarker[];
+  customMarkers?: Location[];
   hotspotLayer?: any;
   obsLayer?: any;
   addingMarker?: boolean;
@@ -42,7 +43,7 @@ export default function Mapbox({
     }, 500);
   };
 
-  const handleMarkerClick = (marker: CustomMarker) => {
+  const handleMarkerClick = (marker: Location) => {
     isOpeningModal.current = true;
     open("viewMarker", { marker });
     setTimeout(() => {
@@ -174,7 +175,7 @@ export default function Mapbox({
         ))}
         {customMarkers?.map((marker) => (
           <Marker
-            key={marker.id}
+            key={marker._id}
             latitude={marker.lat}
             longitude={marker.lng}
             onClick={(e) => {
@@ -182,7 +183,7 @@ export default function Mapbox({
               handleMarkerClick(marker);
             }}
           >
-            <MarkerWithIcon icon={marker.icon} highlight={marker.id === selectedMarkerId} />
+            <MarkerWithIcon icon={marker.icon || defaultMarkerIcon} highlight={marker._id === selectedMarkerId} />
           </Marker>
         ))}
         {hotspotLayer && (

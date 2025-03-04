@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function TravelTime({ isEditing, dayId, id }: Props) {
-  const { trip, calcTravelTime, markTravelTimeDeleted } = useTrip();
+  const { trip, locations: tripLocations, calcTravelTime, markTravelTimeDeleted } = useTrip();
   const locations = trip?.itinerary?.find((day) => day.id === dayId)?.locations || [];
   const thisLocationIndex = locations.findIndex((it) => it.id === id);
   const location1 = locations[thisLocationIndex - 1];
@@ -30,12 +30,12 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
   };
 
   const marker1 =
-    trip?.hotspots?.find((h) => h.id === location1?.locationId || "") ||
-    trip?.markers?.find((m) => m.id === location1?.locationId || "");
+    tripLocations?.find((h) => h._id === location1?.locationId || "") ||
+    tripLocations?.find((m) => m._id === location1?.locationId || "");
 
   const marker2 =
-    trip?.hotspots?.find((h) => h.id === location2?.locationId || "") ||
-    trip?.markers?.find((m) => m.id === location2?.locationId || "");
+    tripLocations?.find((h) => h._id === location2?.locationId || "") ||
+    tripLocations?.find((m) => m._id === location2?.locationId || "");
 
   const travelInfo = travelData && (
     <span className="flex items-center gap-2">

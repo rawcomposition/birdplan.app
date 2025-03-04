@@ -4,7 +4,7 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
-import { Hotspot } from "lib/types";
+import { Location } from "lib/types";
 import Icon from "components/Icon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
@@ -13,7 +13,7 @@ export default function AddHotspot() {
   const [query, setQuery] = React.useState("");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const { open } = useModal();
-  const { trip, appendHotspot } = useTrip();
+  const { trip, locations, appendHotspot } = useTrip();
   const { hotspots } = useFetchHotspots(true);
 
   const results =
@@ -25,7 +25,7 @@ export default function AddHotspot() {
 
   const slicedResults = results.slice(0, 10);
 
-  const selectHotspot = (hotspot: Hotspot, isSaved: boolean) => {
+  const selectHotspot = (hotspot: Location, isSaved: boolean) => {
     if (!isSaved) {
       appendHotspot(hotspot);
       toast.success("Hotspot added to trip");
@@ -34,10 +34,10 @@ export default function AddHotspot() {
   };
 
   const resultsRef = React.useRef(slicedResults);
-  const tripHotspotsRef = React.useRef(trip?.hotspots);
+  const tripHotspotsRef = React.useRef(locations);
   const selectedIndexRef = React.useRef(selectedIndex);
   resultsRef.current = slicedResults;
-  tripHotspotsRef.current = trip?.hotspots;
+  tripHotspotsRef.current = locations;
   selectedIndexRef.current = selectedIndex;
 
   React.useEffect(() => {
@@ -57,7 +57,7 @@ export default function AddHotspot() {
       if (e.key === "Enter") {
         const selected = resultsRef.current[selectedIndexRef.current];
         if (selected) {
-          selectHotspot(selected, !!tripHotspotsRef.current?.find((it) => it.id === selected.id));
+          selectHotspot(selected, !!tripHotspotsRef.current?.find((it) => it._id === selected._id));
         }
       }
     };
@@ -82,7 +82,7 @@ export default function AddHotspot() {
             <div className="flex flex-col gap-2">
               {!!slicedResults?.length && <p className="text-[13px] text-gray-600">Select a hotspot to add</p>}
               {slicedResults.map((it, index) => {
-                const isSaved = !!trip?.hotspots.find((hotspot) => hotspot.id === it.id);
+                const isSaved = !!locations.find((hotspot) => hotspot._id === it._id);
                 const isSelected = selectedIndex === index;
                 return (
                   <button

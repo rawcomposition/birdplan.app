@@ -21,6 +21,7 @@ export default function Trip() {
   const {
     is404,
     trip,
+    locations: tripLocations,
     canEdit,
     setStartDate,
     appendItineraryDay,
@@ -145,9 +146,7 @@ export default function Trip() {
                       {!!locations?.length && (
                         <ul className="flex flex-col">
                           {locations?.map(({ locationId, type, id }, index) => {
-                            const location =
-                              trip?.hotspots?.find((h) => h.id === locationId) ||
-                              trip?.markers?.find((m) => m.id === locationId);
+                            const location = tripLocations.find((it) => it._id === locationId);
                             return (
                               <React.Fragment key={id}>
                                 {index !== 0 && (

@@ -29,8 +29,14 @@ export type EbirdHotspot = {
   numSpeciesAllTime: number;
 };
 
-export type Hotspot = {
-  id: string;
+export enum LocationType {
+  hotspot = "hotspot",
+  custom = "custom",
+}
+
+export type Location = {
+  _id: string;
+  type: LocationType;
   name: string;
   originalName?: string;
   lat: number;
@@ -44,6 +50,9 @@ export type Hotspot = {
     range: string;
     percent: number;
   }[];
+  icon?: MarkerIconT;
+  placeId?: string;
+  placeType?: string;
 };
 
 export type KeyValue = {
@@ -124,17 +133,6 @@ export type Target = {
   percentYr: number;
 };
 
-export type CustomMarker = {
-  name: string;
-  lat: number;
-  lng: number;
-  icon: MarkerIconT;
-  id: string;
-  notes?: string;
-  placeId?: string;
-  placeType?: string;
-};
-
 export type Option = {
   value: string;
   label: string;
@@ -186,14 +184,28 @@ export type RecentSpecies = {
   count: number;
 };
 
-export type Targets = {
-  id?: string;
+export enum TargetListType {
+  trip = "trip",
+  hotspot = "hotspot",
+}
+
+export type TargetList = {
+  _id: string;
+  type: TargetListType;
+  tripId: string;
+  hotspotId?: string;
   items: Target[];
   N: number;
   yrN: number;
-  tripId: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type TargetListInput = {
   hotspotId?: string;
-  updatedAt?: string;
+  items: Target[];
+  N: number;
+  yrN: number;
 };
 
 export type GooglePlaceT = {

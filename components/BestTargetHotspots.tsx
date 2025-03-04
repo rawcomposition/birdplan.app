@@ -5,6 +5,7 @@ import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import FilterTabs from "components/FilterTabs";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
+import { LocationType } from "lib/types";
 
 type Props = {
   speciesCode: string;
@@ -15,12 +16,12 @@ type Props = {
 export default function BestTargetHotspots({ speciesCode, speciesName, className }: Props) {
   const [filter, setFilter] = React.useState("year");
   const [isExpanded, setIsExpanded] = React.useState(false);
-  const { trip, dateRangeLabel } = useTrip();
+  const { trip, locations, dateRangeLabel } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { open } = useModal();
 
-  const locationIds = trip?.hotspots?.map((it) => it.id) || [];
-  const hasHotspots = !!trip?.hotspots?.length;
+  const locationIds = locations.filter((it) => it.type === LocationType.hotspot).map((it) => it._id) || [];
+  const hasHotspots = !!locationIds.length;
 
   if (!hasHotspots) return <Alert style="warning">You have not saved any hotspots for this trip</Alert>;
   if (!allTargets?.length)
@@ -43,7 +44,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
         )
     )
     .map(({ items, hotspotId, N, yrN }) => {
-      const hotspot = trip?.hotspots?.find((it) => it.id === hotspotId);
+      const hotspot = locations.find((it) => it._id === hotspotId);
       const targetInfo = items.find((item) => item.code === speciesCode);
       return {
         locationId: hotspotId,

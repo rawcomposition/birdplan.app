@@ -1,9 +1,7 @@
 import React from "react";
-import { Hotspot, Trip, Targets, CustomMarker, Invite, TravelData } from "lib/types";
+import { Location, Trip, CustomMarker, Invite, TravelData, TargetList } from "lib/types";
 import {
   auth,
-  subscribeToTrip,
-  subscribeToTripTargets,
   subscribeToTripInvites,
   updateHotspots,
   updateItinerary,
@@ -38,7 +36,8 @@ type HaloT = {
 type ContextT = {
   trip: Trip | null;
   invites: Invite[];
-  targets: Targets;
+  targets: TargetList | null;
+  locations: Location[];
   selectedSpecies?: SelectedSpecies;
   canEdit: boolean;
   isOwner: boolean;
@@ -53,12 +52,8 @@ type ContextT = {
 
 const initialState = {
   trip: null,
-  targets: {
-    items: [],
-    N: 0,
-    yrN: 0,
-    tripId: "",
-  },
+  targets: null,
+  locations: [],
   canEdit: false,
   isOwner: false,
   is404: false,
@@ -89,7 +84,24 @@ const TripProvider = ({ children }: Props) => {
     enabled: !!id && !!auth.currentUser,
   });
 
-  const [targets, setTripTargets] = React.useState<Targets>(initialState.targets);
+  const {
+    data: targets,
+    isLoading: isTargetListLoading,
+    error: targetListError,
+  } = useQuery<TargetList>({
+    queryKey: [`/api/trips/${id}/targets`],
+    enabled: !!id && !!auth.currentUser,
+  });
+
+  const {
+    data: locations,
+    isLoading: isLocationsLoading,
+    error: locationsError,
+  } = useQuery<Location[]>({
+    queryKey: [`/api/trips/${id}/locations`],
+    enabled: !!id && !!auth.currentUser,
+  });
+
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
@@ -111,17 +123,6 @@ const TripProvider = ({ children }: Props) => {
   }, [id, pathname]);
 
   React.useEffect(() => {
-    if (!id) return;
-    const unsubscribe = subscribeToTripTargets(id, (targets) => {
-      setTripTargets(targets);
-    });
-    return () => {
-      unsubscribe();
-      setTripTargets(initialState.targets);
-    };
-  }, [id]);
-
-  React.useEffect(() => {
     if (!id || !isOwner) return;
     const unsubscribe = subscribeToTripInvites(id, (invites) => setInvites(invites));
     return () => {
@@ -139,8 +140,9 @@ const TripProvider = ({ children }: Props) => {
         canEdit,
         isOwner,
         is404,
-        trip,
-        targets,
+        trip: trip || null,
+        targets: targets || null,
+        locations: locations || [],
         selectedSpecies,
         selectedMarkerId,
         halo,
@@ -155,7 +157,7 @@ const TripProvider = ({ children }: Props) => {
 
 const useTrip = () => {
   const state = React.useContext(TripContext);
-  const { trip } = state;
+  const { trip, locations } = state;
 
   const appendHotspot = async (hotspot: Hotspot) => {
     if (!trip) return;
@@ -426,11 +428,9 @@ const useTrip = () => {
   };
 
   const calcTravelTime = async ({ dayId, id, locationId1, locationId2, method, save }: CalcTravelTimePropsType) => {
-    const location1 =
-      trip?.hotspots?.find((h) => h.id === locationId1 || "") || trip?.markers?.find((m) => m.id === locationId1 || "");
+    const location1 = locations?.find((h) => h._id === locationId1 || "");
 
-    const location2 =
-      trip?.hotspots?.find((h) => h.id === locationId2 || "") || trip?.markers?.find((m) => m.id === locationId2 || "");
+    const location2 = locations?.find((h) => h._id === locationId2 || "");
 
     if (!location1 || !location2) {
       toast.error(`Unable to calculate travel time to ${location2?.name || "unknown location"}`);

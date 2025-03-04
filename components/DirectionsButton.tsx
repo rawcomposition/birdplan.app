@@ -7,6 +7,7 @@ import Link from "next/link";
 import Icon from "components/Icon";
 import OrganicMapsIcon from "components/OrganicMapsIcon";
 import GoogleMapsIcon from "components/GoogleMapsIcon";
+import { defaultMarkerIcon } from "lib/icons";
 
 type Props = {
   lat: number;
@@ -18,11 +19,11 @@ type Props = {
 
 export default function DirectionsButton({ lat, lng, hotspotId, markerId, googleUrl }: Props) {
   const [open, setOpen] = React.useState(false);
-  const { trip } = useTrip();
+  const { trip, locations } = useTrip();
 
-  const filteredHotspots = trip?.hotspots.filter((it) => it.id !== hotspotId) || [];
-  const filteredMarkers = trip?.markers.filter((it) => it.id !== markerId) || [];
-  const hotspot = trip?.hotspots.find((it) => it.id === hotspotId);
+  const filteredHotspots = locations.filter((it) => it._id !== hotspotId) || [];
+  const filteredMarkers = locations.filter((it) => it._id !== markerId) || [];
+  const hotspot = locations.find((it) => it._id === hotspotId);
 
   const isDirect = filteredHotspots.length === 0 && filteredMarkers.length === 0;
 
@@ -59,7 +60,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
             <h3 className="font-bold mb-1.5 -mt-1.5 text-sm">Directions from...</h3>
             <ul className="flex flex-col pl-2 space-y-0.5">
               {filteredMarkers.map((marker) => (
-                <li key={marker.id}>
+                <li key={marker._id}>
                   <Link
                     href={`https://www.google.com/maps/dir/?api=1&origin=${marker.lat},${marker.lng}&destination=${lat},${lng}`}
                     className="flex items-center gap-2 text-sm cursor-pointer text-gray-700"
@@ -67,7 +68,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                   >
                     <MarkerWithIcon
                       showStroke={false}
-                      icon={marker.icon}
+                      icon={marker.icon || defaultMarkerIcon}
                       className="inline-block ml-1 scale-75 flex-shrink-0"
                     />
                     <span className="truncate">{marker.name}</span>
@@ -75,7 +76,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                 </li>
               ))}
               {filteredHotspots.map((hotspot) => (
-                <li key={hotspot.id}>
+                <li key={hotspot._id}>
                   <Link
                     href={`https://www.google.com/maps/dir/?api=1&origin=${hotspot.lat},${hotspot.lng}&destination=${lat},${lng}`}
                     className="flex items-center gap-2 text-sm cursor-pointer py-0.5 text-gray-700"

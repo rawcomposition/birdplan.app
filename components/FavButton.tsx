@@ -11,8 +11,8 @@ type Props = {
 };
 
 export default function FavButton({ locId, code, name, range, percent }: Props) {
-  const { trip, addHotspotFav, removeHotspotFav } = useTrip();
-  const hotspot = trip?.hotspots.find((it) => it.id === locId);
+  const { locations, addHotspotFav, removeHotspotFav } = useTrip();
+  const hotspot = locations.find((it) => it._id === locId);
   const favIds = hotspot?.favs?.map((it) => it.code) || [];
   const isFav = favIds.includes(code);
   const onClick = () => {

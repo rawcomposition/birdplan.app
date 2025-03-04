@@ -401,3 +401,4 @@ export const markerIcons: MarkerIconsT = {
 export const iconNames = Object.keys(icons) as IconNameT[];
 export type IconNameT = keyof typeof icons;
 export type MarkerIconT = keyof typeof markerIcons;
+export const defaultMarkerIcon = "marker";

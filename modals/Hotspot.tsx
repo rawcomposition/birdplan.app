@@ -1,6 +1,6 @@
 import React from "react";
 import { Body } from "providers/modals";
-import { Hotspot as HotspotT } from "lib/types";
+import { Location } from "lib/types";
 import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
@@ -18,12 +18,13 @@ import Icon from "components/Icon";
 import { useRouter } from "next/router";
 
 type Props = {
-  hotspot: HotspotT;
+  hotspot: Location;
 };
 
 export default function Hotspot({ hotspot }: Props) {
   const {
     trip,
+    locations,
     canEdit,
     appendHotspot,
     removeHotspot,
@@ -34,8 +35,8 @@ export default function Hotspot({ hotspot }: Props) {
     setSelectedMarkerId,
     setHalo,
   } = useTrip();
-  const { id, lat, lng, species } = hotspot;
-  const savedHotspot = trip?.hotspots.find((it) => it.id === id);
+  const { _id, lat, lng, species } = hotspot;
+  const savedHotspot = locations.find((it) => it._id === _id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
@@ -69,7 +70,7 @@ export default function Hotspot({ hotspot }: Props) {
     if (isSaved) {
       if (notes && !confirm("Are you sure you want to remove this hotspot from your trip? Your notes will be lost."))
         return;
-      removeHotspot(id);
+      removeHotspot(_id);
     } else {
       toast.success("Hotspot added to trip!");
       appendHotspot({ ...hotspot, species: hotspot.species || 0 });
@@ -85,7 +86,7 @@ export default function Hotspot({ hotspot }: Props) {
       toast("No translation found");
       return;
     }
-    setTranslatedHotspotName(id, translatedName);
+    setTranslatedHotspotName(_id, translatedName);
   };
 
   const hasSpecies = !!selectedSpecies && router.pathname.includes("targets");
@@ -93,16 +94,16 @@ export default function Hotspot({ hotspot }: Props) {
     if (hasSpecies) {
       setHalo({ lat, lng, color: "#ce0d02" });
     } else if (isSaved) {
-      setSelectedMarkerId(id);
+      setSelectedMarkerId(_id);
     } else if (!isSaved) {
       setHalo({ lat, lng, color: getMarkerColor(species || 0) });
     }
-    setSelectedMarkerId(id);
+    setSelectedMarkerId(_id);
     return () => {
       setSelectedMarkerId(undefined);
       setHalo(undefined);
     };
-  }, [id, lat, lng, isSaved, species, hasSpecies]);
+  }, [_id, lat, lng, isSaved, species, hasSpecies]);
 
   const canTranslate = isSaved && !isRegionEnglish(trip?.region || "");
 
@@ -121,7 +122,7 @@ export default function Hotspot({ hotspot }: Props) {
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <button type="button" className="text-sky-600" onClick={() => resetTranslatedHotspotName(id)}>
+                <button type="button" className="text-sky-600" onClick={() => resetTranslatedHotspotName(_id)}>
                   Reset
                 </button>
               </div>
@@ -132,16 +133,16 @@ export default function Hotspot({ hotspot }: Props) {
       <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
           <Button
-            href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
+            href={`https://ebird.org/targets?r1=${_id}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
             color="gray"
             size="sm"
           >
             <Icon name="feather" className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
           </Button>
-          <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
+          <DirectionsButton lat={lat} lng={lng} hotspotId={_id} />
           <Button
-            href={`https://ebird.org/hotspot/${id}`}
+            href={`https://ebird.org/hotspot/${_id}`}
             target="_blank"
             color="gray"
             size="sm"
@@ -156,7 +157,7 @@ export default function Hotspot({ hotspot }: Props) {
             <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
               <Menu.Item>
                 <a
-                  href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
+                  href={`https://ebird.org/hotspot/${_id}/media?yr=all&m=`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-sky-600"
@@ -174,8 +175,8 @@ export default function Hotspot({ hotspot }: Props) {
             </Menu.Items>
           </Menu>
         </div>
-        <HotspotStats id={id} speciesTotal={hotspot.species} />
-        <HotspotFavs locId={id} />
+        <HotspotStats id={_id} speciesTotal={hotspot.species} />
+        <HotspotFavs locId={_id} />
 
         {canEdit && !isSaved && (
           <button
@@ -187,7 +188,7 @@ export default function Hotspot({ hotspot }: Props) {
           </button>
         )}
 
-        {isSaved && <InputNotes key={id} value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
+        {isSaved && <InputNotes key={_id} value={notes} onBlur={(value) => saveHotspotNotes(_id, value)} />}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id, title }) => (
@@ -207,12 +208,12 @@ export default function Hotspot({ hotspot }: Props) {
           </nav>
         </div>
         <div className="sm:-mx-1.5">
-          {tab === "needs" && <RecentSpeciesList locId={id} onSpeciesClick={() => setTab("checklists")} />}
+          {tab === "needs" && <RecentSpeciesList locId={_id} onSpeciesClick={() => setTab("checklists")} />}
           {tab === "checklists" && (
-            <RecentChecklistList locId={id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
+            <RecentChecklistList locId={_id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
           )}
           <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
-            <HotspotTargets locId={id} onSpeciesClick={() => setTab("checklists")} />
+            <HotspotTargets locId={_id} onSpeciesClick={() => setTab("checklists")} />
           </div>
         </div>
       </Body>

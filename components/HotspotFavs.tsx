@@ -7,8 +7,8 @@ type Props = {
 };
 
 export default function HotspotFavs({ locId }: Props) {
-  const { trip } = useTrip();
-  const hotspot = trip?.hotspots.find((it) => it.id === locId);
+  const { locations } = useTrip();
+  const hotspot = locations.find((it) => it._id === locId);
 
   if (!hotspot?.favs?.length) return null;
   return (
