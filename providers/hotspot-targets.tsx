@@ -1,9 +1,9 @@
 import React from "react";
 import { useTrip } from "providers/trip";
-import { Targets } from "lib/types";
+import { TargetList } from "lib/types";
 import { updateHotspots, subscribeToHotspotTargets, deleteTargets } from "lib/firebase";
-
 import useTargetsDownloadManager from "hooks/useTargetsDownloadManager";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type ContextT = {
   failedLocIds: string[];
@@ -41,7 +41,7 @@ const HotspotTargetsProvider = ({ children }: Props) => {
   );
 };
 
-const cleanTargets = (targets: Targets[]) => {
+const cleanTargets = (targets: TargetList[]) => {
   const encounteredIds = new Set<string>();
   return targets.filter((target) => {
     if (!target.hotspotId) return false;
@@ -52,22 +52,17 @@ const cleanTargets = (targets: Targets[]) => {
 };
 
 const useHotspotTargets = () => {
-  const [targets, setTargets] = React.useState<Targets[]>([]);
   const { trip } = useTrip();
   const state = React.useContext(HotspotTargetsContext);
 
-  const tripId = trip?.id;
+  const tripId = trip?._id;
 
-  React.useEffect(() => {
-    if (!tripId) return;
-    const unsubscribe = subscribeToHotspotTargets(tripId, (targets) => {
-      setTargets(cleanTargets(targets));
-    });
-    return () => {
-      unsubscribe();
-      setTargets([]);
-    };
-  }, [tripId]);
+  const { data } = useQuery<TargetList[]>({
+    queryKey: [`/api/trips/${tripId}/all-hotspot-targets`],
+    enabled: !!tripId,
+  });
+
+  const targets = cleanTargets(data || []);
 
   const resetHotspotTargets = async (id: string) => {
     if (!trip) return;
@@ -81,7 +76,7 @@ const useHotspotTargets = () => {
       return it;
     });
     state.retryDownload(id);
-    await Promise.all([updateHotspots(trip.id, newHotspots), oldTargetsId && deleteTargets(oldTargetsId)]);
+    await Promise.all([updateHotspots(trip._id, newHotspots), oldTargetsId && deleteTargets(oldTargetsId)]);
   };
 
   return { ...state, resetHotspotTargets, allTargets: targets };

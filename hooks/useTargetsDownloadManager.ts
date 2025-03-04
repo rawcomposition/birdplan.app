@@ -64,6 +64,7 @@ export default function useTargetsDownloadManager() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] }),
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/hotspots/${locId}/targets`] }),
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/all-hotspot-targets`] }),
     ]);
   };
 
