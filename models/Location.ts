@@ -6,6 +6,7 @@ type LocationDocument = Omit<Location, "_id"> & Document<null>;
 
 const fields: Record<keyof Omit<Location, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
+  ebirdId: { type: String, required: true },
   type: { type: String, required: true },
   name: { type: String, required: true },
   originalName: String,

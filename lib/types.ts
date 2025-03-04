@@ -17,18 +17,6 @@ export type Marker = {
   shade?: number;
 };
 
-export type EbirdHotspot = {
-  locId: string;
-  locName: string;
-  countryCode: string;
-  subnational1Code: string;
-  subnational2Code: string;
-  lat: number;
-  lng: number;
-  latestObsDt: string;
-  numSpeciesAllTime: number;
-};
-
 export enum LocationType {
   hotspot = "hotspot",
   custom = "custom",
@@ -36,6 +24,7 @@ export enum LocationType {
 
 export type Location = {
   _id: string;
+  ebirdId?: string;
   type: LocationType;
   name: string;
   originalName?: string;
@@ -53,6 +42,22 @@ export type Location = {
   icon?: MarkerIconT;
   placeId?: string;
   placeType?: string;
+};
+
+export type LocationInput = {
+  ebirdId?: string;
+  name: string;
+  lat: number;
+  lng: number;
+  type: LocationType;
+};
+
+export type eBirdHotspot = {
+  ebirdId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
 };
 
 export type KeyValue = {

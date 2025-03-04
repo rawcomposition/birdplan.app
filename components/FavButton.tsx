@@ -3,23 +3,23 @@ import Icon from "components/Icon";
 import { useTrip } from "providers/trip";
 
 type Props = {
-  locId: string;
+  locationId: string;
   code: string;
   name: string;
   range: string;
   percent: number;
 };
 
-export default function FavButton({ locId, code, name, range, percent }: Props) {
+export default function FavButton({ locationId, code, name, range, percent }: Props) {
   const { locations, addHotspotFav, removeHotspotFav } = useTrip();
-  const hotspot = locations.find((it) => it._id === locId);
-  const favIds = hotspot?.favs?.map((it) => it.code) || [];
+  const location = locations.find((it) => it._id === locationId);
+  const favIds = location?.favs?.map((it) => it.code) || [];
   const isFav = favIds.includes(code);
   const onClick = () => {
     if (isFav) {
-      removeHotspotFav(locId, code);
+      removeHotspotFav(locationId, code);
     } else {
-      addHotspotFav(locId, code, name, range, percent);
+      addHotspotFav(locationId, code, name, range, percent);
     }
   };
   return (

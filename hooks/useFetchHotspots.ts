@@ -1,5 +1,5 @@
 import React from "react";
-import { Hotspot } from "lib/types";
+import { eBirdHotspot } from "lib/types";
 import { getMarkerColorIndex } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +8,7 @@ export default function useFetchHotspots(showHotspots: boolean) {
   const { trip, locations } = useTrip();
   const region = trip?.region;
 
-  const { data } = useQuery<Hotspot[]>({
+  const { data } = useQuery<eBirdHotspot[]>({
     queryKey: [`/api/hotspots/${region}`],
     enabled: !!region && showHotspots,
     meta: {
@@ -19,14 +19,14 @@ export default function useFetchHotspots(showHotspots: boolean) {
 
   const hotspots = data || [];
 
-  const hotspotsRef = React.useRef<Hotspot[]>([]);
+  const hotspotsRef = React.useRef<eBirdHotspot[]>([]);
   hotspotsRef.current = hotspots;
   const hasFetched = hotspots.length > 0;
 
   const layer = React.useMemo(() => {
     if (!hasFetched) return null;
-    const savedIds = locations?.map((it) => it._id) || [];
-    const layerHotspots = hotspotsRef.current.filter((it) => !savedIds.includes(it.id));
+    const savedIds = locations?.map((it) => it.ebirdId) || [];
+    const layerHotspots = hotspotsRef.current.filter((it) => !savedIds.includes(it.ebirdId));
     return {
       type: "FeatureCollection",
       features: [
@@ -40,7 +40,7 @@ export default function useFetchHotspots(showHotspots: boolean) {
             },
             properties: {
               shade: colorIndex,
-              id: hotspot.id,
+              id: hotspot.ebirdId,
             },
           };
         }),

@@ -8,22 +8,22 @@ import Icon from "components/Icon";
 import OrganicMapsIcon from "components/OrganicMapsIcon";
 import GoogleMapsIcon from "components/GoogleMapsIcon";
 import { defaultMarkerIcon } from "lib/icons";
+import { LocationType } from "lib/types";
 
 type Props = {
+  locationId: string;
   lat: number;
   lng: number;
-  hotspotId?: string;
-  markerId?: string;
   googleUrl?: string;
 };
 
-export default function DirectionsButton({ lat, lng, hotspotId, markerId, googleUrl }: Props) {
+export default function DirectionsButton({ locationId, lat, lng, googleUrl }: Props) {
   const [open, setOpen] = React.useState(false);
-  const { trip, locations } = useTrip();
+  const { locations } = useTrip();
 
-  const filteredHotspots = locations.filter((it) => it._id !== hotspotId) || [];
-  const filteredMarkers = locations.filter((it) => it._id !== markerId) || [];
-  const hotspot = locations.find((it) => it._id === hotspotId);
+  const filteredHotspots = locations.filter((it) => it._id !== locationId && it.type === LocationType.hotspot) || [];
+  const filteredMarkers = locations.filter((it) => it._id !== locationId && it.type === LocationType.custom) || [];
+  const location = locations.find((it) => it._id === locationId);
 
   const isDirect = filteredHotspots.length === 0 && filteredMarkers.length === 0;
 
@@ -48,7 +48,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
           View in Google Maps
         </a>
         <a
-          href={`om://map?v=1&ll=${lat},${lng}&n=${hotspot?.name || ""}`}
+          href={`om://map?v=1&ll=${lat},${lng}&n=${location?.name || ""}`}
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700 sm:hidden"
           target="_blank"
         >

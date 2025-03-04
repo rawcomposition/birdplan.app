@@ -3,25 +3,25 @@ import FavButton from "components/FavButton";
 import { useTrip } from "providers/trip";
 
 type Props = {
-  locId: string;
+  locationId: string;
 };
 
-export default function HotspotFavs({ locId }: Props) {
+export default function HotspotFavs({ locationId }: Props) {
   const { locations } = useTrip();
-  const hotspot = locations.find((it) => it._id === locId);
+  const location = locations.find((it) => it._id === locationId);
 
-  if (!hotspot?.favs?.length) return null;
+  if (!location?.favs?.length) return null;
   return (
     <div className="mt-8 mb-4">
       <h3 className="text-gray-900 text-sm font-bold mb-2">Favorites</h3>
-      {hotspot?.favs?.map(({ code, name, range, percent }) => (
+      {location?.favs?.map(({ code, name, range, percent }) => (
         <div
           key={code}
           className="border-t last:border-b border-gray-100 py-1.5 text-gray-500/80 text-[13px] grid gap-2 grid-cols-1 sm:grid-cols-2 mx-1"
         >
           <div className="pt-2 text-gray-900 text-sm">{name}</div>
           <div className="flex gap-5">
-            <FavButton locId={locId} code={code} name={name} range={range} percent={percent} />
+            <FavButton locationId={locationId} code={code} name={name} range={range} percent={percent} />
             <div className="flex flex-col gap-1 w-full col-span-2">
               <div>
                 <span className="text-gray-600 text-[15px] font-bold">

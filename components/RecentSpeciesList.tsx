@@ -6,18 +6,18 @@ import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
 
 type Props = {
-  locId: string;
+  ebirdLocationId: string;
   onSpeciesClick: () => void;
 };
 
 const previewCount = 10;
 
-export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
-  const { recentSpecies, isLoading, error } = useFetchRecentSpecies(locId);
+export default function RecentSpeciesList({ ebirdLocationId, onSpeciesClick }: Props) {
+  const { recentSpecies, isLoading, error } = useFetchRecentSpecies(ebirdLocationId);
   const [viewAll, setViewAll] = React.useState(false);
   const { trip, locations, setSelectedSpecies } = useTrip();
   const timezone = trip?.timezone;
-  const hotspot = locations.find((it) => it._id === locId);
+  const hotspot = locations.find((it) => it.ebirdId === ebirdLocationId);
   const favCodes = hotspot?.favs?.map((it) => it.code) || [];
 
   const filteredObs = viewAll ? recentSpecies : recentSpecies.slice(0, previewCount);

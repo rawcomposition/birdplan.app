@@ -35,8 +35,8 @@ export default function Hotspot({ hotspot }: Props) {
     setSelectedMarkerId,
     setHalo,
   } = useTrip();
-  const { _id, lat, lng, species } = hotspot;
-  const savedHotspot = locations.find((it) => it._id === _id);
+  const { _id, ebirdId, lat, lng, species } = hotspot;
+  const savedHotspot = locations.find((it) => it.ebirdId === ebirdId);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
@@ -133,16 +133,16 @@ export default function Hotspot({ hotspot }: Props) {
       <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
           <Button
-            href={`https://ebird.org/targets?r1=${_id}&bmo=1&emo=12&r2=world&t2=life`}
+            href={`https://ebird.org/targets?r1=${ebirdId}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
             color="gray"
             size="sm"
           >
             <Icon name="feather" className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
           </Button>
-          <DirectionsButton lat={lat} lng={lng} hotspotId={_id} />
+          <DirectionsButton lat={lat} lng={lng} locationId={_id} />
           <Button
-            href={`https://ebird.org/hotspot/${_id}`}
+            href={`https://ebird.org/hotspot/${ebirdId}`}
             target="_blank"
             color="gray"
             size="sm"
@@ -157,7 +157,7 @@ export default function Hotspot({ hotspot }: Props) {
             <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
               <Menu.Item>
                 <a
-                  href={`https://ebird.org/hotspot/${_id}/media?yr=all&m=`}
+                  href={`https://ebird.org/hotspot/${ebirdId}/media?yr=all&m=`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-sky-600"
@@ -175,8 +175,8 @@ export default function Hotspot({ hotspot }: Props) {
             </Menu.Items>
           </Menu>
         </div>
-        <HotspotStats id={_id} speciesTotal={hotspot.species} />
-        <HotspotFavs locId={_id} />
+        {ebirdId && <HotspotStats ebirdId={ebirdId} speciesTotal={hotspot.species} />}
+        <HotspotFavs locationId={_id} />
 
         {canEdit && !isSaved && (
           <button
@@ -208,12 +208,14 @@ export default function Hotspot({ hotspot }: Props) {
           </nav>
         </div>
         <div className="sm:-mx-1.5">
-          {tab === "needs" && <RecentSpeciesList locId={_id} onSpeciesClick={() => setTab("checklists")} />}
+          {tab === "needs" && (
+            <RecentSpeciesList ebirdLocationId={ebirdId as string} onSpeciesClick={() => setTab("checklists")} />
+          )}
           {tab === "checklists" && (
             <RecentChecklistList locId={_id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
           )}
           <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
-            <HotspotTargets locId={_id} onSpeciesClick={() => setTab("checklists")} />
+            <HotspotTargets locationId={_id} onSpeciesClick={() => setTab("checklists")} />
           </div>
         </div>
       </Body>

@@ -16,12 +16,12 @@ type Props = {
 export default function BestTargetHotspots({ speciesCode, speciesName, className }: Props) {
   const [filter, setFilter] = React.useState("year");
   const [isExpanded, setIsExpanded] = React.useState(false);
-  const { trip, locations, dateRangeLabel } = useTrip();
+  const { locations, dateRangeLabel } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { open } = useModal();
 
-  const locationIds = locations.filter((it) => it.type === LocationType.hotspot).map((it) => it._id) || [];
-  const hasHotspots = !!locationIds.length;
+  const ebirdIds = locations.filter((it) => it.type === LocationType.hotspot).map((it) => it.ebirdId) || [];
+  const hasHotspots = !!ebirdIds.length;
 
   if (!hasHotspots) return <Alert style="warning">You have not saved any hotspots for this trip</Alert>;
   if (!allTargets?.length)
@@ -36,7 +36,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
     .filter(
       ({ items, hotspotId }) =>
         !!hotspotId &&
-        locationIds.includes(hotspotId) &&
+        ebirdIds.includes(hotspotId) &&
         items.find(
           (item) =>
             item.code === speciesCode &&
@@ -44,7 +44,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
         )
     )
     .map(({ items, hotspotId, N, yrN }) => {
-      const hotspot = locations.find((it) => it._id === hotspotId);
+      const hotspot = locations.find((it) => it.ebirdId === hotspotId);
       const targetInfo = items.find((item) => item.code === speciesCode);
       return {
         locationId: hotspotId,

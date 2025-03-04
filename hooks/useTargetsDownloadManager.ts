@@ -34,8 +34,8 @@ export default function useTargetsDownloadManager() {
     downloadPendingTargets();
   };
 
-  const fetchTargetsForHotspot = async (locId: string): Promise<TargetList> => {
-    const url = `https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-6c6abe6c-b02b-4b79-a86e-f7633e99a025/targets/get?startMonth=${trip?.startMonth}&endMonth=${trip?.endMonth}&region=${locId}&cutoff=${CUTOFF}`;
+  const fetchTargetsForHotspot = async (ebirdLocationId: string): Promise<TargetList> => {
+    const url = `https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-6c6abe6c-b02b-4b79-a86e-f7633e99a025/targets/get?startMonth=${trip?.startMonth}&endMonth=${trip?.endMonth}&region=${ebirdLocationId}&cutoff=${CUTOFF}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
@@ -43,12 +43,12 @@ export default function useTargetsDownloadManager() {
     return data;
   };
 
-  const handleAddTargets = async (locId: string, data: TargetList) => {
+  const handleAddTargets = async (ebirdLocationId: string, data: TargetList) => {
     if (!trip) return;
-    const targetsId = await addTargets({ ...data, tripId: trip?._id, hotspotId: locId });
-    if (targetsId && locId) {
+    const targetsId = await addTargets({ ...data, tripId: trip?._id, hotspotId: ebirdLocationId });
+    if (targetsId && ebirdLocationId) {
       const newHotspots = hotspots.map((it) => {
-        if (it._id === locId) return { ...it, targetsId };
+        if (it.ebirdId === ebirdLocationId) return { ...it, targetsId };
         return it;
       });
       await updateHotspots(trip._id, newHotspots);
@@ -60,25 +60,25 @@ export default function useTargetsDownloadManager() {
     downloadingRef.current = true;
 
     while (pendingHotspotsRef.current.size > 0) {
-      const locId = pendingHotspotsRef.current.values().next().value;
-      if (!locId) break;
+      const ebirdLocationId = pendingHotspotsRef.current.values().next().value;
+      if (!ebirdLocationId) break;
 
-      setDownloadingLocId(locId);
-      pendingHotspotsRef.current.delete(locId);
+      setDownloadingLocId(ebirdLocationId);
+      pendingHotspotsRef.current.delete(ebirdLocationId);
 
       try {
-        const targets: TargetList = await fetchTargetsForHotspot(locId);
+        const targets: TargetList = await fetchTargetsForHotspot(ebirdLocationId);
         if (targets) {
-          await handleAddTargets(locId, targets);
-          processedHotspotsRef.current.add(locId);
-          failedAttemptsRef.current.delete(locId);
+          await handleAddTargets(ebirdLocationId, targets);
+          processedHotspotsRef.current.add(ebirdLocationId);
+          failedAttemptsRef.current.delete(ebirdLocationId);
         }
       } catch (error) {
-        console.error(`Failed to download targets for ${locId}:`, error);
-        const attempts = failedAttemptsRef.current.get(locId) || 0;
+        console.error(`Failed to download targets for ${ebirdLocationId}:`, error);
+        const attempts = failedAttemptsRef.current.get(ebirdLocationId) || 0;
         if (attempts < RETRY_LIMIT) {
-          pendingHotspotsRef.current.add(locId);
-          failedAttemptsRef.current.set(locId, attempts + 1);
+          pendingHotspotsRef.current.add(ebirdLocationId);
+          failedAttemptsRef.current.set(ebirdLocationId, attempts + 1);
         }
       }
     }
@@ -92,9 +92,13 @@ export default function useTargetsDownloadManager() {
 
     hotspots
       .filter(
-        (it) => !it.targetsId && !processedHotspotsRef.current.has(it._id) && !pendingHotspotsRef.current.has(it._id)
+        (it) =>
+          it.ebirdId &&
+          !it.targetsId &&
+          !processedHotspotsRef.current.has(it.ebirdId) &&
+          !pendingHotspotsRef.current.has(it.ebirdId)
       )
-      .forEach((it) => pendingHotspotsRef.current.add(it._id));
+      .forEach((it) => pendingHotspotsRef.current.add(it.ebirdId as string));
 
     if (!downloadingRef.current && !isPaused) {
       downloadPendingTargets();

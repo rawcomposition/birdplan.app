@@ -6,13 +6,13 @@ import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 
 type Props = {
-  id: string;
+  ebirdId: string;
   speciesTotal?: number;
 };
 
-export default function HotspotStats({ id, speciesTotal }: Props) {
-  const { checklists } = useFetchRecentChecklists(id);
-  const { data } = useFetchHotspotInfo(id);
+export default function HotspotStats({ ebirdId, speciesTotal }: Props) {
+  const { checklists } = useFetchRecentChecklists(ebirdId);
+  const { data } = useFetchHotspotInfo(ebirdId);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 

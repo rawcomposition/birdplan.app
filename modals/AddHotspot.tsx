@@ -4,7 +4,7 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
-import { Location } from "lib/types";
+import { eBirdHotspot, Location } from "lib/types";
 import Icon from "components/Icon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
@@ -19,13 +19,14 @@ export default function AddHotspot() {
   const results =
     query?.length > 1
       ? hotspots?.filter(
-          (it) => it.name.toLowerCase().includes(query.toLowerCase()) || it.id.toLowerCase() === query.toLowerCase()
+          (it) =>
+            it.name.toLowerCase().includes(query.toLowerCase()) || it.ebirdId.toLowerCase() === query.toLowerCase()
         )
       : [];
 
   const slicedResults = results.slice(0, 10);
 
-  const selectHotspot = (hotspot: Location, isSaved: boolean) => {
+  const selectHotspot = (hotspot: eBirdHotspot, isSaved: boolean) => {
     if (!isSaved) {
       appendHotspot(hotspot);
       toast.success("Hotspot added to trip");
@@ -57,7 +58,7 @@ export default function AddHotspot() {
       if (e.key === "Enter") {
         const selected = resultsRef.current[selectedIndexRef.current];
         if (selected) {
-          selectHotspot(selected, !!tripHotspotsRef.current?.find((it) => it._id === selected._id));
+          selectHotspot(selected, !!tripHotspotsRef.current?.find((it) => it.ebirdId === selected.ebirdId));
         }
       }
     };
@@ -82,11 +83,11 @@ export default function AddHotspot() {
             <div className="flex flex-col gap-2">
               {!!slicedResults?.length && <p className="text-[13px] text-gray-600">Select a hotspot to add</p>}
               {slicedResults.map((it, index) => {
-                const isSaved = !!locations.find((hotspot) => hotspot._id === it._id);
+                const isSaved = !!locations.find((hotspot) => hotspot.ebirdId === it.ebirdId);
                 const isSelected = selectedIndex === index;
                 return (
                   <button
-                    key={it.id}
+                    key={it.ebirdId}
                     onClick={() => selectHotspot(it, isSaved)}
                     className={clsx(
                       "flex gap-4 items-center justify-between text-left py-2 px-3 border border-transparent hover:bg-blue-100/40 rounded-md hover:border-blue-100",
@@ -96,7 +97,7 @@ export default function AddHotspot() {
                     <span className="flex flex-col gap-0.5">
                       <span className="text-sm font-medium">{it.name}</span>
                       <span className="text-xs text-gray-500">
-                        {it.id}&nbsp;&nbsp;•&nbsp;&nbsp;{it.species} species
+                        {it.ebirdId}&nbsp;&nbsp;•&nbsp;&nbsp;{it.species} species
                       </span>
                     </span>
                     {isSaved && (

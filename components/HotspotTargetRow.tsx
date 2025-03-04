@@ -5,7 +5,7 @@ import FavButton from "components/FavButton";
 type Props = Target & {
   index: number;
   view: string;
-  locId: string;
+  locationId: string;
   range: string;
   onClick: () => void;
 };
@@ -17,7 +17,7 @@ export default function HotspotTargetRow({
   percentYr,
   index,
   view,
-  locId,
+  locationId,
   range,
   onClick,
 }: Props) {
@@ -37,7 +37,7 @@ export default function HotspotTargetRow({
       </div>
       <div className="flex gap-5 sm:col-span-2">
         <FavButton
-          locId={locId}
+          locationId={locationId}
           code={code}
           name={name}
           range={view === "all" ? "All Year" : range}
