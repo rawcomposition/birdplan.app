@@ -19,3 +19,17 @@ export async function GET(request: Request, { params }: { params: ParamsT }) {
     return APIError(error?.message || "Error fetching locations", 500);
   }
 }
+
+export async function POST(request: Request, { params }: { params: ParamsT }) {
+  const { id } = await params;
+  const session = await authenticate(request);
+  if (!session?.uid) return APIError("Unauthorized", 401);
+
+  const trip = await Trip.findById(id);
+  if (!trip) return APIError("Trip not found", 404);
+  if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
+
+  const data = await request.json();
+  const location = await Location.create({ ...data, tripId: id });
+  return Response.json(location);
+}

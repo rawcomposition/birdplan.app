@@ -50,6 +50,7 @@ export type LocationInput = {
   lat: number;
   lng: number;
   type: LocationType;
+  species?: number;
 };
 
 export type eBirdHotspot = {
@@ -103,6 +104,7 @@ export type Trip = {
     minY: number;
     maxY: number;
   };
+  locations: Location[];
   itinerary?: Day[];
   startDate?: string;
   startMonth: number;

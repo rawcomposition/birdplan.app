@@ -16,6 +16,7 @@ import clsx from "clsx";
 import useConfirmNavigation from "hooks/useConfirmNavigation";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
@@ -23,9 +24,10 @@ export default function ImportTargets() {
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const [isFinalizing, setIsFinalizing] = React.useState(false);
   const [isDirty, setIsDirty] = React.useState(false);
-  const { is404, trip, setTargets } = useTrip();
+  const { is404, trip } = useTrip();
   const { lifelist } = useProfile();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const tripId = trip?._id;
   const redirect = router.query.redirect || "";
@@ -54,9 +56,9 @@ export default function ImportTargets() {
   const mutation = useMutation({
     url: `/api/trips/${tripId}/targets`,
     method: "PUT",
-    successMessage: "Targets saved",
     onSuccess: () => {
       router.push(redirectUrl);
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${tripId}/targets`] });
     },
   });
 

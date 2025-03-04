@@ -1,5 +1,5 @@
 import React from "react";
-import { Location, Trip, CustomMarker, Invite, TravelData, TargetList } from "lib/types";
+import { Location, Trip, CustomMarker, Invite, TravelData, TargetList, LocationInput } from "lib/types";
 import {
   auth,
   subscribeToTripInvites,
@@ -21,6 +21,8 @@ import { mostFrequentValue, nanoId, fullMonths, months } from "lib/helpers";
 import { getTravelTime } from "lib/mapbox";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type SelectedSpecies = {
   code: string;
@@ -158,12 +160,28 @@ const TripProvider = ({ children }: Props) => {
 const useTrip = () => {
   const state = React.useContext(TripContext);
   const { trip, locations } = state;
+  const queryClient = useQueryClient();
 
-  const appendHotspot = async (hotspot: Hotspot) => {
+  const addLocationMutation = useMutation({
+    url: `/api/trips/${trip?._id}/locations`,
+    method: "POST",
+    onMutate: (data) => {
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}/locations`]) || [];
+      queryClient.setQueryData([`/api/trips/${trip?._id}/locations`], (old: Location[]) => [...(old || []), data]);
+      return { prevData };
+    },
+    onSuccess: () => {
+      toast.success("Location added to trip");
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/locations`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}/locations`], (context as any)?.prevData);
+    },
+  });
+
+  const appendHotspot = async (data: LocationInput) => {
     if (!trip) return;
-    const alreadyExists = trip.hotspots.find((it) => it.id === hotspot.id);
-    const newHotspots = alreadyExists ? trip.hotspots : [...trip.hotspots, hotspot];
-    await updateHotspots(trip.id, newHotspots);
+    addLocationMutation.mutate({ ...data, tripId: trip._id });
   };
 
   const removeHotspot = async (id: string) => {

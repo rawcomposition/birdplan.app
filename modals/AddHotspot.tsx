@@ -4,10 +4,9 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
-import { eBirdHotspot } from "lib/types";
+import { eBirdHotspot, LocationType } from "lib/types";
 import Icon from "components/Icon";
 import clsx from "clsx";
-import toast from "react-hot-toast";
 
 export default function AddHotspot() {
   const [query, setQuery] = React.useState("");
@@ -28,8 +27,7 @@ export default function AddHotspot() {
 
   const selectHotspot = (hotspot: eBirdHotspot, isSaved: boolean) => {
     if (!isSaved) {
-      appendHotspot(hotspot);
-      toast.success("Hotspot added to trip");
+      appendHotspot({ ...hotspot, type: LocationType.hotspot, species: hotspot.species || 0 });
     }
     open("hotspot", { hotspot });
   };

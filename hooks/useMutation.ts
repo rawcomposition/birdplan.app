@@ -1,29 +1,26 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { useMutation as tanMutation, UseMutationOptions } from "@tanstack/react-query";
-import { nanoId } from "lib/helpers";
 import { auth } from "lib/firebase";
 
 type Options = Omit<UseMutationOptions, "mutationFn"> & {
   url: string;
   method: "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
-  showToast?: boolean;
   successMessage?: string;
+  showToastError?: boolean;
 };
 
 export default function useMutation({
   url,
   method,
-  showToast = true,
   successMessage,
+  showToastError = true,
   onError,
   onSuccess,
   onSettled,
   onMutate,
   ...options
 }: Options) {
-  const toastId = React.useMemo(() => nanoId(6), []);
-
   return tanMutation({
     mutationFn: async (data?: any) => {
       const fetchUrl = data?.url || url;
@@ -50,15 +47,13 @@ export default function useMutation({
       return json;
     },
     onError: (err: any, variables, context) => {
-      if (showToast) toast.error(err.message || "An error ocurred", { id: toastId });
+      if (showToastError) toast.error(err.message || "An error ocurred");
       if (onError) onError(err, variables, context);
     },
     onSuccess: (data, variables, context) => {
-      if (showToast) toast.success(successMessage || "Success", { id: toastId });
       if (onSuccess) onSuccess(data, variables, context);
     },
     onMutate: (variables) => {
-      if (showToast) toast.loading("loading...", { id: toastId });
       if (onMutate) onMutate(variables);
     },
     onSettled: (data, error, variables, context) => {

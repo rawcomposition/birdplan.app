@@ -1,6 +1,6 @@
 import React from "react";
 import { Body } from "providers/modals";
-import { Location } from "lib/types";
+import { Location, LocationType } from "lib/types";
 import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
@@ -72,8 +72,7 @@ export default function Hotspot({ hotspot }: Props) {
         return;
       removeHotspot(_id);
     } else {
-      toast.success("Hotspot added to trip!");
-      appendHotspot({ ...hotspot, species: hotspot.species || 0 });
+      appendHotspot({ ...hotspot, type: LocationType.hotspot, species: hotspot.species || 0 });
     }
   };
 
