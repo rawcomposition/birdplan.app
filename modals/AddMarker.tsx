@@ -5,7 +5,7 @@ import Field from "components/Field";
 import Input from "components/Input";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
-import { randomId } from "lib/helpers";
+import { nanoId } from "lib/helpers";
 import { MarkerIconT, markerIcons } from "lib/icons";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
@@ -26,7 +26,7 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
 
   const handleAddMarker = () => {
     if (!icon) return toast.error("Please choose an icon");
-    appendMarker({ lat, lng, name, icon, id: randomId(6) });
+    appendMarker({ lat, lng, name, icon, id: nanoId(6) });
     close();
   };
 

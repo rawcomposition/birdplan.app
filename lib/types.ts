@@ -17,18 +17,6 @@ export type Marker = {
   shade?: number;
 };
 
-export type EbirdHotspot = {
-  locId: string;
-  locName: string;
-  countryCode: string;
-  subnational1Code: string;
-  subnational2Code: string;
-  lat: number;
-  lng: number;
-  latestObsDt: string;
-  numSpeciesAllTime: number;
-};
-
 export type Hotspot = {
   id: string;
   name: string;
@@ -44,6 +32,22 @@ export type Hotspot = {
     range: string;
     percent: number;
   }[];
+};
+
+export type HotspotInput = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species: number;
+};
+
+export type eBirdHotspot = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
 };
 
 export type KeyValue = {
@@ -77,7 +81,7 @@ export type Day = {
 };
 
 export type Trip = {
-  id: string;
+  _id: string;
   userIds: string[];
   ownerId: string;
   ownerName: string;
@@ -101,10 +105,16 @@ export type Trip = {
   targetNotes?: {
     [key: string]: string;
   };
+  updatedAt: string;
   createdAt: string;
 };
 
-export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId" | "ownerName">;
+export type TripInput = {
+  name: string;
+  region: string;
+  startMonth: number;
+  endMonth: number;
+};
 
 export type Observation = {
   checklistId: string;
@@ -182,14 +192,21 @@ export type RecentSpecies = {
   count: number;
 };
 
-export type Targets = {
-  id?: string;
+export enum TargetListType {
+  trip = "trip",
+  hotspot = "hotspot",
+}
+
+export type TargetList = {
+  _id: string;
+  type: TargetListType;
+  tripId: string;
   items: Target[];
   N: number;
   yrN: number;
-  tripId: string;
   hotspotId?: string;
-  updatedAt?: string;
+  updatedAt: string;
+  createdAt: string;
 };
 
 export type GooglePlaceT = {

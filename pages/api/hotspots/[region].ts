@@ -1,5 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { EbirdHotspot } from "lib/types";
+import { eBirdHotspot } from "lib/types";
+
+export type eBirdHotspotResult = {
+  locId: string;
+  locName: string;
+  countryCode: string;
+  subnational1Code: string;
+  subnational2Code: string;
+  lat: number;
+  lng: number;
+  latestObsDt: string;
+  numSpeciesAllTime: number;
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -8,9 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch(
       `https://api.ebird.org/v2/ref/hotspot/${region}?fmt=json&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
     );
-    const json: EbirdHotspot[] = await response.json();
+    const json: eBirdHotspotResult[] = await response.json();
 
-    const formatted = json.map((it) => ({
+    const formatted: eBirdHotspot[] = json.map((it) => ({
       id: it.locId,
       name: it.locName,
       lat: it.lat,

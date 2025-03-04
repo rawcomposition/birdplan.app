@@ -24,6 +24,10 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
     meta: {
       errorMessage: "Failed to load observations",
     },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000, // 60 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   const obs: Obs[] =

@@ -1,5 +1,5 @@
 import React from "react";
-import { Hotspot } from "lib/types";
+import { eBirdHotspot } from "lib/types";
 import { getMarkerColorIndex } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import { useQuery } from "@tanstack/react-query";
@@ -8,18 +8,22 @@ export default function useFetchHotspots(showHotspots: boolean) {
   const { trip } = useTrip();
   const region = trip?.region;
 
-  const { data } = useQuery<Hotspot[]>({
+  const { data } = useQuery<eBirdHotspot[]>({
     queryKey: [`/api/hotspots/${region}`],
     enabled: !!region && showHotspots,
     meta: {
       errorMessage: "Failed to load hotspots",
       showLoading: true,
     },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000, // 60 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   const hotspots = data || [];
 
-  const hotspotsRef = React.useRef<Hotspot[]>([]);
+  const hotspotsRef = React.useRef<eBirdHotspot[]>([]);
   hotspotsRef.current = hotspots;
   const hasFetched = hotspots.length > 0;
 

@@ -29,6 +29,7 @@ export default function ModalWrapper({ open, onClose, small, children }: Props) 
   return (
     <>
       <Transition
+        as="div"
         show={open}
         enter="ease-out duration-300"
         enterFrom="opacity-0"
@@ -40,6 +41,7 @@ export default function ModalWrapper({ open, onClose, small, children }: Props) 
         onClick={onClose}
       />
       <Transition
+        as="div"
         show={open}
         enter="ease-out duration-300"
         enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"

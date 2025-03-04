@@ -12,10 +12,9 @@ import Icon from "components/Icon";
 import Field from "components/Field";
 import Input from "components/Input";
 import { Option, TripInput } from "lib/types";
-import { createTrip } from "lib/firebase";
-import { getBounds, getCenterOfBounds, getTzFromLatLng, uploadMapboxImg } from "lib/helpers";
 import { useModal } from "providers/modals";
 import dayjs from "dayjs";
+import useMutation from "hooks/useMutation";
 
 const largeRegions = ["MX", "US", "CA", "AU"];
 
@@ -30,11 +29,19 @@ export default function CreateTrip() {
   const [county, setCounty] = React.useState<Option[]>();
   const [manualRegion, setManualRegion] = React.useState<string>("");
   const [isManualRegion, setIsManualRegion] = React.useState(false);
-  const [submitting, setSubmitting] = React.useState(false);
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
   const router = useRouter();
   const { close } = useModal();
+
+  const mutation = useMutation({
+    url: "/api/trips",
+    method: "POST",
+    onSuccess: ({ id }: any) => {
+      router.push(`/${id}/import-targets`);
+      close();
+    },
+  });
 
   const requireSubregion = largeRegions.includes(country?.value || "");
 
@@ -67,40 +74,14 @@ export default function CreateTrip() {
     const name = form.name.value;
     if (!name) return toast.error("Please enter a name");
 
-    try {
-      setSubmitting(true);
+    let data: TripInput = {
+      name,
+      region: region,
+      startMonth: Number(startMonth.value),
+      endMonth: Number(endMonth.value),
+    };
 
-      const bounds = await getBounds(region);
-      if (!bounds) return toast.error("Failed to fetch region info");
-
-      const { lat, lng } = getCenterOfBounds(bounds);
-      const timezone = await getTzFromLatLng(lat, lng);
-      const imgUrl = await uploadMapboxImg(bounds);
-
-      let data: TripInput = {
-        name,
-        region: region,
-        hotspots: [],
-        markers: [],
-        itinerary: [],
-        bounds,
-        startMonth: Number(startMonth.value),
-        endMonth: Number(endMonth.value),
-        timezone: timezone || "America/New_York",
-        imgUrl,
-        createdAt: dayjs().format(),
-      };
-
-      const tripId = await createTrip(data);
-      if (tripId) {
-        router.push(`/${tripId}/import-targets`);
-        close();
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to create trip");
-    }
-    setSubmitting(false);
+    mutation.mutate(data);
   };
 
   return (
@@ -209,8 +190,8 @@ export default function CreateTrip() {
                 <Button href="/trips" color="gray">
                   Cancel
                 </Button>
-                <Button type="submit" color="primary" disabled={submitting}>
-                  {submitting ? "Creating..." : "Continue"}
+                <Button type="submit" color="primary" disabled={mutation.isPending}>
+                  Continue
                 </Button>
               </div>
             </form>

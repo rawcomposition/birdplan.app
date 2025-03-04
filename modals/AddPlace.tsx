@@ -4,7 +4,7 @@ import Button from "components/Button";
 import Field from "components/Field";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
-import { randomId } from "lib/helpers";
+import { nanoId } from "lib/helpers";
 import { GooglePlaceT } from "lib/types";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
@@ -30,7 +30,7 @@ export default function AddPlace() {
       lng: place.lng,
       name: place.name,
       icon,
-      id: place.id || randomId(6),
+      id: place.id || nanoId(6),
       placeId: place.id,
       placeType: place.type,
     });

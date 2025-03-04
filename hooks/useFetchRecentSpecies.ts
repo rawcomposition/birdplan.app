@@ -11,6 +11,10 @@ export default function useFetchRecentSpecies(region?: string) {
     meta: {
       errorMessage: "Failed to load recent species",
     },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000, // 60 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   const filtered = data?.filter((it) => !lifelist.includes(it.code)) || [];

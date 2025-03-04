@@ -21,7 +21,7 @@ export default function useDownloadTargets({ region, startMonth, endMonth, enabl
     ],
     refetchOnWindowFocus: false,
     staleTime: 0,
-    cacheTime: 0,
+    gcTime: 0,
     enabled: !!region && enabled,
   });
 

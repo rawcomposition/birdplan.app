@@ -17,10 +17,6 @@ const queryClient = new QueryClient({
     queries: {
       queryFn: async ({ queryKey, meta }) =>
         get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
-      staleTime: 30 * 60 * 1000, // 30 minutes
-      cacheTime: 60 * 60 * 1000, // 60 minutes
-      refetchOnWindowFocus: false,
-      retry: 2,
     },
   },
   queryCache: new QueryCache({
