@@ -38,9 +38,10 @@ export default function Trip() {
   const customMarkers = locations.filter((it) => it.type === LocationType.custom) || [];
 
   const hotspotClick = (id: string) => {
+    if (!id) return toast.error("Hotspot has no ID");
     setSelectedSpecies(undefined);
     const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
-    const hotspot = allHotspots.find((it) => it.id === id);
+    const hotspot = allHotspots.find((it) => it.ebirdId === id);
     if (!hotspot) return toast.error("Hotspot not found");
     open("hotspot", { hotspot });
   };
