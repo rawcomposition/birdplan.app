@@ -209,6 +209,8 @@ export type TargetList = {
   createdAt: string;
 };
 
+export type TargetListInput = Omit<TargetList, "_id" | "updatedAt" | "createdAt" | "type" | "tripId">;
+
 export type GooglePlaceT = {
   id?: string;
   name: string;
