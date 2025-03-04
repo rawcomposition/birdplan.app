@@ -43,13 +43,13 @@ export default function useTargetsDownloadManager() {
 
   const handleAddTargets = async (locId: string, data: Targets) => {
     if (!trip) return;
-    const targetsId = await addTargets({ ...data, tripId: trip?.id, hotspotId: locId });
+    const targetsId = await addTargets({ ...data, tripId: trip?._id, hotspotId: locId });
     if (targetsId && locId) {
       const newHotspots = trip.hotspots.map((it) => {
         if (it.id === locId) return { ...it, targetsId };
         return it;
       });
-      await updateHotspots(trip.id, newHotspots);
+      await updateHotspots(trip._id, newHotspots);
     }
   };
 

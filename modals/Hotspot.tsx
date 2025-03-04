@@ -71,7 +71,6 @@ export default function Hotspot({ hotspot }: Props) {
         return;
       removeHotspot(id);
     } else {
-      toast.success("Hotspot added to trip!");
       appendHotspot({ ...hotspot, species: hotspot.species || 0 });
     }
   };

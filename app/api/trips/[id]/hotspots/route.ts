@@ -13,7 +13,9 @@ export async function POST(request: Request, { params }: { params: ParamsT }) {
   if (!trip) return APIError("Trip not found", 404);
   if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
 
+  if (trip.hotspots.find((it) => it.id === data.id)) return Response.json({});
+
   const data = await request.json();
-  // TODO: add hotspot to trip
-  return Response.json(location);
+  await trip.updateOne({ $push: { hotspots: data } });
+  return Response.json({});
 }

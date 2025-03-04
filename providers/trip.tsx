@@ -153,16 +153,19 @@ const useTrip = () => {
     url: `/api/trips/${trip?._id}/hotspots`,
     method: "POST",
     onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}/hotspots`]) || [];
-      queryClient.setQueryData([`/api/trips/${trip?._id}/hotspots`], (old: Hotspot[]) => [...(old || []), data]);
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+        ...old,
+        hotspots: [...(old.hotspots || []), data],
+      }));
       return { prevData };
     },
     onSuccess: () => {
       toast.success("Hotspot added to trip");
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/hotspots`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}/hotspots`], (context as any)?.prevData);
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
     },
   });
 
@@ -175,7 +178,7 @@ const useTrip = () => {
     if (!trip) return;
     const hotspot = trip.hotspots.find((it) => it.id === id);
     const newHotspots = trip.hotspots.filter((it) => it.id !== id);
-    await Promise.all([updateHotspots(trip.id, newHotspots), hotspot?.targetsId && deleteTargets(hotspot.targetsId)]);
+    await Promise.all([updateHotspots(trip._id, newHotspots), hotspot?.targetsId && deleteTargets(hotspot.targetsId)]);
   };
 
   const appendMarker = async (marker: CustomMarker) => {
