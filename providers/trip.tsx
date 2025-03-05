@@ -93,7 +93,7 @@ const TripProvider = ({ children }: Props) => {
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
-  const is404 = !!id && !trip && !isLoading;
+  const is404 = !!auth.currentUser && !!id && !trip && !isLoading;
 
   const dateRangeLabel =
     trip?.startMonth && trip?.endMonth
