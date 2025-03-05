@@ -76,20 +76,12 @@ const TripProvider = ({ children }: Props) => {
   const { query, pathname } = useRouter();
   const id = query.tripId?.toString();
 
-  const {
-    data: trip,
-    isLoading,
-    error,
-  } = useQuery<Trip>({
+  const { data: trip, isLoading } = useQuery<Trip>({
     queryKey: [`/api/trips/${id}`],
     enabled: !!id && !!auth.currentUser,
   });
 
-  const {
-    data: targets,
-    isLoading: isTargetListLoading,
-    error: targetListError,
-  } = useQuery<TargetList>({
+  const { data: targets } = useQuery<TargetList>({
     queryKey: [`/api/trips/${id}/targets`],
     enabled: !!id && !!auth.currentUser,
   });
@@ -101,8 +93,7 @@ const TripProvider = ({ children }: Props) => {
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
-  const is404 = id && !trip && !isLoading;
-  console.log("is404", is404);
+  const is404 = !!id && !trip && !isLoading;
 
   const dateRangeLabel =
     trip?.startMonth && trip?.endMonth
@@ -175,13 +166,6 @@ const useTrip = () => {
   const appendHotspot = async (data: HotspotInput) => {
     if (!trip) return;
     addHotspotMutation.mutate({ ...data, tripId: trip._id });
-  };
-
-  const removeHotspot = async (id: string) => {
-    if (!trip) return;
-    const hotspot = trip.hotspots.find((it) => it.id === id);
-    const newHotspots = trip.hotspots.filter((it) => it.id !== id);
-    await Promise.all([updateHotspots(trip._id, newHotspots), hotspot?.targetsId && deleteTargets(hotspot.targetsId)]);
   };
 
   const appendMarker = async (marker: CustomMarker) => {
@@ -489,7 +473,6 @@ const useTrip = () => {
   return {
     ...state,
     appendHotspot,
-    removeHotspot,
     appendMarker,
     removeMarker,
     setTargets,

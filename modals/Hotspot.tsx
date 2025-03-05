@@ -16,6 +16,9 @@ import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
 import { useRouter } from "next/router";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { Trip } from "lib/types";
 
 type Props = {
   hotspot: HotspotT;
@@ -26,7 +29,6 @@ export default function Hotspot({ hotspot }: Props) {
     trip,
     canEdit,
     appendHotspot,
-    removeHotspot,
     saveHotspotNotes,
     selectedSpecies,
     setTranslatedHotspotName,
@@ -43,6 +45,7 @@ export default function Hotspot({ hotspot }: Props) {
   const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "needs");
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const tabs = [
     {
@@ -65,11 +68,30 @@ export default function Hotspot({ hotspot }: Props) {
     });
   }
 
+  const removeMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${id}`,
+    method: "DELETE",
+    onMutate: (data) => {
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+        ...old,
+        hotspots: old.hotspots.filter((it) => it.id !== id),
+      }));
+      return { prevData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
+
   const handleSave = async () => {
     if (isSaved) {
       if (notes && !confirm("Are you sure you want to remove this hotspot from your trip? Your notes will be lost."))
         return;
-      removeHotspot(id);
+      removeMutation.mutate({});
     } else {
       appendHotspot({ ...hotspot, species: hotspot.species || 0 });
     }
