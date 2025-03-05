@@ -148,10 +148,14 @@ const useTrip = () => {
     method: "POST",
     onMutate: (data) => {
       const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
-        ...old,
-        hotspots: [...(old.hotspots || []), data],
-      }));
+      queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
+        if (!old) return old;
+
+        return {
+          ...old,
+          hotspots: [...(old.hotspots || []), data as any],
+        };
+      });
       return { prevData };
     },
     onSuccess: () => {
@@ -163,17 +167,31 @@ const useTrip = () => {
     },
   });
 
-  const appendHotspot = async (data: HotspotInput) => {
-    if (!trip) return;
-    addHotspotMutation.mutate({ ...data, tripId: trip._id });
-  };
+  const addMarkerMutation = useMutation({
+    url: `/api/trips/${trip?._id}/markers`,
+    method: "POST",
+    onMutate: (data) => {
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
+      queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
+        if (!old) return old;
 
-  const appendMarker = async (marker: CustomMarker) => {
-    if (!trip) return;
-    const alreadyExists = trip.markers.find((it) => it.id === marker.id);
-    const newMarkers = alreadyExists ? trip.markers : [...trip.markers, marker];
-    await updateMarkers(trip.id, newMarkers);
-  };
+        return {
+          ...old,
+          markers: [...(old.markers || []), data as any],
+        };
+      });
+      return { prevData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
+
+  const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
+  const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
 
   const removeMarker = async (id: string) => {
     if (!trip) return;
