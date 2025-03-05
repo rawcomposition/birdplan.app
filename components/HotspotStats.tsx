@@ -23,9 +23,6 @@ export default function HotspotStats({ id, speciesTotal }: Props) {
     ? dateTimeToRelative(lastChecklistIsoDate, timezone).replace("months", "mo").replace("month", "mo")
     : "Never";
 
-  console.log("CHECKLISTS", checklists);
-  console.log("LAST CHECKLIST", lastChecklist);
-
   return (
     <div className="flex gap-10 text-gray-500">
       <div className="flex flex-col text-[#1c6900]">
