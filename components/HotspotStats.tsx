@@ -16,14 +16,15 @@ export default function HotspotStats({ id, speciesTotal }: Props) {
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
+  const lastChecklistIsoDate = checklists?.[0]?.isoObsDate;
   const lastChecklistDate = checklists?.[0]?.obsDt;
   const lastChecklistTime = checklists?.[0]?.obsTime;
-  const lastChecklist =
-    lastChecklistDate && lastChecklistTime
-      ? dateTimeToRelative(`${lastChecklistDate} ${lastChecklistTime}`, timezone)
-          .replace("months", "mo")
-          .replace("month", "mo")
-      : "Never";
+  const lastChecklist = lastChecklistIsoDate
+    ? dateTimeToRelative(lastChecklistIsoDate, timezone).replace("months", "mo").replace("month", "mo")
+    : "Never";
+
+  console.log("CHECKLISTS", checklists);
+  console.log("LAST CHECKLIST", lastChecklist);
 
   return (
     <div className="flex gap-10 text-gray-500">

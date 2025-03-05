@@ -161,6 +161,7 @@ export type RecentChecklist = {
   subId: string;
   userDisplayName: string;
   numSpecies: number;
+  isoObsDate: string;
   obsDt: string;
   obsTime: string;
   subID: string;
