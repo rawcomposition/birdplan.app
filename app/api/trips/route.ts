@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     if (!session?.uid) return APIError("Unauthorized", 401);
 
     await connect();
-    const trips = await Trip.find({ userIds: session.uid }).lean();
+    const trips = await Trip.find({ userIds: session.uid }).sort({ createdAt: -1 }).lean();
     return Response.json(trips);
   } catch (error: any) {
     return APIError(error?.message || "Error fetching trips", 500);

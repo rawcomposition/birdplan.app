@@ -8,9 +8,11 @@ import Button from "components/Button";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
-import { Target } from "lib/types";
+import { Target, Trip } from "lib/types";
 import { useSpeciesImages } from "providers/species-images";
 import BestTargetHotspots from "components/BestTargetHotspots";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type PropsT = Target & {
   index: number;
@@ -18,12 +20,51 @@ type PropsT = Target & {
 
 export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
-  const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
+  const { trip, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
   const { addToLifeList } = useProfile();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
+  const queryClient = useQueryClient();
+
+  const addStarMutation = useMutation({
+    url: `/api/trips/${trip?._id}/targets/add-star`,
+    method: "PUT",
+    onMutate: (data) => {
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+        ...old,
+        targetStars: [...(old.targetStars || []), code],
+      }));
+      return { prevData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
+
+  const removeStarMutation = useMutation({
+    url: `/api/trips/${trip?._id}/targets/remove-star`,
+    method: "PUT",
+    onMutate: (data) => {
+      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+        ...old,
+        targetStars: (old.targetStars || []).filter((it) => it !== code),
+      }));
+      return { prevData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
 
   const handleSeen = (code: string, name: string) => {
     if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
@@ -100,7 +141,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             {isStarred ? (
               <button
                 type="button"
-                onClick={() => removeTargetStar(code)}
+                onClick={() => removeStarMutation.mutate({ code })}
                 className="items-center justify-cente hidden sm:flex"
               >
                 <Icon name="star" className="text-yellow-500 text-lg" />
@@ -108,7 +149,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             ) : (
               <button
                 type="button"
-                onClick={() => addTargetStar(code)}
+                onClick={() => addStarMutation.mutate({ code })}
                 className="items-center justify-cente hidden sm:flex"
               >
                 <Icon name="starOutline" className="text-gray-500 text-lg" />
@@ -154,12 +195,12 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             <BestTargetHotspots speciesCode={code} speciesName={name} />
             <div className="flex gap-2 mt-4">
               {isStarred ? (
-                <button type="button" onClick={() => removeTargetStar(code)} className={mobileBtnClasses}>
+                <button type="button" onClick={() => removeStarMutation.mutate({ code })} className={mobileBtnClasses}>
                   <Icon name="star" className="text-yellow-500 text-lg" />
                   Remove star
                 </button>
               ) : (
-                <button type="button" onClick={() => addTargetStar(code)} className={mobileBtnClasses}>
+                <button type="button" onClick={() => addStarMutation.mutate({ code })} className={mobileBtnClasses}>
                   <Icon name="starOutline" className="text-gray-500 text-lg" />
                   Add star
                 </button>

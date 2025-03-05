@@ -135,7 +135,7 @@ export default function TripTargets() {
                     {canEdit && (
                       <p>
                         <Button
-                          href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
+                          href={`/${trip?._id}/import-targets?redirect=targets&back=true`}
                           color="primary"
                           size="sm"
                         >
@@ -188,7 +188,7 @@ export default function TripTargets() {
               <div className="w-full flex-grow relative">
                 {trip?.bounds && (
                   <MapBox
-                    key={trip.id}
+                    key={trip._id}
                     onHotspotClick={obsClick}
                     obsLayer={selectedSpecies && obsLayer}
                     bounds={trip.bounds}
