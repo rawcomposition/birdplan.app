@@ -143,21 +143,26 @@ const useTrip = () => {
   const { trip } = state;
   const queryClient = useQueryClient();
 
+  const setTripCache = (updater: (old: Trip) => Trip) => {
+    if (!trip?._id) return;
+    const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]);
+
+    queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
+      if (!old) return old;
+      return updater(old);
+    });
+
+    return { prevData };
+  };
+
   const addHotspotMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots`,
     method: "POST",
-    onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
-      queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
-        if (!old) return old;
-
-        return {
-          ...old,
-          hotspots: [...(old.hotspots || []), data as any],
-        };
-      });
-      return { prevData };
-    },
+    onMutate: (data) =>
+      setTripCache((old) => ({
+        ...old,
+        hotspots: [...(old.hotspots || []), data as any],
+      })),
     onSuccess: () => {
       toast.success("Hotspot added to trip");
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
@@ -170,18 +175,11 @@ const useTrip = () => {
   const addMarkerMutation = useMutation({
     url: `/api/trips/${trip?._id}/markers`,
     method: "POST",
-    onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
-      queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
-        if (!old) return old;
-
-        return {
-          ...old,
-          markers: [...(old.markers || []), data as any],
-        };
-      });
-      return { prevData };
-    },
+    onMutate: (data) =>
+      setTripCache((old) => ({
+        ...old,
+        markers: [...(old.markers || []), data as any],
+      })),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
@@ -513,6 +511,7 @@ const useTrip = () => {
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
     removeInvite,
+    setTripCache,
   };
 };
 

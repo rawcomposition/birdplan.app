@@ -35,6 +35,7 @@ export default function Hotspot({ hotspot }: Props) {
     resetTranslatedHotspotName,
     setSelectedMarkerId,
     setHalo,
+    setTripCache,
   } = useTrip();
   const { id, lat, lng, species } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
@@ -71,14 +72,11 @@ export default function Hotspot({ hotspot }: Props) {
   const removeMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}`,
     method: "DELETE",
-    onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+    onMutate: (data) =>
+      setTripCache((old) => ({
         ...old,
         hotspots: old.hotspots.filter((it) => it.id !== id),
-      }));
-      return { prevData };
-    },
+      })),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },

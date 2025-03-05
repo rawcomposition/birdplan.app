@@ -20,7 +20,7 @@ type PropsT = Target & {
 
 export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
-  const { trip, canEdit, setSelectedSpecies, setTargetNotes } = useTrip();
+  const { trip, canEdit, setSelectedSpecies, setTargetNotes, setTripCache } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
   const { addToLifeList } = useProfile();
@@ -31,14 +31,11 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const addStarMutation = useMutation({
     url: `/api/trips/${trip?._id}/targets/add-star`,
     method: "PUT",
-    onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+    onMutate: (data) =>
+      setTripCache((old) => ({
         ...old,
-        targetStars: [...(old.targetStars || []), code],
-      }));
-      return { prevData };
-    },
+        targetStars: [...(old.targetStars ?? []), code],
+      })),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
@@ -50,14 +47,11 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const removeStarMutation = useMutation({
     url: `/api/trips/${trip?._id}/targets/remove-star`,
     method: "PUT",
-    onMutate: (data) => {
-      const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]) || [];
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (old: Trip) => ({
+    onMutate: (data) =>
+      setTripCache((old) => ({
         ...old,
         targetStars: (old.targetStars || []).filter((it) => it !== code),
-      }));
-      return { prevData };
-    },
+      })),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
