@@ -75,6 +75,7 @@ type Props = {
 const TripProvider = ({ children }: Props) => {
   const { query, pathname } = useRouter();
   const id = query.tripId?.toString();
+
   const {
     data: trip,
     isLoading,
@@ -92,14 +93,16 @@ const TripProvider = ({ children }: Props) => {
     queryKey: [`/api/trips/${id}/targets`],
     enabled: !!id && !!auth.currentUser,
   });
+
   const [invites, setInvites] = React.useState<Invite[]>([]);
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
-  const [is404, setIs404] = React.useState(false);
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
+  const is404 = id && !trip && !isLoading;
+  console.log("is404", is404);
 
   const dateRangeLabel =
     trip?.startMonth && trip?.endMonth

@@ -15,6 +15,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      retry: 1,
       queryFn: async ({ queryKey, meta }) =>
         get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
     },
