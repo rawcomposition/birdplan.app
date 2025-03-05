@@ -1,5 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { EBIRD_BASE_URL } from "lib/config";
 
 type Obs = {
   id: string;
@@ -17,7 +18,7 @@ type Props = {
 export default function useFetchSpeciesObs({ region, code }: Props) {
   const { data } = useQuery<Obs[]>({
     queryKey: [
-      `https://api.ebird.org/v2/data/obs/${region}/recent/${code}`,
+      `${EBIRD_BASE_URL}/data/obs/${region}/recent/${code}`,
       { key: process.env.NEXT_PUBLIC_EBIRD_KEY, back: 30, includeProvisional: true },
     ],
     enabled: !!region && !!code,

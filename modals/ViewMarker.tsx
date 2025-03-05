@@ -18,7 +18,7 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { trip, canEdit, saveMarkerNotes, setSelectedMarkerId, setTripCache } = useTrip();
+  const { trip, canEdit, setSelectedMarkerId, setTripCache } = useTrip();
   const { id, placeId, name, lat, lng } = marker;
   const queryClient = useQueryClient();
 

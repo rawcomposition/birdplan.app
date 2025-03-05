@@ -193,15 +193,6 @@ const useTrip = () => {
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
 
-  const saveMarkerNotes = async (id: string, notes: string) => {
-    if (!trip) return;
-    const newMarkers = trip.markers.map((it) => {
-      if (it.id === id) return { ...it, notes };
-      return it;
-    });
-    await updateMarkers(trip.id, newMarkers);
-  };
-
   const addHotspotFav = async (id: string, code: string, name: string, range: string, percent: number) => {
     if (!trip) return;
     const newHotspots = trip.hotspots.map((it) => {
@@ -500,7 +491,6 @@ const useTrip = () => {
     markTravelTimeDeleted,
     calcTravelTime,
     saveHotspotNotes,
-    saveMarkerNotes,
     addHotspotFav,
     removeHotspotFav,
     setTranslatedHotspotName,

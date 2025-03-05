@@ -1,6 +1,7 @@
 import React from "react";
 import Select from "components/ReactSelectStyled";
 import { useQuery } from "@tanstack/react-query";
+import { EBIRD_BASE_URL } from "lib/config";
 
 type Props = {
   type: "country" | "subnational1" | "subnational2";
@@ -15,10 +16,7 @@ type Region = {
 
 export default function RegionSelect({ type, parent, ...props }: Props) {
   const { data, isFetching } = useQuery<Region[]>({
-    queryKey: [
-      `https://api.ebird.org/v2/ref/region/list/${type}/${parent}`,
-      { key: process.env.NEXT_PUBLIC_EBIRD_KEY },
-    ],
+    queryKey: [`${EBIRD_BASE_URL}/ref/region/list/${type}/${parent}`, { key: process.env.NEXT_PUBLIC_EBIRD_KEY }],
     enabled: !!type && !!parent,
     meta: {
       errorMessage: "Failed to load regions",

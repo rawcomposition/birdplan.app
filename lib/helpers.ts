@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { auth, uploadFile } from "lib/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { customAlphabet } from "nanoid";
+import { EBIRD_BASE_URL } from "lib/config";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -134,7 +135,7 @@ export const getBounds = async (regionString: string) => {
   try {
     const regions = regionString.split(",");
     const boundsPromises = regions.map((region) =>
-      fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
+      fetch(`${EBIRD_BASE_URL}/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
         res.json()
       )
     );
