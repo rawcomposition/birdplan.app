@@ -12,27 +12,38 @@ import { get } from "lib/helpers";
 import { toast } from "react-hot-toast";
 import ErrorBoundary from "components/ErrorBoundary";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      queryFn: async ({ queryKey, meta }) =>
-        get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
+let queryClient: QueryClient | undefined;
+
+export function initQueryClient() {
+  // Fix for nextjs hot reloading
+  if (queryClient) return queryClient;
+
+  queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        gcTime: 30 * 24 * 60 * 60 * 1000,
+        staleTime: 0,
+        queryFn: async ({ queryKey, meta }) =>
+          get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
+      },
     },
-  },
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      if (query.meta?.errorMessage) {
-        toast.error(query.meta.errorMessage.toString());
-      }
-    },
-  }),
-});
+    queryCache: new QueryCache({
+      onError: (error, query) => {
+        if (query.meta?.errorMessage) {
+          toast.error(query.meta.errorMessage.toString());
+        }
+      },
+    }),
+  });
+
+  return queryClient;
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={initQueryClient()}>
         <SpeciesImagesProvider>
           <UserProvider>
             <Toaster containerStyle={{ zIndex: 10001 }} />
