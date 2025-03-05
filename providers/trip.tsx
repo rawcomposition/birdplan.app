@@ -165,6 +165,8 @@ const useTrip = () => {
       })),
     onSuccess: () => {
       toast.success("Hotspot added to trip");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {
@@ -180,7 +182,7 @@ const useTrip = () => {
         ...old,
         markers: [...(old.markers || []), data as any],
       })),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {
@@ -190,12 +192,6 @@ const useTrip = () => {
 
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  const removeMarker = async (id: string) => {
-    if (!trip) return;
-    const newMarkers = trip.markers.filter((it) => it.id !== id);
-    await updateMarkers(trip.id, newMarkers);
-  };
 
   const saveMarkerNotes = async (id: string, notes: string) => {
     if (!trip) return;
@@ -490,7 +486,6 @@ const useTrip = () => {
     ...state,
     appendHotspot,
     appendMarker,
-    removeMarker,
     setTargets,
     setStartDate,
     setTargetNotes,

@@ -36,7 +36,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
         ...old,
         targetStars: [...(old.targetStars ?? []), code],
       })),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {
@@ -52,7 +52,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
         ...old,
         targetStars: (old.targetStars || []).filter((it) => it !== code),
       })),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {

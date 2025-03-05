@@ -18,7 +18,6 @@ import Icon from "components/Icon";
 import { useRouter } from "next/router";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Trip } from "lib/types";
 
 type Props = {
   hotspot: HotspotT;
@@ -77,7 +76,24 @@ export default function Hotspot({ hotspot }: Props) {
         ...old,
         hotspots: old.hotspots.filter((it) => it.id !== id),
       })),
-    onSuccess: () => {
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
+
+  const saveNotesMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${id}/notes`,
+    method: "PUT",
+    onMutate: (data: any) => {
+      setTripCache((old) => ({
+        ...old,
+        hotspots: old.hotspots.map((it) => (it.id === id ? { ...it, notes: data.notes } : it)),
+      }));
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {
@@ -206,7 +222,9 @@ export default function Hotspot({ hotspot }: Props) {
           </button>
         )}
 
-        {isSaved && <InputNotes key={id} value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
+        {isSaved && (
+          <InputNotes key={id} value={notes} onBlur={(value) => saveNotesMutation.mutate({ notes: value })} />
+        )}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id, title }) => (
