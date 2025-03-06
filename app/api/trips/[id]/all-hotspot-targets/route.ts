@@ -20,6 +20,6 @@ export async function GET(request: Request, { params }: { params: ParamsT }) {
 
     return Response.json(results);
   } catch (error: any) {
-    return APIError(error?.message || "Error fetching targets", 500);
+    return APIError(error?.message || "Error loading targets", 500);
   }
 }

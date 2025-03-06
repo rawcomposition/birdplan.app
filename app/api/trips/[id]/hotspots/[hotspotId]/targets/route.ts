@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: ParamsT }) {
 
     return Response.json(targetList || null);
   } catch (error: any) {
-    return APIError(error?.message || "Error fetching targets", 500);
+    return APIError(error?.message || "Error loading targets", 500);
   }
 }
 
@@ -55,6 +55,6 @@ export async function PUT(request: Request, { params }: { params: ParamsT }) {
     }
     return Response.json({ id: targetList._id });
   } catch (error: any) {
-    return APIError(error?.message || "Error creating trip", 500);
+    return APIError(error?.message || "Error saving targets", 500);
   }
 }

@@ -210,7 +210,7 @@ export default function Hotspot({ hotspot }: Props) {
           </Menu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} />
-        <HotspotFavs locId={id} />
+        <HotspotFavs hotspotId={id} />
 
         {canEdit && !isSaved && (
           <button
@@ -249,7 +249,7 @@ export default function Hotspot({ hotspot }: Props) {
             <RecentChecklistList locId={id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
           )}
           <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
-            <HotspotTargets locId={id} onSpeciesClick={() => setTab("checklists")} />
+            <HotspotTargets hotspotId={id} onSpeciesClick={() => setTab("checklists")} />
           </div>
         </div>
       </Body>

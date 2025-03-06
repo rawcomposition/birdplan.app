@@ -17,6 +17,13 @@ export type Marker = {
   shade?: number;
 };
 
+export type HotspotFav = {
+  name: string;
+  code: string;
+  range: string;
+  percent: number;
+};
+
 export type Hotspot = {
   id: string;
   name: string;
@@ -26,12 +33,7 @@ export type Hotspot = {
   species?: number;
   notes?: string;
   targetsId?: string;
-  favs: {
-    name: string;
-    code: string;
-    range: string;
-    percent: number;
-  }[];
+  favs?: HotspotFav[];
 };
 
 export type HotspotInput = {

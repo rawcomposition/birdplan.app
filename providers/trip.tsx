@@ -1,18 +1,15 @@
 import React from "react";
-import { Hotspot, Trip, TargetList, CustomMarker, Invite, TravelData, HotspotInput } from "lib/types";
+import { Trip, TargetList, CustomMarker, Invite, TravelData, HotspotInput } from "lib/types";
 import {
   subscribeToTripInvites,
   updateHotspots,
   updateItinerary,
-  updateTargets,
-  updateMarkers,
   deleteInvite,
   removeUserFromTrip,
   setTripStartDate,
   addTargetStarToTrip,
   removeTargetStarFromTrip,
   setTargetNotesOnTrip,
-  deleteTargets,
   auth,
 } from "lib/firebase";
 import { useRouter } from "next/router";
@@ -192,35 +189,6 @@ const useTrip = () => {
 
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  const addHotspotFav = async (id: string, code: string, name: string, range: string, percent: number) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === id) {
-        const favs = it.favs ? [...it.favs, { code, name, range, percent }] : [{ code, name, range, percent }];
-        return { ...it, favs };
-      }
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
-
-  const removeHotspotFav = async (id: string, code: string) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === id) {
-        const favs = it.favs?.filter((it) => it.code !== code);
-        return { ...it, favs };
-      }
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
-
-  const setTargets = async (data: Targets) => {
-    if (!trip) return;
-    await updateTargets(trip.id, data, true);
-  };
 
   const setTargetNotes = async (code: string, notes: string) => {
     if (!trip || !state.targets) return;
@@ -477,7 +445,6 @@ const useTrip = () => {
     ...state,
     appendHotspot,
     appendMarker,
-    setTargets,
     setStartDate,
     setTargetNotes,
     addTargetStar,
@@ -491,8 +458,6 @@ const useTrip = () => {
     markTravelTimeDeleted,
     calcTravelTime,
     saveHotspotNotes,
-    addHotspotFav,
-    removeHotspotFav,
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
     removeInvite,

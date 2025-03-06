@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const trips = await Trip.find({ userIds: session.uid }).sort({ createdAt: -1 }).lean();
     return Response.json(trips);
   } catch (error: any) {
-    return APIError(error?.message || "Error fetching trips", 500);
+    return APIError(error?.message || "Error loading trips", 500);
   }
 }
 

@@ -20,6 +20,6 @@ export async function PUT(request: Request, { params }: { params: ParamsT }) {
 
     return Response.json({});
   } catch (error: any) {
-    return APIError(error?.message || "Error creating trip", 500);
+    return APIError(error?.message || "Error saving notes", 500);
   }
 }

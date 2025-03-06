@@ -15,6 +15,6 @@ export async function GET(request: Request, { params }: { params: ParamsT }) {
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
     return Response.json(trip);
   } catch (error: any) {
-    return APIError(error?.message || "Error fetching trips", 500);
+    return APIError(error?.message || "Error loading trip", 500);
   }
 }
