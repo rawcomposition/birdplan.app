@@ -15,6 +15,8 @@ import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Trip() {
   const { user } = useUser();
@@ -28,21 +30,37 @@ export default function Trip() {
     removeItineraryDayLocation,
     moveItineraryDayLocation,
     setItineraryDayNotes,
+    setTripCache,
   } = useTrip();
   const { open, close, modalId } = useModal();
-
+  const queryClient = useQueryClient();
   const hasStartDate = !!trip?.startDate;
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length));
   const isEditing = canEdit && editing;
+
+  const setStartDateMutation = useMutation({
+    url: `/api/trips/${trip?._id}/set-start-date`,
+    method: "PUT",
+    onMutate: (data: any) =>
+      setTripCache((old) => ({
+        ...old,
+        startDate: data.startDate,
+      })),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
+    },
+  });
 
   const submitStartDate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const date = form.date.value;
     if (!date) return toast.error("Please choose a date");
-    setStartDate(date);
-    appendItineraryDay();
+    setStartDateMutation.mutate({ startDate: date });
     setEditingStartDate(false);
   };
 

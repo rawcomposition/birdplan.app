@@ -33,8 +33,8 @@ export default function ViewMarker({ marker }: Props) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
-    onError: (error, data, context) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
     },
   });
 
@@ -50,8 +50,8 @@ export default function ViewMarker({ marker }: Props) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
-    onError: (error, data, context) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
     },
   });
 

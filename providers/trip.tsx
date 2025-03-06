@@ -2,7 +2,6 @@ import React from "react";
 import { Trip, TargetList, CustomMarker, Invite, TravelData, HotspotInput } from "lib/types";
 import {
   subscribeToTripInvites,
-  updateHotspots,
   updateItinerary,
   deleteInvite,
   removeUserFromTrip,
@@ -153,10 +152,10 @@ const useTrip = () => {
   const addHotspotMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots`,
     method: "POST",
-    onMutate: (data) =>
+    onMutate: (data: any) =>
       setTripCache((old) => ({
         ...old,
-        hotspots: [...(old.hotspots || []), data as any],
+        hotspots: [...(old.hotspots || []), data],
       })),
     onSuccess: () => {
       toast.success("Hotspot added to trip");
@@ -164,8 +163,8 @@ const useTrip = () => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
-    onError: (error, data, context) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
     },
   });
 
@@ -180,26 +179,13 @@ const useTrip = () => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
-    onError: (error, data, context) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
     },
   });
 
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  const removeInvite = async (id: string, uid?: string) => {
-    if (!trip) return;
-    await deleteInvite(id);
-    if (uid) {
-      await removeUserFromTrip(trip.id, uid);
-    }
-  };
-
-  const setStartDate = async (date: string) => {
-    if (!trip) return;
-    await setTripStartDate(trip.id, date);
-  };
 
   const appendItineraryDay = async () => {
     if (!trip) return;
@@ -397,11 +383,18 @@ const useTrip = () => {
     }
   };
 
+  const removeInvite = async (id: string, uid?: string) => {
+    if (!trip) return;
+    await deleteInvite(id);
+    if (uid) {
+      await removeUserFromTrip(trip.id, uid);
+    }
+  };
+
   return {
     ...state,
     appendHotspot,
     appendMarker,
-    setStartDate,
     appendItineraryDay,
     removeItineraryDay,
     addItineraryDayLocation,
