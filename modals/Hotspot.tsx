@@ -1,6 +1,6 @@
 import React from "react";
 import { Body } from "providers/modals";
-import { Hotspot as HotspotT } from "lib/types";
+import { Hotspot as HotspotT, Trip } from "lib/types";
 import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
@@ -93,13 +93,22 @@ export default function Hotspot({ hotspot }: Props) {
     url: `/api/trips/${trip?._id}/hotspots/${id}/translate-name`,
     method: "PUT",
     showToastError: true,
-    onSuccess: async (data: any) => {
+    onSuccess: (data: any) => {
       const { originalName, translatedName } = data;
       if (!translatedName || translatedName === originalName) {
         toast("No translation found");
         return;
       }
-      return await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+      queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          hotspots: old.hotspots.map((it) =>
+            it.id === id ? { ...it, name: translatedName, originalName: originalName } : it
+          ),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
   });
 
