@@ -1,8 +1,6 @@
 import { Trip } from "lib/types";
-import { Schema, model, models, Document, Model } from "mongoose";
+import { Schema, model, models, Model } from "mongoose";
 import { nanoId } from "lib/helpers";
-
-type TripDocument = Omit<Trip, "_id"> & Document<null>;
 
 const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
@@ -26,7 +24,7 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
         {
           _id: false,
           id: String,
-          type: String,
+          type: { type: String }, // Explicit because "type" is a reserved word in Mongoose
           locationId: String,
           travel: {
             _id: false,
@@ -84,10 +82,10 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   targetNotes: { type: Map, of: String, default: {} },
 };
 
-const TripSchema = new Schema<TripDocument>(fields, {
+const TripSchema = new Schema(fields, {
   timestamps: true,
 });
 
-const TripModel = (models.Trip as Model<TripDocument>) || model<TripDocument>("Trip", TripSchema);
+const TripModel = (models.Trip as Model<Trip>) || model<Trip>("Trip", TripSchema);
 
 export default TripModel;

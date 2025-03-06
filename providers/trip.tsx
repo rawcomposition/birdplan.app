@@ -187,21 +187,6 @@ const useTrip = () => {
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
 
-  const addItineraryDayLocation = async (dayId: string, type: "hotspot" | "marker", locationId: string) => {
-    if (!trip) return;
-    const id = nanoId(6);
-    const newItinerary =
-      trip.itinerary?.map((it) => {
-        if (it.id === dayId) {
-          const locations = [...(it.locations || []), { type, locationId, id }];
-          return { ...it, locations };
-        }
-        return it;
-      }) || [];
-    await updateItinerary(trip.id, newItinerary);
-    await recalcTravelTime(newItinerary, dayId);
-  };
-
   const removeItineraryDayLocation = async (dayId: string, id: string) => {
     if (!trip) return;
     const newItinerary =
@@ -383,7 +368,6 @@ const useTrip = () => {
     ...state,
     appendHotspot,
     appendMarker,
-    addItineraryDayLocation,
     removeItineraryDayLocation,
     moveItineraryDayLocation,
     setItineraryDayNotes,

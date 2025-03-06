@@ -4,10 +4,9 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
-import { eBirdHotspot, Hotspot } from "lib/types";
+import { eBirdHotspot } from "lib/types";
 import Icon from "components/Icon";
 import clsx from "clsx";
-import toast from "react-hot-toast";
 
 export default function AddHotspot() {
   const [query, setQuery] = React.useState("");

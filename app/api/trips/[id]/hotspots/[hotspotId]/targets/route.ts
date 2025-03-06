@@ -32,7 +32,7 @@ export async function PUT(request: Request, { params }: { params: ParamsT }) {
     const data: TargetListInput = await request.json();
 
     await connect();
-    const trip = await Trip.findById(id);
+    const trip = await Trip.findById(id).lean();
     if (!trip) return APIError("Trip not found", 404);
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
 

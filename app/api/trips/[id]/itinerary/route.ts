@@ -11,13 +11,13 @@ export async function POST(request: Request, { params }: { params: ParamsT }) {
     if (!session?.uid) return APIError("Unauthorized", 401);
 
     await connect();
-    const trip = await Trip.findById(id);
+    const trip = await Trip.findById(id).lean();
     if (!trip) return APIError("Trip not found", 404);
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
 
     if (trip.itinerary?.find((it) => it.id === data.id)) return Response.json({});
 
-    await trip.updateOne({ $push: { itinerary: data } });
+    await Trip.updateOne({ _id: id }, { $push: { itinerary: data } });
     return Response.json({});
   } catch (error: any) {
     return APIError(error?.message || "Error adding itinerary day", 500);

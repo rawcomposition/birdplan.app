@@ -28,9 +28,8 @@ export async function POST(request: Request) {
     const bounds = await getBounds(data.region);
     if (!bounds) throw new Error("Failed to fetch region info");
     const { lat, lng } = getCenterOfBounds(bounds);
-    //const imgUrl = await uploadMapboxImg(bounds);
+    const imgUrl = await uploadMapboxImg(bounds);
     const timezone = findTz(lat, lng)?.[0] || "America/New_York";
-    const imgUrl = ""; // TODO
 
     await connect();
     const trip = await Trip.create({

@@ -1,5 +1,4 @@
 import { get } from "lib/helpers";
-import toast from "react-hot-toast";
 
 type TravelTimeProps = {
   method: "driving" | "walking" | "cycling";
@@ -26,6 +25,7 @@ export const getTravelTime = async ({ method, lat1, lng1, lat2, lng2 }: TravelTi
     }
     return { time: (duration as number) / 60, distance: distance as number };
   } catch (error) {
+    console.log("Error getting travel time", error);
     return null;
   }
 };
