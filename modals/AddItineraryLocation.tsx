@@ -19,6 +19,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
   const addDayMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${dayId}/add-location`,
     method: "POST",
+    mutationKey: [`/api/trips/${trip?._id}/itinerary/${dayId}/add-location`],
     onMutate: (data: any) =>
       setTripCache((old) => ({
         ...old,

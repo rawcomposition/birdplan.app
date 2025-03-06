@@ -1,13 +1,6 @@
 import React from "react";
 import { Trip, TargetList, CustomMarker, Invite, TravelData, HotspotInput } from "lib/types";
-import {
-  subscribeToTripInvites,
-  updateItinerary,
-  deleteInvite,
-  removeUserFromTrip,
-  setTripStartDate,
-  auth,
-} from "lib/firebase";
+import { subscribeToTripInvites, updateItinerary, deleteInvite, removeUserFromTrip, auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
 import { mostFrequentValue, nanoId, fullMonths, months } from "lib/helpers";
@@ -30,6 +23,7 @@ type HaloT = {
 
 type ContextT = {
   trip: Trip | null;
+  isFetching: boolean;
   invites: Invite[];
   targets: TargetList | null;
   selectedSpecies?: SelectedSpecies;
@@ -46,6 +40,7 @@ type ContextT = {
 
 const initialState = {
   trip: null,
+  isFetching: false,
   targets: null,
   canEdit: false,
   isOwner: false,
@@ -69,7 +64,11 @@ const TripProvider = ({ children }: Props) => {
   const { query, pathname } = useRouter();
   const id = query.tripId?.toString();
 
-  const { data: trip, isLoading } = useQuery<Trip>({
+  const {
+    data: trip,
+    isFetching,
+    isLoading,
+  } = useQuery<Trip>({
     queryKey: [`/api/trips/${id}`],
     enabled: !!id && !!auth.currentUser,
   });
@@ -118,6 +117,7 @@ const TripProvider = ({ children }: Props) => {
         isOwner,
         is404,
         trip: trip || null,
+        isFetching,
         targets: targets || null,
         selectedSpecies,
         selectedMarkerId,
@@ -186,20 +186,6 @@ const useTrip = () => {
 
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  const removeItineraryDayLocation = async (dayId: string, id: string) => {
-    if (!trip) return;
-    const newItinerary =
-      trip.itinerary?.map((it) => {
-        if (it.id === dayId) {
-          const locations = it.locations?.filter((it) => it.id !== id);
-          return { ...it, locations };
-        }
-        return it;
-      }) || [];
-    await updateItinerary(trip.id, newItinerary);
-    await recalcTravelTime(newItinerary, dayId);
-  };
 
   const moveItineraryDayLocation = async (dayId: string, id: string, direction: "up" | "down") => {
     if (!trip) return;
@@ -368,7 +354,6 @@ const useTrip = () => {
     ...state,
     appendHotspot,
     appendMarker,
-    removeItineraryDayLocation,
     moveItineraryDayLocation,
     setItineraryDayNotes,
     markTravelTimeDeleted,

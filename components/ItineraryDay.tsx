@@ -8,8 +8,9 @@ import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
 import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutationState } from "@tanstack/react-query";
 import { Day } from "lib/types";
+import { removeInvalidTravelData } from "lib/itinerary";
 
 type PropsT = {
   day: Day;
@@ -17,9 +18,14 @@ type PropsT = {
 };
 
 export default function ItineraryDay({ day, isEditing }: PropsT) {
-  const { trip, removeItineraryDayLocation, moveItineraryDayLocation, setItineraryDayNotes, setTripCache } = useTrip();
+  const { trip, isFetching: isFetchingTrip, moveItineraryDayLocation, setItineraryDayNotes, setTripCache } = useTrip();
   const { open } = useModal();
   const queryClient = useQueryClient();
+
+  const isAddingLocation = useMutationState({
+    filters: { mutationKey: [`/api/trips/${trip?._id}/itinerary/${day.id}/add-location`] },
+    select: (mutation) => mutation?.state.status === "pending",
+  })?.some(Boolean);
 
   const removeDayMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}`,
@@ -37,10 +43,35 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     },
   });
 
+  const removeLocationMutation = useMutation({
+    url: `/api/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
+    method: "PUT",
+    onMutate: (data: any) => {
+      setTripCache((old) => ({
+        ...old,
+        itinerary:
+          old.itinerary?.map((it) =>
+            it.id === day.id
+              ? { ...it, locations: removeInvalidTravelData(it.locations?.filter((loc) => loc.id !== data.id) || []) }
+              : it
+          ) || [],
+      }));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
+    },
+  });
+
   const handleRemoveDay = () => {
     if (day.locations.length && !confirm("Are you sure you want to remove this day?")) return;
     removeDayMutation.mutate(day.id);
   };
+
+  const isLoading =
+    removeLocationMutation.isPending || removeDayMutation.isPending || isAddingLocation || isFetchingTrip;
 
   return (
     <>
@@ -65,11 +96,12 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
                 {locations?.map(({ locationId, type, id }, index) => {
                   const location =
                     trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
+
                   return (
                     <React.Fragment key={id}>
                       {index !== 0 && (
                         <li>
-                          <TravelTime isEditing={isEditing} dayId={dayId} id={id} />
+                          <TravelTime isLoading={isLoading} isEditing={isEditing} dayId={dayId} id={id} />
                         </li>
                       )}
                       <li className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow">
@@ -125,7 +157,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
                             )}
                             <button
                               type="button"
-                              onClick={() => removeItineraryDayLocation(dayId, id)}
+                              onClick={() => removeLocationMutation.mutate({ id })}
                               className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <Icon name="xMarkBold" />

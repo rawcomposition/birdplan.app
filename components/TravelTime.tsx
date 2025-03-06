@@ -8,9 +8,10 @@ type Props = {
   isEditing: boolean;
   dayId: string;
   id: string;
+  isLoading: boolean;
 };
 
-export default function TravelTime({ isEditing, dayId, id }: Props) {
+export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
   const { trip, calcTravelTime, markTravelTimeDeleted } = useTrip();
   const locations = trip?.itinerary?.find((day) => day.id === dayId)?.locations || [];
   const thisLocationIndex = locations.findIndex((it) => it.id === id);
@@ -66,7 +67,8 @@ export default function TravelTime({ isEditing, dayId, id }: Props) {
             <Menu.Button
               className={clsx(" cursor-pointer", !!travelData?.isDeleted && "hover:text-gray-700 hover:underline")}
             >
-              {(!travelData || !!travelData?.isDeleted) && <>Calculate travel time</>}
+              {(!travelData || !!travelData?.isDeleted) && !isLoading && <>Calculate travel time</>}
+              {isLoading && (!travelData || !!travelData?.isDeleted) && <>loading...</>}
               {!travelData?.isDeleted && travelInfo}
             </Menu.Button>
             <Menu.Items className="absolute text-sm -right-2 top-6 rounded bg-white shadow-lg py-1 w-[130px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
