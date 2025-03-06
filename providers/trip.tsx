@@ -7,9 +7,6 @@ import {
   deleteInvite,
   removeUserFromTrip,
   setTripStartDate,
-  addTargetStarToTrip,
-  removeTargetStarFromTrip,
-  setTargetNotesOnTrip,
   auth,
 } from "lib/firebase";
 import { useRouter } from "next/router";
@@ -189,30 +186,6 @@ const useTrip = () => {
 
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  const setTargetNotes = async (code: string, notes: string) => {
-    if (!trip || !state.targets) return;
-    await setTargetNotesOnTrip(trip.id, code, notes);
-  };
-
-  const addTargetStar = async (code: string) => {
-    if (!trip || !state.targets) return;
-    await addTargetStarToTrip(trip.id, code);
-  };
-
-  const removeTargetStar = async (code: string) => {
-    if (!trip || !state.targets) return;
-    await removeTargetStarFromTrip(trip.id, code);
-  };
-
-  const saveHotspotNotes = async (id: string, notes: string) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === id) return { ...it, notes };
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
 
   const setTranslatedHotspotName = async (id: string, translatedName: string) => {
     if (!trip) return;
@@ -446,9 +419,6 @@ const useTrip = () => {
     appendHotspot,
     appendMarker,
     setStartDate,
-    setTargetNotes,
-    addTargetStar,
-    removeTargetStar,
     appendItineraryDay,
     removeItineraryDay,
     addItineraryDayLocation,
@@ -457,7 +427,6 @@ const useTrip = () => {
     setItineraryDayNotes,
     markTravelTimeDeleted,
     calcTravelTime,
-    saveHotspotNotes,
     setTranslatedHotspotName,
     resetTranslatedHotspotName,
     removeInvite,

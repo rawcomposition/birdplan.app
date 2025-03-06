@@ -20,7 +20,7 @@ type PropsT = Target & {
 
 export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
-  const { trip, canEdit, setSelectedSpecies, setTargetNotes, setTripCache } = useTrip();
+  const { trip, canEdit, setSelectedSpecies, setTripCache } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
   const { addToLifeList } = useProfile();
@@ -51,6 +51,22 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
       setTripCache((old) => ({
         ...old,
         targetStars: (old.targetStars || []).filter((it) => it !== code),
+      })),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
+
+  const setNotesMutation = useMutation({
+    url: `/api/trips/${trip?._id}/targets/set-notes`,
+    method: "PUT",
+    onMutate: (data: any) =>
+      setTripCache((old) => ({
+        ...old,
+        targetNotes: { ...(old.targetNotes || {}), [data.code]: data.notes },
       })),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
@@ -116,7 +132,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             placeholder="Add notes..."
             value={tempNotes}
             onChange={(e) => setTempNotes(e.target.value)}
-            onBlur={(e) => setTargetNotes(code, e.target.value)}
+            onBlur={(e) => setNotesMutation.mutate({ code, notes: e.target.value })}
             minRows={2}
             maxRows={6}
             cacheMeasurements
@@ -181,7 +197,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
               placeholder="Add notes..."
               value={tempNotes}
               onChange={(e) => setTempNotes(e.target.value)}
-              onBlur={(e) => setTargetNotes(code, e.target.value)}
+              onBlur={(e) => setNotesMutation.mutate({ code, notes: e.target.value })}
               minRows={2}
               maxRows={6}
               cacheMeasurements
