@@ -5,7 +5,7 @@ import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish, getMarkerColor } from "lib/helpers";
+import { isRegionEnglish, getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -24,25 +24,13 @@ type Props = {
 };
 
 export default function Hotspot({ hotspot }: Props) {
-  const {
-    trip,
-    canEdit,
-    appendHotspot,
-    saveHotspotNotes,
-    selectedSpecies,
-    setTranslatedHotspotName,
-    resetTranslatedHotspotName,
-    setSelectedMarkerId,
-    setHalo,
-    setTripCache,
-  } = useTrip();
+  const { trip, canEdit, appendHotspot, selectedSpecies, setSelectedMarkerId, setHalo, setTripCache } = useTrip();
   const { id, lat, lng, species } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
-  const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "needs");
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -87,13 +75,45 @@ export default function Hotspot({ hotspot }: Props) {
   const saveNotesMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}/notes`,
     method: "PUT",
-    onMutate: (data: any) => {
-      setTripCache((old) => ({
+    onMutate: async (data: any) => {
+      await setTripCache((old) => ({
         ...old,
         hotspots: old.hotspots.map((it) => (it.id === id ? { ...it, notes: data.notes } : it)),
       }));
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], (context as any)?.prevData);
+    },
+  });
+
+  const translateMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${id}/translate-name`,
+    method: "PUT",
+    onSuccess: async (data: any) => {
+      const { originalName, translatedName } = data;
+      if (!translatedName || translatedName === originalName) {
+        toast("No translation found");
+        return;
+      }
+      return await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+  });
+
+  const resetMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${id}/reset-name`,
+    method: "PUT",
+    onMutate: async () => {
+      await setTripCache((old) => ({
+        ...old,
+        hotspots: old.hotspots.map((it) =>
+          it.id === id ? { ...it, name: it.originalName || "", originalName: "" } : it
+        ),
+      }));
+    },
+    onSettled: async () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context) => {
@@ -109,18 +129,6 @@ export default function Hotspot({ hotspot }: Props) {
     } else {
       appendHotspot({ ...hotspot, species: hotspot.species || 0 });
     }
-  };
-
-  const handleTranslate = async () => {
-    setIsTranslating(true);
-    const translatedName = await translate(name);
-    setIsTranslating(false);
-    if (!translatedName) return;
-    if (translatedName === name) {
-      toast("No translation found");
-      return;
-    }
-    setTranslatedHotspotName(id, translatedName);
   };
 
   const hasSpecies = !!selectedSpecies && router.pathname.includes("targets");
@@ -147,16 +155,16 @@ export default function Hotspot({ hotspot }: Props) {
         <h3 className="text-lg font-medium">{name}</h3>
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
-            {!originalName && !isTranslating && (
-              <button type="button" className="block text-sky-600" onClick={handleTranslate}>
+            {!originalName && !translateMutation.isPending && (
+              <button type="button" className="block text-sky-600" onClick={() => translateMutation.mutate({})}>
                 Translate
               </button>
             )}
-            {isTranslating && <div className="text-gray-400">Translating...</div>}
+            {translateMutation.isPending && <div className="text-gray-400">Translating...</div>}
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <button type="button" className="text-sky-600" onClick={() => resetTranslatedHotspotName(id)}>
+                <button type="button" className="text-sky-600" onClick={() => resetMutation.mutate({})}>
                   Reset
                 </button>
               </div>

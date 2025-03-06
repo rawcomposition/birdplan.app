@@ -176,24 +176,6 @@ export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
 
-export const translate = async (string: string) => {
-  try {
-    const res = await fetch("/api/translate", {
-      method: "POST",
-      body: JSON.stringify({ text: string }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await res.json();
-    if (!json.text) throw new Error();
-    return json.text;
-  } catch (error) {
-    toast.error("Error translating");
-    return string;
-  }
-};
-
 export const dateTimeToRelative = (date: string, timezone?: string, includeAgo?: boolean) => {
   if (!timezone || !date) return "";
   const today = dayjs().tz(timezone).format("YYYY-MM-DD");

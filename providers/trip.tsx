@@ -137,8 +137,9 @@ const useTrip = () => {
   const { trip } = state;
   const queryClient = useQueryClient();
 
-  const setTripCache = (updater: (old: Trip) => Trip) => {
+  const setTripCache = async (updater: (old: Trip) => Trip) => {
     if (!trip?._id) return;
+    await queryClient.cancelQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]);
 
     queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
@@ -186,24 +187,6 @@ const useTrip = () => {
 
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  const setTranslatedHotspotName = async (id: string, translatedName: string) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === id) return { ...it, name: translatedName, originalName: it.name };
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
-
-  const resetTranslatedHotspotName = async (id: string) => {
-    if (!trip) return;
-    const newHotspots = trip.hotspots.map((it) => {
-      if (it.id === id) return it.originalName ? { ...it, name: it.originalName, originalName: "" } : it;
-      return it;
-    });
-    await updateHotspots(trip.id, newHotspots);
-  };
 
   const removeInvite = async (id: string, uid?: string) => {
     if (!trip) return;
@@ -427,8 +410,6 @@ const useTrip = () => {
     setItineraryDayNotes,
     markTravelTimeDeleted,
     calcTravelTime,
-    setTranslatedHotspotName,
-    resetTranslatedHotspotName,
     removeInvite,
     setTripCache,
   };
