@@ -187,24 +187,6 @@ const useTrip = () => {
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
 
-  const moveItineraryDayLocation = async (dayId: string, id: string, direction: "up" | "down") => {
-    if (!trip) return;
-    const newItinerary =
-      trip.itinerary?.map((it) => {
-        if (it.id === dayId) {
-          const locations = [...(it.locations || [])];
-          const locationIndex = locations.findIndex((it) => it.id === id);
-          const location = locations.splice(locationIndex, 1)[0];
-          const newIndex = direction === "up" ? locationIndex - 1 : locationIndex + 1;
-          locations.splice(newIndex, 0, location);
-          return { ...it, locations };
-        }
-        return it;
-      }) || [];
-    await updateItinerary(trip.id, newItinerary);
-    await recalcTravelTime(newItinerary, dayId);
-  };
-
   const setItineraryDayNotes = async (dayId: string, notes: string) => {
     if (!trip) return;
     const newItinerary =
@@ -212,44 +194,6 @@ const useTrip = () => {
         if (it.id === dayId) return { ...it, notes };
         return it;
       }) || [];
-    await updateItinerary(trip.id, newItinerary);
-  };
-
-  const recalcTravelTime = async (itinerary: Trip["itinerary"], dayId: string) => {
-    if (!trip) return;
-    const existingMethods =
-      itinerary?.find((it) => it.id === dayId)?.locations?.map((it) => it.travel?.method || null) || [];
-    const defaultMethod = mostFrequentValue(existingMethods) as "walking" | "driving" | "cycling" | null;
-    const newItinerary = await Promise.all(
-      itinerary?.map(async (day) => {
-        const locations = await Promise.all(
-          day.locations?.map(async ({ travel, ...it }, index) => {
-            const prevLocation = day.locations[index - 1];
-            if (!prevLocation) return it;
-            if (prevLocation.locationId && prevLocation.locationId == it.locationId) {
-              return {
-                ...it,
-                travel: {
-                  distance: 0,
-                  time: 0,
-                  method: travel?.method || defaultMethod || "driving",
-                  locationId: prevLocation.locationId,
-                },
-              };
-            }
-            const travelData = await calcTravelTime({
-              dayId: day.id,
-              id: it.id,
-              locationId1: prevLocation.locationId,
-              locationId2: it.locationId,
-              method: travel?.method || defaultMethod || "driving",
-            });
-            return travelData ? { ...it, travel: travelData } : it;
-          }) || []
-        );
-        return { ...day, locations };
-      }) || []
-    );
     await updateItinerary(trip.id, newItinerary);
   };
 
@@ -354,7 +298,6 @@ const useTrip = () => {
     ...state,
     appendHotspot,
     appendMarker,
-    moveItineraryDayLocation,
     setItineraryDayNotes,
     markTravelTimeDeleted,
     calcTravelTime,

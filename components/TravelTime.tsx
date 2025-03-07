@@ -3,6 +3,8 @@ import Icon from "components/Icon";
 import { formatTime, formatDistance } from "lib/helpers";
 import { Menu } from "@headlessui/react";
 import clsx from "clsx";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   isEditing: boolean;
@@ -12,12 +14,13 @@ type Props = {
 };
 
 export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
-  const { trip, calcTravelTime, markTravelTimeDeleted } = useTrip();
+  const { trip, calcTravelTime, setTripCache } = useTrip();
   const locations = trip?.itinerary?.find((day) => day.id === dayId)?.locations || [];
   const thisLocationIndex = locations.findIndex((it) => it.id === id);
   const location1 = locations[thisLocationIndex - 1];
   const location2 = locations[thisLocationIndex]; // current location
   const travelData = location2?.travel;
+  const queryClient = useQueryClient();
 
   const calculate = async (method: "walking" | "driving" | "cycling") => {
     await calcTravelTime({
@@ -30,6 +33,35 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
     });
   };
 
+  const removeTravelTimeMutation = useMutation({
+    url: `/api/trips/${trip?._id}/itinerary/${dayId}/remove-travel-time`,
+    method: "PUT",
+    onMutate: (data: any) => {
+      setTripCache((old) => ({
+        ...old,
+        itinerary:
+          old.itinerary?.map((it) =>
+            it.id === dayId
+              ? {
+                  ...it,
+                  locations: it.locations?.map((loc) =>
+                    loc.id === data.id
+                      ? { ...loc, travel: loc.travel ? { ...loc.travel, isDeleted: true } : undefined }
+                      : loc
+                  ),
+                }
+              : it
+          ) || [],
+      }));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
+    },
+  });
+
   const marker1 =
     trip?.hotspots?.find((h) => h.id === location1?.locationId || "") ||
     trip?.markers?.find((m) => m.id === location1?.locationId || "");
@@ -38,7 +70,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
     trip?.hotspots?.find((h) => h.id === location2?.locationId || "") ||
     trip?.markers?.find((m) => m.id === location2?.locationId || "");
 
-  const travelInfo = travelData && (
+  const TravelInfo = travelData && (
     <span className="flex items-center gap-2">
       {travelData.method === "walking" ? (
         <Icon name="walking" className="text-gray-400" />
@@ -67,9 +99,13 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
             <Menu.Button
               className={clsx(" cursor-pointer", !!travelData?.isDeleted && "hover:text-gray-700 hover:underline")}
             >
-              {(!travelData || !!travelData?.isDeleted) && !isLoading && <>Calculate travel time</>}
-              {isLoading && (!travelData || !!travelData?.isDeleted) && <>loading...</>}
-              {!travelData?.isDeleted && travelInfo}
+              {isLoading && !travelData ? (
+                <>loading...</>
+              ) : !travelData || !!travelData?.isDeleted ? (
+                <>Calculate travel time</>
+              ) : (
+                !travelData?.isDeleted && TravelInfo
+              )}
             </Menu.Button>
             <Menu.Items className="absolute text-sm -right-2 top-6 rounded bg-white shadow-lg py-1 w-[130px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
               <Menu.Item>
@@ -104,7 +140,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
           {travelData && !travelData?.isDeleted && (
             <button
               type="button"
-              onClick={() => markTravelTimeDeleted(dayId, id)}
+              onClick={() => removeTravelTimeMutation.mutate({ id })}
               className="text-[16px] p-1 -mt-1.5 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <Icon name="xMarkBold" />
@@ -116,7 +152,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
           href={`https://www.google.com/maps/dir/?api=1&origin=${marker1?.lat},${marker1?.lng}&destination=${marker2?.lat},${marker2?.lng}&travelmode=${travelData?.method}`}
           target="_blank"
         >
-          {!travelData?.isDeleted && <div className="text-gray-500 text-xs relative">{travelInfo}</div>}
+          {!travelData?.isDeleted && <div className="text-gray-500 text-xs relative">{TravelInfo}</div>}
         </a>
       )}
     </div>

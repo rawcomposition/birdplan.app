@@ -10,7 +10,7 @@ import Icon from "components/Icon";
 import useMutation from "hooks/useMutation";
 import { useQueryClient, useMutationState } from "@tanstack/react-query";
 import { Day } from "lib/types";
-import { removeInvalidTravelData } from "lib/itinerary";
+import { removeInvalidTravelData, moveLocation } from "lib/itinerary";
 
 type PropsT = {
   day: Day;
@@ -18,7 +18,7 @@ type PropsT = {
 };
 
 export default function ItineraryDay({ day, isEditing }: PropsT) {
-  const { trip, isFetching: isFetchingTrip, moveItineraryDayLocation, setItineraryDayNotes, setTripCache } = useTrip();
+  const { trip, isFetching: isFetchingTrip, setItineraryDayNotes, setTripCache } = useTrip();
   const { open } = useModal();
   const queryClient = useQueryClient();
 
@@ -65,13 +65,42 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     },
   });
 
+  const moveLocationMutation = useMutation({
+    url: `/api/trips/${trip?._id}/itinerary/${day.id}/move-location`,
+    method: "PUT",
+    onMutate: (data: any) => {
+      setTripCache((old) => ({
+        ...old,
+        itinerary:
+          old.itinerary?.map((it) =>
+            it.id === day.id
+              ? {
+                  ...it,
+                  locations: removeInvalidTravelData(moveLocation(it.locations, data.id, data.direction)),
+                }
+              : it
+          ) || [],
+      }));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
+    },
+  });
+
   const handleRemoveDay = () => {
     if (day.locations.length && !confirm("Are you sure you want to remove this day?")) return;
     removeDayMutation.mutate(day.id);
   };
 
   const isLoading =
-    removeLocationMutation.isPending || removeDayMutation.isPending || isAddingLocation || isFetchingTrip;
+    moveLocationMutation.isPending ||
+    removeLocationMutation.isPending ||
+    removeDayMutation.isPending ||
+    isAddingLocation ||
+    isFetchingTrip;
 
   return (
     <>
@@ -140,7 +169,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
                             {index !== locations.length - 1 && (
                               <button
                                 type="button"
-                                onClick={() => moveItineraryDayLocation(dayId, id, "down")}
+                                onClick={() => moveLocationMutation.mutate({ id, direction: "down" })}
                                 className="text-[16px] p-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
                               >
                                 <Icon name="angleDownBold" />
@@ -149,7 +178,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
                             {index !== 0 && (
                               <button
                                 type="button"
-                                onClick={() => moveItineraryDayLocation(dayId, id, "up")}
+                                onClick={() => moveLocationMutation.mutate({ id, direction: "up" })}
                                 className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 <Icon name="angleDownBold" className="rotate-180" />
