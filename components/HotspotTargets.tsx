@@ -7,6 +7,8 @@ import { useProfile } from "providers/profile";
 import { useHotspotTargets } from "providers/hotspot-targets";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
+import { useQueryClient } from "@tanstack/react-query";
+import useMutation from "hooks/useMutation";
 
 type Props = {
   hotspotId: string;
@@ -15,9 +17,11 @@ type Props = {
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const { lifelist } = useProfile();
+  const queryClient = useQueryClient();
   const [view, setView] = React.useState<string>("all");
   const { trip, setSelectedSpecies, dateRangeLabel } = useTrip();
-  const { pendingLocIds, failedLocIds, allTargets, resetHotspotTargets, retryDownload } = useHotspotTargets();
+  const { pendingLocIds, failedLocIds, allTargets, retryDownload } = useHotspotTargets();
+  const [isPending, setIsPending] = React.useState(false);
 
   const isDownloading = pendingLocIds.includes(hotspotId);
   const isFailed = failedLocIds.includes(hotspotId);
@@ -34,6 +38,20 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   })();
 
   const hasResults = !!items?.length;
+
+  const resetTargetsMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${hotspotId}/reset-targets`,
+    method: "PUT",
+    onMutate: () => setIsPending(true),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+      await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/all-hotspot-targets`] });
+      setIsPending(false);
+    },
+    onError: () => {
+      setIsPending(false);
+    },
+  });
 
   if (isDownloading) {
     return (
@@ -100,10 +118,11 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
         <button
           type="button"
           className="text-sky-600 text-[12px] font-bold pl-3 py-1 inline-flex items-center gap-1"
-          onClick={() => resetHotspotTargets(hotspotId)}
+          onClick={() => resetTargetsMutation.mutate({})}
+          disabled={isPending}
         >
           <Icon name="refresh" />
-          Refresh Targets
+          {isPending ? "Refreshing..." : "Refresh Targets"}
         </button>
       </div>
     </>

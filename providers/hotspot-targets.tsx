@@ -1,9 +1,8 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import { TargetList } from "lib/types";
-import { updateHotspots, deleteTargets } from "lib/firebase";
 import useTargetsDownloadManager from "hooks/useTargetsDownloadManager";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 type ContextT = {
   failedLocIds: string[];
@@ -64,22 +63,7 @@ const useHotspotTargets = () => {
 
   const targets = cleanTargets(data || []);
 
-  const resetHotspotTargets = async (id: string) => {
-    if (!trip) return;
-    let oldTargetsId: string | undefined;
-    const newHotspots = trip.hotspots.map((it) => {
-      const { targetsId, ...rest } = it;
-      if (it.id === id) {
-        oldTargetsId = targetsId;
-        return { ...rest };
-      }
-      return it;
-    });
-    state.retryDownload(id);
-    await Promise.all([updateHotspots(trip._id, newHotspots), oldTargetsId && deleteTargets(oldTargetsId)]);
-  };
-
-  return { ...state, resetHotspotTargets, allTargets: targets };
+  return { ...state, allTargets: targets };
 };
 
 export { HotspotTargetsProvider, useHotspotTargets };

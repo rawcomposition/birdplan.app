@@ -41,18 +41,6 @@ export async function uploadFile(file: File): Promise<string | null> {
   return url;
 }
 
-export const updateHotspots = async (tripId: string, hotspots: Hotspot[]) => {
-  const user = auth.currentUser;
-  if (!user) return;
-  await fs.setDoc(fs.doc(db, "trip", tripId), { hotspots }, { merge: true });
-};
-
-export const deleteTargets = async (id: string) => {
-  const user = auth.currentUser;
-  if (!user) return;
-  await fs.deleteDoc(fs.doc(db, "targets", id));
-};
-
 type TripUpdateT = {
   tripId: string;
   name: string;
