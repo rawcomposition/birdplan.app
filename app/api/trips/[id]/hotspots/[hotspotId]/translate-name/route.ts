@@ -4,7 +4,7 @@ import * as deepl from "deepl-node";
 
 type ParamsT = { id: string; hotspotId: string };
 
-export async function PUT(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: { params: ParamsT }) {
   try {
     const { id, hotspotId } = await params;
     const session = await authenticate(request);

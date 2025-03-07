@@ -50,7 +50,7 @@ export default function useTargetsDownloadManager() {
       const token = await auth.currentUser?.getIdToken();
       const input: TargetListInput = { ...data, hotspotId: locId };
       await fetch(`/api/trips/${trip?._id}/hotspots/${locId}/targets`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token || ""}`,

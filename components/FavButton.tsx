@@ -37,7 +37,7 @@ export default function FavButton({ hotspotId, code, name, range, percent }: Pro
 
   const removeFavMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${hotspotId}/remove-species-fav`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) =>
       setTripCache((old) => ({
         ...old,

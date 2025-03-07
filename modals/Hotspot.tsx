@@ -74,7 +74,7 @@ export default function Hotspot({ hotspot }: Props) {
 
   const saveNotesMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}/notes`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: async (data: any) => {
       await setTripCache((old) => ({
         ...old,
@@ -91,7 +91,7 @@ export default function Hotspot({ hotspot }: Props) {
 
   const translateMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}/translate-name`,
-    method: "PUT",
+    method: "PATCH",
     showToastError: true,
     onSuccess: (data: any) => {
       const { originalName, translatedName } = data;
@@ -114,7 +114,7 @@ export default function Hotspot({ hotspot }: Props) {
 
   const resetMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}/reset-name`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: async () => {
       await setTripCache((old) => ({
         ...old,

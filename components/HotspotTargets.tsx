@@ -41,7 +41,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   const resetTargetsMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${hotspotId}/reset-targets`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: () => setIsPending(true),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });

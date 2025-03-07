@@ -30,7 +30,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
 
   const addStarMutation = useMutation({
     url: `/api/trips/${trip?._id}/targets/add-star`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data) =>
       setTripCache((old) => ({
         ...old,
@@ -46,7 +46,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
 
   const removeStarMutation = useMutation({
     url: `/api/trips/${trip?._id}/targets/remove-star`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data) =>
       setTripCache((old) => ({
         ...old,
@@ -62,7 +62,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
 
   const setNotesMutation = useMutation({
     url: `/api/trips/${trip?._id}/targets/set-notes`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) =>
       setTripCache((old) => ({
         ...old,

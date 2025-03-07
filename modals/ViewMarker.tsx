@@ -40,7 +40,7 @@ export default function ViewMarker({ marker }: Props) {
 
   const saveNotesMutation = useMutation({
     url: `/api/trips/${trip?._id}/markers/${id}/notes`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) => {
       setTripCache((old) => ({
         ...old,

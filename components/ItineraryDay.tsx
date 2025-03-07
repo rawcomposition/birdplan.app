@@ -50,7 +50,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
 
   const removeLocationMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) => {
       setTripCache((old) => ({
         ...old,
@@ -72,7 +72,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
 
   const moveLocationMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}/move-location`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) => {
       setTripCache((old) => ({
         ...old,
@@ -97,7 +97,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
 
   const setNotesMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}/set-notes`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) => {
       setTripCache((old) => ({
         ...old,

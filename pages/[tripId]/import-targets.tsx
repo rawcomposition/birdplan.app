@@ -55,7 +55,7 @@ export default function ImportTargets() {
 
   const mutation = useMutation({
     url: `/api/trips/${tripId}/targets`,
-    method: "PUT",
+    method: "PATCH",
     onSuccess: () => {
       router.push(redirectUrl);
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${tripId}/targets`] });

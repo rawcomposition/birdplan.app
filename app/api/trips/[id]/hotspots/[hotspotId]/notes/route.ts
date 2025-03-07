@@ -4,7 +4,7 @@ import { connect, Trip } from "lib/db";
 type ParamsT = { id: string; hotspotId: string };
 type BodyT = { notes: string };
 
-export async function PUT(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: { params: ParamsT }) {
   try {
     const { id, hotspotId } = await params;
     const session = await authenticate(request);

@@ -28,7 +28,7 @@ export default function Itinerary() {
 
   const setStartDateMutation = useMutation({
     url: `/api/trips/${trip?._id}/set-start-date`,
-    method: "PUT",
+    method: "PATCH",
     onMutate: (data: any) =>
       setTripCache((old) => ({
         ...old,

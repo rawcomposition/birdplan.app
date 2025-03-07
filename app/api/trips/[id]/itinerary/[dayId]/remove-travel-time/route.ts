@@ -4,7 +4,7 @@ import { connect, Trip } from "lib/db";
 type ParamsT = { id: string; dayId: string };
 type BodyT = { id: string };
 
-export async function PUT(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: { params: ParamsT }) {
   try {
     const { id, dayId } = await params;
     const data: BodyT = await request.json();
