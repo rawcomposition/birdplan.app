@@ -13,7 +13,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { months } from "lib/helpers";
 import Button from "components/Button";
-import { updateTrip } from "lib/firebase";
 import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,7 +21,6 @@ export default function TripSettings() {
   const { trip, is404, isOwner } = useTrip();
   const [startMonth, setStartMonth] = React.useState<Option>();
   const [endMonth, setEndMonth] = React.useState<Option>();
-  const [submitting, setSubmitting] = React.useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -42,9 +40,26 @@ export default function TripSettings() {
     },
   });
 
+  const updateTripMutation = useMutation({
+    url: `/api/trips/${trip?._id}`,
+    showToastError: true,
+    method: "PATCH",
+    onSuccess: ({ hasChangedDates }: any) => {
+      toast.success("Trip updated");
+      queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+      if (hasChangedDates) {
+        router.push(`/${trip?._id}/import-targets`);
+        queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/targets`] });
+        queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/all-hotspot-targets`] });
+      } else {
+        router.push(`/${trip?._id}`);
+      }
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitting(true);
     const form = e.currentTarget;
     const name = (form.name as any).value;
     if (!name) return toast.error("Please enter a name");
@@ -52,11 +67,7 @@ export default function TripSettings() {
     if (!trip) return;
     const start = Number(startMonth.value);
     const end = Number(endMonth.value);
-    const hasTimeframeChanged = start !== trip.startMonth || end !== trip.endMonth;
-    await updateTrip({ tripId: trip.id, name, startMonth: start, endMonth: end });
-    toast.success("Trip updated");
-    setSubmitting(false);
-    router.push(hasTimeframeChanged ? `/${trip.id}/import-targets` : `/${trip.id}`);
+    updateTripMutation.mutate({ name, startMonth: start, endMonth: end });
   };
 
   const handleDelete = async () => {
@@ -118,8 +129,8 @@ export default function TripSettings() {
                 <Button href="/trips" color="gray">
                   Cancel
                 </Button>
-                <Button type="submit" color="primary" disabled={submitting}>
-                  {submitting ? "Saving..." : "Save Changes"}
+                <Button type="submit" color="primary" disabled={updateTripMutation.isPending}>
+                  {updateTripMutation.isPending ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
               {isOwner && (
