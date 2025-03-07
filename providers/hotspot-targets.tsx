@@ -1,7 +1,7 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import { TargetList } from "lib/types";
-import { updateHotspots, subscribeToHotspotTargets, deleteTargets } from "lib/firebase";
+import { updateHotspots, deleteTargets } from "lib/firebase";
 import useTargetsDownloadManager from "hooks/useTargetsDownloadManager";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 

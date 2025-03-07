@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { TargetList, TargetListInput } from "lib/types";
-import { addTargets, auth, updateHotspots } from "lib/firebase";
+import { auth } from "lib/firebase";
 import { useTrip } from "providers/trip";
 import { useWindowActive } from "hooks/useWindowActive";
-import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
 
 const CUTOFF = "5"; // Percent
