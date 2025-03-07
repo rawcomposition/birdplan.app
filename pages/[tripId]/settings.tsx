@@ -13,21 +13,34 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { months } from "lib/helpers";
 import Button from "components/Button";
-import { updateTrip, deleteTrip } from "lib/firebase";
+import { updateTrip } from "lib/firebase";
 import NotFound from "components/NotFound";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function TripSettings() {
-  const { trip, is404 } = useTrip();
+  const { trip, is404, isOwner } = useTrip();
   const [startMonth, setStartMonth] = React.useState<Option>();
   const [endMonth, setEndMonth] = React.useState<Option>();
   const [submitting, setSubmitting] = React.useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   React.useEffect(() => {
     if (!trip) return;
     setEndMonth({ value: trip.endMonth.toString(), label: months[trip.endMonth - 1] });
     setStartMonth({ value: trip.startMonth.toString(), label: months[trip.startMonth - 1] });
   }, [trip]);
+
+  const deleteTripMutation = useMutation({
+    url: `/api/trips/${trip?._id}`,
+    showToastError: true,
+    method: "DELETE",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
+      router.push("/trips");
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,8 +62,7 @@ export default function TripSettings() {
   const handleDelete = async () => {
     if (!trip) return;
     if (!confirm("Are you sure you want to delete this trip?")) return;
-    deleteTrip(trip.id);
-    router.push("/trips");
+    deleteTripMutation.mutate({});
   };
 
   if (is404) return <NotFound />;
@@ -64,7 +76,7 @@ export default function TripSettings() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Link
-          href={`/${trip?.id}`}
+          href={`/${trip?._id}`}
           className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
         >
           ← Back to trip
@@ -110,11 +122,18 @@ export default function TripSettings() {
                   {submitting ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
-              <div className="mt-8">
-                <button type="button" onClick={handleDelete} className="text-red-500 hover:text-red-600 text-sm">
-                  Delete Trip
-                </button>
-              </div>
+              {isOwner && (
+                <div className="mt-8">
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="text-red-500 hover:text-red-600 text-sm"
+                    disabled={deleteTripMutation.isPending}
+                  >
+                    {deleteTripMutation.isPending ? "Deleting..." : "Delete Trip"}
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

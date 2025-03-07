@@ -54,13 +54,6 @@ export const updateTrip = async ({ tripId, name, startMonth, endMonth }: TripUpd
   await fs.setDoc(fs.doc(db, "trip", tripId), { name, startMonth, endMonth }, { merge: true });
   return true;
 };
-
-export const deleteTrip = async (id: string) => {
-  const user = auth.currentUser;
-  if (!user) return;
-  await fs.deleteDoc(fs.doc(db, "trip", id));
-};
-
 export const subscribeToProfile = (callback: (profile: Profile) => void): (() => void) => {
   const user = auth.currentUser;
   if (!user) return () => {};

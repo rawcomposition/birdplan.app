@@ -18,17 +18,17 @@ export default function TripOptionsDropdown({ className }: Props) {
   const links = [
     {
       name: !!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List",
-      href: `/import-lifelist?tripId=${trip?.id}&back=true`,
+      href: `/import-lifelist?tripId=${trip?._id}&back=true`,
       icon: "feather",
     },
     {
       name: !!targets?.items?.length ? "Update Targets" : "Import Targets",
-      href: `/${trip?.id}/import-targets?redirect=targets&back=true`,
+      href: `/${trip?._id}/import-targets?redirect=targets&back=true`,
       icon: "bullseye",
     },
     {
       name: "Bird Quiz",
-      href: `/${trip?.id}/quiz`,
+      href: `/${trip?._id}/quiz`,
       icon: "questionMark",
     },
     {
@@ -39,12 +39,12 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Trip Settings",
-      href: `/${trip?.id}/settings`,
+      href: `/${trip?._id}/settings`,
       icon: "cog",
     },
     {
       name: "Export KML",
-      href: `/api/trips/${trip?.id}/export?profileId=${id}`,
+      href: `/api/trips/${trip?._id}/export?profileId=${id}`,
       icon: "export",
     },
   ];
