@@ -14,24 +14,13 @@ type Props = {
 };
 
 export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
-  const { trip, calcTravelTime, setTripCache } = useTrip();
+  const { trip, setTripCache } = useTrip();
   const locations = trip?.itinerary?.find((day) => day.id === dayId)?.locations || [];
   const thisLocationIndex = locations.findIndex((it) => it.id === id);
   const location1 = locations[thisLocationIndex - 1];
   const location2 = locations[thisLocationIndex]; // current location
   const travelData = location2?.travel;
   const queryClient = useQueryClient();
-
-  const calculate = async (method: "walking" | "driving" | "cycling") => {
-    await calcTravelTime({
-      dayId,
-      id,
-      locationId1: location1?.locationId,
-      locationId2: location2?.locationId,
-      method,
-      save: true,
-    });
-  };
 
   const removeTravelTimeMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${dayId}/remove-travel-time`,
@@ -55,6 +44,31 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
       }));
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
+    },
+  });
+
+  const calcTravelTimeMutation = useMutation({
+    url: `/api/trips/${trip?._id}/itinerary/${dayId}/calc-travel-time`,
+    mutationKey: [`/api/trips/${trip?._id}/itinerary/${dayId}/calc-travel-time`],
+    method: "PUT",
+    onMutate: (data: any) => {
+      setTripCache((old) => ({
+        ...old,
+        itinerary: old.itinerary?.map((it) =>
+          it.id === dayId
+            ? {
+                ...it,
+                locations: it.locations?.map((loc) => (loc.id === data.id ? { ...loc, travel: undefined } : loc)),
+              }
+            : it
+        ),
+      }));
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
     },
     onError: (error, data, context: any) => {
@@ -111,7 +125,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
               <Menu.Item>
                 <button
                   type="button"
-                  onClick={() => calculate("walking")}
+                  onClick={() => calcTravelTimeMutation.mutate({ id, method: "walking" })}
                   className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
                 >
                   <Icon name="walking" /> Walk
@@ -120,7 +134,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
               <Menu.Item>
                 <button
                   type="button"
-                  onClick={() => calculate("driving")}
+                  onClick={() => calcTravelTimeMutation.mutate({ id, method: "driving" })}
                   className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
                 >
                   <Icon name="car" /> Drive
@@ -129,7 +143,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
               <Menu.Item>
                 <button
                   type="button"
-                  onClick={() => calculate("cycling")}
+                  onClick={() => calcTravelTimeMutation.mutate({ id, method: "cycling" })}
                   className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
                 >
                   <Icon name="cycling" /> Bike

@@ -27,6 +27,11 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     select: (mutation) => mutation?.state.status === "pending",
   })?.some(Boolean);
 
+  const isCalculatingTravelTime = useMutationState({
+    filters: { mutationKey: [`/api/trips/${trip?._id}/itinerary/${day.id}/calc-travel-time`] },
+    select: (mutation) => mutation?.state.status === "pending",
+  })?.some(Boolean);
+
   const removeDayMutation = useMutation({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}`,
     method: "DELETE",
@@ -99,6 +104,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     moveLocationMutation.isPending ||
     removeLocationMutation.isPending ||
     removeDayMutation.isPending ||
+    isCalculatingTravelTime ||
     isAddingLocation ||
     isFetchingTrip;
 

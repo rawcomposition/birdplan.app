@@ -1,10 +1,9 @@
 import React from "react";
-import { Trip, TargetList, CustomMarker, Invite, TravelData, HotspotInput } from "lib/types";
+import { Trip, TargetList, CustomMarker, Invite, HotspotInput } from "lib/types";
 import { subscribeToTripInvites, updateItinerary, deleteInvite, removeUserFromTrip, auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
-import { mostFrequentValue, nanoId, fullMonths, months } from "lib/helpers";
-import { getTravelTime } from "lib/mapbox";
+import { fullMonths, months } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import useMutation from "hooks/useMutation";
@@ -197,95 +196,6 @@ const useTrip = () => {
     await updateItinerary(trip.id, newItinerary);
   };
 
-  const markTravelTimeDeleted = async (dayId: string, id: string) => {
-    if (!trip) return;
-    const newItinerary =
-      trip.itinerary?.map((it) => {
-        if (it.id === dayId) {
-          const locations = it.locations?.map((it) => {
-            if (it.id === id) return { ...it, travel: it.travel ? { ...it.travel, isDeleted: true } : undefined };
-            return it;
-          });
-          return { ...it, locations };
-        }
-        return it;
-      }) || [];
-    await updateItinerary(trip.id, newItinerary);
-  };
-
-  const saveItineraryTravelData = async (dayId: string, id: string, data: TravelData) => {
-    if (!trip) return;
-    const newItinerary =
-      trip.itinerary?.map((it) => {
-        if (it.id === dayId) {
-          const locations = it.locations?.map((it) => {
-            if (it.id === id) return { ...it, travel: data };
-            return it;
-          });
-          return { ...it, locations };
-        }
-        return it;
-      }) || [];
-    await updateItinerary(trip.id, newItinerary);
-  };
-
-  type CalcTravelTimePropsType = {
-    dayId: string;
-    id: string;
-    locationId1: string;
-    locationId2: string;
-    method: "walking" | "driving" | "cycling";
-    save?: boolean;
-  };
-
-  const calcTravelTime = async ({ dayId, id, locationId1, locationId2, method, save }: CalcTravelTimePropsType) => {
-    const location1 =
-      trip?.hotspots?.find((h) => h.id === locationId1 || "") || trip?.markers?.find((m) => m.id === locationId1 || "");
-
-    const location2 =
-      trip?.hotspots?.find((h) => h.id === locationId2 || "") || trip?.markers?.find((m) => m.id === locationId2 || "");
-
-    if (!location1 || !location2) {
-      toast.error(`Unable to calculate travel time to ${location2?.name || "unknown location"}`);
-      return;
-    }
-
-    if (locationId1 && locationId1 === locationId2) {
-      const travelData = {
-        distance: 0,
-        time: 0,
-        method,
-        locationId: locationId1,
-      };
-      if (save) {
-        await saveItineraryTravelData(dayId, id, travelData);
-      }
-      return travelData;
-    }
-
-    console.log(`Calculating travel time from ${location1.name} to ${location2.name}`);
-    const { lat: lat1, lng: lng1 } = location1;
-    const { lat: lat2, lng: lng2 } = location2;
-    try {
-      const data = await getTravelTime({ method, lat1, lng1, lat2, lng2 });
-      if (!data || !data.distance || !data.time) throw new Error("No data");
-      const travelData = {
-        distance: data.distance,
-        time: data.time,
-        method,
-        locationId: locationId1,
-      };
-
-      if (save) {
-        await saveItineraryTravelData(dayId, id, travelData);
-      }
-      return travelData;
-    } catch (e) {
-      toast.error(`Unable to calculate travel time to ${location2?.name || "Unknown location"}`);
-      return null;
-    }
-  };
-
   const removeInvite = async (id: string, uid?: string) => {
     if (!trip) return;
     await deleteInvite(id);
@@ -299,8 +209,6 @@ const useTrip = () => {
     appendHotspot,
     appendMarker,
     setItineraryDayNotes,
-    markTravelTimeDeleted,
-    calcTravelTime,
     removeInvite,
     setTripCache,
   };
