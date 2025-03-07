@@ -1,6 +1,6 @@
 import React from "react";
 import { Trip, TargetList, CustomMarker, Invite, HotspotInput } from "lib/types";
-import { subscribeToTripInvites, updateItinerary, deleteInvite, removeUserFromTrip, auth } from "lib/firebase";
+import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
 import { fullMonths, months } from "lib/helpers";
@@ -23,8 +23,8 @@ type HaloT = {
 type ContextT = {
   trip: Trip | null;
   isFetching: boolean;
-  invites: Invite[];
   targets: TargetList | null;
+  invites: Invite[] | null;
   selectedSpecies?: SelectedSpecies;
   canEdit: boolean;
   isOwner: boolean;
@@ -41,10 +41,10 @@ const initialState = {
   trip: null,
   isFetching: false,
   targets: null,
+  invites: null,
   canEdit: false,
   isOwner: false,
   is404: false,
-  invites: [],
   dateRangeLabel: "",
 };
 
@@ -77,13 +77,18 @@ const TripProvider = ({ children }: Props) => {
     enabled: !!id && !!auth.currentUser,
   });
 
-  const [invites, setInvites] = React.useState<Invite[]>([]);
-  const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
-  const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
-  const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
   const { user } = useUser();
   const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
+
+  const { data: invites } = useQuery<Invite[]>({
+    queryKey: [`/api/trips/${id}/invites`],
+    enabled: !!id && !!auth.currentUser && !!canEdit,
+  });
+
+  const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
+  const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
+  const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
   const is404 = !!auth.currentUser && !!id && !trip && !isLoading;
 
   const dateRangeLabel =
@@ -97,21 +102,13 @@ const TripProvider = ({ children }: Props) => {
     return () => setSelectedSpecies(undefined);
   }, [id, pathname]);
 
-  React.useEffect(() => {
-    if (!id || !isOwner) return;
-    const unsubscribe = subscribeToTripInvites(id, (invites) => setInvites(invites));
-    return () => {
-      unsubscribe();
-      setInvites([]);
-    };
-  }, [id, isOwner]);
-
   return (
     <TripContext.Provider
       value={{
         setSelectedSpecies,
         setSelectedMarkerId,
         setHalo,
+        invites: invites || null,
         canEdit,
         isOwner,
         is404,
@@ -121,7 +118,6 @@ const TripProvider = ({ children }: Props) => {
         selectedSpecies,
         selectedMarkerId,
         halo,
-        invites,
         dateRangeLabel,
       }}
     >
@@ -186,30 +182,10 @@ const useTrip = () => {
   const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
   const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
 
-  const setItineraryDayNotes = async (dayId: string, notes: string) => {
-    if (!trip) return;
-    const newItinerary =
-      trip.itinerary?.map((it) => {
-        if (it.id === dayId) return { ...it, notes };
-        return it;
-      }) || [];
-    await updateItinerary(trip.id, newItinerary);
-  };
-
-  const removeInvite = async (id: string, uid?: string) => {
-    if (!trip) return;
-    await deleteInvite(id);
-    if (uid) {
-      await removeUserFromTrip(trip.id, uid);
-    }
-  };
-
   return {
     ...state,
     appendHotspot,
     appendMarker,
-    setItineraryDayNotes,
-    removeInvite,
     setTripCache,
   };
 };

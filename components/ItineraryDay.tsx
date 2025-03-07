@@ -18,7 +18,7 @@ type PropsT = {
 };
 
 export default function ItineraryDay({ day, isEditing }: PropsT) {
-  const { trip, isFetching: isFetchingTrip, setItineraryDayNotes, setTripCache } = useTrip();
+  const { trip, isFetching: isFetchingTrip, setTripCache } = useTrip();
   const { open } = useModal();
   const queryClient = useQueryClient();
 
@@ -95,6 +95,23 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     },
   });
 
+  const setNotesMutation = useMutation({
+    url: `/api/trips/${trip?._id}/itinerary/${day.id}/set-notes`,
+    method: "PUT",
+    onMutate: (data: any) => {
+      setTripCache((old) => ({
+        ...old,
+        itinerary: old.itinerary?.map((it) => (it.id === day.id ? { ...it, notes: data.notes } : it)) || [],
+      }));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
+    },
+  });
+
   const handleRemoveDay = () => {
     if (day.locations.length && !confirm("Are you sure you want to remove this day?")) return;
     removeDayMutation.mutate(day.id);
@@ -121,7 +138,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
               </div>
               <InputNotesSimple
                 value={notes}
-                onBlur={(value) => setItineraryDayNotes(dayId, value)}
+                onBlur={(value) => setNotesMutation.mutate({ notes: value })}
                 className="mt-1 mb-4"
                 canEdit={isEditing}
               />

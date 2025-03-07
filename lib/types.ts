@@ -149,13 +149,18 @@ export type Option = {
 };
 
 export type Invite = {
-  id: string;
+  _id: string;
   email: string;
   tripId: string;
   ownerId: string;
   accepted: boolean;
   name?: string;
   uid?: string;
+};
+
+export type InviteInput = {
+  email: string;
+  tripId: string;
 };
 
 export type RecentChecklist = {

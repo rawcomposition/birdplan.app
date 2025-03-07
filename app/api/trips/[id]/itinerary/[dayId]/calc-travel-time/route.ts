@@ -42,6 +42,6 @@ export async function PUT(request: Request, { params }: { params: ParamsT }) {
 
     return Response.json({});
   } catch (error: any) {
-    return APIError(error?.message || "Error removing location", 500);
+    return APIError(error?.message || "Error calculating travel time", 500);
   }
 }
