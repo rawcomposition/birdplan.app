@@ -17,7 +17,6 @@ export async function GET(request: Request, { params }: { params: ParamsT }) {
 
     if (!trip) return APIError("Trip not found", 404);
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
-    if (!invites) return APIError("Invites not found", 404);
 
     return Response.json(invites);
   } catch (error: any) {

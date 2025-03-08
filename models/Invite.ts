@@ -16,7 +16,8 @@ const InviteSchema = new Schema(fields, {
   timestamps: true,
 });
 
-InviteSchema.index({ tripId: 1, createdAt: -1 });
+InviteSchema.index({ tripId: 1, createdAt: -1 }); // share modal
+InviteSchema.index({ tripId: 1, uid: 1 }); // trip editors endpoint
 
 const InviteModel = (models.Invite as Model<Invite>) || model<Invite>("Invite", InviteSchema);
 

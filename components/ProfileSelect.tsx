@@ -1,24 +1,23 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { useTrip } from "providers/trip";
 import { useUser } from "providers/user";
 import Icon from "components/Icon";
+import { Editor } from "lib/types";
 
 type PropsT = {
   value?: string;
   onChange: (value: string) => void;
+  editors?: Editor[];
 };
 
-export default function ProfileSelect({ value, onChange }: PropsT) {
-  const { invites, trip } = useTrip();
+export default function ProfileSelect({ value, onChange, editors }: PropsT) {
   const { user } = useUser();
 
   const options =
-    trip?.userIds?.map((uid) => {
-      const isMe = uid === user?.uid;
-      const invite = invites?.find((it) => it.uid === uid);
-      const name = isMe ? `${user?.displayName} (me)` || "Me" : invite?.name || invite?.email || `User ${uid}`;
-      return { name, uid };
+    editors?.map((editor) => {
+      const isMe = editor.uid === user?.uid;
+      const name = isMe ? `${user?.displayName} (me)` || "Me" : editor.name || `User ${editor.uid}`;
+      return { name, uid: editor.uid };
     }) || [];
 
   const selectedOption = options.find((it) => it.uid === value);

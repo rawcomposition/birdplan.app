@@ -161,6 +161,12 @@ export type InviteInput = {
   tripId: string;
 };
 
+export type Editor = {
+  uid: string;
+  name: string;
+  lifelist: string[];
+};
+
 export type RecentChecklist = {
   locId: string;
   subId: string;

@@ -1,7 +1,6 @@
 import React from "react";
 import { useUser } from "providers/user";
 import { Profile } from "lib/types";
-import { setProfileValue } from "lib/firebase";
 import { useQuery } from "@tanstack/react-query";
 
 interface ContextT extends Profile {

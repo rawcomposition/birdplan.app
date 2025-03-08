@@ -12,12 +12,12 @@ import { useUser } from "providers/user";
 import Input from "components/Input";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useProfile } from "providers/profile";
-import useProfiles from "hooks/useProfiles";
 import Button from "components/Button";
 import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
-
+import { useQuery } from "@tanstack/react-query";
+import { Editor } from "lib/types";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {
@@ -36,8 +36,11 @@ export default function TripTargets() {
 
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
-  const { profiles } = useProfiles(trip?.userIds && trip.userIds.length > 1 ? trip.userIds : undefined);
-  const lifelist = uid === myUid ? myLifelist : profiles?.find((it) => it.id === uid)?.lifelist || [];
+  const { data: editors } = useQuery<Editor[]>({
+    queryKey: [`/api/trips/${trip?._id}/editors`],
+    enabled: !!trip?._id,
+  });
+  const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -94,7 +97,7 @@ export default function TripTargets() {
           <div className="h-full overflow-auto w-full">
             <div className="h-full grow flex sm:relative flex-col w-full">
               <div className="h-full w-full mx-auto max-w-6xl">
-                <ProfileSelect value={uid} onChange={setUid} />
+                <ProfileSelect value={uid} onChange={setUid} editors={editors} />
                 {!!targetSpecies?.length && (
                   <div className="flex items-center gap-2 my-2 sm:my-4 px-2 sm:px-0">
                     <Input
