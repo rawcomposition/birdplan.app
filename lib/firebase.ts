@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import * as fs from "firebase/firestore";
-import { Profile, Hotspot } from "lib/types";
+import { Profile } from "lib/types";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
@@ -40,23 +40,6 @@ export async function uploadFile(file: File): Promise<string | null> {
   const url = await getDownloadURL(snapshot.ref);
   return url;
 }
-
-type TripUpdateT = {
-  tripId: string;
-  name: string;
-  startMonth: number;
-  endMonth: number;
-};
-
-export const subscribeToProfile = (callback: (profile: Profile) => void): (() => void) => {
-  const user = auth.currentUser;
-  if (!user) return () => {};
-  return fs.onSnapshot(fs.doc(db, "profile", user.uid), (doc) => {
-    if (doc.exists()) {
-      callback({ id: doc.id, ...doc.data() } as Profile);
-    }
-  });
-};
 
 export const subscribeToProfiles = (ids: string[], callback: (profiles: Profile[]) => void): (() => void) => {
   return fs.onSnapshot(fs.query(fs.collection(db, "profile"), fs.where(fs.documentId(), "in", ids)), (snapshot) => {

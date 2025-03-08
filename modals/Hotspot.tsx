@@ -92,7 +92,6 @@ export default function Hotspot({ hotspot }: Props) {
   const translateMutation = useMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}/translate-name`,
     method: "PATCH",
-    showToastError: true,
     onSuccess: (data: any) => {
       const { originalName, translatedName } = data;
       if (!translatedName || translatedName === originalName) {

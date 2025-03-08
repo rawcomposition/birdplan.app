@@ -1,14 +1,13 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import clsx from "clsx";
-import { useProfile } from "providers/profile";
 import Icon from "components/Icon";
 import MerlinkLink from "components/MerlinLink";
 import Button from "components/Button";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
-import { Target, Trip } from "lib/types";
+import { Profile, Target } from "lib/types";
 import { useSpeciesImages } from "providers/species-images";
 import BestTargetHotspots from "components/BestTargetHotspots";
 import useMutation from "hooks/useMutation";
@@ -23,7 +22,6 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const { trip, canEdit, setSelectedSpecies, setTripCache } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
-  const { addToLifeList } = useProfile();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
   const queryClient = useQueryClient();
@@ -76,9 +74,31 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
     },
   });
 
+  const seenMutation = useMutation({
+    url: `/api/my-profile/add-to-lifelist`,
+    method: "POST",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+    },
+    onMutate: async (data: any) => {
+      await queryClient.cancelQueries({ queryKey: ["/api/profile"] });
+      const prevData = queryClient.getQueryData([`/api/profile`]);
+
+      queryClient.setQueryData<Profile | undefined>([`/api/profile`], (old) => {
+        if (!old) return old;
+        return { ...old, lifelist: [...old.lifelist, data.code] };
+      });
+
+      return { prevData };
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/profile`], context?.prevData);
+    },
+  });
+
   const handleSeen = (code: string, name: string) => {
     if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
-    addToLifeList(code);
+    seenMutation.mutate({ code });
   };
 
   const onToggleExpand = (code: string) => {

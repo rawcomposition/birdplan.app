@@ -32,7 +32,6 @@ export default function TripSettings() {
 
   const deleteTripMutation = useMutation({
     url: `/api/trips/${trip?._id}`,
-    showToastError: true,
     method: "DELETE",
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
@@ -42,7 +41,6 @@ export default function TripSettings() {
 
   const updateTripMutation = useMutation({
     url: `/api/trips/${trip?._id}`,
-    showToastError: true,
     method: "PATCH",
     onSuccess: ({ hasChangedDates }: any) => {
       toast.success("Trip updated");

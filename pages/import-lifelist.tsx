@@ -10,10 +10,36 @@ import Footer from "components/Footer";
 import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
 import Link from "next/link";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ImportLifelist() {
-  const { setLifelist, setExceptions, exceptions } = useProfile();
+  const { exceptions } = useProfile();
+  const queryClient = useQueryClient();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const setExceptionsMutation = useMutation({
+    url: "/api/my-profile",
+    method: "PATCH",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+    },
+  });
+
+  const setLifelistMutation = useMutation({
+    url: "/api/my-profile",
+    method: "PATCH",
+    onMutate: () => {
+      toast.loading("Importing life list...", { id: "import-lifelist" });
+    },
+    onSettled: () => {
+      toast.dismiss("import-lifelist");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+      router.push(redirectUrl);
+    },
+  });
 
   const router = useRouter();
   const { tripId } = router.query;
@@ -32,25 +58,7 @@ export default function ImportLifelist() {
             .filter((it: any) => it.Countable === "1" && it.Category === "species")
             .map((it: any) => it["Scientific Name"]);
           fileInputRef.current?.value && (fileInputRef.current.value = "");
-
-          // Convert to species codes
-          const toastId = toast.loading("Importing...");
-          const res = await fetch("/api/lifelist-codes", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(sciNames),
-          });
-          const codes = await res.json();
-          if (Array.isArray(codes)) {
-            setLifelist(codes);
-            toast.success("Life list uploaded");
-          } else {
-            toast.error("Error uploading life list");
-          }
-          toast.dismiss(toastId);
-          router.push(redirectUrl);
+          setLifelistMutation.mutate({ lifelist: sciNames });
         },
       });
     } catch (error) {
@@ -98,7 +106,11 @@ export default function ImportLifelist() {
             <input
               type="text"
               className="input text-xs"
-              onBlur={(e) => setExceptions(e.target.value)}
+              onBlur={(e) =>
+                setExceptionsMutation.mutate({
+                  exceptions: e.target.value?.split(",").map((it) => it.trim().toLowerCase()) || [],
+                })
+              }
               defaultValue={exceptions?.join(", ")}
             />
           </div>

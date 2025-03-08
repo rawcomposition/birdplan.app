@@ -1,12 +1,10 @@
 import { MarkerIconT } from "lib/icons";
 
 export type Profile = {
-  id: string;
+  _id: string;
+  uid: string;
   lifelist: string[];
   exceptions?: string[];
-  radius: number;
-  lat?: number;
-  lng?: number;
   dismissedNoticeId?: string;
 };
 
