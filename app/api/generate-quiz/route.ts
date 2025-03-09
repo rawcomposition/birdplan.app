@@ -1,17 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "lib/firebaseAdmin";
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+import { APIError } from "lib/api";
+import { connect, QuizImages } from "lib/db";
+import { QuizImages as QuizImagesT } from "lib/types";
+export async function POST(request: Request) {
   try {
-    const { codes } = req.body;
+    const { codes }: { codes: string[] } = await request.json();
 
-    const imagesQuery = await db.collection("quizImages").where("code", "in", codes).get();
-    const savedImages = imagesQuery.docs.map((doc) => doc.data());
+    await connect();
+
+    const savedImages = await QuizImages.find({ code: { $in: codes } }).lean();
 
     const steps = await Promise.all(
       codes.map(async (code: string) => {
         try {
-          let savedItem = savedImages.find((it) => it.code === code);
+          let savedItem: QuizImagesT | null = savedImages.find((it) => it.code === code) || null;
           if (!savedItem) {
             const res = await fetch(
               `https://search.macaulaylibrary.org/api/v1/search?count=20&sort=rating_rank_desc&mediaType=p&regionCode=&taxonCode=${code}&taxaLocale=en`
@@ -21,13 +22,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             const ids = results.map((it: any) => it.assetId);
             const name = results[0].commonName;
             const newItem = { code, ids, name };
-            await db.collection("quizImages").doc(code).set(newItem);
-            savedItem = newItem;
+            const item = await QuizImages.create(newItem);
+            savedItem = item.toObject();
           }
-          const mlId = savedItem.ids[Math.floor(Math.random() * savedItem.ids.length)];
+          const mlId = savedItem?.ids[Math.floor(Math.random() * savedItem?.ids.length)];
           return {
-            name: savedItem.name,
-            code: savedItem.code,
+            name: savedItem?.name,
+            code: savedItem?.code,
             mlId,
             guessName: "",
             isCorrect: false,
@@ -40,9 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const filteredSteps = steps.filter((it) => it !== null);
 
-    res.status(200).json(filteredSteps);
+    return Response.json(filteredSteps);
   } catch (error: any) {
-    console.log(error);
-    res.status(500).json({ error: error.message });
+    return APIError(error?.message || "Error creating trip", 500);
   }
 }

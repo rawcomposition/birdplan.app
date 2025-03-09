@@ -230,3 +230,10 @@ export type GooglePlaceT = {
   lng: number;
   type?: string;
 };
+
+export type QuizImages = {
+  _id: string;
+  code: string;
+  ids: string[];
+  name: string;
+};

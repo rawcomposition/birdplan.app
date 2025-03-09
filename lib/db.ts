@@ -2,6 +2,7 @@ import Trip from "models/Trip";
 import TargetList from "models/TargetList";
 import Invite from "models/Invite";
 import Profile from "models/Profile";
+import QuizImages from "models/QuizImages";
 
 import mongoose from "mongoose";
 
@@ -48,4 +49,4 @@ export async function connect() {
   return cached.conn;
 }
 
-export { Trip, TargetList, Invite, Profile };
+export { Trip, TargetList, Invite, Profile, QuizImages };
