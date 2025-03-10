@@ -237,3 +237,9 @@ export type QuizImages = {
   ids: string[];
   name: string;
 };
+
+export type Vault = {
+  _id: string;
+  key: string;
+  value: string;
+};
