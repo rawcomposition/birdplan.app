@@ -12,8 +12,9 @@ import { get } from "lib/helpers";
 import { toast } from "react-hot-toast";
 import ErrorBoundary from "components/ErrorBoundary";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { useEffect } from "react";
+import * as idbKeyval from "idb-keyval";
 
 let queryClient: QueryClient | undefined;
 
@@ -25,7 +26,7 @@ export function initQueryClient() {
     defaultOptions: {
       queries: {
         retry: 1,
-        gcTime: 7 * 24 * 60 * 60 * 1000, // 7 days
+        gcTime: 24 * 24 * 60 * 60 * 1000, // 24 days
         staleTime: 0,
         queryFn: async ({ queryKey, meta }) =>
           get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
@@ -46,15 +47,42 @@ export function initQueryClient() {
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const localStoragePersister = createSyncStoragePersister({
-        storage: window.localStorage,
+      // Create a simple storage interface using idb-keyval
+      const idbStorage = {
+        async getItem(key: string) {
+          try {
+            return await idbKeyval.get(key);
+          } catch (error) {
+            console.error("Error getting item from IndexedDB", error);
+            return null;
+          }
+        },
+        async setItem(key: string, value: string) {
+          try {
+            await idbKeyval.set(key, value);
+          } catch (error) {
+            console.error("Error setting item in IndexedDB", error);
+          }
+        },
+        async removeItem(key: string) {
+          try {
+            await idbKeyval.del(key);
+          } catch (error) {
+            console.error("Error removing item from IndexedDB", error);
+          }
+        },
+      };
+
+      const asyncPersister = createAsyncStoragePersister({
+        storage: idbStorage,
         key: "BIRDPLAN_QUERY_CACHE",
       });
 
       persistQueryClient({
         queryClient: queryClient!,
-        persister: localStoragePersister,
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        persister: asyncPersister,
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        buster: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0",
       });
     }
   }, []);
