@@ -4,16 +4,26 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
-import { eBirdHotspot } from "lib/types";
+import { eBirdHotspot, HotspotInput } from "lib/types";
 import Icon from "components/Icon";
 import clsx from "clsx";
+import useTripMutation from "hooks/useTripMutation";
 
 export default function AddHotspot() {
   const [query, setQuery] = React.useState("");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const { open } = useModal();
-  const { trip, appendHotspot } = useTrip();
+  const { trip } = useTrip();
   const { hotspots } = useFetchHotspots(true);
+
+  const addHotspotMutation = useTripMutation<HotspotInput>({
+    url: `/api/trips/${trip?._id}/hotspots`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: [...(old.hotspots || []), input],
+    }),
+  });
 
   const results =
     query?.length > 1
@@ -26,7 +36,7 @@ export default function AddHotspot() {
 
   const selectHotspot = (hotspot: eBirdHotspot, isSaved: boolean) => {
     if (!isSaved) {
-      appendHotspot({ ...hotspot, species: hotspot.species || 0 });
+      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0 });
     }
     open("hotspot", { hotspot });
   };

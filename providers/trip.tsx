@@ -1,13 +1,10 @@
 import React from "react";
-import { Trip, TargetList, CustomMarker, Invite, HotspotInput } from "lib/types";
+import { Trip, TargetList, Invite } from "lib/types";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
 import { fullMonths, months } from "lib/helpers";
-import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
-import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
 
 type SelectedSpecies = {
   code: string;
@@ -128,68 +125,6 @@ const TripProvider = ({ children }: Props) => {
   );
 };
 
-const useTrip = () => {
-  const state = React.useContext(TripContext);
-  const { trip } = state;
-  const queryClient = useQueryClient();
-
-  const setTripCache = async (updater: (old: Trip) => Trip) => {
-    if (!trip?._id) return;
-    await queryClient.cancelQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    const prevData = queryClient.getQueryData([`/api/trips/${trip?._id}`]);
-
-    queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
-      if (!old) return old;
-      return updater(old);
-    });
-
-    return { prevData };
-  };
-
-  const addHotspotMutation = useMutation({
-    url: `/api/trips/${trip?._id}/hotspots`,
-    method: "POST",
-    onMutate: (data: any) =>
-      setTripCache((old) => ({
-        ...old,
-        hotspots: [...(old.hotspots || []), data],
-      })),
-    onSuccess: () => {
-      toast.success("Hotspot added to trip");
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
-  });
-
-  const addMarkerMutation = useMutation({
-    url: `/api/trips/${trip?._id}/markers`,
-    method: "POST",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        markers: [...(old.markers || []), data as any],
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
-  });
-
-  const appendHotspot = async (data: HotspotInput) => addHotspotMutation.mutate(data);
-  const appendMarker = async (data: CustomMarker) => addMarkerMutation.mutate(data);
-
-  return {
-    ...state,
-    appendHotspot,
-    appendMarker,
-    setTripCache,
-  };
-};
+const useTrip = () => React.useContext(TripContext);
 
 export { TripProvider, useTrip };

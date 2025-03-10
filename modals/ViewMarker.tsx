@@ -9,8 +9,7 @@ import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
-import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import useTripMutation from "hooks/useTripMutation";
 
 type Props = {
   marker: CustomMarker;
@@ -18,41 +17,25 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { trip, canEdit, setSelectedMarkerId, setTripCache } = useTrip();
+  const { trip, canEdit, setSelectedMarkerId } = useTrip();
   const { id, placeId, name, lat, lng } = marker;
-  const queryClient = useQueryClient();
 
-  const removeMutation = useMutation({
+  const removeMutation = useTripMutation({
     url: `/api/trips/${trip?._id}/markers/${id}`,
     method: "DELETE",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        markers: old.markers.filter((it) => it.id !== id),
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old) => ({
+      ...old,
+      markers: old.markers.filter((it) => it.id !== id),
+    }),
   });
 
-  const saveNotesMutation = useMutation({
+  const saveNotesMutation = useTripMutation<{ notes: string }>({
     url: `/api/trips/${trip?._id}/markers/${id}/notes`,
     method: "PATCH",
-    onMutate: (data: any) => {
-      setTripCache((old) => ({
-        ...old,
-        markers: old.markers.map((it) => (it.id === id ? { ...it, notes: data.notes } : it)),
-      }));
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      markers: old.markers.map((it) => (it.id === id ? { ...it, notes: input.notes } : it)),
+    }),
   });
 
   const handleRemoveMarker = () => {

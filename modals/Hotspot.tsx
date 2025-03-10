@@ -1,6 +1,6 @@
 import React from "react";
 import { Body } from "providers/modals";
-import { Hotspot as HotspotT, Trip } from "lib/types";
+import { HotspotInput, Hotspot as HotspotT, Trip } from "lib/types";
 import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
@@ -16,6 +16,7 @@ import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
 import { useRouter } from "next/router";
+import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -24,7 +25,7 @@ type Props = {
 };
 
 export default function Hotspot({ hotspot }: Props) {
-  const { trip, canEdit, appendHotspot, selectedSpecies, setSelectedMarkerId, setHalo, setTripCache } = useTrip();
+  const { trip, canEdit, selectedSpecies, setSelectedMarkerId, setHalo } = useTrip();
   const { id, lat, lng, species } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
@@ -56,43 +57,28 @@ export default function Hotspot({ hotspot }: Props) {
     });
   }
 
-  const removeMutation = useMutation({
+  const removeMutation = useTripMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}`,
     method: "DELETE",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        hotspots: old.hotspots.filter((it) => it.id !== id),
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: old.hotspots.filter((it) => it.id !== id),
+    }),
   });
 
-  const saveNotesMutation = useMutation({
+  const saveNotesMutation = useTripMutation<{ notes: string }>({
     url: `/api/trips/${trip?._id}/hotspots/${id}/notes`,
     method: "PATCH",
-    onMutate: async (data: any) => {
-      await setTripCache((old) => ({
-        ...old,
-        hotspots: old.hotspots.map((it) => (it.id === id ? { ...it, notes: data.notes } : it)),
-      }));
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: old.hotspots.map((it) => (it.id === id ? { ...it, notes: input.notes } : it)),
+    }),
   });
 
-  const translateMutation = useMutation({
+  const translateMutation = useMutation<{ originalName: string; translatedName: string }>({
     url: `/api/trips/${trip?._id}/hotspots/${id}/translate-name`,
     method: "PATCH",
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       const { originalName, translatedName } = data;
       if (!translatedName || translatedName === originalName) {
         toast("No translation found");
@@ -111,23 +97,24 @@ export default function Hotspot({ hotspot }: Props) {
     },
   });
 
-  const resetMutation = useMutation({
+  const resetMutation = useTripMutation({
     url: `/api/trips/${trip?._id}/hotspots/${id}/reset-name`,
     method: "PATCH",
-    onMutate: async () => {
-      await setTripCache((old) => ({
-        ...old,
-        hotspots: old.hotspots.map((it) =>
-          it.id === id ? { ...it, name: it.originalName || "", originalName: "" } : it
-        ),
-      }));
-    },
-    onSettled: async () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old) => ({
+      ...old,
+      hotspots: old.hotspots.map((it) =>
+        it.id === id ? { ...it, name: it.originalName || "", originalName: "" } : it
+      ),
+    }),
+  });
+
+  const addHotspotMutation = useTripMutation<HotspotInput>({
+    url: `/api/trips/${trip?._id}/hotspots`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: [...(old.hotspots || []), input],
+    }),
   });
 
   const handleSave = async () => {
@@ -136,7 +123,7 @@ export default function Hotspot({ hotspot }: Props) {
         return;
       removeMutation.mutate({});
     } else {
-      appendHotspot({ ...hotspot, species: hotspot.species || 0 });
+      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0 });
     }
   };
 

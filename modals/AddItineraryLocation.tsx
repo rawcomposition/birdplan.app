@@ -3,8 +3,7 @@ import { Header, Body } from "providers/modals";
 import { useTrip } from "providers/trip";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import { useModal } from "providers/modals";
-import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import useTripMutation from "hooks/useTripMutation";
 import { nanoId } from "lib/helpers";
 
 type Props = {
@@ -13,26 +12,18 @@ type Props = {
 
 export default function AddItineraryLocation({ dayId }: Props) {
   const { close } = useModal();
-  const { trip, setTripCache } = useTrip();
-  const queryClient = useQueryClient();
+  const { trip } = useTrip();
 
-  const addDayMutation = useMutation({
+  const addDayMutation = useTripMutation<{ type: "hotspot" | "marker"; locationId: string; id: string }>({
     url: `/api/trips/${trip?._id}/itinerary/${dayId}/add-location`,
     method: "POST",
     mutationKey: [`/api/trips/${trip?._id}/itinerary/${dayId}/add-location`],
-    onMutate: (data: any) =>
-      setTripCache((old) => ({
-        ...old,
-        itinerary:
-          old.itinerary?.map((it) => (it.id === dayId ? { ...it, locations: [...(it.locations || []), data] } : it)) ||
-          [],
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary:
+        old.itinerary?.map((it) => (it.id === dayId ? { ...it, locations: [...(it.locations || []), input] } : it)) ||
+        [],
+    }),
   });
 
   return (

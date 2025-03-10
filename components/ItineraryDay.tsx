@@ -7,8 +7,8 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
-import useMutation from "hooks/useMutation";
-import { useQueryClient, useMutationState } from "@tanstack/react-query";
+import useTripMutation from "hooks/useTripMutation";
+import { useMutationState } from "@tanstack/react-query";
 import { Day } from "lib/types";
 import { removeInvalidTravelData, moveLocation } from "lib/itinerary";
 
@@ -18,9 +18,8 @@ type PropsT = {
 };
 
 export default function ItineraryDay({ day, isEditing }: PropsT) {
-  const { trip, isFetching: isFetchingTrip, setTripCache } = useTrip();
+  const { trip, isFetching: isFetchingTrip } = useTrip();
   const { open } = useModal();
-  const queryClient = useQueryClient();
 
   const isAddingLocation = useMutationState({
     filters: { mutationKey: [`/api/trips/${trip?._id}/itinerary/${day.id}/add-location`] },
@@ -32,89 +31,58 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     select: (mutation) => mutation?.state.status === "pending",
   })?.some(Boolean);
 
-  const removeDayMutation = useMutation({
+  const removeDayMutation = useTripMutation({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}`,
     method: "DELETE",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        itinerary: old.itinerary?.filter((it) => it.id !== day.id) || [],
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary: old.itinerary?.filter((it) => it.id !== day.id) || [],
+    }),
   });
 
-  const removeLocationMutation = useMutation({
+  const removeLocationMutation = useTripMutation<{ id: string }>({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
     method: "PATCH",
-    onMutate: (data: any) => {
-      setTripCache((old) => ({
-        ...old,
-        itinerary:
-          old.itinerary?.map((it) =>
-            it.id === day.id
-              ? { ...it, locations: removeInvalidTravelData(it.locations?.filter((loc) => loc.id !== data.id) || []) }
-              : it
-          ) || [],
-      }));
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary:
+        old.itinerary?.map((it) =>
+          it.id === day.id
+            ? { ...it, locations: removeInvalidTravelData(it.locations?.filter((loc) => loc.id !== input.id) || []) }
+            : it
+        ) || [],
+    }),
   });
 
-  const moveLocationMutation = useMutation({
+  const moveLocationMutation = useTripMutation<{ id: string; direction: "up" | "down" }>({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}/move-location`,
     method: "PATCH",
-    onMutate: (data: any) => {
-      setTripCache((old) => ({
-        ...old,
-        itinerary:
-          old.itinerary?.map((it) =>
-            it.id === day.id
-              ? {
-                  ...it,
-                  locations: removeInvalidTravelData(moveLocation(it.locations, data.id, data.direction)),
-                }
-              : it
-          ) || [],
-      }));
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary:
+        old.itinerary?.map((it) =>
+          it.id === day.id
+            ? {
+                ...it,
+                locations: removeInvalidTravelData(moveLocation(it.locations, input.id, input.direction)),
+              }
+            : it
+        ) || [],
+    }),
   });
 
-  const setNotesMutation = useMutation({
+  const setNotesMutation = useTripMutation<{ notes: string }>({
     url: `/api/trips/${trip?._id}/itinerary/${day.id}/set-notes`,
     method: "PATCH",
-    onMutate: (data: any) => {
-      setTripCache((old) => ({
-        ...old,
-        itinerary: old.itinerary?.map((it) => (it.id === day.id ? { ...it, notes: data.notes } : it)) || [],
-      }));
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary: old.itinerary?.map((it) => (it.id === day.id ? { ...it, notes: input.notes } : it)) || [],
+    }),
   });
 
   const handleRemoveDay = () => {
     if (day.locations.length && !confirm("Are you sure you want to remove this day?")) return;
-    removeDayMutation.mutate(day.id);
+    removeDayMutation.mutate({});
   };
 
   const isLoading =

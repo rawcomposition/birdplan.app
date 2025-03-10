@@ -11,51 +11,35 @@ import toast from "react-hot-toast";
 import { useModal } from "providers/modals";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
-import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import useTripMutation from "hooks/useTripMutation";
 import { nanoId } from "lib/helpers";
 import ItineraryDay from "components/ItineraryDay";
 
 export default function Itinerary() {
   const { user } = useUser();
-  const { is404, trip, canEdit, setTripCache } = useTrip();
+  const { is404, trip, canEdit } = useTrip();
   const { close, modalId } = useModal();
-  const queryClient = useQueryClient();
   const hasStartDate = !!trip?.startDate;
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length));
   const isEditing = canEdit && editing;
 
-  const setStartDateMutation = useMutation({
+  const setStartDateMutation = useTripMutation<{ startDate: string }>({
     url: `/api/trips/${trip?._id}/set-start-date`,
     method: "PATCH",
-    onMutate: (data: any) =>
-      setTripCache((old) => ({
-        ...old,
-        startDate: data.startDate,
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      startDate: input.startDate,
+    }),
   });
 
-  const addDayMutation = useMutation({
+  const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
     url: `/api/trips/${trip?._id}/itinerary`,
     method: "POST",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        itinerary: [...(old.itinerary || []), data as any],
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary: [...(old.itinerary || []), input],
+    }),
   });
 
   const submitStartDate = (e: React.FormEvent<HTMLFormElement>) => {

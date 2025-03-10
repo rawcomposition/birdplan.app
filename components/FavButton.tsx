@@ -1,8 +1,8 @@
 import React from "react";
 import Icon from "components/Icon";
 import { useTrip } from "providers/trip";
-import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import useTripMutation from "hooks/useTripMutation";
+import { HotspotFav } from "lib/types";
 
 type Props = {
   hotspotId: string;
@@ -13,44 +13,29 @@ type Props = {
 };
 
 export default function FavButton({ hotspotId, code, name, range, percent }: Props) {
-  const { trip, setTripCache } = useTrip();
-  const queryClient = useQueryClient();
+  const { trip } = useTrip();
   const hotspot = trip?.hotspots.find((it) => it.id === hotspotId);
   const favIds = hotspot?.favs?.map((it) => it.code) || [];
   const isFav = favIds.includes(code);
 
-  const addFavMutation = useMutation({
+  const addFavMutation = useTripMutation<HotspotFav>({
     url: `/api/trips/${trip?._id}/hotspots/${hotspotId}/add-species-fav`,
     method: "POST",
-    onMutate: (data: any) =>
-      setTripCache((old) => ({
-        ...old,
-        hotspots: old.hotspots.map((it) => (it.id === hotspotId ? { ...it, favs: [...(it.favs || []), data] } : it)),
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: old.hotspots.map((it) => (it.id === hotspotId ? { ...it, favs: [...(it.favs || []), input] } : it)),
+    }),
   });
 
-  const removeFavMutation = useMutation({
+  const removeFavMutation = useTripMutation<{ code: string }>({
     url: `/api/trips/${trip?._id}/hotspots/${hotspotId}/remove-species-fav`,
     method: "PATCH",
-    onMutate: (data: any) =>
-      setTripCache((old) => ({
-        ...old,
-        hotspots: old.hotspots.map((it) =>
-          it.id === hotspotId ? { ...it, favs: it.favs?.filter((it) => it.code !== data.code) } : it
-        ),
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: old.hotspots.map((it) =>
+        it.id === hotspotId ? { ...it, favs: it.favs?.filter((it) => it.code !== input.code) } : it
+      ),
+    }),
   });
 
   const onClick = () => {

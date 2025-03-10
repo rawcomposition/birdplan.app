@@ -5,7 +5,7 @@ import Field from "components/Field";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import { nanoId } from "lib/helpers";
-import { GooglePlaceT } from "lib/types";
+import { CustomMarker, GooglePlaceT } from "lib/types";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
@@ -13,19 +13,29 @@ import PlaceSearch from "components/PlaceSearch";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
 import { MarkerIconT, markerIcons } from "lib/icons";
+import useTripMutation from "hooks/useTripMutation";
 
 export default function AddPlace() {
   const [icon, setIcon] = React.useState<MarkerIconT>();
   const [place, setPlace] = React.useState<GooglePlaceT>();
   const { close } = useModal();
-  const { trip, appendMarker } = useTrip();
+  const { trip } = useTrip();
   const firstRegion = trip?.region?.split(",")?.[0];
   const countryCode = firstRegion?.split("-")?.[0];
+
+  const addMarkerMutation = useTripMutation<CustomMarker>({
+    url: `/api/trips/${trip?._id}/markers`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      markers: [...(old.markers || []), input],
+    }),
+  });
 
   const handleAddMarker = () => {
     if (!icon) return toast.error("Please choose an icon");
     if (!place) return toast.error("Please choose a place");
-    appendMarker({
+    addMarkerMutation.mutate({
       lat: place.lat,
       lng: place.lng,
       name: place.name,

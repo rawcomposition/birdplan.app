@@ -11,6 +11,7 @@ import { Profile, Target } from "lib/types";
 import { useSpeciesImages } from "providers/species-images";
 import BestTargetHotspots from "components/BestTargetHotspots";
 import useMutation from "hooks/useMutation";
+import useTripMutation from "hooks/useTripMutation";
 import { useQueryClient } from "@tanstack/react-query";
 
 type PropsT = Target & {
@@ -19,59 +20,38 @@ type PropsT = Target & {
 
 export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
-  const { trip, canEdit, setSelectedSpecies, setTripCache } = useTrip();
+  const { trip, canEdit, setSelectedSpecies } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
   const queryClient = useQueryClient();
 
-  const addStarMutation = useMutation({
+  const addStarMutation = useTripMutation<{ code: string }>({
     url: `/api/trips/${trip?._id}/targets/add-star`,
     method: "PATCH",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        targetStars: [...(old.targetStars ?? []), code],
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: [...(old.targetStars ?? []), input.code],
+    }),
   });
 
-  const removeStarMutation = useMutation({
+  const removeStarMutation = useTripMutation<{ code: string }>({
     url: `/api/trips/${trip?._id}/targets/remove-star`,
     method: "PATCH",
-    onMutate: (data) =>
-      setTripCache((old) => ({
-        ...old,
-        targetStars: (old.targetStars || []).filter((it) => it !== code),
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
+    }),
   });
 
-  const setNotesMutation = useMutation({
+  const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
     url: `/api/trips/${trip?._id}/targets/set-notes`,
     method: "PATCH",
-    onMutate: (data: any) =>
-      setTripCache((old) => ({
-        ...old,
-        targetNotes: { ...(old.targetNotes || {}), [data.code]: data.notes },
-      })),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
-    },
-    onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/trips/${trip?._id}`], context?.prevData);
-    },
+    updateCache: (old, input) => ({
+      ...old,
+      targetNotes: { ...(old.targetNotes || {}), [input.code]: input.notes },
+    }),
   });
 
   const seenMutation = useMutation({

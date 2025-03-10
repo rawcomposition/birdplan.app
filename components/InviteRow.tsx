@@ -23,7 +23,7 @@ export default function InviteRow({ invite }: Props) {
 
   const removeUser = async () => {
     if (!confirm("Are you sure you want to remove this user?")) return;
-    deleteMutation.mutate(invite._id);
+    deleteMutation.mutate({});
   };
 
   return (
