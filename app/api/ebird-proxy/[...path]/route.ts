@@ -1,4 +1,5 @@
-export async function GET(request: Request, { params }: { params: { path: any } }) {
+// Next throws a build error when using type of { path: string[] }
+export async function GET(request: Request, { params }: { params: any }) {
   const { path } = await params;
   const { searchParams } = new URL(request.url);
 
