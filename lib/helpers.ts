@@ -1,4 +1,4 @@
-import { Trip, Targets, Hotspot } from "lib/types";
+import { Trip, TargetList, Hotspot } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import { auth, uploadFile } from "lib/firebase";
@@ -287,8 +287,8 @@ export const mostFrequentValue = (arr: any[]) => {
   return sorted[0];
 };
 
-const targetsToHtml = (targets: Targets[], id?: string) => {
-  const items = targets.find((it) => it.id === id)?.items;
+const targetsToHtml = (targets: TargetList[], id?: string) => {
+  const items = targets.find((it) => it._id === id)?.items;
   if (!items?.length) {
     return "";
   }
@@ -318,7 +318,7 @@ const favsToHtml = (favs: Hotspot["favs"]) => {
   return html + "<br/><br/>";
 };
 
-export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
+export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
   const hotspots = trip?.hotspots || [];
   const markers = trip?.markers || [];
 
