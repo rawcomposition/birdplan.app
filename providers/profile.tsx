@@ -3,9 +3,7 @@ import { useUser } from "providers/user";
 import { Profile } from "lib/types";
 import { useQuery } from "@tanstack/react-query";
 
-interface ContextT extends Profile {
-  reset: () => void;
-}
+interface ContextT extends Profile {}
 
 const initialState: Profile = {
   _id: "",
@@ -17,7 +15,6 @@ const initialState: Profile = {
 
 export const ProfileContext = React.createContext<ContextT>({
   ...initialState,
-  reset: () => {},
 });
 
 type Props = {
@@ -33,10 +30,6 @@ const ProfileProvider = ({ children }: Props) => {
     enabled: !!uid,
   });
 
-  const reset = () => {
-    setState(initialState);
-  };
-
   const lifelist = profile?.lifelist.filter((it) => !profile?.exceptions?.includes(it)) || [];
 
   return (
@@ -47,7 +40,6 @@ const ProfileProvider = ({ children }: Props) => {
         lifelist,
         exceptions: profile?.exceptions || [],
         dismissedNoticeId: profile?.dismissedNoticeId,
-        reset,
       }}
     >
       {children}
