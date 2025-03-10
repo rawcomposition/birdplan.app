@@ -1,9 +1,9 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 
-type ParamsT = { id: string; markerId: string };
+type Params = { params: Promise<{ id: string; markerId: string }> };
 
-export async function DELETE(request: Request, { params }: { params: ParamsT }) {
+export async function DELETE(request: Request, { params }: Params) {
   try {
     const { id, markerId } = await params;
     const session = await authenticate(request);

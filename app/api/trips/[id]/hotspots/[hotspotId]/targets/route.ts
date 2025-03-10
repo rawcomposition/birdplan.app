@@ -2,9 +2,9 @@ import { authenticate, APIError } from "lib/api";
 import { connect, TargetList, Trip } from "lib/db";
 import { TargetListInput, TargetListType } from "lib/types";
 
-type ParamsT = { id: string; hotspotId: string };
+type Params = { params: Promise<{ id: string; hotspotId: string }> };
 
-export async function GET(request: Request, { params }: { params: ParamsT }) {
+export async function GET(request: Request, { params }: Params) {
   try {
     const { id, hotspotId } = await params;
     const session = await authenticate(request);
@@ -24,7 +24,7 @@ export async function GET(request: Request, { params }: { params: ParamsT }) {
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const session = await authenticate(request);

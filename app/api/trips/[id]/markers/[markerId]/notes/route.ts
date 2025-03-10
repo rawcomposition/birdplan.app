@@ -1,15 +1,15 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 
-type ParamsT = { id: string; markerId: string };
-type BodyT = { notes: string };
+type Params = { params: Promise<{ id: string; markerId: string }> };
+type Body = { notes: string };
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const { id, markerId } = await params;
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);
-    const data: BodyT = await request.json();
+    const data: Body = await request.json();
 
     await connect();
     const trip = await Trip.findById(id).lean();

@@ -1,9 +1,9 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Invite, Trip } from "lib/db";
 
-type ParamsT = { id: string };
+type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);

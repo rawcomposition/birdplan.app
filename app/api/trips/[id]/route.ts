@@ -2,9 +2,9 @@ import { authenticate, APIError } from "lib/api";
 import { connect, Trip, TargetList, Invite } from "lib/db";
 import { TargetListType } from "lib/types";
 
-type ParamsT = { id: string };
+type Params = { params: Promise<{ id: string }> };
 
-export async function GET(request: Request, { params }: { params: ParamsT }) {
+export async function GET(request: Request, { params }: Params) {
   try {
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);
@@ -26,7 +26,7 @@ type BodyT = {
   endMonth: number;
 };
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);
@@ -60,7 +60,7 @@ export async function PATCH(request: Request, { params }: { params: ParamsT }) {
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: ParamsT }) {
+export async function DELETE(request: Request, { params }: Params) {
   try {
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);

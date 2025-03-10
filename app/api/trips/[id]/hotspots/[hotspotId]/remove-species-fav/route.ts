@@ -1,13 +1,13 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 
-type ParamsT = { id: string; hotspotId: string };
-type BodyT = { code: string };
+type Params = { params: Promise<{ id: string; hotspotId: string }> };
+type Body = { code: string };
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const { id, hotspotId } = await params;
-    const data: BodyT = await request.json();
+    const data: Body = await request.json();
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);
 
@@ -23,6 +23,6 @@ export async function PATCH(request: Request, { params }: { params: ParamsT }) {
 
     return Response.json({});
   } catch (error: any) {
-    return APIError(error?.message || "Error adding hotspot", 500);
+    return APIError(error?.message || "Error removing fav", 500);
   }
 }

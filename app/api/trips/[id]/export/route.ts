@@ -5,9 +5,9 @@ import { tripToGeoJson, sanitizeFileName } from "lib/helpers";
 // @ts-ignore
 import * as tokml from "@maphubs/tokml";
 
-type ParamsT = { id: string };
+type Params = { params: Promise<{ id: string }> };
 
-export async function GET(request: Request, { params }: { params: ParamsT }) {
+export async function GET(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const { searchParams } = new URL(request.url);

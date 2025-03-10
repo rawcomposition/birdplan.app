@@ -2,13 +2,13 @@ import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 import { updateDayTravelTimes } from "lib/itinerary";
 
-type ParamsT = { id: string; dayId: string };
-type BodyT = { id: string };
+type Params = { params: Promise<{ id: string; dayId: string }> };
+type Body = { id: string };
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const { id, dayId } = await params;
-    const data: BodyT = await request.json();
+    const data: Body = await request.json();
     const session = await authenticate(request);
     if (!session?.uid) return APIError("Unauthorized", 401);
 

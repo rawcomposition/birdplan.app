@@ -2,9 +2,9 @@ import { authenticate, APIError } from "lib/api";
 import { connect, Invite, Trip, Profile } from "lib/db";
 import { Editor } from "lib/types";
 
-type ParamsT = { id: string };
+type Params = { params: Promise<{ id: string }> };
 
-export async function GET(request: Request, { params }: { params: ParamsT }) {
+export async function GET(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const session = await authenticate(request);

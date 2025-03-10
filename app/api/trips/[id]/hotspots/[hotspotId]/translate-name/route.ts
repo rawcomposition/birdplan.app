@@ -2,9 +2,9 @@ import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 import * as deepl from "deepl-node";
 
-type ParamsT = { id: string; hotspotId: string };
+type Params = { params: Promise<{ id: string; hotspotId: string }> };
 
-export async function PATCH(request: Request, { params }: { params: ParamsT }) {
+export async function PATCH(request: Request, { params }: Params) {
   try {
     const { id, hotspotId } = await params;
     const session = await authenticate(request);

@@ -1,9 +1,9 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 
-type ParamsT = { id: string };
+type Params = { params: Promise<{ id: string }> };
 
-export async function POST(request: Request, { params }: { params: ParamsT }) {
+export async function POST(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const data = await request.json();

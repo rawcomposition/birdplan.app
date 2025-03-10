@@ -2,9 +2,9 @@ import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 import { HotspotFav } from "lib/types";
 
-type ParamsT = { id: string; hotspotId: string };
+type Params = { params: Promise<{ id: string; hotspotId: string }> };
 
-export async function POST(request: Request, { params }: { params: ParamsT }) {
+export async function POST(request: Request, { params }: Params) {
   try {
     const { id, hotspotId } = await params;
     const data: HotspotFav = await request.json();
