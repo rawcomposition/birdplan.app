@@ -12,7 +12,7 @@ type Props = {
 
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
-  const { lifelist, id } = useProfile();
+  const { lifelist, uid } = useProfile();
   const { targets, trip, isOwner } = useTrip();
 
   const links = [
@@ -44,7 +44,7 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Export KML",
-      href: `/api/trips/${trip?._id}/export?profileId=${id}`,
+      href: `/api/trips/${trip?._id}/export?uid=${uid}`,
       icon: "export",
     },
   ];
@@ -64,6 +64,7 @@ export default function TripOptionsDropdown({ className }: Props) {
 
       <Transition>
         <Transition.Child
+          as="div"
           enter="transition duration-200 ease-out"
           enterFrom="scale-95 opacity-0"
           enterTo="scale-100 opacity-100"

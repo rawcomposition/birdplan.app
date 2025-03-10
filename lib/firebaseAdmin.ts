@@ -12,4 +12,3 @@ if (!firebase.apps.length) {
 
 export const admin = firebase;
 export const auth = firebase.auth();
-export const db = firebase.firestore();
