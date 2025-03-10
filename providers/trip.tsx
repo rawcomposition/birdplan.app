@@ -75,6 +75,7 @@ const TripProvider = ({ children }: Props) => {
   const { data: targets } = useQuery<TargetList>({
     queryKey: [`/api/trips/${id}/targets`],
     enabled: !!id && !!auth.currentUser,
+    refetchOnWindowFocus: false,
   });
 
   const { user } = useUser();
@@ -84,6 +85,7 @@ const TripProvider = ({ children }: Props) => {
   const { data: invites } = useQuery<Invite[]>({
     queryKey: [`/api/trips/${id}/invites`],
     enabled: !!id && !!auth.currentUser && !!canEdit,
+    refetchOnWindowFocus: false,
   });
 
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();

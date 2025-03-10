@@ -22,7 +22,7 @@ export async function PATCH(request: Request, { params }: Params) {
     await Trip.updateOne({ _id: id, "hotspots.id": hotspotId }, { $pull: { "hotspots.$.favs": { code: data.code } } });
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error removing fav", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error removing fav", 500);
   }
 }

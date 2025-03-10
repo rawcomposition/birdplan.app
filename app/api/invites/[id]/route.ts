@@ -20,7 +20,7 @@ export async function DELETE(request: Request, { params }: Params) {
     ]);
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error deleting invite", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error deleting invite", 500);
   }
 }

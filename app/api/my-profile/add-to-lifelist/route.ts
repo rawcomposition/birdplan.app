@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code } });
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error updating profile", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error updating profile", 500);
   }
 }

@@ -40,6 +40,7 @@ export default function TripTargets() {
   const { data: editors } = useQuery<Editor[]>({
     queryKey: [`/api/trips/${trip?._id}/editors`],
     enabled: !!trip?._id && !!auth.currentUser,
+    refetchOnWindowFocus: false,
   });
   const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];

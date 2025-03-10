@@ -12,8 +12,8 @@ export async function GET(request: Request) {
       profile = await Profile.create({ uid: session.uid });
     }
     return Response.json(profile);
-  } catch (error: any) {
-    return APIError(error?.message || "Error loading profile", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading profile", 500);
   }
 }
 
@@ -57,7 +57,7 @@ export async function PATCH(request: Request) {
     }
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error updating profile", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error updating profile", 500);
   }
 }

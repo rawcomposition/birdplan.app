@@ -41,7 +41,7 @@ export async function PATCH(request: Request, { params }: Params) {
     );
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error calculating travel time", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error calculating travel time", 500);
   }
 }

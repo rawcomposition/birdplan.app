@@ -8,7 +8,7 @@ export default function useConfirmNavigation(isDirty: boolean) {
     const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
       if (isDirty && !window.confirm("Are you sure? Changes you made will not be saved.")) {
         router.events.emit("routeChangeError", "Route change aborted", url, { shallow });
-        throw "Route change aborted.";
+        throw new Error("Route change aborted.");
       }
     };
 

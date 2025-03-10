@@ -20,8 +20,8 @@ export async function GET(request: Request, { params }: Params) {
     if (!targetList) return APIError("Target list not found", 404);
 
     return Response.json(targetList);
-  } catch (error: any) {
-    return APIError(error?.message || "Error loading targets", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading targets", 500);
   }
 }
 
@@ -48,7 +48,7 @@ export async function PATCH(request: Request, { params }: Params) {
     );
 
     return Response.json({ id: targetList._id });
-  } catch (error: any) {
-    return APIError(error?.message || "Error saving targets", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error saving targets", 500);
   }
 }

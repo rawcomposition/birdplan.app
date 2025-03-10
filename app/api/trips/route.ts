@@ -14,8 +14,8 @@ export async function GET(request: Request) {
     await connect();
     const trips = await Trip.find({ userIds: session.uid }).sort({ createdAt: -1 }).lean();
     return Response.json(trips);
-  } catch (error: any) {
-    return APIError(error?.message || "Error loading trips", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading trips", 500);
   }
 }
 
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       markers: [],
     });
     return Response.json({ id: trip._id });
-  } catch (error: any) {
-    return APIError(error?.message || "Error creating trip", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error creating trip", 500);
   }
 }

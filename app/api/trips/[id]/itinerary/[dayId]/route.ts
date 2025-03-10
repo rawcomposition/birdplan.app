@@ -17,7 +17,7 @@ export async function DELETE(request: Request, { params }: Params) {
     await Trip.updateOne({ _id: id }, { $pull: { itinerary: { id: dayId } } });
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error removing itinerary day", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error removing itinerary day", 500);
   }
 }

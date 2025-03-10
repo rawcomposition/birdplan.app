@@ -19,7 +19,7 @@ export async function POST(request: Request, { params }: Params) {
 
     await Trip.updateOne({ _id: id }, { $push: { hotspots: data } });
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error adding hotspot", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error adding hotspot", 500);
   }
 }

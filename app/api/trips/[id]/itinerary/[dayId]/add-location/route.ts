@@ -35,7 +35,7 @@ export async function POST(request: Request, { params }: Params) {
     );
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error adding location", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error adding location", 500);
   }
 }

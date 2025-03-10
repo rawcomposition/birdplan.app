@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: Params) {
     });
 
     return Response.json(editors);
-  } catch (error: any) {
-    return APIError(error?.message || "Error loading invites", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading invites", 500);
   }
 }

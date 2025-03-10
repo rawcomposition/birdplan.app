@@ -19,7 +19,7 @@ export async function PATCH(request: Request, { params }: Params) {
     await Trip.updateOne({ _id: id }, { $pull: { targetStars: data.code } });
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error removing star", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error removing star", 500);
   }
 }

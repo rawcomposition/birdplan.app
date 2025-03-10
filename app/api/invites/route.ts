@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     });
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error creating trip", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error creating trip", 500);
   }
 }

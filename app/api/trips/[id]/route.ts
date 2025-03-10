@@ -15,8 +15,8 @@ export async function GET(request: Request, { params }: Params) {
     if (!trip) return APIError("Trip not found", 404);
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
     return Response.json(trip);
-  } catch (error: any) {
-    return APIError(error?.message || "Error loading trip", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading trip", 500);
   }
 }
 
@@ -55,8 +55,8 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 
     return Response.json({ hasChangedDates });
-  } catch (error: any) {
-    return APIError(error?.message || "Error updating trip", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error updating trip", 500);
   }
 }
 
@@ -77,7 +77,7 @@ export async function DELETE(request: Request, { params }: Params) {
     ]);
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error deleting trip", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error deleting trip", 500);
   }
 }

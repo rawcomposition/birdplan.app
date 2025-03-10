@@ -39,7 +39,7 @@ export async function GET(request: Request, { params }: Params) {
     });
 
     return new Response(kml, { status: 200, headers });
-  } catch (error: any) {
-    return APIError(error?.message || "Error updating trip", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error updating trip", 500);
   }
 }

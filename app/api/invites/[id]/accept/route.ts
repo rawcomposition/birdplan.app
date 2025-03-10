@@ -20,7 +20,7 @@ export async function PATCH(request: Request, { params }: Params) {
     ]);
 
     return Response.json({ tripId: invite.tripId });
-  } catch (error: any) {
-    return APIError(error?.message || "Error accepting invite", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error accepting invite", 500);
   }
 }

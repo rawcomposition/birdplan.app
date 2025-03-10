@@ -19,7 +19,7 @@ export async function DELETE(request: Request, { params }: Params) {
       TargetList.deleteMany({ tripId: id, hotspotId }),
     ]);
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error removing hotspot", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error removing hotspot", 500);
   }
 }

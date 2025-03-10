@@ -19,7 +19,7 @@ export async function GET(request: Request, { params }: Params) {
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
 
     return Response.json(results);
-  } catch (error: any) {
-    return APIError(error?.message || "Error loading targets", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading targets", 500);
   }
 }

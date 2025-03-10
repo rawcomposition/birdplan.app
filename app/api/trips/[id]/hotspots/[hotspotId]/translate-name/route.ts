@@ -37,7 +37,7 @@ export async function PATCH(request: Request, { params }: Params) {
     );
 
     return Response.json({ originalName, translatedName });
-  } catch (error: any) {
-    return APIError(error?.message || "Error translating", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error translating", 500);
   }
 }

@@ -19,7 +19,7 @@ export async function PATCH(request: Request, { params }: Params) {
     await Trip.updateOne({ _id: id, "markers.id": markerId }, { $set: { "markers.$.notes": data.notes } });
 
     return Response.json({});
-  } catch (error: any) {
-    return APIError(error?.message || "Error saving notes", 500);
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error saving notes", 500);
   }
 }
