@@ -49,7 +49,7 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
             </Menu.Items>
           </Menu>
         </div>
-        {speciesCode && <ObsList locId={id} speciesCode={speciesCode} />}
+        {speciesCode && <ObsList hotspotId={id} speciesCode={speciesCode} />}
       </Body>
     </>
   );
