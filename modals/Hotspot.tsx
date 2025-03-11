@@ -250,7 +250,11 @@ export default function Hotspot({ hotspot }: Props) {
         <div className="sm:-mx-1.5">
           {tab === "needs" && <RecentSpeciesList locId={id} onSpeciesClick={() => setTab("checklists")} />}
           {tab === "checklists" && (
-            <RecentChecklistList locId={id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
+            <RecentChecklistList
+              hotspotId={id}
+              speciesCode={selectedSpecies?.code}
+              speciesName={selectedSpecies?.name}
+            />
           )}
           <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
             <HotspotTargets hotspotId={id} onSpeciesClick={() => setTab("checklists")} />
