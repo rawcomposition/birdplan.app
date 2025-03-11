@@ -1,8 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { APIError } from "lib/api";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+type Params = { params: Promise<{ region: string }> };
+
+export async function GET(request: Request, { params }: Params) {
   try {
-    const { region } = req.query;
+    const { region } = await params;
 
     const response = await fetch(
       `https://api.ebird.org/v2/data/obs/${region}/recent?fmt=json&cat=species&includeProvisional=true&back=30&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
@@ -23,10 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }, []);
 
     const tenMinutes = 600;
-    res.setHeader("Cache-Control", `public, max-age=${tenMinutes}, s-maxage=${tenMinutes}`);
+    const headers = new Headers({
+      "Cache-Control": `public, max-age=${tenMinutes}, s-maxage=${tenMinutes}`,
+    });
 
-    res.status(200).json(formatted);
-  } catch (error) {
-    res.status(500).json({ error });
+    return new Response(JSON.stringify(formatted), { status: 200, headers });
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading targets", 500);
   }
 }

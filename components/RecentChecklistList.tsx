@@ -11,20 +11,24 @@ import ObsList from "components/ObsList";
 import FilterTabs from "components/FilterTabs";
 
 type Props = {
-  locId: string;
+  hotspotId: string;
   speciesCode?: string;
   speciesName?: string;
 };
 
-export default function RecentChecklistList({ locId, speciesCode, speciesName }: Props) {
+export default function RecentChecklistList({ hotspotId, speciesCode, speciesName }: Props) {
   const [view, setView] = React.useState<string>("all");
   const [expanded, setExpanded] = React.useState(false);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
-  const { data: info } = useFetchHotspotInfo(locId);
-  const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(locId);
-  const { data: obs, isLoading: isLoadingObs, error: obsError } = useFetchHotspotObs(locId, speciesCode);
+  const { data: info } = useFetchHotspotInfo(trip?._id || "", hotspotId);
+  const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(hotspotId);
+  const {
+    data: obs,
+    isLoading: isLoadingObs,
+    error: obsError,
+  } = useFetchHotspotObs(trip?._id || "", hotspotId, speciesCode);
   const checklists = expanded ? groupedChecklists : groupedChecklists.slice(0, 10);
 
   const successRate = info?.numChecklists && obs?.length ? obs.length / info.numChecklists : null;
@@ -56,7 +60,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
           ]}
         />
       )}
-      {view === "obs" && speciesCode && <ObsList locId={locId} speciesCode={speciesCode} />}
+      {view === "obs" && speciesCode && <ObsList hotspotId={hotspotId} speciesCode={speciesCode} />}
       {view === "all" && (
         <>
           {checklists.length > 0 && (
@@ -108,7 +112,7 @@ export default function RecentChecklistList({ locId, speciesCode, speciesName }:
               <Link
                 target="_blank"
                 className="text-sm text-blue-900 mt-2"
-                href={`https://ebird.org/hotspot/${locId}/activity?yr=all&m=`}
+                href={`https://ebird.org/hotspot/${hotspotId}/activity?yr=all&m=`}
               >
                 View more on eBird
               </Link>

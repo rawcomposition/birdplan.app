@@ -6,7 +6,7 @@ export default function useFetchRecentSpecies(region?: string) {
   const { lifelist } = useProfile();
 
   const { data, isLoading, error } = useQuery<RecentSpecies[]>({
-    queryKey: ["/api/region-species", { region }],
+    queryKey: [`/api/region/${region}/species`],
     enabled: !!region,
     meta: {
       errorMessage: "Failed to load recent species",

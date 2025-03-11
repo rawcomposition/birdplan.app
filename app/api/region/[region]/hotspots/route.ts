@@ -1,5 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { APIError } from "lib/api";
 import { eBirdHotspot } from "lib/types";
+
+type Params = { params: Promise<{ region: string }> };
 
 export type eBirdHotspotResult = {
   locId: string;
@@ -13,9 +15,9 @@ export type eBirdHotspotResult = {
   numSpeciesAllTime: number;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(request: Request, { params }: Params) {
   try {
-    const { region } = req.query;
+    const { region } = await params;
 
     const response = await fetch(
       `https://api.ebird.org/v2/ref/hotspot/${region}?fmt=json&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
@@ -31,10 +33,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }));
 
     const sevenDays = 604800;
-    res.setHeader("Cache-Control", `public, max-age=${sevenDays}, s-maxage=${sevenDays}`);
+    const headers = new Headers({
+      "Cache-Control": `public, max-age=${sevenDays}, s-maxage=${sevenDays}`,
+    });
 
-    res.status(200).json(formatted);
-  } catch (error) {
-    res.status(500).json({ error });
+    return new Response(JSON.stringify(formatted), { status: 200, headers });
+  } catch (error: unknown) {
+    return APIError(error instanceof Error ? error.message : "Error loading targets", 500);
   }
 }

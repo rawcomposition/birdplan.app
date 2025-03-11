@@ -5,10 +5,10 @@ type Info = {
   numSpecies: number;
 };
 
-export default function useFetchHotspotInfo(locId: string) {
+export default function useFetchHotspotInfo(tripId: string, hotspotId: string) {
   const { data, isLoading, error } = useQuery<Info>({
-    queryKey: ["/api/hotspot-info", { id: locId }],
-    enabled: !!locId,
+    queryKey: [`/api/trips/${tripId}/hotspots/${hotspotId}/info`],
+    enabled: !!hotspotId && !!tripId,
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 60 minutes
     refetchOnWindowFocus: false,

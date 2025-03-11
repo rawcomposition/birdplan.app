@@ -12,8 +12,8 @@ type Props = {
 
 export default function HotspotStats({ id, speciesTotal }: Props) {
   const { checklists } = useFetchRecentChecklists(id);
-  const { data } = useFetchHotspotInfo(id);
   const { trip } = useTrip();
+  const { data } = useFetchHotspotInfo(trip?._id || "", id);
   const timezone = trip?.timezone;
 
   const lastChecklistIsoDate = checklists?.[0]?.isoObsDate;
