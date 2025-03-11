@@ -8,7 +8,6 @@ export async function GET(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const session = await authenticate(request);
-    if (!session?.uid) return APIError("Unauthorized", 401);
 
     await connect();
     const [trip, targetList] = await Promise.all([
@@ -16,7 +15,7 @@ export async function GET(request: Request, { params }: Params) {
       TargetList.findOne({ type: TargetListType.trip, tripId: id }).sort({ createdAt: -1 }),
     ]);
     if (!trip) return APIError("Trip not found", 404);
-    if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
+    if (!trip.isPublic && (!session?.uid || !trip.userIds.includes(session.uid))) return APIError("Forbidden", 403);
     if (!targetList) return APIError("Target list not found", 404);
 
     return Response.json(targetList);

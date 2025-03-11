@@ -7,6 +7,7 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   userIds: [{ type: String, required: true }], // Array of uids
   ownerId: { type: String, required: true },
   ownerName: { type: String, required: true },
+  isPublic: { type: Boolean, default: true },
   name: { type: String, required: true },
   region: { type: String, required: true },
   bounds: {

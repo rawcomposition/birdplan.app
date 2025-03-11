@@ -8,7 +8,6 @@ export async function GET(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const session = await authenticate(request);
-    if (!session?.uid) return APIError("Unauthorized", 401);
 
     await connect();
     const [trip, invites] = await Promise.all([
@@ -17,7 +16,7 @@ export async function GET(request: Request, { params }: Params) {
     ]);
 
     if (!trip) return APIError("Trip not found", 404);
-    if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
+    if (!trip.isPublic && (!session?.uid || !trip.userIds.includes(session.uid))) return APIError("Forbidden", 403);
 
     if (invites.length === 0) return Response.json([]);
 

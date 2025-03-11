@@ -8,9 +8,11 @@ interface ContextT extends Profile {}
 const initialState: Profile = {
   _id: "",
   uid: "",
+  name: "",
   lifelist: [],
   exceptions: [],
   dismissedNoticeId: "",
+  lastActiveAt: new Date(),
 };
 
 export const ProfileContext = React.createContext<ContextT>({
@@ -40,6 +42,8 @@ const ProfileProvider = ({ children }: Props) => {
         lifelist,
         exceptions: profile?.exceptions || [],
         dismissedNoticeId: profile?.dismissedNoticeId,
+        lastActiveAt: profile?.lastActiveAt || new Date(),
+        name: profile?.name || "",
       }}
     >
       {children}

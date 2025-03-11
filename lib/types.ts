@@ -87,6 +87,7 @@ export type Trip = {
   userIds: string[];
   ownerId: string;
   ownerName: string;
+  isPublic: boolean;
   name: string;
   region: string;
   bounds: {

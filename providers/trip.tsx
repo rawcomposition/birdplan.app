@@ -66,13 +66,13 @@ const TripProvider = ({ children }: Props) => {
     isLoading,
   } = useQuery<Trip>({
     queryKey: [`/api/trips/${id}`],
-    enabled: !!id && !!auth.currentUser,
+    enabled: !!id,
     refetchInterval: 1000 * 60 * 2,
   });
 
   const { data: targets } = useQuery<TargetList>({
     queryKey: [`/api/trips/${id}/targets`],
-    enabled: !!id && !!auth.currentUser,
+    enabled: !!id,
     refetchOnWindowFocus: false,
   });
 
