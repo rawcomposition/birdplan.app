@@ -24,6 +24,9 @@ const TargetListSchema = new Schema(fields, {
   timestamps: true,
 });
 
+TargetListSchema.index({ tripId: 1, type: 1, createdAt: -1 });
+TargetListSchema.index({ tripId: 1, type: 1, hotspotId: 1, createdAt: -1 });
+
 const TargetListModel = (models.TargetList as Model<TargetList>) || model<TargetList>("TargetList", TargetListSchema);
 
 export default TargetListModel;

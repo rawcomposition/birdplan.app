@@ -13,7 +13,7 @@ export async function GET(request: Request, { params }: Params) {
     await connect();
     const [trip, targetList] = await Promise.all([
       Trip.findById(id),
-      TargetList.findOne({ type: TargetListType.trip, tripId: id }),
+      TargetList.findOne({ type: TargetListType.trip, tripId: id }).sort({ createdAt: -1 }),
     ]);
     if (!trip) return APIError("Trip not found", 404);
     if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);

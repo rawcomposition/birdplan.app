@@ -43,13 +43,13 @@ export async function PATCH(request: Request) {
       const response = await fetch(
         `https://api.ebird.org/v2/ref/taxonomy/ebird?fmt=json&cat=species&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
       );
-      const taxonomy = await response.json();
+      const taxonomy: eBirdResponse = await response.json();
 
       const codes = sciNames
         .map((name: string) => {
-          return taxonomy.find((taxon: any) => taxon.sciName === name)?.speciesCode;
+          return taxonomy.find((taxon) => taxon.sciName === name)?.speciesCode;
         })
-        .filter((code: string) => code);
+        .filter((code) => code);
 
       await Profile.updateOne({ uid: session.uid }, { ...data, lifelist: codes });
     } else {
@@ -61,3 +61,8 @@ export async function PATCH(request: Request) {
     return APIError(error instanceof Error ? error.message : "Error updating profile", 500);
   }
 }
+
+type eBirdResponse = {
+  speciesCode: string;
+  sciName: string;
+}[];

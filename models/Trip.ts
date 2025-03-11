@@ -86,6 +86,8 @@ const TripSchema = new Schema(fields, {
   timestamps: true,
 });
 
+TripSchema.index({ userIds: 1, createdAt: -1 });
+
 const TripModel = (models.Trip as Model<Trip>) || model<Trip>("Trip", TripSchema);
 
 export default TripModel;

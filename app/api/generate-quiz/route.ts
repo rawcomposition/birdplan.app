@@ -17,9 +17,9 @@ export async function POST(request: Request) {
             const res = await fetch(
               `https://search.macaulaylibrary.org/api/v1/search?count=20&sort=rating_rank_desc&mediaType=p&regionCode=&taxonCode=${code}&taxaLocale=en`
             );
-            const data = await res.json();
+            const data: eBirdResponse = await res.json();
             const results = data.results.content;
-            const ids = results.map((it: any) => it.assetId);
+            const ids = results.map((it) => it.assetId);
             const name = results[0].commonName;
             const newItem = { code, ids, name };
             const item = await QuizImages.create(newItem);
@@ -46,3 +46,12 @@ export async function POST(request: Request) {
     return APIError(error instanceof Error ? error.message : "Error creating trip", 500);
   }
 }
+
+type eBirdResponse = {
+  results: {
+    content: {
+      assetId: string;
+      commonName: string;
+    }[];
+  };
+};

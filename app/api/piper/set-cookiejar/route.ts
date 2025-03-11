@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect, Vault } from "lib/db";
-
+import { APIError } from "lib/api";
 export const config = {
   api: {
     bodyParser: false,
@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
     await Vault.updateOne({ key: "ebird-tools" }, { value: rawBody });
 
     return new NextResponse("Success", { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return APIError(error instanceof Error ? error.message : "Error updating cookiejar", 500);
   }
 }
