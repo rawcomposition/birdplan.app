@@ -6,7 +6,7 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
   userIds: [{ type: String, required: true }], // Array of uids
   ownerId: { type: String, required: true },
-  ownerName: { type: String, required: true },
+  ownerName: String,
   isPublic: { type: Boolean, default: true },
   name: { type: String, required: true },
   region: { type: String, required: true },
