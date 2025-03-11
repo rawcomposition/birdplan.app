@@ -3,9 +3,11 @@ import { MarkerIconT } from "lib/icons";
 export type Profile = {
   _id: string;
   uid: string;
+  name?: string;
   lifelist: string[];
   exceptions?: string[];
   dismissedNoticeId?: string;
+  lastActiveAt: Date;
 };
 
 export type Marker = {

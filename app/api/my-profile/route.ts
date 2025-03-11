@@ -7,9 +7,12 @@ export async function GET(request: Request) {
     if (!session?.uid) return APIError("Unauthorized", 401);
 
     await connect();
-    let profile = await Profile.findOne({ uid: session.uid }).lean();
+    let [profile] = await Promise.all([
+      Profile.findOne({ uid: session.uid }).lean(),
+      Profile.updateOne({ uid: session.uid }, { lastActiveAt: new Date(), name: session.name }),
+    ]);
     if (!profile) {
-      profile = await Profile.create({ uid: session.uid });
+      profile = await Profile.create({ uid: session.uid, name: session.name });
     }
     return Response.json(profile);
   } catch (error: unknown) {
