@@ -27,7 +27,7 @@ const SpeciesImagesProvider = ({ children }: Props) => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
-    gcTime: 180 * 24 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
   });
 
   const getSpeciesImg = React.useCallback(
