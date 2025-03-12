@@ -28,8 +28,8 @@ export default function ProfileSelect({ value, onChange, editors }: PropsT) {
     <Menu as="div" className="mt-1 ml-2 sm:ml-0 text-left relative sm:-mb-1">
       <div>
         <Menu.Button className="py-1 sm:py-0 sm:pt-2 ">
-          <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
-          <span className="text-gray-600 text-[13px] hover:text-gray-600">
+          <span className="text-gray-600 text-[12px]">Targets for</span>{" "}
+          <span className="text-gray-700 font-medium text-[13px] hover:text-gray-600">
             {selectedOption?.name} <Icon name="angleDown" />
           </span>
         </Menu.Button>
