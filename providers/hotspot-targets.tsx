@@ -59,6 +59,8 @@ const useHotspotTargets = () => {
   const { data } = useQuery<TargetList[]>({
     queryKey: [`/api/trips/${tripId}/all-hotspot-targets`],
     enabled: !!tripId,
+    staleTime: 1000 * 60 * 60 * 24,
+    refetchOnWindowFocus: false,
   });
 
   const targets = cleanTargets(data || []);

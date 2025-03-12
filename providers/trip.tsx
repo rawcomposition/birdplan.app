@@ -74,6 +74,7 @@ const TripProvider = ({ children }: Props) => {
     queryKey: [`/api/trips/${id}/targets`],
     enabled: !!id,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 60 * 24,
   });
 
   const { user } = useUser();
