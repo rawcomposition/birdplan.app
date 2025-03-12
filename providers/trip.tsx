@@ -70,7 +70,7 @@ const TripProvider = ({ children }: Props) => {
     refetchInterval: 1000 * 60 * 2,
   });
 
-  const { data: targets } = useQuery<TargetList>({
+  const { data: targets } = useQuery<TargetList | null>({
     queryKey: [`/api/trips/${id}/targets`],
     enabled: !!id,
     refetchOnWindowFocus: false,

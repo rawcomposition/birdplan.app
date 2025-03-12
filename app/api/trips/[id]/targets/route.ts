@@ -16,9 +16,8 @@ export async function GET(request: Request, { params }: Params) {
     ]);
     if (!trip) return APIError("Trip not found", 404);
     if (!trip.isPublic && (!session?.uid || !trip.userIds.includes(session.uid))) return APIError("Forbidden", 403);
-    if (!targetList) return APIError("Target list not found", 404);
 
-    return Response.json(targetList);
+    return Response.json(targetList || null);
   } catch (error: unknown) {
     return APIError(error instanceof Error ? error.message : "Error loading targets", 500);
   }

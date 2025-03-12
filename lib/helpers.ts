@@ -1,10 +1,8 @@
 import { Trip, TargetList, Hotspot } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
-import { auth, uploadFile } from "lib/firebase";
-import { v4 as uuidv4 } from "uuid";
+import { auth } from "lib/firebase";
 import { customAlphabet } from "nanoid";
-import { EBIRD_BASE_URL } from "lib/config";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -132,30 +130,25 @@ export const radiusOptions = [
 ];
 
 export const getBounds = async (regionString: string) => {
-  try {
-    const regions = regionString.split(",");
-    const boundsPromises = regions.map((region) =>
-      fetch(`${EBIRD_BASE_URL}/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
-        res.json()
-      )
-    );
-    const boundsResults = await Promise.all(boundsPromises);
-    const combinedBounds = boundsResults.reduce(
-      (acc, bounds) => {
-        return {
-          minX: Math.min(acc.minX, bounds.bounds.minX),
-          maxX: Math.max(acc.maxX, bounds.bounds.maxX),
-          minY: Math.min(acc.minY, bounds.bounds.minY),
-          maxY: Math.max(acc.maxY, bounds.bounds.maxY),
-        };
-      },
-      { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
-    );
-    return combinedBounds;
-  } catch (error) {
-    toast.error("Error getting region info");
-    return null;
-  }
+  const regions = regionString.split(",");
+  const boundsPromises = regions.map((region) =>
+    fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
+      res.json()
+    )
+  );
+  const boundsResults = await Promise.all(boundsPromises);
+  const combinedBounds = boundsResults.reduce(
+    (acc, bounds) => {
+      return {
+        minX: Math.min(acc.minX, bounds.bounds.minX),
+        maxX: Math.max(acc.maxX, bounds.bounds.maxX),
+        minY: Math.min(acc.minY, bounds.bounds.minY),
+        maxY: Math.max(acc.maxY, bounds.bounds.maxY),
+      };
+    },
+    { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
+  );
+  return combinedBounds;
 };
 
 export const getCenterOfBounds = ({ minX, minY, maxX, maxY }: Trip["bounds"]) => {
@@ -264,16 +257,6 @@ export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: s
   return json;
 };
 
-export const uploadMapboxImg = async (bounds: Trip["bounds"]) => {
-  const id = uuidv4();
-  const res = await fetch(
-    `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}&padding=30`
-  );
-  const blob = await res.blob();
-  const file = new File([blob], `${id}.png`, { type: "image/png" });
-  const url = await uploadFile(file);
-  return url;
-};
 //https://decipher.dev/30-seconds-of-typescript/docs/debounce/
 export const debounce = (fn: Function, ms = 300) => {
   let timeoutId: ReturnType<typeof setTimeout>;

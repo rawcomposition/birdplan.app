@@ -191,7 +191,14 @@ export default function CreateTrip() {
                   Cancel
                 </Button>
                 <Button type="submit" color="primary" disabled={mutation.isPending}>
-                  Continue
+                  {mutation.isPending ? (
+                    <>
+                      <Icon name="loading" className="animate-spin text-md text-white" />
+                      <span className="ml-2">Saving...</span>
+                    </>
+                  ) : (
+                    "Continue"
+                  )}
                 </Button>
               </div>
             </form>
