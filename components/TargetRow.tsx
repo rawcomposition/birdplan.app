@@ -153,6 +153,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
                 type="button"
                 onClick={() => removeStarMutation.mutate({ code })}
                 className="items-center justify-cente hidden sm:flex"
+                disabled={!canEdit}
               >
                 <Icon name="star" className="text-yellow-500 text-lg" />
               </button>
@@ -161,6 +162,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
                 type="button"
                 onClick={() => addStarMutation.mutate({ code })}
                 className="items-center justify-cente hidden sm:flex"
+                disabled={!canEdit}
               >
                 <Icon name="starOutline" className="text-gray-500 text-lg" />
               </button>
@@ -205,12 +207,22 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             <BestTargetHotspots speciesCode={code} speciesName={name} />
             <div className="flex gap-2 mt-4">
               {isStarred ? (
-                <button type="button" onClick={() => removeStarMutation.mutate({ code })} className={mobileBtnClasses}>
+                <button
+                  type="button"
+                  onClick={() => removeStarMutation.mutate({ code })}
+                  className={mobileBtnClasses}
+                  disabled={!canEdit}
+                >
                   <Icon name="star" className="text-yellow-500 text-lg" />
                   Remove star
                 </button>
               ) : (
-                <button type="button" onClick={() => addStarMutation.mutate({ code })} className={mobileBtnClasses}>
+                <button
+                  type="button"
+                  onClick={() => addStarMutation.mutate({ code })}
+                  className={mobileBtnClasses}
+                  disabled={!canEdit}
+                >
                   <Icon name="starOutline" className="text-gray-500 text-lg" />
                   Add star
                 </button>
@@ -225,11 +237,13 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
           </td>
           <td colSpan={7} className="pb-4 hidden sm:table-cell">
             <BestTargetHotspots speciesCode={code} speciesName={name} className="mb-4" />
-            <span className="text-gray-600 font-medium text-sm">Species actions:</span>{" "}
             {canEdit && (
-              <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => handleSeen(code, name)}>
-                Mark as seen
-              </button>
+              <>
+                <span className="text-gray-600 font-medium text-sm">Species actions:</span>{" "}
+                <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => handleSeen(code, name)}>
+                  Mark as seen
+                </button>
+              </>
             )}
           </td>
         </tr>

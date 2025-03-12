@@ -57,7 +57,8 @@ export const englishCountries = [
 
 export const isRegionEnglish = (region: string) => {
   const regionCode = region.split(",")[0];
-  return englishCountries.includes(regionCode);
+  const countryCode = regionCode.split("-")[0];
+  return englishCountries.includes(countryCode);
 };
 
 export function truncate(string: string, length: number): string {

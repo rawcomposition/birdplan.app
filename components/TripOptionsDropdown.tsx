@@ -13,7 +13,7 @@ type Props = {
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
   const { lifelist, uid } = useProfile();
-  const { targets, trip, isOwner } = useTrip();
+  const { targets, trip, isOwner, canEdit } = useTrip();
 
   const links = [
     {
@@ -25,6 +25,7 @@ export default function TripOptionsDropdown({ className }: Props) {
       name: !!targets?.items?.length ? "Update Targets" : "Import Targets",
       href: `/${trip?._id}/import-targets?redirect=targets&back=true`,
       icon: "bullseye",
+      hidden: !canEdit,
     },
     {
       name: "Bird Quiz",
@@ -41,6 +42,7 @@ export default function TripOptionsDropdown({ className }: Props) {
       name: "Trip Settings",
       href: `/${trip?._id}/settings`,
       icon: "cog",
+      hidden: !canEdit,
     },
     {
       name: "Export KML",

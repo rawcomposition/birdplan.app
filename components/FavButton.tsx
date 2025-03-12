@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function FavButton({ hotspotId, code, name, range, percent }: Props) {
-  const { trip } = useTrip();
+  const { trip, canEdit } = useTrip();
   const hotspot = trip?.hotspots.find((it) => it.id === hotspotId);
   const favIds = hotspot?.favs?.map((it) => it.code) || [];
   const isFav = favIds.includes(code);
@@ -46,7 +46,7 @@ export default function FavButton({ hotspotId, code, name, range, percent }: Pro
     }
   };
   return (
-    <button type="button" onClick={onClick} className="text-base">
+    <button type="button" onClick={onClick} className="text-base" disabled={!canEdit}>
       {isFav ? <Icon name="heartSolid" className="text-pink-700" /> : <Icon name="heart" />}
     </button>
   );

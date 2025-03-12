@@ -143,7 +143,7 @@ export default function Hotspot({ hotspot }: Props) {
     };
   }, [id, lat, lng, isSaved, species, hasSpecies]);
 
-  const canTranslate = isSaved && !isRegionEnglish(trip?.region || "");
+  const canTranslate = isSaved && canEdit && !isRegionEnglish(trip?.region || "");
 
   return (
     <>

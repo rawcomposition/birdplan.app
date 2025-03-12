@@ -24,14 +24,13 @@ const PAGE_SIZE = 50;
 export default function TripTargets() {
   const { open, close } = useModal();
   const { user } = useUser();
-  const myUid = user?.uid;
   const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
 
   // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
-  const [uid, setUid] = React.useState<string | undefined>(myUid || trip?.ownerId);
+  const [uid, setUid] = React.useState<string | undefined>();
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
 
@@ -39,9 +38,11 @@ export default function TripTargets() {
   const { lifelist: myLifelist } = useProfile();
   const { data: editors } = useQuery<Editor[]>({
     queryKey: [`/api/trips/${trip?._id}/editors`],
-    enabled: !!trip?._id && !!auth.currentUser,
+    enabled: !!trip?._id,
     refetchOnWindowFocus: false,
   });
+  const myUid = user?.uid;
+  const ownerId = trip?.ownerId;
   const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
@@ -67,8 +68,9 @@ export default function TripTargets() {
   };
 
   React.useEffect(() => {
-    setUid(myUid);
-  }, [myUid]);
+    if (!myUid && !ownerId) return;
+    setUid(myUid || ownerId);
+  }, [myUid, ownerId]);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
