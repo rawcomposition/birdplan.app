@@ -17,7 +17,7 @@ export async function GET(request: Request, { params }: Params) {
     const [trip, hotspotTargets, profile] = await Promise.all([
       Trip.findById(id).lean(),
       TargetList.find({ tripId: id, type: TargetListType.hotspot }).lean(),
-      Profile.findById(uid).lean(),
+      Profile.findOne({ uid }).lean(),
     ]);
     if (!trip) return APIError("Trip not found", 404);
 
