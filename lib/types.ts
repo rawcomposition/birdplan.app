@@ -7,7 +7,7 @@ export type Profile = {
   lifelist: string[];
   exceptions?: string[];
   dismissedNoticeId?: string;
-  lastActiveAt: Date;
+  lastActiveAt: Date | null;
 };
 
 export type Marker = {
