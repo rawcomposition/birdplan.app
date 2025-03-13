@@ -3,9 +3,9 @@ import Header from "components/Header";
 import Head from "next/head";
 import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
-import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useProfile } from "providers/profile";
+import useMutation from "hooks/useMutation";
 
 export default function Accept() {
   const { user } = useUser();
@@ -16,21 +16,17 @@ export default function Accept() {
   const hasLifelistRef = React.useRef(!!lifelist?.length);
   hasLifelistRef.current = !!lifelist?.length;
 
+  const acceptMutation = useMutation({
+    url: `/api/invites/${inviteId}/accept`,
+    method: "PATCH",
+    onSuccess: (data: any) => {
+      router.push(hasLifelistRef.current ? `/${data?.tripId}` : `/import-lifelist?tripId=${data.tripId}`);
+    },
+  });
+
   React.useEffect(() => {
     if (!uid || !inviteId) return;
-    (async () => {
-      const token = await auth.currentUser?.getIdToken();
-      const res = await fetch("/api/accept", {
-        method: "post",
-        body: JSON.stringify({ inviteId }),
-        headers: {
-          Authorization: token || "",
-          "Content-Type": "application/json",
-        },
-      });
-      const { tripId } = await res.json();
-      router.push(hasLifelistRef.current ? `/${tripId}` : `/import-lifelist?tripId=${tripId}`);
-    })();
+    acceptMutation.mutate({});
   }, [uid, inviteId]);
 
   return (

@@ -1,24 +1,23 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { useTrip } from "providers/trip";
 import { useUser } from "providers/user";
 import Icon from "components/Icon";
+import { Editor } from "lib/types";
 
 type PropsT = {
   value?: string;
   onChange: (value: string) => void;
+  editors?: Editor[];
 };
 
-export default function ProfileSelect({ value, onChange }: PropsT) {
-  const { invites, trip } = useTrip();
+export default function ProfileSelect({ value, onChange, editors }: PropsT) {
   const { user } = useUser();
 
   const options =
-    trip?.userIds?.map((uid) => {
-      const isMe = uid === user?.uid;
-      const invite = invites?.find((it) => it.uid === uid);
-      const name = isMe ? `${user?.displayName} (me)` || "Me" : invite?.name || invite?.email || `User ${uid}`;
-      return { name, uid };
+    editors?.map((editor) => {
+      const isMe = editor.uid === user?.uid;
+      const name = isMe ? `${user?.displayName} (me)` || "Me" : editor.name || `User ${editor.uid}`;
+      return { name, uid: editor.uid };
     }) || [];
 
   const selectedOption = options.find((it) => it.uid === value);
@@ -29,8 +28,8 @@ export default function ProfileSelect({ value, onChange }: PropsT) {
     <Menu as="div" className="mt-1 ml-2 sm:ml-0 text-left relative sm:-mb-1">
       <div>
         <Menu.Button className="py-1 sm:py-0 sm:pt-2 ">
-          <span className="text-gray-400 text-[12px]">Targets for</span>{" "}
-          <span className="text-gray-600 text-[13px] hover:text-gray-600">
+          <span className="text-gray-600 text-[12px]">Targets for</span>{" "}
+          <span className="text-gray-700 font-medium text-[13px] hover:text-gray-600">
             {selectedOption?.name} <Icon name="angleDown" />
           </span>
         </Menu.Button>

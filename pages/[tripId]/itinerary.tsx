@@ -8,47 +8,51 @@ import Input from "components/Input";
 import Button from "components/Button";
 import { useTrip } from "providers/trip";
 import toast from "react-hot-toast";
-import dayjs from "dayjs";
 import { useModal } from "providers/modals";
-import MarkerWithIcon from "components/MarkerWithIcon";
-import TravelTime from "components/TravelTime";
-import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
+import useTripMutation from "hooks/useTripMutation";
+import { nanoId } from "lib/helpers";
+import ItineraryDay from "components/ItineraryDay";
 
-export default function Trip() {
+export default function Itinerary() {
   const { user } = useUser();
-  const {
-    is404,
-    trip,
-    canEdit,
-    setStartDate,
-    appendItineraryDay,
-    removeItineraryDay,
-    removeItineraryDayLocation,
-    moveItineraryDayLocation,
-    setItineraryDayNotes,
-  } = useTrip();
-  const { open, close, modalId } = useModal();
-
+  const { is404, trip, canEdit } = useTrip();
+  const { close, modalId } = useModal();
   const hasStartDate = !!trip?.startDate;
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const [editing, setEditing] = React.useState(!!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length));
   const isEditing = canEdit && editing;
+
+  const setStartDateMutation = useTripMutation<{ startDate: string }>({
+    url: `/api/trips/${trip?._id}/set-start-date`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      startDate: input.startDate,
+    }),
+  });
+
+  const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
+    url: `/api/trips/${trip?._id}/itinerary`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary: [...(old.itinerary || []), input],
+    }),
+  });
 
   const submitStartDate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const date = form.date.value;
     if (!date) return toast.error("Please choose a date");
-    setStartDate(date);
-    appendItineraryDay();
+    setStartDateMutation.mutate({ startDate: date });
     setEditingStartDate(false);
   };
 
-  const handleRemoveDay = (dayId: string) => {
-    if (!confirm("Are you sure you want to remove this day?")) return;
-    removeItineraryDay(dayId);
+  const handleAddDay = () => {
+    addDayMutation.mutate({ id: nanoId(6), locations: [] });
   };
 
   const handleDivClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -126,122 +130,11 @@ export default function Trip() {
                     No itinerary has been set for this trip yet.
                   </div>
                 )}
-                {trip?.itinerary?.map(({ id: dayId, notes, locations }, i) => {
-                  const date = dayjs(trip.startDate).add(i, "day").format("dddd, MMMM D");
-                  return (
-                    <div key={dayId} className="mb-8">
-                      <div className="mb-3">
-                        <div className="flex flex-col">
-                          <h1 className="text-xl font-bold text-gray-700">Day {i + 1}</h1>
-                          <span className="text-gray-500 text-[13px]">{date}</span>
-                        </div>
-                        <InputNotesSimple
-                          value={notes}
-                          onBlur={(value) => setItineraryDayNotes(dayId, value)}
-                          className="mt-1 mb-4"
-                          canEdit={isEditing}
-                        />
-                      </div>
-                      {!!locations?.length && (
-                        <ul className="flex flex-col">
-                          {locations?.map(({ locationId, type, id }, index) => {
-                            const location =
-                              trip?.hotspots?.find((h) => h.id === locationId) ||
-                              trip?.markers?.find((m) => m.id === locationId);
-                            return (
-                              <React.Fragment key={id}>
-                                {index !== 0 && (
-                                  <li>
-                                    <TravelTime isEditing={isEditing} dayId={dayId} id={id} />
-                                  </li>
-                                )}
-                                <li className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow">
-                                  <button
-                                    className="flex gap-2 text-left -my-[9px] py-3 -ml-4 pl-4 grow"
-                                    onClick={
-                                      location
-                                        ? () =>
-                                            type === "hotspot"
-                                              ? open("hotspot", { hotspot: location })
-                                              : open("viewMarker", { marker: location })
-                                        : undefined
-                                    }
-                                    disabled={!location}
-                                  >
-                                    {location ? (
-                                      <MarkerWithIcon
-                                        showStroke={false}
-                                        icon={(location as any)?.icon || "hotspot"}
-                                        className="inline-block scale-[.85] flex-shrink-0 print:hidden"
-                                      />
-                                    ) : (
-                                      <Icon name="warning" className="text-red-500 text-[22px]" />
-                                    )}
-                                    <span>
-                                      <div className="truncate font-medium mt-[2px]">
-                                        {location?.name || "Unknown Location"}
-                                      </div>
-                                      {location?.notes && (
-                                        <span className="text-gray-700 text-sm relative group whitespace-pre-wrap">
-                                          {location.notes}
-                                        </span>
-                                      )}
-                                    </span>
-                                  </button>
-                                  {isEditing && (
-                                    <div className="flex items-center gap-1.5 ml-auto">
-                                      {index !== locations.length - 1 && (
-                                        <button
-                                          type="button"
-                                          onClick={() => moveItineraryDayLocation(dayId, id, "down")}
-                                          className="text-[16px] p-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
-                                        >
-                                          <Icon name="angleDownBold" />
-                                        </button>
-                                      )}
-                                      {index !== 0 && (
-                                        <button
-                                          type="button"
-                                          onClick={() => moveItineraryDayLocation(dayId, id, "up")}
-                                          className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                          <Icon name="angleDownBold" className="rotate-180" />
-                                        </button>
-                                      )}
-                                      <button
-                                        type="button"
-                                        onClick={() => removeItineraryDayLocation(dayId, id)}
-                                        className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
-                                      >
-                                        <Icon name="xMarkBold" />
-                                      </button>
-                                    </div>
-                                  )}
-                                </li>
-                              </React.Fragment>
-                            );
-                          })}
-                        </ul>
-                      )}
-                      {isEditing && (
-                        <div className="flex justify-between items-center gap-2 mt-3">
-                          <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId })}>
-                            + Add Location
-                          </Button>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveDay(dayId)}
-                            className="text-[12px] py-0.5 px-1.5 text-red-700"
-                          >
-                            Remove day
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                {trip?.itinerary?.map((day) => (
+                  <ItineraryDay key={day.id} day={day} isEditing={isEditing} />
+                ))}
                 {isEditing && hasStartDate && (
-                  <Button color="primary" onClick={appendItineraryDay} className="mb-8">
+                  <Button color="primary" onClick={handleAddDay} className="mb-8">
                     Add Day
                   </Button>
                 )}

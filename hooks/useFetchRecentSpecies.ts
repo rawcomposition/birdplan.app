@@ -6,11 +6,15 @@ export default function useFetchRecentSpecies(region?: string) {
   const { lifelist } = useProfile();
 
   const { data, isLoading, error } = useQuery<RecentSpecies[]>({
-    queryKey: ["/api/region-species", { region }],
+    queryKey: [`/api/region/${region}/species`],
     enabled: !!region,
     meta: {
       errorMessage: "Failed to load recent species",
     },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000, // 60 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   const filtered = data?.filter((it) => !lifelist.includes(it.code)) || [];

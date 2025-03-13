@@ -30,7 +30,7 @@ export default function TripNav({ active }: Props) {
     <div className="flex gap-1.5 items-center flex-shrink-0 px-3 bg-[#1e263a] justify-start h-[52px]">
       {links.map(({ name, slug, icon }) => (
         <Link
-          href={`/${trip?.id}/${slug}`}
+          href={`/${trip?._id}/${slug}`}
           key={slug}
           className={clsx(
             "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-2.5",

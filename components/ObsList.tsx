@@ -7,19 +7,19 @@ import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 
 type Props = {
-  locId: string;
+  hotspotId: string;
   speciesCode: string;
 };
 
 const previewCount = 10;
 
-export default function ObsList({ locId, speciesCode }: Props) {
+export default function ObsList({ hotspotId, speciesCode }: Props) {
   const [viewAll, setViewAll] = React.useState(false);
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
-  const { data, isLoading, error } = useFetchHotspotObs(locId, speciesCode);
-  const { checklists } = useFetchRecentChecklists(locId);
+  const { data, isLoading, error } = useFetchHotspotObs(trip?._id || "", hotspotId, speciesCode);
+  const { checklists } = useFetchRecentChecklists(hotspotId);
 
   const formattedObs =
     data?.map((it) => {
@@ -48,7 +48,7 @@ export default function ObsList({ locId, speciesCode }: Props) {
         </thead>
         <tbody>
           {filteredObs.map(({ date, count, evidence, checklistId }, index) => (
-            <tr key={`${locId}-${speciesCode}-${index}`} className="even:bg-neutral-50">
+            <tr key={`${hotspotId}-${speciesCode}-${index}`} className="even:bg-neutral-50">
               <td className="pl-1.5 py-[5px]">
                 <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>
                   {dateTimeToRelative(date, timezone)}

@@ -11,7 +11,7 @@ type Props = {
 
 export default function PlaceSearch({ className, country, onChange, focus, ...props }: Props) {
   const inputRef = React.useRef(null);
-  const isInitalizedRef = React.useRef<boolean>();
+  const isInitalizedRef = React.useRef<boolean>(false);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") e.preventDefault();

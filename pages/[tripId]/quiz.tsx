@@ -30,7 +30,7 @@ export default function Quiz() {
   const { lifelist } = useProfile();
   const selectRef = React.useRef<any>(null);
 
-  const liferTargets = targets.items.filter((target) => !lifelist.includes(target.code));
+  const liferTargets = targets?.items.filter((target) => !lifelist.includes(target.code)) || [];
   const options = liferTargets.map(({ code, name }) => ({ value: code, label: name }));
   const step = steps[index];
 
@@ -38,7 +38,8 @@ export default function Quiz() {
     console.log("Initializing quiz...");
     setSteps([]);
     setIndex(0);
-    const targetCodes = targets.items.filter((target) => !lifelist.includes(target.code)).map((target) => target.code);
+    const targetCodes =
+      targets?.items.filter((target) => !lifelist.includes(target.code)).map((target) => target.code) || [];
 
     const randomCodes = getRandomItemsFromArray(targetCodes, quizLength);
     try {
@@ -123,7 +124,7 @@ export default function Quiz() {
       <Header />
       <main className="max-w-2xl w-full mx-auto">
         <div className="p-4 md:p-0 mt-6 mb-52">
-          <Link href={`/${trip?.id}`} className="text-gray-500 hover:text-gray-600 mb-8 inline-flex items-center">
+          <Link href={`/${trip?._id}`} className="text-gray-500 hover:text-gray-600 mb-8 inline-flex items-center">
             ← Back to trip
           </Link>
           <h1 className="text-3xl font-bold text-gray-700 mb-8">🤔 Bird Quiz</h1>

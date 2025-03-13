@@ -3,6 +3,8 @@ import { Header, Body } from "providers/modals";
 import { useTrip } from "providers/trip";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import { useModal } from "providers/modals";
+import useTripMutation from "hooks/useTripMutation";
+import { nanoId } from "lib/helpers";
 
 type Props = {
   dayId: string;
@@ -10,7 +12,19 @@ type Props = {
 
 export default function AddItineraryLocation({ dayId }: Props) {
   const { close } = useModal();
-  const { trip, addItineraryDayLocation } = useTrip();
+  const { trip } = useTrip();
+
+  const addDayMutation = useTripMutation<{ type: "hotspot" | "marker"; locationId: string; id: string }>({
+    url: `/api/trips/${trip?._id}/itinerary/${dayId}/add-location`,
+    method: "POST",
+    mutationKey: [`/api/trips/${trip?._id}/itinerary/${dayId}/add-location`],
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary:
+        old.itinerary?.map((it) => (it.id === dayId ? { ...it, locations: [...(it.locations || []), input] } : it)) ||
+        [],
+    }),
+  });
 
   return (
     <>
@@ -23,7 +37,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                 <button
                   className="flex items-center gap-2 text-sm cursor-pointer text-gray-700 w-full"
                   onClick={() => {
-                    addItineraryDayLocation(dayId, "marker", marker.id);
+                    addDayMutation.mutate({ type: "marker", locationId: marker.id, id: nanoId(6) });
                     close();
                   }}
                 >
@@ -41,7 +55,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                 <button
                   className="flex items-center gap-2 text-sm cursor-pointer py-0.5 text-gray-700 w-full"
                   onClick={() => {
-                    addItineraryDayLocation(dayId, "hotspot", hotspot.id);
+                    addDayMutation.mutate({ type: "hotspot", locationId: hotspot.id, id: nanoId(6) });
                     close();
                   }}
                 >

@@ -9,6 +9,7 @@ import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
+import useTripMutation from "hooks/useTripMutation";
 
 type Props = {
   marker: CustomMarker;
@@ -16,12 +17,30 @@ type Props = {
 
 export default function ViewMarker({ marker }: Props) {
   const { close } = useModal();
-  const { canEdit, removeMarker, saveMarkerNotes, setSelectedMarkerId } = useTrip();
+  const { trip, canEdit, setSelectedMarkerId } = useTrip();
   const { id, placeId, name, lat, lng } = marker;
 
+  const removeMutation = useTripMutation({
+    url: `/api/trips/${trip?._id}/markers/${id}`,
+    method: "DELETE",
+    updateCache: (old) => ({
+      ...old,
+      markers: old.markers.filter((it) => it.id !== id),
+    }),
+  });
+
+  const saveNotesMutation = useTripMutation<{ notes: string }>({
+    url: `/api/trips/${trip?._id}/markers/${id}/notes`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      markers: old.markers.map((it) => (it.id === id ? { ...it, notes: input.notes } : it)),
+    }),
+  });
+
   const handleRemoveMarker = () => {
-    if (!confirm("Are you sure you want to delete this marker?")) return;
-    removeMarker(id);
+    if (!confirm("Are you sure you want to remove this marker?")) return;
+    removeMutation.mutate({});
     close();
   };
 
@@ -66,7 +85,7 @@ export default function ViewMarker({ marker }: Props) {
               </Menu.Items>
             </Menu>
           </div>
-          <InputNotes value={marker.notes} onBlur={(value) => saveMarkerNotes(id, value)} key={id} />
+          <InputNotes value={marker.notes} onBlur={(value) => saveNotesMutation.mutate({ notes: value })} key={id} />
         </div>
       </Body>
     </>

@@ -1,16 +1,18 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import clsx from "clsx";
-import { useProfile } from "providers/profile";
 import Icon from "components/Icon";
 import MerlinkLink from "components/MerlinLink";
 import Button from "components/Button";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
-import { Target } from "lib/types";
+import { Profile, Target } from "lib/types";
 import { useSpeciesImages } from "providers/species-images";
 import BestTargetHotspots from "components/BestTargetHotspots";
+import useMutation from "hooks/useMutation";
+import useTripMutation from "hooks/useTripMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type PropsT = Target & {
   index: number;
@@ -18,16 +20,65 @@ type PropsT = Target & {
 
 export default function TargetRow({ index, code, name, percent }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
-  const { trip, canEdit, setSelectedSpecies, setTargetNotes, addTargetStar, removeTargetStar } = useTrip();
+  const { trip, canEdit, setSelectedSpecies } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
-  const { addToLifeList } = useProfile();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
+  const queryClient = useQueryClient();
+
+  const addStarMutation = useTripMutation<{ code: string }>({
+    url: `/api/trips/${trip?._id}/targets/add-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: [...(old.targetStars ?? []), input.code],
+    }),
+  });
+
+  const removeStarMutation = useTripMutation<{ code: string }>({
+    url: `/api/trips/${trip?._id}/targets/remove-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
+    }),
+  });
+
+  const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
+    url: `/api/trips/${trip?._id}/targets/set-notes`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetNotes: { ...(old.targetNotes || {}), [input.code]: input.notes },
+    }),
+  });
+
+  const seenMutation = useMutation({
+    url: `/api/my-profile/add-to-lifelist`,
+    method: "POST",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+    },
+    onMutate: async (data: any) => {
+      await queryClient.cancelQueries({ queryKey: ["/api/profile"] });
+      const prevData = queryClient.getQueryData([`/api/profile`]);
+
+      queryClient.setQueryData<Profile | undefined>([`/api/profile`], (old) => {
+        if (!old) return old;
+        return { ...old, lifelist: [...old.lifelist, data.code] };
+      });
+
+      return { prevData };
+    },
+    onError: (error, data, context: any) => {
+      queryClient.setQueryData([`/api/profile`], context?.prevData);
+    },
+  });
 
   const handleSeen = (code: string, name: string) => {
     if (!confirm(`Are you sure you want to add ${name} to your life list?`)) return;
-    addToLifeList(code);
+    seenMutation.mutate({ code });
   };
 
   const onToggleExpand = (code: string) => {
@@ -81,7 +132,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             placeholder="Add notes..."
             value={tempNotes}
             onChange={(e) => setTempNotes(e.target.value)}
-            onBlur={(e) => setTargetNotes(code, e.target.value)}
+            onBlur={(e) => setNotesMutation.mutate({ code, notes: e.target.value })}
             minRows={2}
             maxRows={6}
             cacheMeasurements
@@ -100,16 +151,18 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             {isStarred ? (
               <button
                 type="button"
-                onClick={() => removeTargetStar(code)}
+                onClick={() => removeStarMutation.mutate({ code })}
                 className="items-center justify-cente hidden sm:flex"
+                disabled={!canEdit}
               >
                 <Icon name="star" className="text-yellow-500 text-lg" />
               </button>
             ) : (
               <button
                 type="button"
-                onClick={() => addTargetStar(code)}
+                onClick={() => addStarMutation.mutate({ code })}
                 className="items-center justify-cente hidden sm:flex"
+                disabled={!canEdit}
               >
                 <Icon name="starOutline" className="text-gray-500 text-lg" />
               </button>
@@ -146,7 +199,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
               placeholder="Add notes..."
               value={tempNotes}
               onChange={(e) => setTempNotes(e.target.value)}
-              onBlur={(e) => setTargetNotes(code, e.target.value)}
+              onBlur={(e) => setNotesMutation.mutate({ code, notes: e.target.value })}
               minRows={2}
               maxRows={6}
               cacheMeasurements
@@ -154,12 +207,22 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             <BestTargetHotspots speciesCode={code} speciesName={name} />
             <div className="flex gap-2 mt-4">
               {isStarred ? (
-                <button type="button" onClick={() => removeTargetStar(code)} className={mobileBtnClasses}>
+                <button
+                  type="button"
+                  onClick={() => removeStarMutation.mutate({ code })}
+                  className={mobileBtnClasses}
+                  disabled={!canEdit}
+                >
                   <Icon name="star" className="text-yellow-500 text-lg" />
                   Remove star
                 </button>
               ) : (
-                <button type="button" onClick={() => addTargetStar(code)} className={mobileBtnClasses}>
+                <button
+                  type="button"
+                  onClick={() => addStarMutation.mutate({ code })}
+                  className={mobileBtnClasses}
+                  disabled={!canEdit}
+                >
                   <Icon name="starOutline" className="text-gray-500 text-lg" />
                   Add star
                 </button>
@@ -174,11 +237,13 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
           </td>
           <td colSpan={7} className="pb-4 hidden sm:table-cell">
             <BestTargetHotspots speciesCode={code} speciesName={name} className="mb-4" />
-            <span className="text-gray-600 font-medium text-sm">Species actions:</span>{" "}
             {canEdit && (
-              <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => handleSeen(code, name)}>
-                Mark as seen
-              </button>
+              <>
+                <span className="text-gray-600 font-medium text-sm">Species actions:</span>{" "}
+                <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => handleSeen(code, name)}>
+                  Mark as seen
+                </button>
+              </>
             )}
           </td>
         </tr>

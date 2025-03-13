@@ -1,13 +1,13 @@
 import { MarkerIconT } from "lib/icons";
 
 export type Profile = {
-  id: string;
+  _id: string;
+  uid: string;
+  name?: string;
   lifelist: string[];
   exceptions?: string[];
-  radius: number;
-  lat?: number;
-  lng?: number;
   dismissedNoticeId?: string;
+  lastActiveAt: Date | null;
 };
 
 export type Marker = {
@@ -17,16 +17,11 @@ export type Marker = {
   shade?: number;
 };
 
-export type EbirdHotspot = {
-  locId: string;
-  locName: string;
-  countryCode: string;
-  subnational1Code: string;
-  subnational2Code: string;
-  lat: number;
-  lng: number;
-  latestObsDt: string;
-  numSpeciesAllTime: number;
+export type HotspotFav = {
+  name: string;
+  code: string;
+  range: string;
+  percent: number;
 };
 
 export type Hotspot = {
@@ -38,12 +33,23 @@ export type Hotspot = {
   species?: number;
   notes?: string;
   targetsId?: string;
-  favs: {
-    name: string;
-    code: string;
-    range: string;
-    percent: number;
-  }[];
+  favs?: HotspotFav[];
+};
+
+export type HotspotInput = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species: number;
+};
+
+export type eBirdHotspot = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
 };
 
 export type KeyValue = {
@@ -77,10 +83,11 @@ export type Day = {
 };
 
 export type Trip = {
-  id: string;
+  _id: string;
   userIds: string[];
   ownerId: string;
   ownerName: string;
+  isPublic: boolean;
   name: string;
   region: string;
   bounds: {
@@ -101,10 +108,16 @@ export type Trip = {
   targetNotes?: {
     [key: string]: string;
   };
+  updatedAt: string;
   createdAt: string;
 };
 
-export type TripInput = Omit<Trip, "id" | "userIds" | "ownerId" | "ownerName">;
+export type TripInput = {
+  name: string;
+  region: string;
+  startMonth: number;
+  endMonth: number;
+};
 
 export type Observation = {
   checklistId: string;
@@ -137,7 +150,7 @@ export type Option = {
 };
 
 export type Invite = {
-  id: string;
+  _id: string;
   email: string;
   tripId: string;
   ownerId: string;
@@ -146,11 +159,23 @@ export type Invite = {
   uid?: string;
 };
 
+export type InviteInput = {
+  email: string;
+  tripId: string;
+};
+
+export type Editor = {
+  uid: string;
+  name: string;
+  lifelist: string[];
+};
+
 export type RecentChecklist = {
   locId: string;
   subId: string;
   userDisplayName: string;
   numSpecies: number;
+  isoObsDate: string;
   obsDt: string;
   obsTime: string;
   subID: string;
@@ -182,15 +207,24 @@ export type RecentSpecies = {
   count: number;
 };
 
-export type Targets = {
-  id?: string;
+export enum TargetListType {
+  trip = "trip",
+  hotspot = "hotspot",
+}
+
+export type TargetList = {
+  _id: string;
+  type: TargetListType;
+  tripId: string;
   items: Target[];
   N: number;
   yrN: number;
-  tripId: string;
   hotspotId?: string;
-  updatedAt?: string;
+  updatedAt: string;
+  createdAt: string;
 };
+
+export type TargetListInput = Omit<TargetList, "_id" | "updatedAt" | "createdAt" | "type" | "tripId">;
 
 export type GooglePlaceT = {
   id?: string;
@@ -198,4 +232,17 @@ export type GooglePlaceT = {
   lat: number;
   lng: number;
   type?: string;
+};
+
+export type QuizImages = {
+  _id: string;
+  code: string;
+  ids: string[];
+  name: string;
+};
+
+export type Vault = {
+  _id: string;
+  key: string;
+  value: string;
 };

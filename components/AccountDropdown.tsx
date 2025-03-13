@@ -29,6 +29,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
 
       <Transition>
         <Transition.Child
+          as="div"
           enter="transition duration-200 ease-out"
           enterFrom="scale-95 opacity-0"
           enterTo="scale-100 opacity-100"

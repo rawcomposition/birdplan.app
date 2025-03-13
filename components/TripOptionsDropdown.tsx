@@ -12,23 +12,24 @@ type Props = {
 
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
-  const { lifelist, id } = useProfile();
-  const { targets, trip, isOwner } = useTrip();
+  const { lifelist, uid } = useProfile();
+  const { targets, trip, isOwner, canEdit } = useTrip();
 
   const links = [
     {
       name: !!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List",
-      href: `/import-lifelist?tripId=${trip?.id}&back=true`,
+      href: `/import-lifelist?tripId=${trip?._id}&back=true`,
       icon: "feather",
     },
     {
       name: !!targets?.items?.length ? "Update Targets" : "Import Targets",
-      href: `/${trip?.id}/import-targets?redirect=targets&back=true`,
+      href: `/${trip?._id}/import-targets?redirect=targets&back=true`,
       icon: "bullseye",
+      hidden: !canEdit,
     },
     {
       name: "Bird Quiz",
-      href: `/${trip?.id}/quiz`,
+      href: `/${trip?._id}/quiz`,
       icon: "questionMark",
     },
     {
@@ -39,12 +40,13 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Trip Settings",
-      href: `/${trip?.id}/settings`,
+      href: `/${trip?._id}/settings`,
       icon: "cog",
+      hidden: !canEdit,
     },
     {
       name: "Export KML",
-      href: `/api/trips/${trip?.id}/export?profileId=${id}`,
+      href: `/api/trips/${trip?._id}/export?uid=${uid}`,
       icon: "export",
     },
   ];
@@ -64,6 +66,7 @@ export default function TripOptionsDropdown({ className }: Props) {
 
       <Transition>
         <Transition.Child
+          as="div"
           enter="transition duration-200 ease-out"
           enterFrom="scale-95 opacity-0"
           enterTo="scale-100 opacity-100"

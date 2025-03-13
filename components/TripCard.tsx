@@ -9,7 +9,7 @@ type Props = {
 
 export default function TripCard({ trip }: Props) {
   const [render, setRender] = React.useState(false);
-  const { id, name, hotspots } = trip;
+  const { _id, name, hotspots } = trip;
 
   // Avoid hydration errors from loading trips from localStorage
   React.useEffect(() => {
@@ -19,7 +19,7 @@ export default function TripCard({ trip }: Props) {
   if (!render) return null;
 
   return (
-    <Link href={`/${id}`}>
+    <Link href={`/${_id}`}>
       <div className="bg-white rounded-lg shadow relative p-4">
         {trip?.imgUrl && (
           <img

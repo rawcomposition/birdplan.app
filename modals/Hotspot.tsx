@@ -1,11 +1,11 @@
 import React from "react";
 import { Body } from "providers/modals";
-import { Hotspot as HotspotT } from "lib/types";
+import { HotspotInput, Hotspot as HotspotT, Trip } from "lib/types";
 import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
-import { translate, isRegionEnglish, getMarkerColor } from "lib/helpers";
+import { isRegionEnglish, getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -16,33 +16,25 @@ import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
 import { useRouter } from "next/router";
+import useTripMutation from "hooks/useTripMutation";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   hotspot: HotspotT;
 };
 
 export default function Hotspot({ hotspot }: Props) {
-  const {
-    trip,
-    canEdit,
-    appendHotspot,
-    removeHotspot,
-    saveHotspotNotes,
-    selectedSpecies,
-    setTranslatedHotspotName,
-    resetTranslatedHotspotName,
-    setSelectedMarkerId,
-    setHalo,
-  } = useTrip();
+  const { trip, canEdit, selectedSpecies, setSelectedMarkerId, setHalo } = useTrip();
   const { id, lat, lng, species } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
-  const [isTranslating, setIsTranslating] = React.useState(false);
   const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "needs");
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const tabs = [
     {
@@ -65,27 +57,74 @@ export default function Hotspot({ hotspot }: Props) {
     });
   }
 
+  const removeMutation = useTripMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${id}`,
+    method: "DELETE",
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: old.hotspots.filter((it) => it.id !== id),
+    }),
+  });
+
+  const saveNotesMutation = useTripMutation<{ notes: string }>({
+    url: `/api/trips/${trip?._id}/hotspots/${id}/notes`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: old.hotspots.map((it) => (it.id === id ? { ...it, notes: input.notes } : it)),
+    }),
+  });
+
+  const translateMutation = useMutation<{ originalName: string; translatedName: string }>({
+    url: `/api/trips/${trip?._id}/hotspots/${id}/translate-name`,
+    method: "PATCH",
+    onSuccess: (data) => {
+      const { originalName, translatedName } = data;
+      if (!translatedName || translatedName === originalName) {
+        toast("No translation found");
+        return;
+      }
+      queryClient.setQueryData<Trip | undefined>([`/api/trips/${trip?._id}`], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          hotspots: old.hotspots.map((it) =>
+            it.id === id ? { ...it, name: translatedName, originalName: originalName } : it
+          ),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+    },
+  });
+
+  const resetMutation = useTripMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${id}/reset-name`,
+    method: "PATCH",
+    updateCache: (old) => ({
+      ...old,
+      hotspots: old.hotspots.map((it) =>
+        it.id === id ? { ...it, name: it.originalName || "", originalName: "" } : it
+      ),
+    }),
+  });
+
+  const addHotspotMutation = useTripMutation<HotspotInput>({
+    url: `/api/trips/${trip?._id}/hotspots`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      hotspots: [...(old.hotspots || []), input],
+    }),
+  });
+
   const handleSave = async () => {
     if (isSaved) {
       if (notes && !confirm("Are you sure you want to remove this hotspot from your trip? Your notes will be lost."))
         return;
-      removeHotspot(id);
+      removeMutation.mutate({});
     } else {
-      toast.success("Hotspot added to trip!");
-      appendHotspot({ ...hotspot, species: hotspot.species || 0 });
+      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0 });
     }
-  };
-
-  const handleTranslate = async () => {
-    setIsTranslating(true);
-    const translatedName = await translate(name);
-    setIsTranslating(false);
-    if (!translatedName) return;
-    if (translatedName === name) {
-      toast("No translation found");
-      return;
-    }
-    setTranslatedHotspotName(id, translatedName);
   };
 
   const hasSpecies = !!selectedSpecies && router.pathname.includes("targets");
@@ -104,7 +143,7 @@ export default function Hotspot({ hotspot }: Props) {
     };
   }, [id, lat, lng, isSaved, species, hasSpecies]);
 
-  const canTranslate = isSaved && !isRegionEnglish(trip?.region || "");
+  const canTranslate = isSaved && canEdit && !isRegionEnglish(trip?.region || "");
 
   return (
     <>
@@ -112,16 +151,16 @@ export default function Hotspot({ hotspot }: Props) {
         <h3 className="text-lg font-medium">{name}</h3>
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
-            {!originalName && !isTranslating && (
-              <button type="button" className="block text-sky-600" onClick={handleTranslate}>
+            {!originalName && !translateMutation.isPending && (
+              <button type="button" className="block text-sky-600" onClick={() => translateMutation.mutate({})}>
                 Translate
               </button>
             )}
-            {isTranslating && <div className="text-gray-400">Translating...</div>}
+            {translateMutation.isPending && <div className="text-gray-400">Translating...</div>}
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <button type="button" className="text-sky-600" onClick={() => resetTranslatedHotspotName(id)}>
+                <button type="button" className="text-sky-600" onClick={() => resetMutation.mutate({})}>
                   Reset
                 </button>
               </div>
@@ -175,7 +214,7 @@ export default function Hotspot({ hotspot }: Props) {
           </Menu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} />
-        <HotspotFavs locId={id} />
+        <HotspotFavs hotspotId={id} />
 
         {canEdit && !isSaved && (
           <button
@@ -187,7 +226,9 @@ export default function Hotspot({ hotspot }: Props) {
           </button>
         )}
 
-        {isSaved && <InputNotes key={id} value={notes} onBlur={(value) => saveHotspotNotes(id, value)} />}
+        {isSaved && (
+          <InputNotes key={id} value={notes} onBlur={(value) => saveNotesMutation.mutate({ notes: value })} />
+        )}
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id, title }) => (
@@ -209,10 +250,14 @@ export default function Hotspot({ hotspot }: Props) {
         <div className="sm:-mx-1.5">
           {tab === "needs" && <RecentSpeciesList locId={id} onSpeciesClick={() => setTab("checklists")} />}
           {tab === "checklists" && (
-            <RecentChecklistList locId={id} speciesCode={selectedSpecies?.code} speciesName={selectedSpecies?.name} />
+            <RecentChecklistList
+              hotspotId={id}
+              speciesCode={selectedSpecies?.code}
+              speciesName={selectedSpecies?.name}
+            />
           )}
           <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
-            <HotspotTargets locId={id} onSpeciesClick={() => setTab("checklists")} />
+            <HotspotTargets hotspotId={id} onSpeciesClick={() => setTab("checklists")} />
           </div>
         </div>
       </Body>

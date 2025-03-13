@@ -13,15 +13,16 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { months } from "lib/helpers";
 import Button from "components/Button";
-import { updateTrip, deleteTrip } from "lib/firebase";
 import NotFound from "components/NotFound";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function TripSettings() {
-  const { trip, is404 } = useTrip();
+  const { trip, is404, isOwner } = useTrip();
   const [startMonth, setStartMonth] = React.useState<Option>();
   const [endMonth, setEndMonth] = React.useState<Option>();
-  const [submitting, setSubmitting] = React.useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   React.useEffect(() => {
     if (!trip) return;
@@ -29,9 +30,34 @@ export default function TripSettings() {
     setStartMonth({ value: trip.startMonth.toString(), label: months[trip.startMonth - 1] });
   }, [trip]);
 
+  const deleteTripMutation = useMutation({
+    url: `/api/trips/${trip?._id}`,
+    method: "DELETE",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
+      router.push("/trips");
+    },
+  });
+
+  const updateTripMutation = useMutation({
+    url: `/api/trips/${trip?._id}`,
+    method: "PATCH",
+    onSuccess: async ({ hasChangedDates }: any) => {
+      toast.success("Trip updated");
+      queryClient.invalidateQueries({ queryKey: ["/api/trips"] });
+      await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+      if (hasChangedDates) {
+        router.push(`/${trip?._id}/import-targets`);
+        queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/targets`] });
+        queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/all-hotspot-targets`] });
+      } else {
+        router.push(`/${trip?._id}`);
+      }
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitting(true);
     const form = e.currentTarget;
     const name = (form.name as any).value;
     if (!name) return toast.error("Please enter a name");
@@ -39,18 +65,13 @@ export default function TripSettings() {
     if (!trip) return;
     const start = Number(startMonth.value);
     const end = Number(endMonth.value);
-    const hasTimeframeChanged = start !== trip.startMonth || end !== trip.endMonth;
-    await updateTrip({ tripId: trip.id, name, startMonth: start, endMonth: end });
-    toast.success("Trip updated");
-    setSubmitting(false);
-    router.push(hasTimeframeChanged ? `/${trip.id}/import-targets` : `/${trip.id}`);
+    updateTripMutation.mutate({ name, startMonth: start, endMonth: end });
   };
 
   const handleDelete = async () => {
     if (!trip) return;
     if (!confirm("Are you sure you want to delete this trip?")) return;
-    deleteTrip(trip.id);
-    router.push("/trips");
+    deleteTripMutation.mutate({});
   };
 
   if (is404) return <NotFound />;
@@ -64,7 +85,7 @@ export default function TripSettings() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Link
-          href={`/${trip?.id}`}
+          href={`/${trip?._id}`}
           className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
         >
           ← Back to trip
@@ -106,15 +127,22 @@ export default function TripSettings() {
                 <Button href="/trips" color="gray">
                   Cancel
                 </Button>
-                <Button type="submit" color="primary" disabled={submitting}>
-                  {submitting ? "Saving..." : "Save Changes"}
+                <Button type="submit" color="primary" disabled={updateTripMutation.isPending}>
+                  {updateTripMutation.isPending ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
-              <div className="mt-8">
-                <button type="button" onClick={handleDelete} className="text-red-500 hover:text-red-600 text-sm">
-                  Delete Trip
-                </button>
-              </div>
+              {isOwner && (
+                <div className="mt-8">
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="text-red-500 hover:text-red-600 text-sm"
+                    disabled={deleteTripMutation.isPending}
+                  >
+                    {deleteTripMutation.isPending ? "Deleting..." : "Delete Trip"}
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

@@ -15,6 +15,8 @@ import NotFound from "components/NotFound";
 import clsx from "clsx";
 import useConfirmNavigation from "hooks/useConfirmNavigation";
 import useDownloadTargets from "hooks/useDownloadTargets";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const cutoffs = ["5%", "2%", "1%", "0.8%", "0.5%", "0.2%", "0.1%", "0%"];
 
@@ -22,11 +24,12 @@ export default function ImportTargets() {
   const [cutoff, setCutoff] = React.useState<Option>({ value: "1%", label: "1%" });
   const [isFinalizing, setIsFinalizing] = React.useState(false);
   const [isDirty, setIsDirty] = React.useState(false);
-  const { is404, trip, setTargets } = useTrip();
+  const { is404, trip } = useTrip();
   const { lifelist } = useProfile();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const tripId = trip?.id;
+  const tripId = trip?._id;
   const redirect = router.query.redirect || "";
   const showBack = router.query.back === "true";
   const region = trip?.region;
@@ -34,8 +37,8 @@ export default function ImportTargets() {
   const endMonth = trip?.endMonth || 12;
   const redirectUrl =
     lifelist.length > 0
-      ? `/${trip?.id}/${redirect}`
-      : `/import-lifelist?tripId=${trip?.id}&back=${showBack ? "true" : "false"}`;
+      ? `/${tripId}/${redirect}`
+      : `/import-lifelist?tripId=${tripId}&back=${showBack ? "true" : "false"}`;
 
   const { data, isLoading, isRefetching, error, refetch } = useDownloadTargets({
     region,
@@ -50,13 +53,21 @@ export default function ImportTargets() {
 
   useConfirmNavigation(isDirty);
 
+  const mutation = useMutation({
+    url: `/api/trips/${tripId}/targets`,
+    method: "PATCH",
+    onSuccess: () => {
+      router.push(redirectUrl);
+      queryClient.invalidateQueries({ queryKey: [`/api/trips/${tripId}/targets`] });
+    },
+  });
+
   const handleSubmit = async () => {
     if (!tripId || !data) return;
     const filtered = data.items.filter(({ percent }) => percent >= Number(cutoff.value.replace("%", "")));
     setIsDirty(false);
     setIsFinalizing(true);
-    await setTargets({ ...data, tripId, items: filtered });
-    router.push(redirectUrl);
+    mutation.mutate({ ...data, items: filtered });
   };
 
   if (is404) return <NotFound />;
@@ -71,7 +82,7 @@ export default function ImportTargets() {
       <main className="max-w-2xl w-full mx-auto pb-12">
         {showBack && (
           <Link
-            href={`/${trip?.id}`}
+            href={`/${tripId}`}
             className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
           >
             ← Back to trip

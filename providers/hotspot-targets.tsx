@@ -1,9 +1,8 @@
 import React from "react";
 import { useTrip } from "providers/trip";
-import { Targets } from "lib/types";
-import { updateHotspots, subscribeToHotspotTargets, deleteTargets } from "lib/firebase";
-
+import { TargetList } from "lib/types";
 import useTargetsDownloadManager from "hooks/useTargetsDownloadManager";
+import { useQuery } from "@tanstack/react-query";
 
 type ContextT = {
   failedLocIds: string[];
@@ -41,7 +40,7 @@ const HotspotTargetsProvider = ({ children }: Props) => {
   );
 };
 
-const cleanTargets = (targets: Targets[]) => {
+const cleanTargets = (targets: TargetList[]) => {
   const encounteredIds = new Set<string>();
   return targets.filter((target) => {
     if (!target.hotspotId) return false;
@@ -52,39 +51,21 @@ const cleanTargets = (targets: Targets[]) => {
 };
 
 const useHotspotTargets = () => {
-  const [targets, setTargets] = React.useState<Targets[]>([]);
   const { trip } = useTrip();
   const state = React.useContext(HotspotTargetsContext);
 
-  const tripId = trip?.id;
+  const tripId = trip?._id;
 
-  React.useEffect(() => {
-    if (!tripId) return;
-    const unsubscribe = subscribeToHotspotTargets(tripId, (targets) => {
-      setTargets(cleanTargets(targets));
-    });
-    return () => {
-      unsubscribe();
-      setTargets([]);
-    };
-  }, [tripId]);
+  const { data } = useQuery<TargetList[]>({
+    queryKey: [`/api/trips/${tripId}/all-hotspot-targets`],
+    enabled: !!tripId,
+    staleTime: 1000 * 60 * 60 * 24,
+    refetchOnWindowFocus: false,
+  });
 
-  const resetHotspotTargets = async (id: string) => {
-    if (!trip) return;
-    let oldTargetsId: string | undefined;
-    const newHotspots = trip.hotspots.map((it) => {
-      const { targetsId, ...rest } = it;
-      if (it.id === id) {
-        oldTargetsId = targetsId;
-        return { ...rest };
-      }
-      return it;
-    });
-    state.retryDownload(id);
-    await Promise.all([updateHotspots(trip.id, newHotspots), oldTargetsId && deleteTargets(oldTargetsId)]);
-  };
+  const targets = cleanTargets(data || []);
 
-  return { ...state, resetHotspotTargets, allTargets: targets };
+  return { ...state, allTargets: targets };
 };
 
 export { HotspotTargetsProvider, useHotspotTargets };

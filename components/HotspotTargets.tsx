@@ -7,22 +7,26 @@ import { useProfile } from "providers/profile";
 import { useHotspotTargets } from "providers/hotspot-targets";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
+import { useQueryClient } from "@tanstack/react-query";
+import useMutation from "hooks/useMutation";
 
 type Props = {
-  locId: string;
+  hotspotId: string;
   onSpeciesClick: () => void;
 };
 
-export default function HotspotTargets({ locId, onSpeciesClick }: Props) {
+export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const { lifelist } = useProfile();
+  const queryClient = useQueryClient();
   const [view, setView] = React.useState<string>("all");
   const { trip, setSelectedSpecies, dateRangeLabel } = useTrip();
-  const { pendingLocIds, failedLocIds, allTargets, resetHotspotTargets, retryDownload } = useHotspotTargets();
+  const { pendingLocIds, failedLocIds, allTargets, retryDownload } = useHotspotTargets();
+  const [isPending, setIsPending] = React.useState(false);
 
-  const isDownloading = pendingLocIds.includes(locId);
-  const isFailed = failedLocIds.includes(locId);
+  const isDownloading = pendingLocIds.includes(hotspotId);
+  const isFailed = failedLocIds.includes(hotspotId);
 
-  const items = allTargets.find((it) => it.hotspotId === locId)?.items;
+  const items = allTargets.find((it) => it.hotspotId === hotspotId)?.items;
 
   const sortedItems = (() => {
     if (!items?.length) return [];
@@ -34,6 +38,20 @@ export default function HotspotTargets({ locId, onSpeciesClick }: Props) {
   })();
 
   const hasResults = !!items?.length;
+
+  const resetTargetsMutation = useMutation({
+    url: `/api/trips/${trip?._id}/hotspots/${hotspotId}/reset-targets`,
+    method: "PATCH",
+    onMutate: () => setIsPending(true),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}`] });
+      await queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/all-hotspot-targets`] });
+      setIsPending(false);
+    },
+    onError: () => {
+      setIsPending(false);
+    },
+  });
 
   if (isDownloading) {
     return (
@@ -49,7 +67,7 @@ export default function HotspotTargets({ locId, onSpeciesClick }: Props) {
       <Alert style="error" className="-mx-1 my-1">
         <Icon name="xMarkCircle" className="text-xl" />
         Failed to download targets from eBird
-        <button className="text-sky-600 font-medium" onClick={() => retryDownload(locId)}>
+        <button className="text-sky-600 font-medium" onClick={() => retryDownload(hotspotId)}>
           Retry
         </button>
       </Alert>
@@ -76,7 +94,7 @@ export default function HotspotTargets({ locId, onSpeciesClick }: Props) {
           {...it}
           index={index}
           view={view}
-          locId={locId}
+          hotspotId={hotspotId}
           range={dateRangeLabel}
           onClick={() => {
             setSelectedSpecies({ code: it.code, name: it.name });
@@ -88,8 +106,8 @@ export default function HotspotTargets({ locId, onSpeciesClick }: Props) {
         <a
           href={
             view === "all"
-              ? `https://ebird.org/targets?r1=${locId}&bmo=1&emo=12&r2=world&t2=life`
-              : `https://ebird.org/targets?r1=${locId}&bmo=${trip?.startMonth}&emo=${trip?.endMonth}&r2=world&t2=life`
+              ? `https://ebird.org/targets?r1=${hotspotId}&bmo=1&emo=12&r2=world&t2=life`
+              : `https://ebird.org/targets?r1=${hotspotId}&bmo=${trip?.startMonth}&emo=${trip?.endMonth}&r2=world&t2=life`
           }
           target="_blank"
           rel="noreferrer"
@@ -100,10 +118,11 @@ export default function HotspotTargets({ locId, onSpeciesClick }: Props) {
         <button
           type="button"
           className="text-sky-600 text-[12px] font-bold pl-3 py-1 inline-flex items-center gap-1"
-          onClick={() => resetHotspotTargets(locId)}
+          onClick={() => resetTargetsMutation.mutate({})}
+          disabled={isPending}
         >
           <Icon name="refresh" />
-          Refresh Targets
+          {isPending ? "Refreshing..." : "Refresh Targets"}
         </button>
       </div>
     </>

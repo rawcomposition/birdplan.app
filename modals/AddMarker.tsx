@@ -5,11 +5,13 @@ import Field from "components/Field";
 import Input from "components/Input";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
-import { randomId } from "lib/helpers";
+import { nanoId } from "lib/helpers";
 import { MarkerIconT, markerIcons } from "lib/icons";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
+import useTripMutation from "hooks/useTripMutation";
+import { CustomMarker } from "lib/types";
 
 type Props = {
   lat?: number;
@@ -22,11 +24,20 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
   const [lat, setLat] = React.useState<number>(defaultLat || 0);
   const [lng, setLng] = React.useState<number>(defaultLng || 0);
   const { close } = useModal();
-  const { appendMarker } = useTrip();
+  const { trip } = useTrip();
+
+  const addMarkerMutation = useTripMutation<CustomMarker>({
+    url: `/api/trips/${trip?._id}/markers`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      markers: [...(old.markers || []), input],
+    }),
+  });
 
   const handleAddMarker = () => {
     if (!icon) return toast.error("Please choose an icon");
-    appendMarker({ lat, lng, name, icon, id: randomId(6) });
+    addMarkerMutation.mutate({ lat, lng, name, icon, id: nanoId(6) });
     close();
   };
 

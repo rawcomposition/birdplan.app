@@ -110,7 +110,7 @@ export default function Trip() {
               <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox
-                    key={trip.id}
+                    key={trip._id}
                     onHotspotClick={hotspotClick}
                     markers={markers}
                     customMarkers={customMarkers}

@@ -1,18 +1,37 @@
 import Link from "next/link";
 import CloseButton from "components/CloseButton";
 import { useProfile } from "providers/profile";
+import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { Profile } from "lib/types";
 
 const noticeId = "";
 
 export default function Notice() {
-  const { id, dismissNotice, dismissedNoticeId } = useProfile();
+  const { _id, dismissedNoticeId } = useProfile();
+  const queryClient = useQueryClient();
 
-  const handleDismiss = () => {
-    dismissNotice(noticeId);
-  };
+  const dismissMutation = useMutation({
+    url: "/api/my-profile",
+    method: "PATCH",
+    onMutate: async (data: any) => {
+      await queryClient.cancelQueries({ queryKey: [`/api/my-profile`] });
+      const prevData = queryClient.getQueryData([`/api/my-profile`]);
+
+      queryClient.setQueryData<Profile | undefined>([`/api/my-profile`], (old) => {
+        if (!old) return old;
+        return { ...old, dismissedNoticeId: data.dismissedNoticeId };
+      });
+
+      return { prevData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+    },
+  });
 
   if (!noticeId) return null;
-  if (!id) return null;
+  if (!_id) return null;
   if (dismissedNoticeId === noticeId) return null;
 
   return (
@@ -27,7 +46,7 @@ export default function Notice() {
           </Link>{" "}
           and targets for any upcoming trips.
         </p>
-        <CloseButton onClick={handleDismiss} />
+        <CloseButton onClick={() => dismissMutation.mutate({ dismissedNoticeId: noticeId })} />
       </div>
     </div>
   );

@@ -12,32 +12,38 @@ import { useUser } from "providers/user";
 import Input from "components/Input";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useProfile } from "providers/profile";
-import useProfiles from "hooks/useProfiles";
 import Button from "components/Button";
 import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
-
+import { useQuery } from "@tanstack/react-query";
+import { Editor } from "lib/types";
+import { auth } from "lib/firebase";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {
   const { open, close } = useModal();
   const { user } = useUser();
-  const myUid = user?.uid;
   const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
 
   // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
-  const [uid, setUid] = React.useState<string | undefined>(myUid || trip?.ownerId);
+  const [uid, setUid] = React.useState<string | undefined>();
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
 
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
-  const { profiles } = useProfiles(trip?.userIds && trip.userIds.length > 1 ? trip.userIds : undefined);
-  const lifelist = uid === myUid ? myLifelist : profiles?.find((it) => it.id === uid)?.lifelist || [];
+  const { data: editors } = useQuery<Editor[]>({
+    queryKey: [`/api/trips/${trip?._id}/editors`],
+    enabled: !!trip?._id,
+    refetchOnWindowFocus: false,
+  });
+  const myUid = user?.uid;
+  const ownerId = trip?.ownerId;
+  const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
   const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -62,8 +68,9 @@ export default function TripTargets() {
   };
 
   React.useEffect(() => {
-    setUid(myUid);
-  }, [myUid]);
+    if (!myUid && !ownerId) return;
+    setUid(myUid || ownerId);
+  }, [myUid, ownerId]);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
@@ -94,7 +101,7 @@ export default function TripTargets() {
           <div className="h-full overflow-auto w-full">
             <div className="h-full grow flex sm:relative flex-col w-full">
               <div className="h-full w-full mx-auto max-w-6xl">
-                <ProfileSelect value={uid} onChange={setUid} />
+                <ProfileSelect value={uid} onChange={setUid} editors={editors} />
                 {!!targetSpecies?.length && (
                   <div className="flex items-center gap-2 my-2 sm:my-4 px-2 sm:px-0">
                     <Input
@@ -135,7 +142,7 @@ export default function TripTargets() {
                     {canEdit && (
                       <p>
                         <Button
-                          href={`/${trip?.id}/import-targets?redirect=targets&back=true`}
+                          href={`/${trip?._id}/import-targets?redirect=targets&back=true`}
                           color="primary"
                           size="sm"
                         >
@@ -188,7 +195,7 @@ export default function TripTargets() {
               <div className="w-full flex-grow relative">
                 {trip?.bounds && (
                   <MapBox
-                    key={trip.id}
+                    key={trip._id}
                     onHotspotClick={obsClick}
                     obsLayer={selectedSpecies && obsLayer}
                     bounds={trip.bounds}

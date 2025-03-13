@@ -1,9 +1,8 @@
-import { Trip, Target, Targets, Hotspot } from "lib/types";
+import { Trip, TargetList, Hotspot } from "lib/types";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
-import { uploadFile } from "lib/firebase";
-import { v4 as uuidv4 } from "uuid";
-import Papa from "papaparse";
+import { auth } from "lib/firebase";
+import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -58,7 +57,8 @@ export const englishCountries = [
 
 export const isRegionEnglish = (region: string) => {
   const regionCode = region.split(",")[0];
-  return englishCountries.includes(regionCode);
+  const countryCode = regionCode.split("-")[0];
+  return englishCountries.includes(countryCode);
 };
 
 export function truncate(string: string, length: number): string {
@@ -131,30 +131,25 @@ export const radiusOptions = [
 ];
 
 export const getBounds = async (regionString: string) => {
-  try {
-    const regions = regionString.split(",");
-    const boundsPromises = regions.map((region) =>
-      fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
-        res.json()
-      )
-    );
-    const boundsResults = await Promise.all(boundsPromises);
-    const combinedBounds = boundsResults.reduce(
-      (acc, bounds) => {
-        return {
-          minX: Math.min(acc.minX, bounds.bounds.minX),
-          maxX: Math.max(acc.maxX, bounds.bounds.maxX),
-          minY: Math.min(acc.minY, bounds.bounds.minY),
-          maxY: Math.max(acc.maxY, bounds.bounds.maxY),
-        };
-      },
-      { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
-    );
-    return combinedBounds;
-  } catch (error) {
-    toast.error("Error getting region info");
-    return null;
-  }
+  const regions = regionString.split(",");
+  const boundsPromises = regions.map((region) =>
+    fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
+      res.json()
+    )
+  );
+  const boundsResults = await Promise.all(boundsPromises);
+  const combinedBounds = boundsResults.reduce(
+    (acc, bounds) => {
+      return {
+        minX: Math.min(acc.minX, bounds.bounds.minX),
+        maxX: Math.max(acc.maxX, bounds.bounds.maxX),
+        minY: Math.min(acc.minY, bounds.bounds.minY),
+        maxY: Math.max(acc.maxY, bounds.bounds.maxY),
+      };
+    },
+    { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
+  );
+  return combinedBounds;
 };
 
 export const getCenterOfBounds = ({ minX, minY, maxX, maxY }: Trip["bounds"]) => {
@@ -171,44 +166,8 @@ export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
   return { lat, lng };
 };
 
-export const randomId = (length: number) => {
-  let result = "";
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
-
-export const translate = async (string: string) => {
-  try {
-    const res = await fetch("/api/translate", {
-      method: "POST",
-      body: JSON.stringify({ text: string }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await res.json();
-    if (!json.text) throw new Error();
-    return json.text;
-  } catch (error) {
-    toast.error("Error translating");
-    return string;
-  }
-};
-
-export const getTzFromLatLng = async (lat: number, lng: number) => {
-  try {
-    const res = await fetch(`/api/get-tz?lat=${lat}&lng=${lng}`);
-    const json = await res.json();
-    if (!json.timezone) throw new Error();
-    return json.timezone;
-  } catch (error) {
-    console.log(error);
-  }
-  return null;
+export const nanoId = (length: number = 16) => {
+  return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
 
 export const dateTimeToRelative = (date: string, timezone?: string, includeAgo?: boolean) => {
@@ -240,9 +199,18 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 
   const queryParams = new URLSearchParams(cleanParams).toString();
 
+  let urlWithParams = url;
+  if (queryParams) {
+    urlWithParams += url.includes("?") ? `&${queryParams}` : `?${queryParams}`;
+  }
+
   if (showLoading) toast.loading("Loading...", { id: url });
-  const res = await fetch(`${url}?${queryParams}`, {
+  const token = await auth.currentUser?.getIdToken();
+  const res = await fetch(urlWithParams, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${token || ""}`,
+    },
   });
   if (showLoading) toast.dismiss(url);
 
@@ -252,6 +220,8 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
     json = await res.json();
   } catch (error) {}
   if (!res.ok) {
+    if (res.status === 401) throw new Error("Unauthorized");
+    if (res.status === 403) throw new Error("Forbidden");
     if (res.status === 404) throw new Error("Route not found");
     if (res.status === 405) throw new Error("Method not allowed");
     if (res.status === 504) throw new Error("Operation timed out. Please try again.");
@@ -260,16 +230,34 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   return json;
 };
 
-export const uploadMapboxImg = async (bounds: Trip["bounds"]) => {
-  const id = uuidv4();
-  const res = await fetch(
-    `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}&padding=30`
-  );
-  const blob = await res.blob();
-  const file = new File([blob], `${id}.png`, { type: "image/png" });
-  const url = await uploadFile(file);
-  return url;
+export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
+  const token = await auth.currentUser?.getIdToken();
+  const res = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token || ""}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  let json: any | null = null;
+  try {
+    json = await res.json();
+  } catch (error) {}
+
+  if (!res.ok) {
+    if (res.status === 401) throw new Error("Unauthorized");
+    if (res.status === 403) throw new Error("Forbidden");
+    if (res.status === 404) throw new Error("Route not found");
+    if (res.status === 405) throw new Error("Method not allowed");
+    if (res.status === 504) throw new Error("Operation timed out. Please try again.");
+    throw new Error((json as any)?.message || (json as any)?.error || "An error occurred");
+  }
+
+  return json;
 };
+
 //https://decipher.dev/30-seconds-of-typescript/docs/debounce/
 export const debounce = (fn: Function, ms = 300) => {
   let timeoutId: ReturnType<typeof setTimeout>;
@@ -311,8 +299,8 @@ export const mostFrequentValue = (arr: any[]) => {
   return sorted[0];
 };
 
-const targetsToHtml = (targets: Targets[], id?: string) => {
-  const items = targets.find((it) => it.id === id)?.items;
+const targetsToHtml = (targets: TargetList[], id?: string) => {
+  const items = targets.find((it) => it._id === id)?.items;
   if (!items?.length) {
     return "";
   }
@@ -342,7 +330,7 @@ const favsToHtml = (favs: Hotspot["favs"]) => {
   return html + "<br/><br/>";
 };
 
-export const tripToGeoJson = (trip: Trip, targets: Targets[]) => {
+export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
   const hotspots = trip?.hotspots || [];
   const markers = trip?.markers || [];
 
