@@ -192,20 +192,24 @@ export default function Hotspot({ hotspot }: Props) {
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <Icon name="verticalDots" />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
+            <Menu.Items className="absolute text-sm right-0 top-10 rounded bg-white shadow-lg py-1.5 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
               <Menu.Item>
                 <a
                   href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sky-600"
+                  className="text-gray-700 hover:bg-gray-50 px-3 py-2"
                 >
                   Illustrated Checklist
                 </a>
               </Menu.Item>
               {canEdit && isSaved && (
                 <Menu.Item>
-                  <button type="button" onClick={handleSave} className="inline-flex items-center gap-1 text-red-700">
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    className="inline-flex items-center gap-1 w-full text-red-700 px-3 py-2 hover:bg-gray-50"
+                  >
                     Remove from trip
                   </button>
                 </Menu.Item>

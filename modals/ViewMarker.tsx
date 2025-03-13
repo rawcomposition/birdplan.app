@@ -61,13 +61,18 @@ export default function ViewMarker({ marker }: Props) {
         <div className="px-4 sm:px-6 pt-4">
           <div className="flex gap-2 mb-2">
             <DirectionsButton lat={lat} lng={lng} markerId={id} googleUrl={googleUrl} />
-            <Menu as="div" className="relative inline-block text-left">
+            <Menu as="div" className="relative inline-block text-left z-10">
               <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
                 <Icon name="verticalDots" />
               </Menu.Button>
-              <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-2">
+              <Menu.Items className="absolute text-sm left-0 top-10 rounded bg-white shadow-lg py-1.5 w-[180px] ring-1 ring-black ring-opacity-5 flex flex-col">
                 <Menu.Item>
-                  <a href={googleUrl} target="_blank" rel="noreferrer" className="text-sky-600">
+                  <a
+                    href={googleUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-gray-700 hover:bg-gray-50 px-3 py-2"
+                  >
                     View on Google Maps
                   </a>
                 </Menu.Item>
@@ -76,7 +81,7 @@ export default function ViewMarker({ marker }: Props) {
                     <button
                       type="button"
                       onClick={handleRemoveMarker}
-                      className="inline-flex items-center gap-1 text-red-700"
+                      className="inline-flex items-center gap-1 w-full text-red-700 px-3 py-2 hover:bg-gray-50"
                     >
                       Remove from trip
                     </button>
