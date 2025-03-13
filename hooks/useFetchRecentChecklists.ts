@@ -2,7 +2,6 @@ import React from "react";
 import { RecentChecklist } from "lib/types";
 import { nanoId } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
-import { EBIRD_BASE_URL } from "lib/config";
 
 export default function useFetchRecentChecklists(region?: string) {
   const { data, isLoading, error } = useQuery<RecentChecklist[]>({

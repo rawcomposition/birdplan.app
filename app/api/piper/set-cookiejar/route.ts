@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     await connect();
-    await Vault.updateOne({ key: "ebird-tools" }, { value: rawBody });
+    await Vault.updateOne({ key: "ebird-tools" }, { value: rawBody }, { upsert: true });
 
     return new NextResponse("Success", { status: 200 });
   } catch (error: unknown) {
