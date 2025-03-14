@@ -26,7 +26,7 @@ export default function Trips() {
         <title>My Trips | BirdPlan.app</title>
       </Head>
 
-      <Header />
+      <Header border />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <div className="p-4 md:p-0">
           <div className="flex gap-8 items-center mb-8 mt-4 md:mt-8">

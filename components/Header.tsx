@@ -13,13 +13,14 @@ import Logo from "components/Logo";
 
 type Props = {
   title?: string;
+  border?: boolean;
   parent?: {
     title: string;
     href: string;
   };
 };
 
-export default function Header({ title, parent }: Props) {
+export default function Header({ title, parent, border }: Props) {
   const { isOnline } = useRealtimeStatus();
   const { isOwner } = useTrip();
   const { open, close } = useModal();
@@ -35,7 +36,10 @@ export default function Header({ title, parent }: Props) {
   };
 
   return (
-    <header className="bg-slate-50 h-[60px] shrink-0 flex items-center" onClick={close}>
+    <header
+      className={clsx("bg-white h-[60px] shrink-0 flex items-center", border && "border-b border-gray-100")}
+      onClick={close}
+    >
       {!isOnline && (
         <div className="bg-red-500 text-white px-2 py-0.5 text-xs absolute text-center w-full left-0 top-14 z-20">
           No Internet Connection
@@ -71,7 +75,7 @@ export default function Header({ title, parent }: Props) {
       {isOwner && (
         <button
           type="button"
-          className="rounded-full border text-accent/90 border-accent/90 py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:border-accent hover:text-accent"
+          className="rounded-full border text-accent border-accent py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:bg-accent/5"
           onClick={handleShare}
           ref={shareRef}
         >

@@ -15,9 +15,10 @@ const links = [
 
 type Props = {
   active: string;
+  border?: boolean;
 };
 
-export default function TripNav({ active }: Props) {
+export default function TripNav({ active, border = true }: Props) {
   const { trip } = useTrip();
   const { pathname } = useRouter();
   const { close } = useModal();
@@ -27,8 +28,8 @@ export default function TripNav({ active }: Props) {
   }, [pathname]);
 
   return (
-    <div className="bg-slate-50 px-2 py-2">
-      <div className="flex gap-1.5 items-center flex-shrink-0 bg-slate-200/60 justify-start rounded-full px-5 py-2">
+    <div className={clsx("bg-white px-2 pb-2 pt-0.5", border && "border-b border-gray-100")}>
+      <div className="flex gap-1.5 items-center flex-shrink-0 bg-slate-100 justify-start rounded-full px-5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link
             href={`/${trip?._id}/${slug}`}
