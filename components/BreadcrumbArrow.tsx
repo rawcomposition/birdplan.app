@@ -7,7 +7,7 @@ type Props = {
 export default function BreadcrumbArrow({ className }: Props) {
   return (
     <svg
-      className={clsx("w-2 h-4 text-white/60", className)}
+      className={clsx("w-2 h-4 text-gray-600", className)}
       viewBox="0 0 24 44"
       preserveAspectRatio="none"
       fill="currentColor"
