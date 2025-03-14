@@ -29,14 +29,14 @@ export default function TripNav({ active, border = true }: Props) {
 
   return (
     <div className={clsx("bg-white px-2 pb-2 pt-0.5 h-[55px]", border && "border-b border-gray-100")}>
-      <div className="flex gap-1.5 items-center flex-shrink-0 bg-slate-200/80 justify-start rounded-full px-5 py-2">
+      <div className="flex gap-1.5 items-center flex-shrink-0 bg-dark/95 justify-start rounded-full px-5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link
             href={`/${trip?._id}/${slug}`}
             key={slug}
             className={clsx(
               "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-2.5",
-              active === slug ? "bg-sky-600 text-white" : "hover:bg-slate-300/70 text-gray-700"
+              active === slug ? "bg-sky-600 text-gray-100" : "hover:bg-white/10 text-gray-200"
             )}
           >
             <div className="hidden xs:block">

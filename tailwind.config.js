@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       colors: {
         accent: "#fdbf05",
+        dark: "#1e263a",
       },
       container: {
         center: true,
