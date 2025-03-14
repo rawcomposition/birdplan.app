@@ -99,10 +99,14 @@ export default function useTargetsDownloadManager() {
     downloadingRef.current = false;
   };
 
-  useEffect(() => {
-    if (!trip?.hotspots || !canEdit) return;
+  // trip is not stable between renders
+  const hotspotsString = JSON.stringify(trip?.hotspots?.map((h) => ({ id: h.id, targetsId: h.targetsId })) || []);
 
-    trip.hotspots
+  useEffect(() => {
+    const parsedHotspots: { id: string; targetsId: string }[] = JSON.parse(hotspotsString);
+    if (!parsedHotspots || !canEdit) return;
+
+    parsedHotspots
       .filter(
         (it) => !it.targetsId && !processedHotspotsRef.current.has(it.id) && !pendingHotspotsRef.current.has(it.id)
       )
@@ -111,7 +115,7 @@ export default function useTargetsDownloadManager() {
     if (!downloadingRef.current && !isPaused) {
       downloadPendingTargets();
     }
-  }, [trip?.hotspots, isPaused, canEdit]);
+  }, [isPaused, canEdit, hotspotsString]);
 
   const pendingLocIds = Array.from(pendingHotspotsRef.current);
   if (downloadingLocId) pendingLocIds.push(downloadingLocId);
