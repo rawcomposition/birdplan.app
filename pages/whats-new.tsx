@@ -20,6 +20,7 @@ export default function WhatsNew() {
               ✨ Streamlined the process of importing region targets from eBird. You no longer need to choose a cutoff
               percent. All targets &gt; 0.01% will be included.
             </li>
+            <li>✨ Optimized the process of downloading targets for hotspots.</li>
           </ul>
           <h2>March 12, 2025</h2>
           <ul>
