@@ -63,7 +63,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
   return (
     <div className={className || ""}>
       <div className="flex items-center gap-2">
-        <h4 className="text-gray-700 font-bold text-[15px]">Best Hotspots</h4>
+        <h4 className="text-gray-700 font-bold text-[15px]">Best Saved Hotspots</h4>
         <FilterTabs
           className="my-4"
           value={filter}

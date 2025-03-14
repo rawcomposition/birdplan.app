@@ -18,7 +18,6 @@ import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import { useQuery } from "@tanstack/react-query";
 import { Editor } from "lib/types";
-import { auth } from "lib/firebase";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {
