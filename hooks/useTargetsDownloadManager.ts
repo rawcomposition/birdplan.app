@@ -40,7 +40,7 @@ export default function useTargetsDownloadManager() {
     const response = await fetch(url);
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
-    if (!data.items?.length) throw new Error("No targets found");
+    if (!data.items) throw new Error("Invalid response");
     return data;
   };
 
