@@ -75,7 +75,7 @@ export default function Header({ title, parent, border }: Props) {
       {isOwner && (
         <button
           type="button"
-          className="rounded-full border text-accent border-accent py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:bg-accent/5"
+          className="rounded-full border text-amber-600 border-amber-600 py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:bg-amber-500/5"
           onClick={handleShare}
           ref={shareRef}
         >

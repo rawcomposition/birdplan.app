@@ -65,7 +65,7 @@ export default function Trip() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="" border={false} />
-      <main className="flex h-[calc(100%-60px-52px)] relative">
+      <main className="flex h-[calc(100%-60px-55px)] relative">
         <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
           <MapButton
             onClick={() => setShowAll((prev) => !prev)}
