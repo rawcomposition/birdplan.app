@@ -4,6 +4,7 @@ import { auth } from "lib/firebase";
 import { useTrip } from "providers/trip";
 import { useWindowActive } from "hooks/useWindowActive";
 import { useQueryClient } from "@tanstack/react-query";
+import useRealtime from "hooks/useRealtimeStatus";
 
 const CUTOFF = "5"; // Percent
 const RETRY_LIMIT = 1;
@@ -16,7 +17,6 @@ export default function useTargetsDownloadManager() {
   const pendingHotspotsRef = useRef(new Set<string>());
   const failedAttemptsRef = useRef(new Map<string, number>());
   const downloadingRef = useRef(false);
-
   const windowIsFocused = useWindowActive({
     onFocus: () => {
       processedHotspotsRef.current.clear();
@@ -24,7 +24,8 @@ export default function useTargetsDownloadManager() {
       failedAttemptsRef.current.clear();
     },
   });
-  const isPaused = !windowIsFocused;
+  const realtimeStatus = useRealtime();
+  const isPaused = !windowIsFocused || !realtimeStatus.isOnline;
 
   const queryClient = useQueryClient();
 
