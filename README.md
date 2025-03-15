@@ -1,4 +1,4 @@
-![screenshot](https://birdplan.app/screenshot4.jpg)
+![screenshot](https://birdplan.app/screenshot5.jpg)
 
 ## Welcome to BirdPlan.app! 🦆
 
