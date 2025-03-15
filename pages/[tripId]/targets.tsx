@@ -36,7 +36,7 @@ export default function TripTargets() {
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
   const { data: editors } = useQuery<Editor[]>({
-    queryKey: [`/api/trips/${trip?._id}/editors`],
+    queryKey: [`/api/v1/trips/${trip?._id}/editors`],
     enabled: !!trip?._id,
     refetchOnWindowFocus: false,
   });

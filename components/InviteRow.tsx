@@ -14,10 +14,10 @@ export default function InviteRow({ invite }: Props) {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    url: `/api/invites/${invite._id}`,
+    url: `/api/v1/invites/${invite._id}`,
     method: "DELETE",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/trips/${trip?._id}/invites`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/invites`] });
     },
   });
 

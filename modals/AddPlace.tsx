@@ -24,7 +24,7 @@ export default function AddPlace() {
   const countryCode = firstRegion?.split("-")?.[0];
 
   const addMarkerMutation = useTripMutation<CustomMarker>({
-    url: `/api/trips/${trip?._id}/markers`,
+    url: `/api/v1/trips/${trip?._id}/markers`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,

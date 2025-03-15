@@ -28,7 +28,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const queryClient = useQueryClient();
 
   const addStarMutation = useTripMutation<{ code: string }>({
-    url: `/api/trips/${trip?._id}/targets/add-star`,
+    url: `/api/v1/trips/${trip?._id}/targets/add-star`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -37,7 +37,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   });
 
   const removeStarMutation = useTripMutation<{ code: string }>({
-    url: `/api/trips/${trip?._id}/targets/remove-star`,
+    url: `/api/v1/trips/${trip?._id}/targets/remove-star`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -46,7 +46,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   });
 
   const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
-    url: `/api/trips/${trip?._id}/targets/set-notes`,
+    url: `/api/v1/trips/${trip?._id}/targets/set-notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -55,16 +55,16 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   });
 
   const seenMutation = useMutation({
-    url: `/api/my-profile/add-to-lifelist`,
+    url: `/api/v1/my-profile/add-to-lifelist`,
     method: "POST",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/v1/my-profile`] });
     },
     onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: ["/api/profile"] });
-      const prevData = queryClient.getQueryData([`/api/profile`]);
+      await queryClient.cancelQueries({ queryKey: ["/api/v1/profile"] });
+      const prevData = queryClient.getQueryData([`/api/v1/profile`]);
 
-      queryClient.setQueryData<Profile | undefined>([`/api/profile`], (old) => {
+      queryClient.setQueryData<Profile | undefined>([`/api/v1/profile`], (old) => {
         if (!old) return old;
         return { ...old, lifelist: [...old.lifelist, data.code] };
       });
@@ -72,7 +72,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
       return { prevData };
     },
     onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/profile`], context?.prevData);
+      queryClient.setQueryData([`/api/v1/profile`], context?.prevData);
     },
   });
 
