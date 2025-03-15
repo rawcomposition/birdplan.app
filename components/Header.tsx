@@ -49,7 +49,7 @@ export default function Header({ title, parent, border }: Props) {
         href={user?.uid ? "/trips" : "/"}
         className={clsx("sm:w-60 flex items-center flex-shrink-0", isSubPage && "hidden md:flex")}
       >
-        <Logo className="w-[50px] mr-4 ml-6" />
+        <Logo className="w-[50px] mr-4 ml-6 -mb-[2px]" />
         <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
       </Link>
       {isSubPage && (
