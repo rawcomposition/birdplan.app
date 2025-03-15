@@ -15,6 +15,7 @@ import { Option, TripInput } from "lib/types";
 import { useModal } from "providers/modals";
 import dayjs from "dayjs";
 import useMutation from "hooks/useMutation";
+import Link from "next/link";
 
 const largeRegions = ["MX", "US", "CA", "AU"];
 
@@ -92,6 +93,9 @@ export default function CreateTrip() {
 
       <Header />
       <main className="max-w-lg w-full mx-auto pb-12">
+        <Link href="/trips" className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center">
+          ← Back to trips
+        </Link>
         <div className="p-4 md:p-0 mt-12">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <Icon name="genericMarker" className="text-2xl text-[#fd1743] -mt-1" /> Create Trip
