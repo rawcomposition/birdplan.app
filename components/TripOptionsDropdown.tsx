@@ -73,7 +73,7 @@ export default function TripOptionsDropdown({ className }: Props) {
           leave="transition duration-150 ease-in"
           leaveFrom="scale-100 opacity-100"
           leaveTo="scale-95 opacity-0"
-          className="-right-2 top-11 absolute  z-50 min-w-[240px] origin-top-right ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white text-gray-700 shadow-md py-2"
+          className="-right-2 top-9 absolute  z-50 min-w-[240px] origin-top-right ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white text-gray-700 shadow-md py-2"
         >
           <Menu.Items>
             {filteredLinks.map(({ name, href, onClick, icon }) => (

@@ -74,7 +74,7 @@ export default function Itinerary() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="itinerary" />
-      <main className="flex h-[calc(100%-60px-52px)]">
+      <main className="flex h-[calc(100%-60px-55px)]">
         <ErrorBoundary>
           <div className="h-full grow flex sm:relative flex-col w-full">
             <div className="h-full overflow-auto" onClick={handleDivClick}>

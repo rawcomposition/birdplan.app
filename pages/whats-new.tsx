@@ -14,6 +14,10 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>March 14, 2025</h2>
+          <ul>
+            <li>✨ New logo and a slight facelift as we get ready for a wider announcement.</li>
+          </ul>
           <h2>March 13, 2025</h2>
           <ul>
             <li>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import Button from "components/Button";
 import { useUser } from "providers/user";
-
+import Logo from "components/Logo";
 export default function HomeHeader() {
   const { user } = useUser();
   const isLoggedIn = !!user?.uid;
@@ -11,7 +11,7 @@ export default function HomeHeader() {
     <header className="bg-white border-b border-gray-100 py-4 shrink-0 flex items-center">
       <div className="container flex items-center px-4">
         <Link href="/trips" className={clsx("flex items-center")}>
-          <img src="/icon.png" className="w-[50px] mr-4" width="50" height="50" />
+          <Logo className="w-[50px] mr-4" />
           <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
         </Link>
         {isLoggedIn ? (

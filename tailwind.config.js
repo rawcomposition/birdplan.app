@@ -9,12 +9,13 @@ module.exports = {
     extend: {
       colors: {
         accent: "#fdbf05",
+        dark: "#1e263a",
       },
       container: {
         center: true,
       },
       boxShadow: {
-        left: "0 -20px 25px -5px rgba(0, 0, 0, 0.3)",
+        left: "0 -5px 25px -5px rgba(0, 0, 0, 0.15)",
       },
     },
     fontFamily: {

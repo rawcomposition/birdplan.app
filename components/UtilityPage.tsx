@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import Logo from "components/Logo";
 
 type PropTypes = {
   heading: string;
@@ -13,7 +14,7 @@ export default function UtilityPage({ heading, children }: PropTypes) {
         <title>{heading}</title>
       </Head>
       <div className="flex flex-col items-center">
-        <img src="/icon.png" className="w-[80px] max-auto" width="50" height="50" />
+        <Logo className="w-[80px] mx-auto" />
         <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">{heading}</h2>
       </div>
 

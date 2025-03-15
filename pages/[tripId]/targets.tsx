@@ -95,7 +95,7 @@ export default function TripTargets() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="targets" />
-      <main className="flex h-[calc(100%-60px-52px)] relative">
+      <main className="flex h-[calc(100%-60px-55px)] relative">
         <ErrorBoundary>
           <div className="h-full overflow-auto w-full">
             <div className="h-full grow flex sm:relative flex-col w-full">
