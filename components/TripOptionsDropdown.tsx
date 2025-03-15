@@ -46,7 +46,7 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Export KML",
-      href: `/api/trips/${trip?._id}/export?uid=${uid}`,
+      href: `/api/v1/trips/${trip?._id}/export?uid=${uid}`,
       icon: "export",
     },
   ];

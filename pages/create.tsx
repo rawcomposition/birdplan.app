@@ -36,7 +36,7 @@ export default function CreateTrip() {
   const { close } = useModal();
 
   const mutation = useMutation<{ id: string }, TripInput>({
-    url: "/api/trips",
+    url: "/api/v1/trips",
     method: "POST",
     onSuccess: ({ id }) => {
       router.push(`/${id}/import-targets`);

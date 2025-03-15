@@ -16,7 +16,7 @@ export default function Trips() {
   const { user } = useUser();
 
   const { data, isLoading, error, refetch } = useQuery<Trip[]>({
-    queryKey: ["/api/trips"],
+    queryKey: ["/api/v1/trips"],
     enabled: !!user?.uid,
   });
 

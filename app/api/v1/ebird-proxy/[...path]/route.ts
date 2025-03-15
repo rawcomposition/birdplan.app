@@ -9,6 +9,7 @@ export async function GET(request: Request, { params }: Params) {
   }
 
   const url = `https://api.ebird.org/v2/${path.join("/")}?${searchParams.toString()}`;
+  console.log("EBIRD URL", url);
 
   const response = await fetch(url);
   return Response.json(await response.json());

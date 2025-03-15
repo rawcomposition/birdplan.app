@@ -15,9 +15,9 @@ export default function AddItineraryLocation({ dayId }: Props) {
   const { trip } = useTrip();
 
   const addDayMutation = useTripMutation<{ type: "hotspot" | "marker"; locationId: string; id: string }>({
-    url: `/api/trips/${trip?._id}/itinerary/${dayId}/add-location`,
+    url: `/api/v1/trips/${trip?._id}/itinerary/${dayId}/add-location`,
     method: "POST",
-    mutationKey: [`/api/trips/${trip?._id}/itinerary/${dayId}/add-location`],
+    mutationKey: [`/api/v1/trips/${trip?._id}/itinerary/${dayId}/add-location`],
     updateCache: (old, input) => ({
       ...old,
       itinerary:

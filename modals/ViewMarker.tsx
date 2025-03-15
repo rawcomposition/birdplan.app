@@ -21,7 +21,7 @@ export default function ViewMarker({ marker }: Props) {
   const { id, placeId, name, lat, lng } = marker;
 
   const removeMutation = useTripMutation({
-    url: `/api/trips/${trip?._id}/markers/${id}`,
+    url: `/api/v1/trips/${trip?._id}/markers/${id}`,
     method: "DELETE",
     updateCache: (old) => ({
       ...old,
@@ -30,7 +30,7 @@ export default function ViewMarker({ marker }: Props) {
   });
 
   const saveNotesMutation = useTripMutation<{ notes: string }>({
-    url: `/api/trips/${trip?._id}/markers/${id}/notes`,
+    url: `/api/v1/trips/${trip?._id}/markers/${id}/notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,

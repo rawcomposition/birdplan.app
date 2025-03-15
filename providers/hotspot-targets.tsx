@@ -57,7 +57,7 @@ const useHotspotTargets = () => {
   const tripId = trip?._id;
 
   const { data } = useQuery<TargetList[]>({
-    queryKey: [`/api/trips/${tripId}/all-hotspot-targets`],
+    queryKey: [`/api/v1/trips/${tripId}/all-hotspot-targets`],
     enabled: !!tripId,
     staleTime: 1000 * 60 * 60 * 24,
     refetchOnWindowFocus: false,

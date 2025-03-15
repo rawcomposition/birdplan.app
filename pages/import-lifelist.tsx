@@ -19,15 +19,15 @@ export default function ImportLifelist() {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const setExceptionsMutation = useMutation({
-    url: "/api/my-profile",
+    url: "/api/v1/my-profile",
     method: "PATCH",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/v1/my-profile`] });
     },
   });
 
   const setLifelistMutation = useMutation({
-    url: "/api/my-profile",
+    url: "/api/v1/my-profile",
     method: "PATCH",
     onMutate: () => {
       toast.loading("Importing life list...", { id: "import-lifelist" });
@@ -36,7 +36,7 @@ export default function ImportLifelist() {
       toast.dismiss("import-lifelist");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/my-profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/v1/my-profile`] });
       router.push(redirectUrl);
     },
   });
