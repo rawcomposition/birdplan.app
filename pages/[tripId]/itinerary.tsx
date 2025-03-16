@@ -21,8 +21,13 @@ export default function Itinerary() {
   const { close, modalId } = useModal();
   const hasStartDate = !!trip?.startDate;
   const [editingStartDate, setEditingStartDate] = React.useState(false);
-  const [editing, setEditing] = React.useState(!!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length));
+  const shouldDefaultEdit = !!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length);
+  const [editing, setEditing] = React.useState(shouldDefaultEdit);
   const isEditing = canEdit && editing;
+
+  React.useEffect(() => {
+    if (shouldDefaultEdit) setEditing(true);
+  }, [shouldDefaultEdit]);
 
   const setStartDateMutation = useTripMutation<{ startDate: string }>({
     url: `/api/v1/trips/${trip?._id}/set-start-date`,
@@ -49,6 +54,7 @@ export default function Itinerary() {
     if (!date) return toast.error("Please choose a date");
     setStartDateMutation.mutate({ startDate: date });
     setEditingStartDate(false);
+    setEditing(true);
   };
 
   const handleAddDay = () => {
