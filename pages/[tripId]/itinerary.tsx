@@ -25,7 +25,7 @@ export default function Itinerary() {
   const isEditing = canEdit && editing;
 
   const setStartDateMutation = useTripMutation<{ startDate: string }>({
-    url: `/api/trips/${trip?._id}/set-start-date`,
+    url: `/api/v1/trips/${trip?._id}/set-start-date`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -34,7 +34,7 @@ export default function Itinerary() {
   });
 
   const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
-    url: `/api/trips/${trip?._id}/itinerary`,
+    url: `/api/v1/trips/${trip?._id}/itinerary`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,

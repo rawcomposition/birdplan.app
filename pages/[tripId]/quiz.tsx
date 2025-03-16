@@ -43,7 +43,7 @@ export default function Quiz() {
 
     const randomCodes = getRandomItemsFromArray(targetCodes, quizLength);
     try {
-      const res = await fetch(`/api/generate-quiz`, {
+      const res = await fetch(`/api/v1/generate-quiz`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ codes: randomCodes }),

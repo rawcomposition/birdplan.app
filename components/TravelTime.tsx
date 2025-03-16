@@ -21,7 +21,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
   const travelData = location2?.travel;
 
   const removeTravelTimeMutation = useTripMutation<{ id: string }>({
-    url: `/api/trips/${trip?._id}/itinerary/${dayId}/remove-travel-time`,
+    url: `/api/v1/trips/${trip?._id}/itinerary/${dayId}/remove-travel-time`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -42,8 +42,8 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
   });
 
   const calcTravelTimeMutation = useTripMutation<{ id: string; method: string }>({
-    url: `/api/trips/${trip?._id}/itinerary/${dayId}/calc-travel-time`,
-    mutationKey: [`/api/trips/${trip?._id}/itinerary/${dayId}/calc-travel-time`],
+    url: `/api/v1/trips/${trip?._id}/itinerary/${dayId}/calc-travel-time`,
+    mutationKey: [`/api/v1/trips/${trip?._id}/itinerary/${dayId}/calc-travel-time`],
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,

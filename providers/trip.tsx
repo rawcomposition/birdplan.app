@@ -65,13 +65,13 @@ const TripProvider = ({ children }: Props) => {
     isFetching,
     isLoading,
   } = useQuery<Trip>({
-    queryKey: [`/api/trips/${id}`],
+    queryKey: [`/api/v1/trips/${id}`],
     enabled: !!id,
     refetchInterval: 1000 * 60 * 2,
   });
 
   const { data: targets } = useQuery<TargetList | null>({
-    queryKey: [`/api/trips/${id}/targets`],
+    queryKey: [`/api/v1/trips/${id}/targets`],
     enabled: !!id,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60 * 24,
@@ -82,7 +82,7 @@ const TripProvider = ({ children }: Props) => {
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
   const { data: invites } = useQuery<Invite[]>({
-    queryKey: [`/api/trips/${id}/invites`],
+    queryKey: [`/api/v1/trips/${id}/invites`],
     enabled: !!id && !!auth.currentUser && !!canEdit,
     refetchOnWindowFocus: false,
   });
