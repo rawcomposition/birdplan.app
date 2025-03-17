@@ -58,7 +58,7 @@ export default function TripOptionsDropdown({ className }: Props) {
       <Menu.Button
         className={
           className ||
-          "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-1 hover:bg-white/10 text-gray-300"
+          "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-1 hover:bg-slate-300 text-gray-600"
         }
       >
         <Icon name="verticalDots" className="text-lg" />
