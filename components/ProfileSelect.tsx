@@ -16,7 +16,7 @@ export default function ProfileSelect({ value, onChange, editors }: PropsT) {
   const options =
     editors?.map((editor) => {
       const isMe = editor.uid === user?.uid;
-      const name = isMe ? `${user?.displayName} (me)` || "Me" : editor.name || `User ${editor.uid}`;
+      const name = isMe ? `${user?.displayName || `User ${editor.uid}`} (me)` : editor.name || `User ${editor.uid}`;
       return { name, uid: editor.uid };
     }) || [];
 

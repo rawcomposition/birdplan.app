@@ -12,7 +12,9 @@ export async function DELETE(request: Request, { params }: Params) {
     await connect();
     const invite = await Invite.findById(id).lean();
     if (!invite) return APIError("Invite not found", 404);
-    if (invite.ownerId !== session.uid) return APIError("Forbidden", 403);
+    const trip = await Trip.findById(invite.tripId).lean();
+    if (!trip) return APIError("Trip not found", 404);
+    if (!trip.userIds.includes(session.uid)) return APIError("Forbidden", 403);
 
     await Promise.all([
       Invite.deleteOne({ _id: id }),

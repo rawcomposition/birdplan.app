@@ -22,7 +22,7 @@ type Props = {
 
 export default function Header({ title, parent, border }: Props) {
   const { isOnline } = useRealtimeStatus();
-  const { isOwner } = useTrip();
+  const { canEdit } = useTrip();
   const { open, close } = useModal();
   const { user } = useUser();
   const shareRef = React.useRef<HTMLButtonElement>(null);
@@ -72,7 +72,7 @@ export default function Header({ title, parent, border }: Props) {
           </nav>
         )}
       </div>
-      {isOwner && (
+      {canEdit && (
         <button
           type="button"
           className="rounded-full border text-amber-600 border-amber-600 py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:bg-amber-500/5"
