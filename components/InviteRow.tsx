@@ -25,6 +25,10 @@ export default function InviteRow({ invite }: Props) {
     method: "DELETE",
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/invites`] });
+      if (isMe) {
+        queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
+        queryClient.invalidateQueries({ queryKey: ["/api/v1/trips"] });
+      }
       close();
       if (isMe) router.push("/trips");
     },
