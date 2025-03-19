@@ -4,7 +4,7 @@ import { nanoId } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useFetchRecentChecklists(region?: string) {
-  const { data, isLoading, error } = useQuery<RecentChecklist[]>({
+  const { data, isLoading, error, refetch } = useQuery<RecentChecklist[]>({
     // Proxy required for this particular eBird endpoint to avoid CORS error
     queryKey: [
       `/api/v1/ebird-proxy/product/lists/${region}`,
@@ -28,5 +28,5 @@ export default function useFetchRecentChecklists(region?: string) {
     return Object.values(grouped);
   }, [data]);
 
-  return { checklists: data, groupedChecklists, isLoading, error };
+  return { checklists: data, groupedChecklists, isLoading, error, refetch };
 }

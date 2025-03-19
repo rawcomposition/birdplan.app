@@ -4,6 +4,7 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
+import Alert from "components/Alert";
 
 type Props = {
   locId: string;
@@ -13,7 +14,7 @@ type Props = {
 const previewCount = 10;
 
 export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
-  const { recentSpecies, isLoading, error } = useFetchRecentSpecies(locId);
+  const { recentSpecies, isLoading, error, refetch } = useFetchRecentSpecies(locId);
   const [viewAll, setViewAll] = React.useState(false);
   const { trip, setSelectedSpecies } = useTrip();
   const timezone = trip?.timezone;
@@ -76,11 +77,26 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
           </button>
         )}
       </p>
-      {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {!isLoading && recentSpecies.length === 0 && !error && (
-        <p className="text-gray-500 text-sm">No needs in the last 30 days</p>
+      {isLoading && (
+        <Alert style="info" className="-mx-1 my-1">
+          <Icon name="loading" className="text-xl animate-spin" />
+          Loading recent species...
+        </Alert>
       )}
-      {error && <p className="text-gray-500 text-sm">Failed to load recent reports</p>}
+      {!isLoading && recentSpecies.length === 0 && !error && (
+        <Alert style="info" className="-mx-1 my-1">
+          No recent needs in the last 30 days
+        </Alert>
+      )}
+      {error && (
+        <Alert style="error" className="-mx-1 my-1">
+          <Icon name="xMarkCircle" className="text-xl" />
+          Failed to load recent species
+          <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+            Retry
+          </button>
+        </Alert>
+      )}
     </>
   );
 }

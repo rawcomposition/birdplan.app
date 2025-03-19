@@ -5,12 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 export default function useFetchRecentSpecies(region?: string) {
   const { lifelist } = useProfile();
 
-  const { data, isLoading, error } = useQuery<RecentSpecies[]>({
+  const { data, isLoading, error, refetch } = useQuery<RecentSpecies[]>({
     queryKey: [`/api/v1/region/${region}/species`],
     enabled: !!region,
-    meta: {
-      errorMessage: "Failed to load recent species",
-    },
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 60 minutes
     refetchOnWindowFocus: false,
@@ -19,5 +16,5 @@ export default function useFetchRecentSpecies(region?: string) {
 
   const filtered = data?.filter((it) => !lifelist.includes(it.code)) || [];
 
-  return { recentSpecies: filtered, isLoading, error };
+  return { recentSpecies: filtered, isLoading, error, refetch };
 }

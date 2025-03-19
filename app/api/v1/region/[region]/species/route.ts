@@ -9,6 +9,11 @@ export async function GET(request: Request, { params }: Params) {
     const response = await fetch(
       `https://api.ebird.org/v2/data/obs/${region}/recent?fmt=json&cat=species&includeProvisional=true&back=30&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
     );
+
+    if (!response.ok) {
+      return APIError(`Unable to load recent species: ${response.statusText}`, response.status);
+    }
+
     const json = await response.json();
     const formatted = json.reduce((acc: any[], it: any) => {
       const code = it.speciesCode;

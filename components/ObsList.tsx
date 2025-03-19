@@ -5,6 +5,7 @@ import { useTrip } from "providers/trip";
 import dayjs from "dayjs";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
+import Alert from "components/Alert";
 
 type Props = {
   hotspotId: string;
@@ -18,7 +19,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
   const { trip } = useTrip();
   const timezone = trip?.timezone;
 
-  const { data, isLoading, error } = useFetchHotspotObs(trip?._id || "", hotspotId, speciesCode);
+  const { data, isLoading, error, refetch } = useFetchHotspotObs(trip?._id || "", hotspotId, speciesCode);
   const { checklists } = useFetchRecentChecklists(hotspotId);
 
   const formattedObs =
@@ -78,8 +79,22 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
           </button>
         )}
       </p>
-      {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {error && <p className="text-red-500 text-sm">Failed to load observations</p>}
+      {isLoading && (
+        <Alert style="info" className="-mx-1 my-1">
+          <Icon name="loading" className="text-xl animate-spin" />
+          Loading observations...
+        </Alert>
+      )}
+
+      {error && (
+        <Alert style="error" className="-mx-1 my-1">
+          <Icon name="xMarkCircle" className="text-xl" />
+          Failed to load observations
+          <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+            Retry
+          </button>
+        </Alert>
+      )}
     </>
   );
 }

@@ -2,7 +2,7 @@ import { Observation } from "lib/types";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useFetchHotspotObs(tripId: string, hotspotId: string, speciesCode?: string) {
-  const { data, isLoading, error } = useQuery<Observation[]>({
+  const { data, isLoading, error, refetch } = useQuery<Observation[]>({
     queryKey: [`/api/v1/trips/${tripId}/hotspots/${hotspotId}/obs`, { speciesCode }],
     enabled: !!tripId && !!hotspotId && !!speciesCode,
     staleTime: 30 * 60 * 1000, // 30 minutes
@@ -11,5 +11,5 @@ export default function useFetchHotspotObs(tripId: string, hotspotId: string, sp
     retry: 2,
   });
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, refetch };
 }

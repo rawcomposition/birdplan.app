@@ -9,6 +9,7 @@ import useFetchHotspotInfo from "hooks/useFetchHotspotInfo";
 import Icon from "components/Icon";
 import ObsList from "components/ObsList";
 import FilterTabs from "components/FilterTabs";
+import Alert from "components/Alert";
 
 type Props = {
   hotspotId: string;
@@ -23,7 +24,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
   const timezone = trip?.timezone;
 
   const { data: info } = useFetchHotspotInfo(trip?._id || "", hotspotId);
-  const { groupedChecklists, isLoading, error } = useFetchRecentChecklists(hotspotId);
+  const { groupedChecklists, isLoading, error, refetch } = useFetchRecentChecklists(hotspotId);
   const {
     data: obs,
     isLoading: isLoadingObs,
@@ -118,9 +119,26 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
               </Link>
             </p>
           )}
-          {!isLoading && checklists.length === 0 && <p className="text-gray-500 text-sm">No recent checklists</p>}
-          {isLoading && <p className="text-gray-500 text-sm">Loading...</p>}
-          {error && <p className="text-red-500 text-sm">Failed to load checklists</p>}
+          {!isLoading && checklists.length === 0 && !error && (
+            <Alert style="info" className="-mx-1 my-1">
+              No recent checklists
+            </Alert>
+          )}
+          {isLoading && (
+            <Alert style="gray" className="-mx-1 my-1">
+              <Icon name="loading" className="text-xl animate-spin" />
+              Loading recent checklists...
+            </Alert>
+          )}
+          {error && (
+            <Alert style="error" className="-mx-1 my-1">
+              <Icon name="xMarkCircle" className="text-xl" />
+              Failed to load recent checklists
+              <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+                Retry
+              </button>
+            </Alert>
+          )}
         </>
       )}
     </>

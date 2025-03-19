@@ -87,7 +87,11 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           ]}
         />
       )}
-      {!sortedItems?.length && <p className="text-gray-500 text-sm">No targets found &gt; {HOTSPOT_TARGET_CUTOFF}%</p>}
+      {!sortedItems?.length && (
+        <Alert style="info" className="-mx-1 my-1">
+          No targets found &gt; {HOTSPOT_TARGET_CUTOFF}%
+        </Alert>
+      )}
       {sortedItems.map((it, index) => (
         <HotspotTargetRow
           key={it.code}
