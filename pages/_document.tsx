@@ -11,7 +11,7 @@ class MyDocument extends Document {
           />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <meta name="theme-color" content="#0f172a" />
+          <meta name="theme-color" content="#000000" />
           <link rel="manifest" href="/manifest.json"></link>
           <link
             href="https://fonts.googleapis.com/css2?family=Lobster&family=Ubuntu:wght@400;500;700&display=swap"
