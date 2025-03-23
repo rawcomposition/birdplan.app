@@ -113,7 +113,7 @@ export default function CreateTrip() {
                     value={startMonth}
                     instanceId="startMonth"
                     className="flex-grow"
-                    menuPortalTarget={typeof document !== "undefined" && document.body}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                   <span className="text-gray-500 px-2">to</span>
                   <MonthSelect
@@ -121,7 +121,7 @@ export default function CreateTrip() {
                     value={endMonth}
                     instanceId="endMonth"
                     className="flex-grow"
-                    menuPortalTarget={typeof document !== "undefined" && document.body}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function CreateTrip() {
                       parent="world"
                       onChange={setCountry}
                       value={country}
-                      menuPortalTarget={typeof document !== "undefined" && document.body}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                     />
                   </Field>
                   <Field label="State/Province Region" isOptional={!requireSubregion}>
@@ -142,7 +142,7 @@ export default function CreateTrip() {
                       parent={country?.value}
                       onChange={setState}
                       value={state}
-                      menuPortalTarget={typeof document !== "undefined" && document.body}
+                      menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                       isClearable={!requireSubregion}
                       isMulti
                     />
@@ -154,7 +154,7 @@ export default function CreateTrip() {
                         parent={state?.[0].value}
                         onChange={setCounty}
                         value={county}
-                        menuPortalTarget={typeof document !== "undefined" && document.body}
+                        menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                         isClearable
                         isMulti
                       />

@@ -1,7 +1,22 @@
 import React, { forwardRef } from "react";
 import ReactSelect from "react-select";
+import { Option } from "lib/types";
 
-const ReactSelectStyled = forwardRef((props: any, ref: any) => {
+export type SelectProps = {
+  options: Option[];
+  value?: Option | Option[];
+  isLoading?: boolean;
+  isDisabled?: boolean;
+  isMulti?: boolean;
+  isClearable?: boolean;
+  instanceId?: string;
+  placeholder?: string;
+  onChange?: (value: any) => void;
+  menuPortalTarget?: HTMLElement | null;
+  className?: string;
+};
+
+const ReactSelectStyled = forwardRef((props: SelectProps, ref: any) => {
   return (
     <ReactSelect
       ref={ref}
