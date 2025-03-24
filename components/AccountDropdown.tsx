@@ -5,6 +5,7 @@ import { useUser } from "providers/user";
 import Link from "next/link";
 import clsx from "clsx";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
+import { useProfile } from "providers/profile";
 
 type Props = {
   className?: string;
@@ -13,6 +14,8 @@ type Props = {
 
 const AccountDropdown = ({ className, dropUp }: Props) => {
   const { user } = useUser();
+  const { lifelist } = useProfile();
+  const lifelistCount = lifelist?.length || 0;
   const { logout } = useFirebaseLogout();
 
   if (!user) return null;
@@ -38,7 +41,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           leaveTo="scale-95 opacity-0"
           className={clsx(
             dropUp ? "bottom-24 right-4" : "right-2 top-9 ",
-            "absolute z-20 z-50 min-w-[240px] origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-700 shadow-lg"
+            "absolute z-20 min-w-[240px] origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-700 shadow-lg"
           )}
         >
           <Menu.Items>
@@ -56,6 +59,22 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
               >
                 <Icon name="user" />
                 <span>Account</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link
+                className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                href="/import-lifelist"
+              >
+                <Icon name="feather" />
+                {lifelistCount > 0 ? (
+                  <span>
+                    <span>Update Life List</span>&nbsp;&nbsp;
+                    <span className="text-gray-500 font-normal">({lifelistCount})</span>
+                  </span>
+                ) : (
+                  <span>Import Life List</span>
+                )}
               </Link>
             </Menu.Item>
             <Menu.Item>

@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     const data: BodyT = await request.json();
     const { code } = data;
 
-    await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code } });
+    await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code }, $pull: { exclusions: code } });
 
     return Response.json({});
   } catch (error: unknown) {
