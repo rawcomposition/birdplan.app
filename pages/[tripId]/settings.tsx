@@ -111,7 +111,7 @@ export default function TripSettings() {
                     value={startMonth}
                     instanceId="startMonth"
                     className="flex-grow"
-                    menuPortalTarget={typeof document !== "undefined" && document.body}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                   <span className="text-gray-500 px-2">to</span>
                   <MonthSelect
@@ -119,7 +119,7 @@ export default function TripSettings() {
                     value={endMonth}
                     instanceId="endMonth"
                     className="flex-grow"
-                    menuPortalTarget={typeof document !== "undefined" && document.body}
+                    menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                 </div>
               </div>

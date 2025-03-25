@@ -11,12 +11,18 @@ import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
 import Link from "next/link";
 import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import AsyncSelect from "components/ReactSelectAsyncStyled";
+import { Option } from "lib/types";
+import Alert from "components/Alert";
 
 export default function ImportLifelist() {
+  const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
   const { exceptions } = useProfile();
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const exceptionsString = exceptions?.join(",");
 
   const setExceptionsMutation = useMutation({
     url: "/api/v1/my-profile",
@@ -36,15 +42,44 @@ export default function ImportLifelist() {
       toast.dismiss("import-lifelist");
     },
     onSuccess: () => {
+      toast.success("Life list imported");
       queryClient.invalidateQueries({ queryKey: [`/api/v1/my-profile`] });
       router.push(redirectUrl);
     },
   });
 
+  const {
+    data: taxonomy,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<{ name: string; code: string }[]>({
+    queryKey: ["/api/v1/taxonomy"],
+  });
+
+  React.useEffect(() => {
+    if (!exceptionsString) return;
+    const codes = exceptionsString.split(",");
+    const value = codes.map((code) => {
+      const taxon = taxonomy?.find((it) => it.code === code);
+      return {
+        label: taxon?.name || `Unknown (${code})`,
+        value: taxon?.code!,
+      };
+    });
+    setExceptionsValue(value);
+  }, [exceptionsString, taxonomy]);
+
+  const taxonomySearch = (input: string, callback: (options: Option[]) => void) => {
+    const options = taxonomy?.filter((it) => it.name.toLowerCase().includes(input.toLowerCase()))?.slice(0, 25) || [];
+    const formattedOptions = options.map((it) => ({ value: it.code, label: it.name }));
+    callback(formattedOptions);
+  };
+
   const router = useRouter();
   const { tripId } = router.query;
   const showBack = router.query.back === "true" && tripId;
-  const redirectUrl = tripId ? `/${tripId}` : `/`;
+  const redirectUrl = tripId ? `/${tripId}` : `/trips`;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -101,22 +136,37 @@ export default function ImportLifelist() {
             </Button>
           </div>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">2. Enter Exceptions (optional)</h3>
-            <p className="text-sm text-gray-600 mb-2">Enter comma separated list of eBird species codes to ignore.</p>
-            <input
-              type="text"
-              className="input text-xs"
-              onBlur={(e) =>
-                setExceptionsMutation.mutate({
-                  exceptions: e.target.value?.split(",").map((it) => it.trim().toLowerCase()) || [],
-                })
+            <h3 className="text-lg font-medium mb-4 text-gray-700">2. Exceptions (optional)</h3>
+            <p className="text-sm text-gray-600 mb-2">Species you want to see again</p>
+            {isError && (
+              <Alert style="error" className="-mx-1 my-1">
+                <Icon name="xMarkCircle" className="text-xl" />
+                Failed to load eBird taxonomy
+                <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+                  Retry
+                </button>
+              </Alert>
+            )}
+            <AsyncSelect
+              value={exceptionsValue}
+              loadOptions={taxonomySearch}
+              noOptionsMessage={({ inputValue }) =>
+                inputValue.length > 0 ? "No species found" : "Search for a species..."
               }
-              defaultValue={exceptions?.join(", ")}
+              menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+              isMulti
+              isLoading={isLoading}
+              onChange={(newValue: Option[]) => {
+                setExceptionsValue(newValue);
+                setExceptionsMutation.mutate({
+                  exceptions: newValue.map((it) => it.value),
+                });
+              }}
             />
           </div>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">3. Upload file</h3>
-            <p className="text-sm text-gray-600 mb-2">Upload the CSV file you downloaded in step 1.</p>
+            <p className="text-sm text-gray-600 mb-2">Upload the CSV file you downloaded in step 1</p>
             <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
           </div>
           <div className="flex">

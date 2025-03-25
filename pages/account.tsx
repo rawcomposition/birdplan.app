@@ -5,9 +5,18 @@ import Footer from "components/Footer";
 import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
 
+const providerNames = {
+  "google.com": "Google",
+  "apple.com": "Apple",
+};
+
 export default function Account() {
   const { user } = useUser();
   if (!user) return null;
+
+  const providers = user.providerData
+    .filter((provider) => provider.providerId !== "password")
+    .map((provider) => providerNames[provider.providerId as keyof typeof providerNames]);
 
   return (
     <div className="flex flex-col h-full">
@@ -27,7 +36,11 @@ export default function Account() {
                 {user.email && <p className="text-gray-600">{user.email}</p>}
               </div>
             </div>
-            <p>Your account is connected to your Google account.</p>
+            {providers.length > 0 && (
+              <p>
+                You logged in using your <strong>{providers.join(", ")}</strong> account.
+              </p>
+            )}
           </div>
         </div>
       </main>

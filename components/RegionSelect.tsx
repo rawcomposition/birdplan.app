@@ -1,12 +1,11 @@
 import React from "react";
-import Select from "components/ReactSelectStyled";
+import Select, { SelectProps } from "components/ReactSelectStyled";
 import { useQuery } from "@tanstack/react-query";
 import { EBIRD_BASE_URL } from "lib/config";
 
-type Props = {
+type Props = Omit<SelectProps, "options" | "isLoading" | "isDisabled" | "instanceId" | "placeholder"> & {
   type: "country" | "subnational1" | "subnational2";
   parent?: string;
-  [key: string]: any;
 };
 
 type Region = {

@@ -1,9 +1,8 @@
-import React, { forwardRef } from "react";
-import ReactSelect from "react-select";
+import React from "react";
+import AsyncSelect from "react-select/async";
 import { Option } from "lib/types";
 
 export type SelectProps = {
-  options: Option[];
   value?: Option | Option[];
   isLoading?: boolean;
   isDisabled?: boolean;
@@ -14,12 +13,13 @@ export type SelectProps = {
   onChange?: (value: any) => void;
   menuPortalTarget?: HTMLElement | null;
   className?: string;
+  loadOptions: (input: string, callback: (options: Option[]) => void) => void;
+  noOptionsMessage?: (input: any) => string;
 };
 
-const ReactSelectStyled = forwardRef((props: SelectProps, ref: any) => {
+export default function ReactSelectAsyncStyled(props: SelectProps) {
   return (
-    <ReactSelect
-      ref={ref}
+    <AsyncSelect
       styles={{
         singleValue: (base) => ({
           ...base,
@@ -48,8 +48,4 @@ const ReactSelectStyled = forwardRef((props: SelectProps, ref: any) => {
       {...props}
     />
   );
-});
-
-ReactSelectStyled.displayName = "ReactSelectStyled";
-
-export default ReactSelectStyled;
+}
