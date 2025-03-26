@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     if (!bounds) throw new Error("Failed to fetch region info");
     const { lat, lng } = getCenterOfBounds(bounds);
 
-    const mapboxImgUrl = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}&padding=30`;
+    const mapboxImgUrl = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.MAPBOX_SERVER_KEY}&padding=30`;
     const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
 
     const timezone = findTz(lat, lng)?.[0] || "America/New_York";
