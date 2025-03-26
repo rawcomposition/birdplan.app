@@ -117,15 +117,7 @@ export default function ImportTargets() {
                 <h3 className="text-lg font-medium text-gray-700">Targets imported!</h3>
                 <p className="text-sm text-slate-600 mb-4">Redirecting...</p>
               </div>
-            ) : (
-              <div className="flex items-center flex-col gap-2 my-8">
-                <Icon name="xMark" className="text-3xl text-red-500" />
-                <h3 className="text-lg font-medium text-gray-700">Unable to import targets</h3>
-                <button className="text-sky-600 font-medium" onClick={() => router.reload()}>
-                  Try Again
-                </button>
-              </div>
-            )}
+            ) : null}
           </div>
 
           <div className="flex">
