@@ -15,7 +15,7 @@ export const getTravelTime = async ({ method, lat1, lng1, lat2, lng2 }: TravelTi
     const response = await get(url, {
       sources: 0,
       annotations: "duration,distance",
-      access_token: process.env.NEXT_PUBLIC_MAPBOX_KEY || "",
+      access_token: process.env.MAPBOX_SERVER_KEY || "",
     });
     const duration = response?.durations[0][1];
     const distance = response?.distances[0][1];
