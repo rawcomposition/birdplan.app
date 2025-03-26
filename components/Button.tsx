@@ -45,6 +45,7 @@ export default function Button({
   const colors: ColorTypes = {
     default: "bg-gray-300 text-gray-700",
     gray: "text-gray-600 bg-gray-100",
+    grayOutline: "border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors",
     primary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors",
     pillPrimary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full",
     pillOutlineGray:
