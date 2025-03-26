@@ -20,7 +20,10 @@ export async function uploadMapboxImageToStorage(mapboxImageUrl: string): Promis
   const id = nanoId();
   const res = await fetch(mapboxImageUrl);
 
-  if (!res.ok) throw new Error("Failed to fetch Mapbox image");
+  if (!res.ok) {
+    console.error("Failed to load Mapbox image", res.statusText, mapboxImageUrl);
+    throw new Error("Failed to load Mapbox image");
+  }
 
   const arrayBuffer = await res.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
