@@ -16,42 +16,67 @@ import Share from "modals/Share";
 import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
+import DeleteAccount from "modals/DeleteAccount";
 
-const modals = [
+export type ModalPosition = "right" | "center";
+
+type ModalConfig = {
+  id: string;
+  Component: React.ComponentType<any>;
+  position: ModalPosition;
+  small?: boolean;
+  maxHeight?: number | string;
+};
+
+const modals: ModalConfig[] = [
   {
     id: "hotspot",
     Component: Hotspot,
+    position: "right",
   },
   {
     id: "personalLocation",
     Component: PersonalLocation,
+    position: "right",
   },
   {
     id: "addMarker",
     Component: AddMarker,
     small: true,
+    position: "right",
   },
   {
     id: "addPlace",
     Component: AddPlace,
+    position: "right",
   },
   {
     id: "addHotspot",
     Component: AddHotspot,
+    position: "right",
   },
   {
     id: "viewMarker",
     Component: ViewMarker,
     small: true,
+    position: "right",
   },
   {
     id: "share",
     Component: Share,
+    position: "right",
   },
   {
     id: "addItineraryLocation",
     Component: AddItineraryLocation,
     small: true,
+    position: "right",
+  },
+  {
+    id: "deleteAccount",
+    Component: DeleteAccount,
+    position: "center",
+    maxHeight: "90vh",
   },
 ];
 
@@ -63,7 +88,8 @@ type ModalId =
   | "viewMarker"
   | "share"
   | "addItineraryLocation"
-  | "addPlace";
+  | "addPlace"
+  | "deleteAccount";
 
 type Context = {
   open: (id: ModalId, props?: KeyValue) => void;
@@ -109,7 +135,13 @@ const ModalProvider = ({ children }: Props) => {
   return (
     <FieldContext.Provider value={{ open, close, modalId }}>
       {children}
-      <ModalWrapper small={modal?.small} open={!!modal && !closing} onClose={handleDismiss}>
+      <ModalWrapper
+        position={modal?.position}
+        small={modal?.small}
+        maxHeight={modal?.maxHeight}
+        open={!!modal && !closing}
+        onClose={handleDismiss}
+      >
         {modal && <Component {...modalProps} />}
       </ModalWrapper>
     </FieldContext.Provider>
