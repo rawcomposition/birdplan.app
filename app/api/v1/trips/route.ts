@@ -1,7 +1,7 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 import { TripInput } from "lib/types";
-import { getBounds, getCenterOfBounds } from "lib/helpers";
+import { getBounds, getCenterOfBounds, getTimezone } from "lib/helpers";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin";
 
 export async function GET(request: Request) {
@@ -28,18 +28,7 @@ export async function POST(request: Request) {
     const { lat, lng } = getCenterOfBounds(bounds);
 
     const mapboxImgUrl = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.MAPBOX_SERVER_KEY}&padding=30`;
-    const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
-
-    let timezone = null;
-    try {
-      const tzRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/legacy-get-tz?lat=${lat}&lng=${lng}`);
-      const tzData = await tzRes.json();
-      timezone = tzData.tz;
-    } catch (error) {
-      console.error(error);
-    }
-
-    if (!timezone) throw new Error(`Failed to get timezone for ${lat}, ${lng}`);
+    const [imgUrl, timezone] = await Promise.all([uploadMapboxImageToStorage(mapboxImgUrl), getTimezone(lat, lng)]);
 
     await connect();
     const trip = await Trip.create({

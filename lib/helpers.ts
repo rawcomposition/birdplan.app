@@ -396,3 +396,13 @@ export function sanitizeFileName(fileName: string): string {
   sanitized = sanitized.replace(/\s+/g, " ");
   return sanitized.trim();
 }
+
+export function getTimezone(lat: number, lng: number): Promise<string> {
+  return fetch(`${process.env.NEXT_PUBLIC_URL}/api/legacy-get-tz?lat=${lat}&lng=${lng}`)
+    .then((res) => res.json())
+    .then((data) => data.tz)
+    .catch((error) => {
+      console.error(error);
+      throw new Error(`Failed to get timezone for ${lat}, ${lng}`);
+    });
+}
