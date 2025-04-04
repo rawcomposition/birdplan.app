@@ -1,7 +1,6 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Profile, Trip, TargetList, Invite } from "lib/db";
 import { auth as firebaseAuth } from "lib/firebaseAdmin";
-import { getStorage } from "firebase-admin/storage";
 
 export async function DELETE(request: Request) {
   try {
@@ -15,11 +14,6 @@ export async function DELETE(request: Request) {
     const trips = await Trip.find({ ownerId: uid }).lean();
     const tripIds = trips.map((trip) => trip._id);
 
-    const imageUrls = trips
-      .filter((trip) => trip.imgUrl)
-      .map((trip) => trip.imgUrl as string)
-      .filter((url) => url && url.includes("storage.googleapis.com"));
-
     await Promise.all([
       Profile.deleteOne({ uid }),
       TargetList.deleteMany({ tripId: { $in: tripIds } }),
@@ -28,21 +22,6 @@ export async function DELETE(request: Request) {
       Trip.deleteMany({ ownerId: uid }),
       Trip.updateMany({ userIds: uid, ownerId: { $ne: uid } }, { $pull: { userIds: uid } }),
     ]);
-
-    if (imageUrls.length > 0) {
-      const storage = getStorage().bucket();
-
-      for (const url of imageUrls) {
-        try {
-          const fileName = url.split("/").pop();
-          if (fileName) {
-            await storage.file(fileName).delete();
-          }
-        } catch (storageError) {
-          console.error(`Failed to delete image ${url}:`, storageError);
-        }
-      }
-    }
 
     await firebaseAuth.deleteUser(uid);
 
