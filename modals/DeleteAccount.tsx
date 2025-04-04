@@ -18,7 +18,6 @@ export default function DeleteAccount() {
   const deleteAccountMutation = useMutation({
     url: "/api/v1/account",
     method: "DELETE",
-    showToastError: true,
     onSuccess: async () => {
       close();
       await logout();
