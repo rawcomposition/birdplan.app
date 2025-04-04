@@ -4,6 +4,7 @@ import Head from "next/head";
 import Footer from "components/Footer";
 import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
+import { useModal } from "providers/modals";
 
 const providerNames = {
   "google.com": "Google",
@@ -12,6 +13,8 @@ const providerNames = {
 
 export default function Account() {
   const { user } = useUser();
+  const { open } = useModal();
+
   if (!user) return null;
 
   const providers = user.providerData
@@ -41,6 +44,17 @@ export default function Account() {
                 You logged in using your <strong>{providers.join(", ")}</strong> account.
               </p>
             )}
+          </div>
+
+          <div className="mt-8 border-t pt-8">
+            <h2 className="text-lg font-medium text-gray-700 mb-4">Danger Zone</h2>
+
+            <button
+              onClick={() => open("deleteAccount")}
+              className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center transition-colors"
+            >
+              Delete my account
+            </button>
           </div>
         </div>
       </main>
