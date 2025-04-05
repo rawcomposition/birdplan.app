@@ -1,14 +1,14 @@
 import React from "react";
 import { useUser } from "providers/user";
 import Icon from "components/Icon";
-import useFirebaseLogin from "hooks/useFirebaseLogin";
+import useGoogleLogin from "hooks/useGoogleLogin";
 
 type Props = {
   showLoader?: boolean;
 };
 
 const LoginModal = ({ showLoader = true }: Props) => {
-  const { login, loading: authLoading } = useFirebaseLogin();
+  const { login, loading: authLoading } = useGoogleLogin();
   const { loading, user } = useUser();
   if (user?.uid && !loading) return null;
   if (!showLoader && (loading || authLoading)) return null;

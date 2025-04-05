@@ -1,12 +1,12 @@
 import React from "react";
 import { useUser } from "providers/user";
 import UtilityPage from "components/UtilityPage";
-import useFirebaseLogin from "hooks/useFirebaseLogin";
+import useGoogleLogin from "hooks/useGoogleLogin";
 import { useRouter } from "next/router";
 
 export default function Login() {
   const router = useRouter();
-  const { login, loading: authLoading } = useFirebaseLogin();
+  const { login, loading: authLoading } = useGoogleLogin();
   const { loading, user } = useUser();
   if (user?.uid && !loading) router.push("/trips");
 
