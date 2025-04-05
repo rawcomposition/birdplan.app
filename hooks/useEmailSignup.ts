@@ -1,5 +1,5 @@
 import { auth } from "lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -8,11 +8,12 @@ export default function useEmailSignup() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const signup = async (email: string, password: string) => {
+  const signup = async (name: string, email: string, password: string) => {
     setLoading(true);
     const toastId = toast.loading("Creating account...");
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
       toast.success("Account created successfully!", { id: toastId });
       router.push("/trips");
     } catch (error: any) {

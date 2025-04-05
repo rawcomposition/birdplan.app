@@ -32,7 +32,7 @@ const ProfileProvider = ({ children }: Props) => {
     enabled: !!uid,
   });
 
-  const lifelist = profile?.lifelist.filter((it) => !profile?.exceptions?.includes(it)) || [];
+  const lifelist = profile?.lifelist?.filter((it) => !profile?.exceptions?.includes(it)) || [];
 
   return (
     <ProfileContext.Provider

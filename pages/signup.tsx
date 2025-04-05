@@ -12,6 +12,7 @@ import Link from "next/link";
 
 export default function Signup() {
   const router = useRouter();
+  const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
@@ -30,7 +31,7 @@ export default function Signup() {
       toast.error("Passwords do not match.");
       return;
     }
-    await emailSignup(email, password);
+    await emailSignup(name, email, password);
   };
 
   return (
@@ -40,14 +41,23 @@ export default function Signup() {
       <form onSubmit={handleFormSubmit} className="space-y-4">
         <div>
           <Input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+            required
+            disabled={isLoading}
+            autoFocus
+          />
+        </div>
+        <div>
+          <Input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
-            autoFocus
           />
         </div>
         <div className="flex gap-2 flex-col sm:flex-row">
@@ -57,7 +67,6 @@ export default function Signup() {
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
           />
           <Input
@@ -66,12 +75,11 @@ export default function Signup() {
             value={confirmPassword}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
           />
         </div>
         <Button type="submit" color="primary" className="w-full" disabled={isLoading}>
-          {emailSignupLoading ? "Creating Account..." : "Sign Up"}
+          Sign Up
         </Button>
       </form>
       <div className="relative my-6">
