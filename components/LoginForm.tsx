@@ -5,6 +5,7 @@ import useEmailLogin from "hooks/useEmailLogin";
 import Input from "components/Input";
 import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [email, setEmail] = React.useState("");
@@ -77,6 +78,14 @@ export default function LoginForm() {
           <GoogleIcon className="text-lg" />
           Sign In with Google
         </Button>
+      </div>
+      <div className="text-center mt-6">
+        <p className="text-sm text-gray-600">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+            Sign up
+          </Link>
+        </p>
       </div>
     </>
   );
