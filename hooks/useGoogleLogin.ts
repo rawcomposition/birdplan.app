@@ -4,7 +4,7 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 
-export default function useFirebaseLogin() {
+export default function useGoogleLogin() {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
 
