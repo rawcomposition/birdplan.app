@@ -8,19 +8,21 @@ import GoogleIcon from "components/GoogleIcon";
 import Link from "next/link";
 
 export default function LoginForm() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
   const [emailLoginLoading, setEmailLoginLoading] = React.useState(false);
-
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
   const { login: emailLogin } = useEmailLogin();
   const { loading: userLoading } = useUser();
 
   const isLoading = userLoading || googleLoading || emailLoginLoading;
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setEmailLoginLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
     try {
       await emailLogin(email, password);
     } finally {
@@ -34,25 +36,15 @@ export default function LoginForm() {
       <p className="text-sm text-gray-500 text-center mb-6">Sign in to your account to continue</p>
       <form onSubmit={handleEmailLogin} className="space-y-4">
         <div>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-            autoFocus
-          />
+          <Input type="email" name="email" placeholder="Email" required autoFocus />
         </div>
         <div>
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
+          <Input type="password" name="password" placeholder="Password" required />
+          <div className="text-right mt-1">
+            <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
+              Forgot password?
+            </Link>
+          </div>
         </div>
         <Button type="submit" color="primary" className="w-full" disabled={isLoading}>
           Sign In

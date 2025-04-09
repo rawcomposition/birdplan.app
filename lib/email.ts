@@ -41,3 +41,16 @@ export const sendInviteEmail = async ({ tripName, fromName, email, url }: invite
     replyTo: email,
   });
 };
+
+type resetEmailProps = {
+  email: string;
+  url: string;
+};
+
+export const sendResetEmail = async ({ email, url }: resetEmailProps) => {
+  await sendEmail({
+    to: email,
+    subject: "Reset your BirdPlan.app password",
+    html: `Hello,<br /><br />You requested to reset your BirdPlan.app password.<br /><br /><a href=${url}>Reset Password</a><br /><br />This link will expire in 2 hours. If you did not request a password reset, please ignore this email.`,
+  });
+};

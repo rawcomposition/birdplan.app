@@ -10,6 +10,8 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   exceptions: { type: [String], default: [] },
   dismissedNoticeId: String,
   lastActiveAt: { type: Date, default: new Date() },
+  resetToken: String,
+  resetTokenExpires: Date,
 };
 
 const ProfileSchema = new Schema(fields, {
