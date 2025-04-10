@@ -4,6 +4,7 @@ import { sendResetEmail } from "lib/email";
 import { nanoId } from "lib/helpers";
 import { APIError } from "lib/api";
 import dayjs from "dayjs";
+import { RESET_TOKEN_EXPIRATION } from "lib/config";
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
     }
 
     const resetToken = nanoId(64);
-    const resetTokenExpires = dayjs().add(12, "hours").toDate();
+    const resetTokenExpires = dayjs().add(RESET_TOKEN_EXPIRATION, "hours").toDate();
     const url = `${process.env.NEXT_PUBLIC_URL}/reset-password?token=${resetToken}`;
 
     await Profile.updateOne({ uid: user.uid }, { resetToken, resetTokenExpires });

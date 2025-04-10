@@ -13,7 +13,7 @@ const Input = React.forwardRef(({ type = "text", isTextarea, className, autoFocu
   React.useEffect(() => {
     if (autoFocus) {
       setTimeout(() => {
-        (ref?.current || thisRef.current).focus();
+        (ref?.current || thisRef.current)?.focus();
       }, 50);
     }
   }, [autoFocus, ref]);
