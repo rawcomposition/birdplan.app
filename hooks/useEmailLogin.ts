@@ -14,6 +14,7 @@ export default function useEmailLogin() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/trips");
+      toast.dismiss(toastId);
     } catch (error: any) {
       console.log("login error", error);
       if (error.code === "auth/wrong-password") {
