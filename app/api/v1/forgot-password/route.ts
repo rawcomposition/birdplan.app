@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     const resetToken = nanoId(64);
-    const resetTokenExpires = dayjs().add(2, "hours").toDate();
+    const resetTokenExpires = dayjs().add(12, "hours").toDate();
     const url = `${process.env.NEXT_PUBLIC_URL}/reset-password?token=${resetToken}`;
 
     await Profile.updateOne({ uid: user.uid }, { resetToken, resetTokenExpires });

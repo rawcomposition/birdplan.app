@@ -7,20 +7,36 @@ import Button from "components/Button";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import Icon from "components/Icon";
+
+interface VerificationData {
+  isValid: boolean;
+}
 
 export default function ResetPassword() {
   const router = useRouter();
   const { token } = router.query;
-  const [success, setSuccess] = React.useState(false);
   const { loading: userLoading, user } = useUser();
 
   if (user?.uid && !userLoading) router.push("/trips");
+
+  const {
+    data: verificationData,
+    isLoading: isVerifying,
+    error: verificationError,
+  } = useQuery<VerificationData, Error>({
+    queryKey: ["/api/v1/verify-reset-token", { token }],
+    enabled: !!token,
+    retry: false,
+  });
 
   const mutation = useMutation({
     url: "/api/v1/reset-password",
     method: "POST",
     onSuccess: () => {
-      setSuccess(true);
+      toast.success("Password reset successfully");
+      router.push("/login");
     },
   });
 
@@ -43,12 +59,21 @@ export default function ResetPassword() {
     mutation.mutate({ token, password });
   };
 
-  if (!token) {
+  if (isVerifying || userLoading) {
     return (
       <UtilityPage heading="Reset Password">
         <div className="text-center">
-          <h2 className="text-lg font-bold text-gray-600 mb-2">Invalid Link</h2>
-          <p className="text-sm text-gray-500 mb-6">This password reset link is invalid or expired.</p>
+          <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+        </div>
+      </UtilityPage>
+    );
+  }
+
+  if (verificationError || !verificationData?.isValid) {
+    return (
+      <UtilityPage heading="Reset Password">
+        <p className="text-center text-lg text-gray-700">Invalid or expired reset link.</p>
+        <div className="text-center mt-4">
           <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
             Request a new reset link
           </Link>
@@ -59,33 +84,19 @@ export default function ResetPassword() {
 
   return (
     <UtilityPage heading="Reset Password">
-      {success ? (
-        <div className="text-center">
-          <h2 className="text-lg font-bold text-gray-600 mb-2">Password Reset Successfully</h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Your password has been reset. You will be redirected to the login page.
-          </p>
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Go to login
-          </Link>
+      <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Set New Password</h2>
+      <p className="text-sm text-gray-500 text-center mb-6">Enter a new password for your account.</p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Input type="password" name="password" placeholder="New Password" required autoFocus />
         </div>
-      ) : (
-        <>
-          <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Set New Password</h2>
-          <p className="text-sm text-gray-500 text-center mb-6">Enter a new password for your account.</p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Input type="password" name="password" placeholder="New Password" required autoFocus />
-            </div>
-            <div>
-              <Input type="password" name="confirmPassword" placeholder="Confirm Password" required />
-            </div>
-            <Button type="submit" color="primary" className="w-full" disabled={mutation.isPending || userLoading}>
-              Reset Password
-            </Button>
-          </form>
-        </>
-      )}
+        <div>
+          <Input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+        </div>
+        <Button type="submit" color="primary" className="w-full" disabled={mutation.isPending || userLoading}>
+          Reset Password
+        </Button>
+      </form>
     </UtilityPage>
   );
 }
