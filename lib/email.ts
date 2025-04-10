@@ -52,6 +52,6 @@ export const sendResetEmail = async ({ email, url }: resetEmailProps) => {
   await sendEmail({
     to: email,
     subject: "Reset your BirdPlan.app password",
-    html: `Hello,<br /><br />You requested to reset your BirdPlan.app password.<br /><br /><a href=${url}>Reset Password</a><br /><br />This link will expire in ${RESET_TOKEN_EXPIRATION} hours. If you did not request a password reset, please ignore this email.`,
+    html: `Hello,<br /><br />Click the link below to reset your BirdPlan.app password.<br /><br /><a href=${url}>Reset Password</a><br /><br />This link will expire in ${RESET_TOKEN_EXPIRATION} hours. If you did not request a password reset, please ignore this email.`,
   });
 };

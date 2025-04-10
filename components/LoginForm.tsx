@@ -23,11 +23,8 @@ export default function LoginForm() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    try {
-      await emailLogin(email, password);
-    } finally {
-      setEmailLoginLoading(false);
-    }
+    await emailLogin(email, password);
+    setEmailLoginLoading(false);
   };
 
   return (

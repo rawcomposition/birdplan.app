@@ -24,7 +24,6 @@ export default function useEmailLogin() {
         toast.error("Error signing in", { id: toastId });
       }
     } finally {
-      if (!disableLoader) toast.dismiss(toastId);
       setLoading(false);
     }
   };

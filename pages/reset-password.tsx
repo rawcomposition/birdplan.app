@@ -85,7 +85,7 @@ export default function ResetPassword() {
   return (
     <UtilityPage heading="Reset Password">
       <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Set New Password</h2>
-      <p className="text-sm text-gray-500 text-center mb-6">Enter a new password for your account.</p>
+      <p className="text-sm text-gray-600 text-center mb-6">Enter a new password for your account.</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Input type="password" name="password" placeholder="New Password" required autoFocus />
