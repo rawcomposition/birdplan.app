@@ -19,7 +19,7 @@ export const sendEmail = async ({ to, subject, html, replyTo }: Props) => {
   });
 
   await transporter.sendMail({
-    from: '"Bird Plan" <adam@rawcomposition.com>',
+    from: '"Bird Plan" <adam@birdplan.app>',
     to,
     subject,
     html,
