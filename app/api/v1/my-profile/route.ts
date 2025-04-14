@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     if (!profile) {
       const user = await auth.getUser(session.uid);
-      const newProfile = await Profile.create({ uid: session.uid, name: user.displayName });
+      const newProfile = await Profile.create({ uid: session.uid, name: user.displayName, email: user.email });
       profile = newProfile.toObject();
     }
 
