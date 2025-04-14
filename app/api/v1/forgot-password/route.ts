@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     const user = await auth.getUserByEmail(email);
 
     if (!user || !user.providerData.some((provider) => provider.providerId === "password")) {
+      console.log("User not found/invalid provider", user?.providerData);
       return Response.json({});
     }
 
