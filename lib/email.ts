@@ -10,10 +10,10 @@ type Props = {
 
 export const sendEmail = async ({ to, subject, html, replyTo }: Props) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp-relay.sendinblue.com",
+    host: "smtp-relay.brevo.com",
     port: 587,
     auth: {
-      user: "noreply.birdinghotspots@gmail.com",
+      user: "8a557e001@smtp-brevo.com",
       pass: process.env.EMAIL_PASS,
     },
   });
