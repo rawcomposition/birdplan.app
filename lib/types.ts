@@ -4,6 +4,7 @@ export type Profile = {
   _id: string;
   uid: string;
   name?: string;
+  email?: string;
   lifelist: string[];
   exceptions?: string[];
   dismissedNoticeId?: string;

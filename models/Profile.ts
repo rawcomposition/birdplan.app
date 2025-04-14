@@ -6,6 +6,7 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
   uid: { type: String, required: true, unique: true },
   name: String,
+  email: String,
   lifelist: { type: [String], default: [] },
   exceptions: { type: [String], default: [] },
   dismissedNoticeId: String,
