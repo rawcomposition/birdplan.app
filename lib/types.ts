@@ -8,6 +8,8 @@ export type Profile = {
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
+  resetToken?: string;
+  resetTokenExpires?: Date;
 };
 
 export type Marker = {

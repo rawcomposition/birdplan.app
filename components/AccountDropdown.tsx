@@ -27,7 +27,13 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
         }
       >
-        {user.photoURL && <img src={user.photoURL} className="h-7 w-7 object-cover rounded-full opacity-85" />}
+        {user.photoURL ? (
+          <img src={user.photoURL} className="h-7 w-7 object-cover rounded-full opacity-85" />
+        ) : (
+          <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
+            <Icon name="user" className="text-gray-500" />
+          </div>
+        )}
       </Menu.Button>
 
       <Transition>

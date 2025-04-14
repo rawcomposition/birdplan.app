@@ -5,6 +5,7 @@ import Footer from "components/Footer";
 import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
 import { useModal } from "providers/modals";
+import Icon from "components/Icon";
 
 const providerNames = {
   "google.com": "Google",
@@ -33,7 +34,13 @@ export default function Account() {
           <h1 className="text-3xl font-bold text-gray-700 mb-8">👤 My Account</h1>
           <div className="flex flex-col gap-4 mb-2">
             <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 border rounded-lg w-full">
-              {user.photoURL && <img src={user.photoURL} className="h-[32px] w-[32px] object-cover rounded-full" />}
+              {user.photoURL ? (
+                <img src={user.photoURL} className="h-[32px] w-[32px] object-cover rounded-full" />
+              ) : (
+                <div className="h-[32px] w-[32px] rounded-full bg-gray-200 flex items-center justify-center">
+                  <Icon name="user" className="text-gray-500" />
+                </div>
+              )}
               <div className="text-sm">
                 <p className="font-semibold">{user?.displayName}</p>
                 {user.email && <p className="text-gray-600">{user.email}</p>}

@@ -1,5 +1,6 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Profile } from "lib/db";
+import { auth } from "lib/firebaseAdmin";
 
 export async function GET(request: Request) {
   try {
@@ -9,10 +10,21 @@ export async function GET(request: Request) {
     await connect();
     let [profile] = await Promise.all([
       Profile.findOne({ uid: session.uid }).lean(),
-      Profile.updateOne({ uid: session.uid }, { lastActiveAt: new Date(), name: session.name }),
+      Profile.updateOne({ uid: session.uid }, { lastActiveAt: new Date() }),
     ]);
+
     if (!profile) {
-      profile = await Profile.create({ uid: session.uid, name: session.name });
+      const user = await auth.getUser(session.uid);
+      const newProfile = await Profile.create({ uid: session.uid, name: user.displayName });
+      profile = newProfile.toObject();
+    }
+
+    if (!profile.name) {
+      const user = await auth.getUser(session.uid);
+      if (user.displayName) {
+        await Profile.updateOne({ uid: session.uid }, { name: user.displayName });
+        profile = { ...profile, name: user.displayName };
+      }
     }
     return Response.json(profile);
   } catch (error: unknown) {
