@@ -34,6 +34,8 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
 
   const successRate = info?.numChecklists && obs?.length ? obs.length / info.numChecklists : null;
 
+  const reduceLoaders = !!speciesCode;
+
   return (
     <>
       {speciesCode && (
@@ -126,7 +128,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
           )}
           {isLoading && (
             <Alert style="gray" className="-mx-1 my-1">
-              <Icon name="loading" className="text-xl animate-spin" />
+              {!reduceLoaders && <Icon name="loading" className="text-xl animate-spin" />}
               Loading recent checklists...
             </Alert>
           )}
