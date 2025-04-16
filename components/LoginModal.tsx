@@ -14,16 +14,17 @@ const LoginModal = ({ showLoader = true }: Props) => {
 
   return (
     <>
-      <div className="fixed inset-0 z-20 bg-white bg-opacity-70" />
-      <div className="px-4 w-full fixed left-1/2 top-1/3 -translate-y-1/2 -translate-x-1/2 z-20">
-        <div className="max-w-sm mx-auto sm:max-w-md shadow rounded-lg bg-white border p-8 pt-6">
-          {loading ? (
-            <div className="text-center">
-              <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
-            </div>
-          ) : (
-            <LoginForm />
-          )}
+      <div className="fixed inset-0 z-20 bg-white bg-opacity-70 overflow-y-auto">
+        <div className="min-h-screen px-4 py-8 flex items-center sm:items-start sm:pt-[15vh] justify-center">
+          <div className="max-w-sm w-full sm:max-w-md shadow rounded-lg bg-white border p-8 pt-6 relative my-8">
+            {loading ? (
+              <div className="text-center">
+                <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+              </div>
+            ) : (
+              <LoginForm />
+            )}
+          </div>
         </div>
       </div>
     </>
