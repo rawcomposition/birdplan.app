@@ -22,7 +22,7 @@ export default function PasswordChangeForm() {
       return;
     }
 
-    if (newPassword.length < 8) {
+    if (newPassword.length < 6) {
       toast.error("Password must be at least 6 characters");
       return;
     }
