@@ -13,6 +13,7 @@ import { IconNameT } from "lib/icons";
 import PasswordChangeForm from "components/PasswordChangeForm";
 import EmailChangeForm from "components/EmailChangeForm";
 import Link from "next/link";
+import Alert from "components/Alert";
 
 const providerNames = {
   "google.com": "Google",
@@ -114,12 +115,9 @@ export default function Account() {
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Change Email</h2>
 
                 {!isEmailProvider ? (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <p className="text-yellow-700 text-sm">
-                      Your account is linked to {socialProviders.join(", ")}. Email changes must be made through your
-                      provider.
-                    </p>
-                  </div>
+                  <Alert style="warning">
+                    You cannot change your email because you logged in using {socialProviders.join(", ")}.
+                  </Alert>
                 ) : (
                   <EmailChangeForm currentEmail={user.email || ""} />
                 )}
@@ -127,15 +125,15 @@ export default function Account() {
             )}
 
             {activeTab === "password" && (
-              <div>
+              <div className="max-w-md">
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Change Password</h2>
 
                 {isEmailProvider ? (
                   <PasswordChangeForm />
                 ) : (
-                  <p className="text-sm text-gray-600">
+                  <Alert style="warning">
                     Your account is managed through your {socialProviders.join(", ")} account.
-                  </p>
+                  </Alert>
                 )}
               </div>
             )}
