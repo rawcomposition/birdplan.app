@@ -48,7 +48,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             />
           </Field>
         </div>
-        <p className="text-sm text-gray-600">You will need sign in again after updating your email.</p>
+        <p className="text-sm text-gray-600">You will need to sign in again after updating your email.</p>
         <Button type="submit" color="primary" disabled={updateEmailMutation.isPending || !isDirty || !email}>
           Update Email
         </Button>
