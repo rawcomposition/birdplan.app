@@ -7,7 +7,11 @@ import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
 import Link from "next/link";
 
-export default function LoginForm() {
+type Props = {
+  message?: string;
+};
+
+export default function LoginForm({ message }: Props) {
   const [emailLoginLoading, setEmailLoginLoading] = React.useState(false);
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
   const { login: emailLogin } = useEmailLogin();
@@ -30,7 +34,11 @@ export default function LoginForm() {
   return (
     <>
       <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Welcome back</h2>
-      <p className="text-sm text-gray-500 text-center mb-6">Sign in to your account to continue</p>
+      {message ? (
+        <p className="text-sm text-gray-500 text-center mb-6">{message}</p>
+      ) : (
+        <p className="text-sm text-gray-500 text-center mb-6">Sign in to your account to continue</p>
+      )}
       <form onSubmit={handleEmailLogin} className="space-y-4">
         <div>
           <Input type="email" name="email" placeholder="Email" required autoFocus />

@@ -4,18 +4,21 @@ import Input from "components/Input";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import Field from "components/Field";
+import { useRouter } from "next/router";
 
 export default function PasswordChangeForm() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
 
   const mutation = useMutation({
     url: "/api/v1/account/update-password",
     method: "POST",
     onSuccess: () => {
-      toast.success("Password updated successfully");
       setNewPassword("");
       setConfirmPassword("");
+      toast.success("Password updated successfully");
+      router.push("/login?event=passwordUpdated");
     },
   });
 
@@ -59,6 +62,8 @@ export default function PasswordChangeForm() {
           />
         </Field>
       </div>
+
+      <p className="text-sm text-gray-600">You will need sign in again after updating your password.</p>
 
       <Button
         type="submit"

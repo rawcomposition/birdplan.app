@@ -8,8 +8,8 @@ export async function POST(request: Request) {
 
     const { password } = await request.json();
 
-    if (!password || password.length < 8) {
-      return APIError("Password must be at least 8 characters", 400);
+    if (!password || password.length < 6) {
+      return APIError("Password must be at least 6 characters", 400);
     }
 
     const user = await auth.getUser(session.uid);

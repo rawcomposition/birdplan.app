@@ -40,11 +40,11 @@ export default function Account() {
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
 
-  const providers = user.providerData
+  const socialProviders = user.providerData
     .filter((provider) => provider.providerId !== "password")
     .map((provider) => providerNames[provider.providerId as keyof typeof providerNames]);
 
-  const isEmailProvider = !providers.length;
+  const isEmailProvider = user.providerData.some((provider) => provider.providerId === "password");
 
   return (
     <div className="flex flex-col h-full">
@@ -100,9 +100,9 @@ export default function Account() {
                       {user.email && <p className="text-gray-600">{user.email}</p>}
                     </div>
                   </div>
-                  {providers.length > 0 && (
+                  {socialProviders.length > 0 && (
                     <p className="text-sm text-gray-600">
-                      You logged in using your <strong>{providers.join(", ")}</strong> account.
+                      You logged in using your <strong>{socialProviders.join(", ")}</strong> account.
                     </p>
                   )}
                 </div>
@@ -116,7 +116,7 @@ export default function Account() {
                 {!isEmailProvider ? (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                     <p className="text-yellow-700 text-sm">
-                      Your account is linked to {providers.join(", ")}. Email changes must be made through your
+                      Your account is linked to {socialProviders.join(", ")}. Email changes must be made through your
                       provider.
                     </p>
                   </div>
@@ -134,7 +134,7 @@ export default function Account() {
                   <PasswordChangeForm />
                 ) : (
                   <p className="text-sm text-gray-600">
-                    Your account is managed through your {providers.join(", ")} account.
+                    Your account is managed through your {socialProviders.join(", ")} account.
                   </p>
                 )}
               </div>
