@@ -3,13 +3,13 @@ import Button from "components/Button";
 import Input from "components/Input";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
+import Field from "components/Field";
 
 export default function PasswordChangeForm() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
-  const updatePasswordMutation = useMutation({
+  const mutation = useMutation({
     url: "/api/v1/account/update-password",
     method: "POST",
     onSuccess: () => {
@@ -21,47 +21,51 @@ export default function PasswordChangeForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPasswordError("");
 
     if (newPassword.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
-    updatePasswordMutation.mutate({ password: newPassword });
+    mutation.mutate({ password: newPassword });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
       <div>
-        <Input
-          type="password"
-          name="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
-          required
-        />
+        <Field label="New Password">
+          <Input
+            type="password"
+            name="password"
+            value={newPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
+            required
+          />
+        </Field>
       </div>
       <div>
-        <Input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-          required
-        />
+        <Field label="Confirm Password">
+          <Input
+            type="password"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </Field>
       </div>
 
-      {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
-
-      <Button type="submit" color="primary" disabled={updatePasswordMutation.isPending} className="mt-2">
+      <Button
+        type="submit"
+        color="primary"
+        disabled={mutation.isPending || !newPassword || !confirmPassword}
+        className="mt-2"
+      >
         Update Password
       </Button>
     </form>

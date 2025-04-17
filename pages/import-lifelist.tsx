@@ -121,7 +121,7 @@ export default function ImportLifelist() {
         )}
         <div className="px-4 md:px-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <Icon name="feather" className="text-2xl text-lime-600" /> {"Import Life List"}
+            <Icon name="feather" className="text-2xl text-lime-600" /> Import Life List
           </h1>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download life list from eBird</h3>
