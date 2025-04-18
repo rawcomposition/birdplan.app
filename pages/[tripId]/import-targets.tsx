@@ -64,6 +64,14 @@ export default function ImportTargets() {
 
   if (is404) return <NotFound />;
 
+  const DownloadingNotice = () => (
+    <div className="flex items-center flex-col gap-2 my-8">
+      <h3 className="text-lg font-medium text-gray-700">Downloading targetsfrom eBird</h3>
+      <p className="text-sm text-slate-600 mb-4">This may take a minute...</p>
+      <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
+    </div>
+  );
+
   return (
     <div className="flex flex-col h-full">
       <Head>
@@ -90,11 +98,7 @@ export default function ImportTargets() {
                 <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
               </div>
             ) : isDownloading ? (
-              <div className="flex items-center flex-col gap-2 my-8">
-                <h3 className="text-lg font-medium text-gray-700">Downloading targetsfrom eBird</h3>
-                <p className="text-sm text-slate-600 mb-4">This may take a minute...</p>
-                <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
-              </div>
+              <DownloadingNotice />
             ) : hasUploadError ? (
               <div className="flex items-center flex-col gap-2 my-8">
                 <Icon name="xMark" className="text-3xl text-red-500" />
@@ -118,11 +122,7 @@ export default function ImportTargets() {
                 <p className="text-sm text-slate-600 mb-4">Redirecting...</p>
               </div>
             ) : (
-              <div className="flex items-center flex-col gap-2 my-8">
-                <h3 className="text-lg font-medium text-gray-700">Downloading targetsfrom eBird</h3>
-                <p className="text-sm text-slate-600 mb-4">This may take a minute...</p>
-                <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
-              </div>
+              <DownloadingNotice />
             )}
           </div>
 
