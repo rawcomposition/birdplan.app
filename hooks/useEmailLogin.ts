@@ -16,7 +16,6 @@ export default function useEmailLogin() {
       router.push("/trips");
       toast.dismiss(toastId);
     } catch (error: any) {
-      console.log("login error", error);
       if (error.code === "auth/wrong-password") {
         toast.error("Invalid password", { id: toastId });
       } else if (error.code === "auth/too-many-requests") {

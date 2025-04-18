@@ -22,7 +22,7 @@ export async function uploadMapboxImageToStorage(mapboxImageUrl: string): Promis
 
   if (!res.ok) {
     console.error("Failed to load Mapbox image", res.statusText, mapboxImageUrl);
-    throw new Error("Failed to load Mapbox image");
+    return null; // No error thrown since some regions (e.g. Antarctica) don't have a Mapbox image.
   }
 
   const arrayBuffer = await res.arrayBuffer();
