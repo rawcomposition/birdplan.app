@@ -117,7 +117,13 @@ export default function ImportTargets() {
                 <h3 className="text-lg font-medium text-gray-700">Targets imported!</h3>
                 <p className="text-sm text-slate-600 mb-4">Redirecting...</p>
               </div>
-            ) : null}
+            ) : (
+              <div className="flex items-center flex-col gap-2 my-8">
+                <h3 className="text-lg font-medium text-gray-700">Downloading targetsfrom eBird</h3>
+                <p className="text-sm text-slate-600 mb-4">This may take a minute...</p>
+                <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
+              </div>
+            )}
           </div>
 
           <div className="flex">
