@@ -9,6 +9,14 @@ class MyDocument extends Document {
             name="description"
             content="Plan your next birding adventure with ease using our interactive map tool. The user-friendly interface lets you customize your trip and stay organized along the way."
           />
+          <meta property="og:title" content="BirdPlan.app - Plan Your Next Birding Adventure" />
+          <meta
+            property="og:description"
+            content="Plan your next birding adventure with ease using our interactive map tool. The user-friendly interface lets you customize your trip and stay organized along the way."
+          />
+          <meta property="og:image" content="https://birdplan.app/og-banner.jpg" />
+          <meta property="og:url" content="https://birdplan.app" />
+          <meta property="og:type" content="website" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <meta name="theme-color" content="#ffffff" />
