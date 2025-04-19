@@ -17,6 +17,8 @@ class MyDocument extends Document {
           <meta property="og:image" content="https://birdplan.app/og-banner.jpg" />
           <meta property="og:url" content="https://birdplan.app" />
           <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="BirdPlan.app" />
+          <meta property="og:locale" content="en_US" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <meta name="theme-color" content="#ffffff" />
