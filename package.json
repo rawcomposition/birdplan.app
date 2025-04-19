@@ -28,7 +28,6 @@
     "mongoose": "^8.11.0",
     "nanoid": "^5.1.2",
     "next": "15.2.0",
-    "nodemailer": "^6.9.3",
     "papaparse": "^5.4.0",
     "react": "19.0.0",
     "react-country-flag": "^3.1.0",
@@ -37,6 +36,7 @@
     "react-map-gl": "^7.0.21",
     "react-select": "^5.7.0",
     "react-textarea-autosize": "^8.4.1",
+    "resend": "^4.3.0",
     "tsx": "^4.19.2",
     "usehooks-ts": "^3.1.1"
   },

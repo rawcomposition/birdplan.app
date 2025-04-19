@@ -1,5 +1,7 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { RESET_TOKEN_EXPIRATION } from "lib/config";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 type Props = {
   to: string;
@@ -9,17 +11,8 @@ type Props = {
 };
 
 export const sendEmail = async ({ to, subject, html, replyTo }: Props) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    auth: {
-      user: "8a557e001@smtp-brevo.com",
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  await transporter.sendMail({
-    from: '"Bird Plan" <adam@birdplan.app>',
+  await resend.emails.send({
+    from: "BirdPlan.app <support@birdplan.app>",
     to,
     subject,
     html,
