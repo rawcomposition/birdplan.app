@@ -106,7 +106,7 @@ export default function CreateTrip() {
                 <Input type="text" name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
               </Field>
               <div>
-                <label className="mb-1 block">Trip Timeframe</label>
+                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Timeframe</label>
                 <div className="flex gap-2 items-center">
                   <MonthSelect
                     onChange={setStartMonth}
