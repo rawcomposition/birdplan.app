@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
+import Link from "next/link";
 
 export default function WhatsNew() {
   return (
@@ -14,6 +15,12 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>April 20, 2025</h2>
+          <ul>
+            <li>
+              ✨ Added a <Link href="/support">support page</Link> with a contact form.
+            </li>
+          </ul>
           <h2>April 17, 2025</h2>
           <ul>
             <li>
