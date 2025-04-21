@@ -8,71 +8,50 @@ import Field from "components/Field";
 import Input from "components/Input";
 import Button from "components/Button";
 import Icon from "components/Icon";
+import useMutation from "hooks/useMutation";
+import Link from "next/link";
 
 export default function Support() {
   const { user } = useUser();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
+
+  const mutation = useMutation({
+    url: "/api/v1/support",
+    method: "POST",
+    onSuccess: () => {
+      toast.success("Your message has been sent!");
+      setSubmitted(true);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    try {
-      const formData = new FormData(e.currentTarget);
-      const name = formData.get("name") as string;
-      const email = formData.get("email") as string;
-      const type = formData.get("type") as string;
-      const message = formData.get("message") as string;
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const type = formData.get("type") as string;
+    const message = formData.get("message") as string;
 
-      if (!name || !email || !type || !message) {
-        toast.error("Please fill out all fields");
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Basic spam detection
-      if (message.toUpperCase().includes("SEO")) {
-        toast.success("Your message has been sent!");
-        setSubmitted(true);
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Get browser information
-      const browserInfo = {
-        userAgent: navigator.userAgent,
-        screenWidth: window.innerWidth,
-        screenHeight: window.innerHeight,
-        userId: user?.uid || "not logged in",
-        userName: user?.displayName || "unknown",
-      };
-
-      const response = await fetch("/api/v1/support", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          type,
-          message,
-          browserInfo,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      toast.success("Your message has been sent!");
-      setSubmitted(true);
-    } catch (error) {
-      toast.error("Failed to send message. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
+    if (!name || !email || !type || !message) {
+      toast.error("Please fill out all fields");
+      return;
     }
+
+    const browserInfo = {
+      userAgent: navigator.userAgent,
+      screenWidth: window.innerWidth,
+      screenHeight: window.innerHeight,
+      userId: user?.uid || "not logged in",
+    };
+
+    mutation.mutate({
+      name,
+      email,
+      type,
+      message,
+      browserInfo,
+    });
   };
 
   return (
@@ -92,12 +71,18 @@ export default function Support() {
               <p className="text-gray-600 mb-4">
                 We&apos;ve received your request and will get back to you as soon as possible.
               </p>
-              <Button onClick={() => setSubmitted(false)} color="primary">
-                Send another message
-              </Button>
+              <Link
+                href={user?.uid ? `/trips` : "/"}
+                className="text-gray-500 hover:text-gray-600 ml-4 md:ml-0 inline-flex items-center"
+              >
+                {user?.uid ? "← Back to trips" : "← Back to home"}
+              </Link>
             </div>
           ) : (
             <div className="bg-white p-8 rounded-lg shadow">
+              <p className="text-gray-600 mb-4">
+                Do you have any questions, feedback, or bug reports? We would love to hear from you!
+              </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <Field label="Name">
                   <Input type="text" name="name" defaultValue={user?.displayName || ""} required autoFocus />
@@ -112,10 +97,10 @@ export default function Support() {
                     <option value="" disabled selected>
                       Select
                     </option>
-                    <option value="feature">Feature Request</option>
-                    <option value="bug">Bug Report</option>
-                    <option value="help">Help Request</option>
-                    <option value="other">Other</option>
+                    <option value="Feature Request">Feature Request</option>
+                    <option value="Bug Report">Bug Report</option>
+                    <option value="Help Request">Help Request</option>
+                    <option value="Other">Other</option>
                   </select>
                 </Field>
 
@@ -124,8 +109,8 @@ export default function Support() {
                 </Field>
 
                 <div className="flex justify-end">
-                  <Button type="submit" color="primary" disabled={isSubmitting}>
-                    {isSubmitting ? (
+                  <Button type="submit" color="primary" disabled={mutation.isPending}>
+                    {mutation.isPending ? (
                       <>
                         <Icon name="loading" className="animate-spin text-md text-white" />
                         <span className="ml-2">Sending...</span>

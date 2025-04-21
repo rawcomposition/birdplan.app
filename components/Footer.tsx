@@ -8,7 +8,7 @@ export default function Footer() {
         RawComposition
       </a>
       <span className="mx-2">•</span>
-      <Link href="/support">Feedback</Link>
+      <Link href="/support">Support</Link>
       <span className="mx-2">•</span>
       <Link href="/whats-new">What&apos;s New</Link>
       <span className="mx-2">•</span>
