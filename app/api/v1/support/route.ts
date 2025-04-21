@@ -29,7 +29,6 @@ export async function POST(request: Request) {
     }
 
     const html = `
-      <h2>New Support Message</h2>
       <p><strong>From:</strong> ${name} (${email})</p>
       <p><strong>Type:</strong> ${type}</p>
       <p><strong>Message:</strong></p>
