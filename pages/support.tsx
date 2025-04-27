@@ -93,8 +93,8 @@ export default function Support() {
                 </Field>
 
                 <Field label="Type of Message">
-                  <select name="type" required className="input">
-                    <option value="" disabled selected>
+                  <select name="type" required className="input" defaultValue="">
+                    <option value="" disabled>
                       Select
                     </option>
                     <option value="Feature Request">Feature Request</option>
