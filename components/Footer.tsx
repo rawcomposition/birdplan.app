@@ -8,12 +8,7 @@ export default function Footer() {
         RawComposition
       </a>
       <span className="mx-2">•</span>
-      <a
-        href="https://docs.google.com/forms/d/e/1FAIpQLSc16gkzUiRR5FNy4y2GdpK7nO5cOZtY9iawWPuLTrwMkbnJDA/viewform"
-        target="_blank"
-      >
-        Feedback
-      </a>
+      <Link href="/support">Support</Link>
       <span className="mx-2">•</span>
       <Link href="/whats-new">What&apos;s New</Link>
       <span className="mx-2">•</span>
