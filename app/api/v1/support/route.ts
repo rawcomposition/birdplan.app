@@ -34,7 +34,6 @@ export async function POST(request: Request) {
       <p><strong>Message:</strong></p>
       <p>${message.replace(/\n/g, "<br />")}</p>
       <hr />
-      <h3>User Information</h3>
       <p><strong>User ID:</strong> ${browserInfo.userId}</p>
       <p><strong>Browser:</strong> ${browserInfo.userAgent}</p>
       <p><strong>Screen Size:</strong> ${browserInfo.screenWidth}x${browserInfo.screenHeight}</p>
