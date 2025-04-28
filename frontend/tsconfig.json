@@ -19,7 +19,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
