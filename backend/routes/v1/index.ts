@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
-import regionRoutes from "./region/index.js";
+import regionRoutes from "@/routes/v1/region";
 
 const v1Routes: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<void> => {
   fastify.register(regionRoutes, { prefix: "/region" });

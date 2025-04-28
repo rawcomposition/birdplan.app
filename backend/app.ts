@@ -11,7 +11,7 @@ const options = {};
 
 const app: FastifyPluginAsync = async (fastify: FastifyInstance, opts: any): Promise<void> => {
   // Register env plugin first to load environment variables
-  await fastify.register(import("./plugins/env"));
+  await fastify.register(import("@/plugins/env"));
 
   // Register CORS
   await fastify.register(cors, {
@@ -20,10 +20,10 @@ const app: FastifyPluginAsync = async (fastify: FastifyInstance, opts: any): Pro
   });
 
   // Register API utilities
-  await fastify.register(import("./plugins/api-utils"));
+  await fastify.register(import("@/plugins/api-utils"));
 
   // Register Mongoose
-  await fastify.register(import("./plugins/mongoose"));
+  await fastify.register(import("@/plugins/mongoose"));
 
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused
@@ -35,7 +35,7 @@ const app: FastifyPluginAsync = async (fastify: FastifyInstance, opts: any): Pro
   });
 
   // Register the API routes
-  await fastify.register(import("./routes"), { prefix: "/api" });
+  await fastify.register(import("@/routes"), { prefix: "/api" });
 };
 
 export default app;
