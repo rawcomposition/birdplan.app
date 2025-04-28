@@ -1,0 +1,1 @@
+export const RESET_TOKEN_EXPIRATION_HOURS = 2;
