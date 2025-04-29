@@ -48,6 +48,7 @@ const apiUtils: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<v
     return error;
   });
 
+  // Catches all uncaught errors
   fastify.setErrorHandler((error: APIError, request: FastifyRequest, reply: FastifyReply) => {
     const statusCode = error.statusCode || 500;
 
