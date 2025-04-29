@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import AutoLoad from "@fastify/autoload";
 import cors from "@fastify/cors";
+import sensible from "@fastify/sensible";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,6 +13,9 @@ const options = {};
 const app: FastifyPluginAsync = async (fastify: FastifyInstance, opts: any): Promise<void> => {
   // Register env plugin first to load environment variables
   await fastify.register(import("@/plugins/env"));
+
+  // Register sensible for error handling and utility decorators
+  await fastify.register(sensible);
 
   // Register CORS
   await fastify.register(cors, {

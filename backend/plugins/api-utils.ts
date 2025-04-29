@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import * as admin from "firebase-admin";
 
@@ -34,32 +34,8 @@ async function authenticate(request: FastifyRequest): Promise<admin.auth.Decoded
   }
 }
 
-interface APIError extends Error {
-  statusCode?: number;
-}
-
 const apiUtils: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<void> => {
   fastify.decorate("authenticate", authenticate);
-
-  fastify.decorate("APIError", (message: string, statusCode = 500): APIError => {
-    fastify.log.error(message);
-    const error: APIError = new Error(message);
-    error.statusCode = statusCode;
-    return error;
-  });
-
-  // Catches all uncaught errors
-  fastify.setErrorHandler((error: APIError, request: FastifyRequest, reply: FastifyReply) => {
-    const statusCode = error.statusCode || 500;
-
-    if (statusCode >= 500) {
-      fastify.log.error({ error }, error.message);
-    }
-
-    reply.status(statusCode).send({
-      message: error.message || "Internal Server Error",
-    });
-  });
 };
 
 export default fp(apiUtils, {

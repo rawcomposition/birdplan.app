@@ -31,7 +31,8 @@ export async function getHotspots(req: FastifyRequest<{ Params: Params }>, reply
     reply.header("Cache-Control", "public, max-age=604800, s-maxage=604800").send(formatted);
   } catch (error: any) {
     req.log.error(error);
-    throw req.server.APIError(error.message || "Error loading hotspots", error.response?.status || 500);
+    const statusCode = error.response?.status || 500;
+    throw req.server.httpErrors.createError(statusCode, error.message || "Error loading hotspots");
   }
 }
 
@@ -50,7 +51,7 @@ export async function getSpecies(req: FastifyRequest<{ Params: Params }>, reply:
     });
 
     if (!response.data) {
-      throw req.server.APIError(`Unable to load recent species`, response.status || 500);
+      throw req.server.httpErrors.internalServerError("Unable to load recent species");
     }
 
     const json = response.data;
@@ -73,6 +74,7 @@ export async function getSpecies(req: FastifyRequest<{ Params: Params }>, reply:
     reply.header("Cache-Control", "public, max-age=600, s-maxage=600").send(formatted);
   } catch (error: any) {
     req.log.error(error);
-    throw req.server.APIError(error.message || "Error loading species", error.response?.status || 500);
+    const statusCode = error.response?.status || 500;
+    throw req.server.httpErrors.createError(statusCode, error.message || "Error loading species");
   }
 }
