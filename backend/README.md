@@ -1,23 +1,41 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+# Fastify TypeScript Project
 
-## Available Scripts
+A minimal Fastify v5 API with TypeScript setup.
 
-In the project directory, you can run:
+## Features
 
-### `npm run dev`
+- Fastify v5
+- TypeScript with tsx
+- Organized route and controller structure
+- Absolute import paths
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Getting Started
 
-### `npm start`
+### Install dependencies
 
-For production mode
+```
+npm install
+```
 
-### `npm run test`
+### Development
 
-Run the test cases.
+```
+npm run dev
+```
 
-## Learn More
+### Build for production
 
-To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
+```
+npm run build
+```
+
+### Start production server
+
+```
+npm start
+```
+
+## API Endpoints
+
+- `GET /health` - Health check endpoint
+- `GET /api` - API information endpoint

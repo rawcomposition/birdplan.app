@@ -1,25 +1,34 @@
 import Fastify from "fastify";
-import app from "./app.js";
+import cors from "@fastify/cors";
+import sensible from "@fastify/sensible";
+import routes from "./routes/index.js";
+import { configureEnv, EnvConfig } from "./config/env.js";
+import plugins from "./plugins/index.js";
 
-const server = Fastify({
-  logger: {
-    level: "info",
-    transport: {
-      target: "pino-pretty",
-    },
-  },
+const fastify = Fastify({
+  logger: true,
 });
 
-await server.register(app);
+declare module "fastify" {
+  interface FastifyInstance {
+    config: EnvConfig;
+  }
+}
 
-const start = async () => {
+async function startServer() {
   try {
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-    await server.listen({ port, host: "0.0.0.0" });
+    await configureEnv(fastify);
+    await fastify.register(cors);
+    await fastify.register(sensible);
+
+    fastify.register(routes);
+    fastify.register(plugins);
+    const port = fastify.config.PORT || 3000;
+    await fastify.listen({ port, host: "0.0.0.0" });
   } catch (err) {
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
-};
+}
 
-start();
+startServer();

@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import * as admin from "firebase-admin";
 
-let firebaseApp: admin.app.App;
+/*let firebaseApp: admin.app.App;
 if (!admin.apps.length) {
   firebaseApp = admin.initializeApp({
     credential: admin.credential.cert({
@@ -32,10 +32,10 @@ async function authenticate(request: FastifyRequest): Promise<admin.auth.Decoded
     request.log.error({ error }, "Firebase auth error");
     return null;
   }
-}
+}*/
 
 const apiUtils: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<void> => {
-  fastify.decorate("authenticate", authenticate);
+  //fastify.decorate("authenticate", authenticate);
 };
 
 export default fp(apiUtils, {

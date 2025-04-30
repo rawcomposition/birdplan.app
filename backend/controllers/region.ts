@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import axios from "axios";
-import { EBirdHotspot, EBirdHotspotResult } from "@/types/ebird";
+import { EBirdHotspot, EBirdHotspotResult } from "../types/ebird.js";
 
 type Params = {
   region: string;

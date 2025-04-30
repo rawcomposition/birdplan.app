@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
-import * as regionController from "@/controllers/region";
+import * as regionController from "../../../controllers/region.js";
 
 const regionRoutes: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<void> => {
   fastify.get("/:region/hotspots", regionController.getHotspots);
