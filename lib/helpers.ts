@@ -283,8 +283,8 @@ export const formatDistance = (meters: number, metric: boolean) => {
     distance > 10
       ? Math.round(distance)
       : distance > 1
-      ? Math.round(distance * 10) / 10
-      : Math.round(distance * 100) / 100;
+        ? Math.round(distance * 10) / 10
+        : Math.round(distance * 100) / 100;
   return `${rounded} ${units}`;
 };
 
@@ -397,12 +397,19 @@ export function sanitizeFileName(fileName: string): string {
   return sanitized.trim();
 }
 
-export function getTimezone(lat: number, lng: number): Promise<string> {
-  return fetch(`${process.env.NEXT_PUBLIC_URL}/api/legacy-get-tz?lat=${lat}&lng=${lng}`)
-    .then((res) => res.json())
-    .then((data) => data.tz)
-    .catch((error) => {
-      console.error(error);
-      throw new Error(`Failed to get timezone for ${lat}, ${lng}`);
-    });
+export async function getTimezone(lat: number, lng: number): Promise<string> {
+  const geonamesUrl = `http://api.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=${process.env.GEONAMES_USERNAME}`;
+
+  try {
+    const res = await fetch(geonamesUrl);
+    if (!res.ok) {
+      throw new Error(`Geonames API returned ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data.timezoneId) throw new Error("No timezone found");
+    return data.timezoneId;
+  } catch (error) {
+    console.error(error);
+    throw new Error(`Failed to get timezone for ${lat}, ${lng}`);
+  }
 }
