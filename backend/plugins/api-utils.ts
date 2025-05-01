@@ -2,6 +2,12 @@ import { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import admin from "firebase-admin";
 
+declare module "fastify" {
+  interface FastifyInstance {
+    authenticate: (request: FastifyRequest) => Promise<admin.auth.DecodedIdToken | null>;
+  }
+}
+
 const apiUtils: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<void> => {
   if (!admin.apps.length) {
     admin.initializeApp({
@@ -12,31 +18,29 @@ const apiUtils: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<v
       }),
       storageBucket: "bird-planner.appspot.com",
     });
-  }
 
-  const auth = admin.auth();
+    const auth = admin.auth();
 
-  async function authenticate(request: FastifyRequest): Promise<admin.auth.DecodedIdToken | null> {
-    const authHeader = request.headers.authorization;
+    async function authenticate(request: FastifyRequest): Promise<admin.auth.DecodedIdToken | null> {
+      const authHeader = request.headers.authorization;
 
-    if (!authHeader?.startsWith("Bearer ")) {
-      request.log.error("Missing or invalid authorization header");
-      return null;
+      if (!authHeader?.startsWith("Bearer ")) {
+        request.log.error("Missing or invalid authorization header");
+        return null;
+      }
+
+      const token = authHeader.split("Bearer ")[1];
+
+      try {
+        return await auth.verifyIdToken(token);
+      } catch (error) {
+        request.log.error({ error }, "Firebase auth error");
+        return null;
+      }
     }
 
-    const token = authHeader.split("Bearer ")[1];
-
-    try {
-      return await auth.verifyIdToken(token);
-    } catch (error) {
-      request.log.error({ error }, "Firebase auth error");
-      return null;
-    }
+    fastify.decorate("authenticate", authenticate);
   }
-
-  fastify.decorate("authenticate", authenticate);
-  fastify.decorate("firebase", admin);
-  fastify.decorate("firebaseAuth", auth);
 };
 
 export default fp(apiUtils, {

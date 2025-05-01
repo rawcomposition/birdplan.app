@@ -2,7 +2,8 @@ import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 const debugRoutes: FastifyPluginAsync = async (fastify: FastifyInstance): Promise<void> => {
   fastify.get("/", async (request, reply) => {
-    reply.send({ message: "Hola amigo!" });
+    const user = await fastify.authenticate(request);
+    reply.send({ message: "Hola amigo!", user });
   });
 };
 

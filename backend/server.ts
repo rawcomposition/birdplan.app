@@ -21,8 +21,9 @@ async function startServer() {
     await fastify.register(cors);
     await fastify.register(sensible);
 
-    fastify.register(routes);
-    fastify.register(plugins);
+    await fastify.register(plugins);
+    await fastify.register(routes);
+
     const port = fastify.config.PORT || 3000;
     await fastify.listen({ port, host: "0.0.0.0" });
   } catch (err) {
