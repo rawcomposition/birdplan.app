@@ -1,5 +1,5 @@
 {
-  "name": "fastify-test",
+  "name": "birdplan-api",
   "version": "1.0.0",
   "description": "A simple Fastify API with TypeScript",
   "main": "dist/server.js",
