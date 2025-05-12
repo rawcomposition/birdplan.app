@@ -60,6 +60,22 @@ EBIRD_API_KEY=1gcdgl2ihetr
 
 - ...
 
+## Example structure for nested resources
+
+```
+routes/
+└── trip/
+    ├── index.ts                // handles /trip GET/POST
+    ├── [id].ts                 // handles /trip/:id GET/PUT/DELETE
+    └── hotspots/
+        ├── index.ts           // handles /trip/:id/hotspots POST (add)
+        └── [hotspotId].ts     // handles /trip/:id/hotspots/:hotspotId DELETE (remove)
+
+controllers/
+└── tripController.ts        // core trip CRUD
+└── tripHotspotController.ts // manages hotspots on trips
+```
+
 ## Full Nextjs folder tree (for reference)
 
 ├── app
@@ -185,16 +201,6 @@ EBIRD_API_KEY=1gcdgl2ihetr
 │   ├── itinerary.ts
 │   ├── mapbox.ts
 │   └── types.ts
-├── modals
-│   ├── AddHotspot.tsx
-│   ├── AddItineraryLocation.tsx
-│   ├── AddMarker.tsx
-│   ├── AddPlace.tsx
-│   ├── DeleteAccount.tsx
-│   ├── Hotspot.tsx
-│   ├── PersonalLocation.tsx
-│   ├── Share.tsx
-│   └── ViewMarker.tsx
 ├── models
 │   ├── Invite.ts
 │   ├── Profile.ts
