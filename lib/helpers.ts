@@ -1,11 +1,10 @@
 import { Trip, TargetList, Hotspot } from "lib/types";
-import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
-import { auth } from "lib/firebase";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { find as geoTz } from "geo-tz";
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -187,77 +186,6 @@ export const dateTimeToRelative = (date: string, timezone?: string, includeAgo?:
   return result;
 };
 
-type Params = {
-  [key: string]: string | number | boolean;
-};
-
-export const get = async (url: string, params: Params, showLoading?: boolean) => {
-  const cleanParams = Object.keys(params).reduce((accumulator: any, key) => {
-    if (params[key]) accumulator[key] = params[key];
-    return accumulator;
-  }, {});
-
-  const queryParams = new URLSearchParams(cleanParams).toString();
-
-  let urlWithParams = url;
-  if (queryParams) {
-    urlWithParams += url.includes("?") ? `&${queryParams}` : `?${queryParams}`;
-  }
-
-  if (showLoading) toast.loading("Loading...", { id: url });
-  const token = await auth.currentUser?.getIdToken();
-  const res = await fetch(urlWithParams, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token || ""}`,
-    },
-  });
-  if (showLoading) toast.dismiss(url);
-
-  let json: any = {};
-
-  try {
-    json = await res.json();
-  } catch (error) {}
-  if (!res.ok) {
-    if (res.status === 401) throw new Error("Unauthorized");
-    if (res.status === 403) throw new Error("Forbidden");
-    if (res.status === 404) throw new Error("Route not found");
-    if (res.status === 405) throw new Error("Method not allowed");
-    if (res.status === 504) throw new Error("Operation timed out. Please try again.");
-    throw new Error(json.message || "An error ocurred");
-  }
-  return json;
-};
-
-export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
-  const token = await auth.currentUser?.getIdToken();
-  const res = await fetch(url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token || ""}`,
-    },
-    body: JSON.stringify(data),
-  });
-
-  let json: any | null = null;
-  try {
-    json = await res.json();
-  } catch (error) {}
-
-  if (!res.ok) {
-    if (res.status === 401) throw new Error("Unauthorized");
-    if (res.status === 403) throw new Error("Forbidden");
-    if (res.status === 404) throw new Error("Route not found");
-    if (res.status === 405) throw new Error("Method not allowed");
-    if (res.status === 504) throw new Error("Operation timed out. Please try again.");
-    throw new Error((json as any)?.message || (json as any)?.error || "An error occurred");
-  }
-
-  return json;
-};
-
 //https://decipher.dev/30-seconds-of-typescript/docs/debounce/
 export const debounce = (fn: Function, ms = 300) => {
   let timeoutId: ReturnType<typeof setTimeout>;
@@ -397,19 +325,8 @@ export function sanitizeFileName(fileName: string): string {
   return sanitized.trim();
 }
 
-export async function getTimezone(lat: number, lng: number): Promise<string> {
-  const geonamesUrl = `http://api.geonames.org/timezoneJSON?lat=${lat}&lng=${lng}&username=${process.env.GEONAMES_USERNAME}`;
-
-  try {
-    const res = await fetch(geonamesUrl);
-    if (!res.ok) {
-      throw new Error(`Geonames API returned ${res.status}`);
-    }
-    const data = await res.json();
-    if (!data.timezoneId) throw new Error("No timezone found");
-    return data.timezoneId;
-  } catch (error) {
-    console.error(error);
-    throw new Error(`Failed to get timezone for ${lat}, ${lng}`);
-  }
+export async function getTimezone(lat: number, lng: number) {
+  if (!lat || !lng) return null;
+  const tz = geoTz(Number(lat), Number(lng))?.[0] || null;
+  return tz;
 }

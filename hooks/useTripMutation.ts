@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { mutate } from "lib/helpers";
+import { mutate } from "lib/http";
 import { Trip } from "lib/types";
 import { useTrip } from "providers/trip";
 

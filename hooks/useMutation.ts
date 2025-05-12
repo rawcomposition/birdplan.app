@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { useMutation as tanMutation, UseMutationOptions } from "@tanstack/react-query";
-import { mutate } from "lib/helpers";
+import { mutate } from "lib/http";
 
 type Options<TData, TVariables> = Omit<UseMutationOptions<TData, unknown, TVariables>, "mutationFn"> & {
   url: string;

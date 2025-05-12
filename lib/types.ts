@@ -264,3 +264,9 @@ export type eBirdTaxonomy = {
   familyComName: string;
   familySciName: string;
 };
+
+export type RegionTz = {
+  code: string;
+  tz: string | null;
+  subregions: RegionTz[];
+};
