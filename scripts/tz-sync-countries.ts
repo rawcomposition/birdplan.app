@@ -14,7 +14,8 @@ type Bounds = {
 
 const WAIT = 1000;
 
-const downloadAndSaveData = async () => {
+const syncCountries = async () => {
+  console.log("Syncing countries...");
   try {
     const filePath = path.join(__dirname, "../timezones.json");
 
@@ -67,4 +68,4 @@ const downloadAndSaveData = async () => {
   }
 };
 
-downloadAndSaveData();
+syncCountries();
