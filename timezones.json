@@ -401,8 +401,7 @@
   },
   {
     "code": "XX",
-    "tz": null,
-    "subregions": []
+    "tz": "Etc/UTC"
   },
   {
     "code": "HN",

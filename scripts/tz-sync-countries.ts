@@ -3,18 +3,6 @@ dotenv.config();
 import fs from "fs";
 import path from "path";
 import { RegionTz } from "lib/types";
-import { getBounds, getCenterOfBounds, getTimezone } from "lib/helpers";
-
-type Bounds = {
-  minX: number;
-  minY: number;
-  maxX: number;
-  maxY: number;
-};
-
-const WAIT = 1000;
-
-// NOTE: Many of the chosen time zones are not the best choice. Manually review and adjust as needed.
 
 const syncCountries = async () => {
   console.log("Syncing countries...");
@@ -33,38 +21,27 @@ const syncCountries = async () => {
     if (!countriesReq.ok) {
       throw new Error(`HTTP error: ${countriesReq.status}`);
     }
+
     const countries = await countriesReq.json();
     const newData: RegionTz[] = [];
+
     for (const country of countries) {
       const oldCountry = oldData.find((it) => it.code === country.code);
-      let bounds: Bounds;
-      try {
-        bounds = await getBounds(country.code);
-      } catch (error) {
-        console.error(`Error getting bounds for ${country.code}: ${error}`);
-        newData.push({
-          code: country.code,
-          tz: "Etc/UTC",
-          ...(oldCountry?.subregions ? { subregions: oldCountry.subregions } : {}),
-        });
-        continue;
-      }
-      const { lat, lng } = getCenterOfBounds(bounds);
-      const tz = await getTimezone(lat, lng);
-      if (!tz) console.warn(`No timezone found for ${country.code}. Using Etc/UTC.`);
+
       const data = {
         code: country.code,
-        ...(oldCountry?.subregions ? { subregions: oldCountry.subregions } : {}),
-        tz: tz || null,
+        tz: oldCountry?.tz || null,
+        ...(oldCountry?.subregions && oldCountry.subregions.length > 0 ? { subregions: oldCountry.subregions } : {}),
       };
-      console.log(data);
+
       newData.push(data);
-      await new Promise((resolve) => setTimeout(resolve, WAIT));
     }
 
     fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
 
-    console.log(`Synced ${newData.length} countries`);
+    const countriesWithNullTz = newData.filter((it) => it.tz === null);
+
+    console.log(`Synced ${newData.length} countries. ${countriesWithNullTz.length} need review.`);
   } catch (error) {
     console.error(error);
   }

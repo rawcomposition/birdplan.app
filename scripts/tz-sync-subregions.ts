@@ -3,18 +3,8 @@ dotenv.config();
 import fs from "fs";
 import path from "path";
 import { RegionTz } from "lib/types";
-import { getBounds, getCenterOfBounds, getTimezone } from "lib/helpers";
-
-type Bounds = {
-  minX: number;
-  minY: number;
-  maxX: number;
-  maxY: number;
-};
 
 type SubRegionTz = Omit<RegionTz, "subregions">;
-
-const WAIT = 1000;
 
 // Example usage: npm run tz-sync-subregions US
 
@@ -59,44 +49,28 @@ const syncSubregionTimezones = async (countryCode: string) => {
       return;
     }
 
+    const existingSubregions = allData[countryIndex].subregions || [];
     const newSubregionData: SubRegionTz[] = [];
-    console.log(`Found ${subregions.length} subregions. Fetching timezones...`);
 
     for (const subregion of subregions) {
-      let bounds: Bounds;
-      try {
-        bounds = await getBounds(subregion.code);
-      } catch (error) {
-        console.error(`Error getting bounds for subregion ${subregion.code}: ${error}. Skipping.`);
-        newSubregionData.push({ code: subregion.code, tz: null });
-        continue;
-      }
-
-      const { lat, lng } = getCenterOfBounds(bounds);
-      let tz: string | null = null;
-      try {
-        tz = await getTimezone(lat, lng);
-        if (!tz) {
-          console.warn(`No timezone found for ${subregion.code} at (${lat}, ${lng}). Using null.`);
-        }
-      } catch (error) {
-        console.error(`Error getting timezone for ${subregion.code}: ${error}. Using null.`);
-      }
+      const existingSubregion = existingSubregions.find((it) => it.code === subregion.code);
 
       const data: SubRegionTz = {
         code: subregion.code,
-        tz: tz,
+        tz: existingSubregion?.tz || null,
       };
-      console.log(`  ${subregion.code}: ${tz || "Not found"}`);
+
       newSubregionData.push(data);
-      await new Promise((resolve) => setTimeout(resolve, WAIT));
     }
 
     allData[countryIndex].subregions = newSubregionData;
 
     fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
 
-    console.log(`Updated timezones for ${newSubregionData.length} subregions of ${countryCode}`);
+    const subregionsWithNullTz = newSubregionData.filter((it) => it.tz === null);
+    console.log(
+      `Updated ${newSubregionData.length} subregions of ${countryCode}. ${subregionsWithNullTz.length} need review.`
+    );
   } catch (error) {
     console.error("An error occurred during the subregion timezone sync:", error);
     process.exit(1);
