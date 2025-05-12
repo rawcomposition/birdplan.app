@@ -2,8 +2,8 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import fs from "fs";
 import path from "path";
-import { RegionTz } from "../lib/types"; // Assuming RegionTz is in lib/types
-import { getBounds, getCenterOfBounds, getTimezone } from "../lib/helpers"; // Assuming helpers are in lib/helpers
+import { RegionTz } from "lib/types";
+import { getBounds, getCenterOfBounds, getTimezone } from "lib/helpers";
 
 type Bounds = {
   minX: number;
@@ -14,7 +14,9 @@ type Bounds = {
 
 type SubRegionTz = Omit<RegionTz, "subregions">;
 
-const WAIT = 1000; // Delay between API calls in milliseconds
+const WAIT = 1000;
+
+// Example usage: npm run tz-sync-subregions US
 
 const syncSubregionTimezones = async (countryCode: string) => {
   if (!countryCode) {

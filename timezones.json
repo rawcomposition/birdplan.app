@@ -954,7 +954,213 @@
   },
   {
     "code": "US",
-    "tz": "America/New_York"
+    "tz": "America/New_York",
+    "subregions": [
+      {
+        "code": "US-AL",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-AK",
+        "tz": "America/Anchorage"
+      },
+      {
+        "code": "US-AZ",
+        "tz": "America/Phoenix"
+      },
+      {
+        "code": "US-AR",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-CA",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-CO",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-CT",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-DE",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-DC",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-FL",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-GA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-HI",
+        "tz": "America/Honolulu"
+      },
+      {
+        "code": "US-ID",
+        "tz": "America/Boise"
+      },
+      {
+        "code": "US-IL",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-IN",
+        "tz": "America/Indiana/Indianapolis"
+      },
+      {
+        "code": "US-IA",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-KS",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-KY",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-LA",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-ME",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-MD",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-MA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-MI",
+        "tz": "America/Detroit"
+      },
+      {
+        "code": "US-MN",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-MS",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-MO",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-MT",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-NE",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-NV",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-NH",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-NJ",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-NM",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-NY",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-NC",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-ND",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-OH",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-OK",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-OR",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-PA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-RI",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-SC",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-SD",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-TN",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-TX",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-UT",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-VT",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-VA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-WA",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-WV",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-WI",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-WY",
+        "tz": "America/Denver"
+      }
+    ]
   },
   {
     "code": "UM",
@@ -990,11 +1196,11 @@
   },
   {
     "code": "VI",
-    "tz": "Etc/GMT+4"
+    "tz": "America/St_Thomas"
   },
   {
     "code": "WF",
-    "tz": "Etc/GMT+12"
+    "tz": "Pacific/Wallis"
   },
   {
     "code": "EH",
