@@ -3,6 +3,7 @@ dotenv.config();
 import fs from "fs";
 import path from "path";
 import { RegionTz } from "lib/types";
+import { flattenTimezones } from "lib/helpers";
 
 type SubRegionTz = Omit<RegionTz, "subregions">;
 
@@ -64,9 +65,10 @@ const syncSubregionTimezones = async (countryCode: string) => {
     }
 
     allData[countryIndex].subregions = newSubregionData;
+    const flattenedTimezones = flattenTimezones(allData);
 
     fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
-
+    fs.writeFileSync(path.join(__dirname, "../timezones-flat.json"), JSON.stringify(flattenedTimezones, null, 2));
     const subregionsWithNullTz = newSubregionData.filter((it) => it.tz === null);
     console.log(
       `Updated ${newSubregionData.length} subregions of ${countryCode}. ${subregionsWithNullTz.length} need review.`

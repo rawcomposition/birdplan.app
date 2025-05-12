@@ -1,10 +1,9 @@
-import { Trip, TargetList, Hotspot } from "lib/types";
+import { Trip, TargetList, Hotspot, RegionTz } from "lib/types";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { find as geoTz } from "geo-tz";
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -325,8 +324,22 @@ export function sanitizeFileName(fileName: string): string {
   return sanitized.trim();
 }
 
-export async function getTimezone(lat: number, lng: number) {
-  if (!lat || !lng) return null;
-  const tz = geoTz(Number(lat), Number(lng))?.[0] || null;
-  return tz;
-}
+export const flattenTimezones = (timezones: RegionTz[]) => {
+  const result: Record<string, string> = {};
+
+  for (const region of timezones) {
+    if (region.subregions?.length) {
+      for (const subregion of region.subregions) {
+        if (subregion.tz) {
+          result[subregion.code] = subregion.tz;
+        }
+      }
+    }
+
+    if (region.tz) {
+      result[region.code] = region.tz;
+    }
+  }
+
+  return result;
+};

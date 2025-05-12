@@ -3,6 +3,7 @@ dotenv.config();
 import fs from "fs";
 import path from "path";
 import { RegionTz } from "lib/types";
+import { flattenTimezones } from "lib/helpers";
 
 const syncCountries = async () => {
   console.log("Syncing countries...");
@@ -37,7 +38,10 @@ const syncCountries = async () => {
       newData.push(data);
     }
 
+    const flattenedTimezones = flattenTimezones(newData);
+
     fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
+    fs.writeFileSync(path.join(__dirname, "../timezones-flat.json"), JSON.stringify(flattenedTimezones, null, 2));
 
     const countriesWithNullTz = newData.filter((it) => it.tz === null);
 
