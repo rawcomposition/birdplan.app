@@ -53,7 +53,7 @@
   },
   {
     "code": "AU",
-    "tz": "Australia/Adelaide"
+    "tz": "Australia/Sydney"
   },
   {
     "code": "AT",
@@ -121,7 +121,7 @@
   },
   {
     "code": "BR",
-    "tz": "America/Cuiaba"
+    "tz": "America/Sao_Paulo"
   },
   {
     "code": "IO",
@@ -153,7 +153,7 @@
   },
   {
     "code": "CA",
-    "tz": "America/Rankin_Inlet"
+    "tz": "America/Toronto"
   },
   {
     "code": "CV",
@@ -426,7 +426,7 @@
   },
   {
     "code": "ID",
-    "tz": "Asia/Makassar"
+    "tz": "Asia/Jakarta"
   },
   {
     "code": "IR",
@@ -742,7 +742,7 @@
   },
   {
     "code": "RU",
-    "tz": "Etc/GMT"
+    "tz": "Europe/Moscow"
   },
   {
     "code": "RW",
@@ -850,7 +850,7 @@
   },
   {
     "code": "ES",
-    "tz": "Etc/GMT"
+    "tz": "Europe/Madrid"
   },
   {
     "code": "LK",
@@ -954,7 +954,7 @@
   },
   {
     "code": "US",
-    "tz": "Europe/Paris"
+    "tz": "America/New_York"
   },
   {
     "code": "UM",
