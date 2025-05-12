@@ -8,7 +8,6 @@ import { flattenTimezones } from "lib/helpers";
 type SubRegionTz = Omit<RegionTz, "subregions">;
 
 const countriesWithMultipleTz = [
-  "AQ",
   "AU",
   "BR",
   "CA",
@@ -16,8 +15,6 @@ const countriesWithMultipleTz = [
   "CD",
   "EC",
   "PF",
-  "GL",
-  "XX",
   "ID",
   "KZ",
   "KI",
