@@ -5,6 +5,32 @@ import path from "path";
 import { RegionTz } from "lib/types";
 import { flattenTimezones } from "lib/helpers";
 
+const countriesWithMultipleTz = [
+  "AQ",
+  "AU",
+  "BR",
+  "CA",
+  "CL",
+  "CD",
+  "EC",
+  "PF",
+  "GL",
+  "XX",
+  "ID",
+  "KZ",
+  "KI",
+  "MX",
+  "FM",
+  "MN",
+  "NZ",
+  "PG",
+  "PT",
+  "RU",
+  "ES",
+  "US",
+  "UM",
+];
+
 const syncCountries = async () => {
   console.log("Syncing countries...");
   try {
