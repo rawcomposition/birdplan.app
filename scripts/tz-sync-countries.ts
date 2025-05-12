@@ -5,11 +5,18 @@ import path from "path";
 import { RegionTz } from "lib/types";
 import { getBounds, getCenterOfBounds, getTimezone } from "lib/helpers";
 
+type Bounds = {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+};
+
 const WAIT = 1000;
 
 const downloadAndSaveData = async () => {
   try {
-    const filePath = path.join(__dirname, "../public/timezones.json");
+    const filePath = path.join(__dirname, "../timezones.json");
 
     let oldData: RegionTz[] = [];
     if (fs.existsSync(filePath)) {
@@ -27,17 +34,29 @@ const downloadAndSaveData = async () => {
     const newData: RegionTz[] = [];
     for (const country of countries) {
       const oldCountry = oldData.find((it) => it.code === country.code);
-      const bounds = await getBounds(country.code);
+      let bounds: Bounds;
+      try {
+        bounds = await getBounds(country.code);
+      } catch (error) {
+        console.error(`Error getting bounds for ${country.code}: ${error}`);
+        newData.push({
+          code: country.code,
+          tz: "Etc/UTC",
+          ...(oldCountry?.subregions ? { subregions: oldCountry.subregions } : {}),
+        });
+        continue;
+      }
       const { lat, lng } = getCenterOfBounds(bounds);
       const tz = await getTimezone(lat, lng);
-      if (!tz) console.error(`No timezone found for ${country.code}`);
+      if (!tz) console.warn(`No timezone found for ${country.code}. Using Etc/UTC.`);
       const data = {
         code: country.code,
-        subregions: oldCountry?.subregions || [],
+        ...(oldCountry?.subregions ? { subregions: oldCountry.subregions } : {}),
         tz: tz || null,
       };
       console.log(data);
       newData.push(data);
+      await new Promise((resolve) => setTimeout(resolve, WAIT));
     }
 
     fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));

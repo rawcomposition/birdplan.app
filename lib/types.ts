@@ -268,5 +268,5 @@ export type eBirdTaxonomy = {
 export type RegionTz = {
   code: string;
   tz: string | null;
-  subregions: RegionTz[];
+  subregions?: RegionTz[];
 };
