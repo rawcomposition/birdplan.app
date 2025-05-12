@@ -14,6 +14,8 @@ type Bounds = {
 
 const WAIT = 1000;
 
+// NOTE: Many of the chosen time zones are not the best choice. Manually review and adjust as needed.
+
 const syncCountries = async () => {
   console.log("Syncing countries...");
   try {

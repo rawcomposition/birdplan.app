@@ -13,7 +13,7 @@
   },
   {
     "code": "AS",
-    "tz": "Etc/GMT+11"
+    "tz": "Pacific/Pago_Pago"
   },
   {
     "code": "AD",
@@ -21,23 +21,23 @@
   },
   {
     "code": "AO",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Luanda"
   },
   {
     "code": "AI",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Anguilla"
   },
   {
     "code": "AQ",
-    "tz": "Africa/Johannesburg"
+    "tz": "Antarctica/Casey"
   },
   {
     "code": "AG",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Antigua"
   },
   {
     "code": "AR",
-    "tz": "America/Argentina/Salta"
+    "tz": "America/Argentina/Buenos_Aires"
   },
   {
     "code": "AM",
@@ -45,11 +45,11 @@
   },
   {
     "code": "AW",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Aruba"
   },
   {
     "code": "AC",
-    "tz": "Etc/GMT-8"
+    "tz": "Atlantic/St_Helena"
   },
   {
     "code": "AU",
@@ -65,11 +65,11 @@
   },
   {
     "code": "BS",
-    "tz": "America/Toronto"
+    "tz": "America/Nassau"
   },
   {
     "code": "BH",
-    "tz": "Asia/Qatar"
+    "tz": "Asia/Bahrain"
   },
   {
     "code": "BD",
@@ -93,7 +93,7 @@
   },
   {
     "code": "BJ",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Porto-Novo"
   },
   {
     "code": "BM",
@@ -105,19 +105,19 @@
   },
   {
     "code": "BO",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/La_Paz"
   },
   {
     "code": "BA",
-    "tz": "Europe/Belgrade"
+    "tz": "Europe/Sarajevo"
   },
   {
     "code": "BW",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Gaborone"
   },
   {
     "code": "BV",
-    "tz": "Etc/GMT"
+    "tz": "Antarctica/Troll"
   },
   {
     "code": "BR",
@@ -125,11 +125,11 @@
   },
   {
     "code": "IO",
-    "tz": "Etc/GMT-5"
+    "tz": "Indian/Chagos"
   },
   {
     "code": "BN",
-    "tz": "Asia/Makassar"
+    "tz": "Asia/Brunei"
   },
   {
     "code": "BG",
@@ -137,19 +137,19 @@
   },
   {
     "code": "BF",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Ouagadougou"
   },
   {
     "code": "BI",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Bujumbura"
   },
   {
     "code": "KH",
-    "tz": "Asia/Jakarta"
+    "tz": "Asia/Phnom_Penh"
   },
   {
     "code": "CM",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Douala"
   },
   {
     "code": "CA",
@@ -161,15 +161,15 @@
   },
   {
     "code": "BQ",
-    "tz": "Etc/GMT+4"
+    "tz": "America/Kralendijk"
   },
   {
     "code": "KY",
-    "tz": "Etc/GMT+5"
+    "tz": "America/Cayman"
   },
   {
     "code": "CF",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Bangui"
   },
   {
     "code": "TD",
@@ -177,7 +177,7 @@
   },
   {
     "code": "CL",
-    "tz": "Etc/GMT+6"
+    "tz": "America/Santiago"
   },
   {
     "code": "CN",
@@ -185,15 +185,15 @@
   },
   {
     "code": "CX",
-    "tz": "Asia/Jakarta"
+    "tz": "Indian/Christmas"
   },
   {
     "code": "CP",
-    "tz": "Etc/GMT+7"
+    "tz": "Pacific/Tahiti"
   },
   {
     "code": "CC",
-    "tz": "Asia/Yangon"
+    "tz": "Indian/Cocos"
   },
   {
     "code": "CO",
@@ -201,23 +201,23 @@
   },
   {
     "code": "KM",
-    "tz": "Asia/Riyadh"
+    "tz": "Indian/Comoro"
   },
   {
     "code": "CG",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Brazzaville"
   },
   {
     "code": "CK",
-    "tz": "Etc/GMT+11"
+    "tz": "Pacific/Rarotonga"
   },
   {
     "code": "CS",
-    "tz": "Etc/GMT-10"
+    "tz": "America/Costa_Rica"
   },
   {
     "code": "CR",
-    "tz": "Etc/GMT+6"
+    "tz": "America/Costa_Rica"
   },
   {
     "code": "CI",
@@ -225,7 +225,7 @@
   },
   {
     "code": "HR",
-    "tz": "Europe/Belgrade"
+    "tz": "Europe/Zagreb"
   },
   {
     "code": "CU",
@@ -233,11 +233,11 @@
   },
   {
     "code": "CW",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Curacao"
   },
   {
     "code": "CY",
-    "tz": "Asia/Famagusta"
+    "tz": "Asia/Nicosia"
   },
   {
     "code": "CZ",
@@ -245,15 +245,15 @@
   },
   {
     "code": "DK",
-    "tz": "Europe/Berlin"
+    "tz": "Europe/Copenhagen"
   },
   {
     "code": "DJ",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Djibouti"
   },
   {
     "code": "DM",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Dominica"
   },
   {
     "code": "DO",
@@ -261,11 +261,11 @@
   },
   {
     "code": "CD",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Kinshasa"
   },
   {
     "code": "EC",
-    "tz": "Etc/GMT+6"
+    "tz": "America/Guayaquil"
   },
   {
     "code": "EG",
@@ -277,11 +277,11 @@
   },
   {
     "code": "GQ",
-    "tz": "Etc/GMT-1"
+    "tz": "Africa/Malabo"
   },
   {
     "code": "ER",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Asmara"
   },
   {
     "code": "EE",
@@ -289,11 +289,11 @@
   },
   {
     "code": "SZ",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Mbabane"
   },
   {
     "code": "ET",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Addis_Ababa"
   },
   {
     "code": "FK",
@@ -305,7 +305,7 @@
   },
   {
     "code": "FJ",
-    "tz": "Etc/GMT"
+    "tz": "Pacific/Fiji"
   },
   {
     "code": "FI",
@@ -321,19 +321,19 @@
   },
   {
     "code": "PF",
-    "tz": "Etc/GMT+10"
+    "tz": "Pacific/Tahiti"
   },
   {
     "code": "TF",
-    "tz": "Etc/GMT-4"
+    "tz": "Indian/Kerguelen"
   },
   {
     "code": "GA",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Libreville"
   },
   {
     "code": "GM",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Banjul"
   },
   {
     "code": "GE",
@@ -345,7 +345,7 @@
   },
   {
     "code": "GH",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Accra"
   },
   {
     "code": "GI",
@@ -361,11 +361,11 @@
   },
   {
     "code": "GD",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Grenada"
   },
   {
     "code": "GP",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Guadeloupe"
   },
   {
     "code": "GU",
@@ -377,11 +377,11 @@
   },
   {
     "code": "GG",
-    "tz": "Europe/London"
+    "tz": "Europe/Guernsey"
   },
   {
     "code": "GN",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Conakry"
   },
   {
     "code": "GW",
@@ -397,7 +397,7 @@
   },
   {
     "code": "HM",
-    "tz": "Etc/GMT-5"
+    "tz": "Indian/Kerguelen"
   },
   {
     "code": "XX",
@@ -418,7 +418,7 @@
   },
   {
     "code": "IS",
-    "tz": "Africa/Abidjan"
+    "tz": "Atlantic/Reykjavik"
   },
   {
     "code": "IN",
@@ -442,11 +442,11 @@
   },
   {
     "code": "IM",
-    "tz": "Europe/London"
+    "tz": "Europe/Isle_of_Man"
   },
   {
     "code": "IL",
-    "tz": "Asia/Hebron"
+    "tz": "Asia/Jerusalem"
   },
   {
     "code": "IT",
@@ -462,7 +462,7 @@
   },
   {
     "code": "JE",
-    "tz": "Europe/London"
+    "tz": "Europe/Jersey"
   },
   {
     "code": "JO",
@@ -474,11 +474,11 @@
   },
   {
     "code": "KE",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Nairobi"
   },
   {
     "code": "KI",
-    "tz": "Etc/GMT"
+    "tz": "Pacific/Tarawa"
   },
   {
     "code": "XK",
@@ -486,7 +486,7 @@
   },
   {
     "code": "KW",
-    "tz": "Asia/Riyadh"
+    "tz": "Asia/Kuwait"
   },
   {
     "code": "KG",
@@ -494,7 +494,7 @@
   },
   {
     "code": "LA",
-    "tz": "Asia/Jakarta"
+    "tz": "Asia/Vientiane"
   },
   {
     "code": "LV",
@@ -506,7 +506,7 @@
   },
   {
     "code": "LS",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Maseru"
   },
   {
     "code": "LR",
@@ -518,7 +518,7 @@
   },
   {
     "code": "LI",
-    "tz": "Europe/Zurich"
+    "tz": "Europe/Vaduz"
   },
   {
     "code": "LT",
@@ -526,7 +526,7 @@
   },
   {
     "code": "LU",
-    "tz": "Europe/Brussels"
+    "tz": "Europe/Luxembourg"
   },
   {
     "code": "MO",
@@ -534,15 +534,15 @@
   },
   {
     "code": "MG",
-    "tz": "Asia/Riyadh"
+    "tz": "Indian/Antananarivo"
   },
   {
     "code": "MW",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Blantyre"
   },
   {
     "code": "MY",
-    "tz": "Etc/GMT-7"
+    "tz": "Asia/Kuala_Lumpur"
   },
   {
     "code": "MV",
@@ -550,7 +550,7 @@
   },
   {
     "code": "ML",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Bamako"
   },
   {
     "code": "MT",
@@ -558,7 +558,7 @@
   },
   {
     "code": "MH",
-    "tz": "Pacific/Kwajalein"
+    "tz": "Pacific/Majuro"
   },
   {
     "code": "MQ",
@@ -566,15 +566,15 @@
   },
   {
     "code": "MR",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Nouakchott"
   },
   {
     "code": "MU",
-    "tz": "Etc/GMT-4"
+    "tz": "Indian/Mauritius"
   },
   {
     "code": "YT",
-    "tz": "Asia/Riyadh"
+    "tz": "Indian/Mayotte"
   },
   {
     "code": "MX",
@@ -582,7 +582,7 @@
   },
   {
     "code": "FM",
-    "tz": "Etc/GMT-10"
+    "tz": "Pacific/Chuuk"
   },
   {
     "code": "MD",
@@ -590,7 +590,7 @@
   },
   {
     "code": "MC",
-    "tz": "Europe/Paris"
+    "tz": "Europe/Monaco"
   },
   {
     "code": "MN",
@@ -598,11 +598,11 @@
   },
   {
     "code": "ME",
-    "tz": "Europe/Belgrade"
+    "tz": "Europe/Podgorica"
   },
   {
     "code": "MS",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Montserrat"
   },
   {
     "code": "MA",
@@ -610,7 +610,7 @@
   },
   {
     "code": "MZ",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Maputo"
   },
   {
     "code": "MM",
@@ -630,15 +630,15 @@
   },
   {
     "code": "NL",
-    "tz": "Europe/Brussels"
+    "tz": "Europe/Amsterdam"
   },
   {
     "code": "NC",
-    "tz": "Etc/GMT-11"
+    "tz": "Pacific/Noumea"
   },
   {
     "code": "NZ",
-    "tz": "Etc/GMT"
+    "tz": "Pacific/Auckland"
   },
   {
     "code": "NI",
@@ -646,7 +646,7 @@
   },
   {
     "code": "NE",
-    "tz": "Africa/Lagos"
+    "tz": "Africa/Niamey"
   },
   {
     "code": "NG",
@@ -654,7 +654,7 @@
   },
   {
     "code": "NU",
-    "tz": "Pacific/Pago_Pago"
+    "tz": "Pacific/Niue"
   },
   {
     "code": "NF",
@@ -662,7 +662,7 @@
   },
   {
     "code": "MP",
-    "tz": "Etc/GMT-10"
+    "tz": "Pacific/Saipan"
   },
   {
     "code": "KP",
@@ -670,15 +670,15 @@
   },
   {
     "code": "MK",
-    "tz": "Europe/Belgrade"
+    "tz": "Europe/Skopje"
   },
   {
     "code": "NO",
-    "tz": "Europe/Berlin"
+    "tz": "Europe/Oslo"
   },
   {
     "code": "OM",
-    "tz": "Asia/Dubai"
+    "tz": "Asia/Muscat"
   },
   {
     "code": "PK",
@@ -686,11 +686,11 @@
   },
   {
     "code": "PW",
-    "tz": "Asia/Tokyo"
+    "tz": "Pacific/Palau"
   },
   {
     "code": "PS",
-    "tz": "Asia/Jerusalem"
+    "tz": "Asia/Gaza"
   },
   {
     "code": "PA",
@@ -714,7 +714,7 @@
   },
   {
     "code": "PN",
-    "tz": "Etc/GMT+9"
+    "tz": "Pacific/Pitcairn"
   },
   {
     "code": "PL",
@@ -722,7 +722,7 @@
   },
   {
     "code": "PT",
-    "tz": "Etc/GMT+1"
+    "tz": "Europe/Lisbon"
   },
   {
     "code": "PR",
@@ -734,7 +734,7 @@
   },
   {
     "code": "RE",
-    "tz": "Asia/Dubai"
+    "tz": "Indian/Reunion"
   },
   {
     "code": "RO",
@@ -746,27 +746,27 @@
   },
   {
     "code": "RW",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Kigali"
   },
   {
     "code": "BL",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/St_Barthelemy"
   },
   {
     "code": "SH",
-    "tz": "Etc/GMT+1"
+    "tz": "Atlantic/St_Helena"
   },
   {
     "code": "KN",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/St_Kitts"
   },
   {
     "code": "LC",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/St_Lucia"
   },
   {
     "code": "MF",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Marigot"
   },
   {
     "code": "PM",
@@ -774,7 +774,7 @@
   },
   {
     "code": "VC",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/St_Vincent"
   },
   {
     "code": "WS",
@@ -782,7 +782,7 @@
   },
   {
     "code": "SM",
-    "tz": "Europe/Rome"
+    "tz": "Europe/San_Marino"
   },
   {
     "code": "ST",
@@ -794,7 +794,7 @@
   },
   {
     "code": "SN",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Dakar"
   },
   {
     "code": "RS",
@@ -802,11 +802,11 @@
   },
   {
     "code": "SC",
-    "tz": "Etc/GMT-3"
+    "tz": "Indian/Mahe"
   },
   {
     "code": "SL",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Freetown"
   },
   {
     "code": "SG",
@@ -814,15 +814,15 @@
   },
   {
     "code": "SX",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Lower_Princes"
   },
   {
     "code": "SK",
-    "tz": "Europe/Prague"
+    "tz": "Europe/Bratislava"
   },
   {
     "code": "SI",
-    "tz": "Europe/Belgrade"
+    "tz": "Europe/Ljubljana"
   },
   {
     "code": "SB",
@@ -830,7 +830,7 @@
   },
   {
     "code": "SO",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Mogadishu"
   },
   {
     "code": "ZA",
@@ -838,7 +838,7 @@
   },
   {
     "code": "GS",
-    "tz": "Etc/GMT+2"
+    "tz": "Atlantic/South_Georgia"
   },
   {
     "code": "KR",
@@ -866,11 +866,11 @@
   },
   {
     "code": "SJ",
-    "tz": "Etc/GMT-1"
+    "tz": "Europe/Oslo"
   },
   {
     "code": "SE",
-    "tz": "Europe/Berlin"
+    "tz": "Europe/Stockholm"
   },
   {
     "code": "CH",
@@ -890,11 +890,11 @@
   },
   {
     "code": "TZ",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Dar_es_Salaam"
   },
   {
     "code": "TH",
-    "tz": "Asia/Jakarta"
+    "tz": "Asia/Bangkok"
   },
   {
     "code": "TL",
@@ -902,7 +902,7 @@
   },
   {
     "code": "TG",
-    "tz": "Africa/Abidjan"
+    "tz": "Africa/Lome"
   },
   {
     "code": "TK",
@@ -910,11 +910,11 @@
   },
   {
     "code": "TO",
-    "tz": "Etc/GMT+12"
+    "tz": "Pacific/Tongatapu"
   },
   {
     "code": "TT",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Port_of_Spain"
   },
   {
     "code": "TN",
@@ -934,11 +934,11 @@
   },
   {
     "code": "TV",
-    "tz": "Etc/GMT-12"
+    "tz": "Pacific/Funafuti"
   },
   {
     "code": "UG",
-    "tz": "Asia/Riyadh"
+    "tz": "Africa/Kampala"
   },
   {
     "code": "UA",
@@ -1002,7 +1002,7 @@
       },
       {
         "code": "US-HI",
-        "tz": "America/Honolulu"
+        "tz": "Pacific/Honolulu"
       },
       {
         "code": "US-ID",
@@ -1164,7 +1164,7 @@
   },
   {
     "code": "UM",
-    "tz": "Africa/Abidjan"
+    "tz": "Pacific/Wake"
   },
   {
     "code": "UY",
@@ -1172,15 +1172,15 @@
   },
   {
     "code": "UZ",
-    "tz": "Asia/Samarkand"
+    "tz": "Asia/Tashkent"
   },
   {
     "code": "VU",
-    "tz": "Etc/GMT-11"
+    "tz": "Pacific/Efate"
   },
   {
     "code": "VA",
-    "tz": "Europe/Rome"
+    "tz": "Europe/Vatican"
   },
   {
     "code": "VE",
@@ -1188,11 +1188,11 @@
   },
   {
     "code": "VN",
-    "tz": "Asia/Jakarta"
+    "tz": "Asia/Ho_Chi_Minh"
   },
   {
     "code": "VG",
-    "tz": "America/Puerto_Rico"
+    "tz": "America/Tortola"
   },
   {
     "code": "VI",
@@ -1208,14 +1208,14 @@
   },
   {
     "code": "YE",
-    "tz": "Asia/Riyadh"
+    "tz": "Asia/Aden"
   },
   {
     "code": "ZM",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Lusaka"
   },
   {
     "code": "ZW",
-    "tz": "Africa/Johannesburg"
+    "tz": "Africa/Harare"
   }
 ]
