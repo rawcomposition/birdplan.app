@@ -108,7 +108,9 @@ const syncCountries = async () => {
         if (subregions.length > 0) {
           data.subregions = subregions;
           const subregionsWithNullTz = subregions.filter((sr) => sr.tz === null);
-          console.log(`  Added ${subregions.length} subregions. ${subregionsWithNullTz.length} need timezone review.`);
+          console.log(
+            `  Processed ${subregions.length} subregions. ${subregionsWithNullTz.length ? `(${subregionsWithNullTz.length} need timezone review)` : ""}`
+          );
         }
       } else if (oldCountry?.subregions && oldCountry.subregions.length > 0) {
         data.subregions = oldCountry.subregions;

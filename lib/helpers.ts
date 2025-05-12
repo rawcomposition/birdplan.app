@@ -324,20 +324,21 @@ export function sanitizeFileName(fileName: string): string {
   return sanitized.trim();
 }
 
-export const flattenTimezones = (timezones: RegionTz[]) => {
+export const flattenTimezones = (regions: RegionTz[]) => {
   const result: Record<string, string> = {};
 
-  for (const region of timezones) {
+  for (const region of regions) {
+    const defaultTz = region.tz;
     if (region.subregions?.length) {
       for (const subregion of region.subregions) {
-        if (subregion.tz) {
+        if (subregion.tz && subregion.tz !== defaultTz) {
           result[subregion.code] = subregion.tz;
         }
       }
     }
 
-    if (region.tz) {
-      result[region.code] = region.tz;
+    if (defaultTz) {
+      result[region.code] = defaultTz;
     }
   }
 
