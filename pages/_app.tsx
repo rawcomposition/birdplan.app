@@ -8,7 +8,7 @@ import { HotspotTargetsProvider } from "providers/hotspot-targets";
 import { SpeciesImagesProvider } from "providers/species-images";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
-import { get } from "lib/helpers";
+import { get } from "lib/http";
 import { toast } from "react-hot-toast";
 import ErrorBoundary from "components/ErrorBoundary";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";

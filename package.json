@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "get-avicommons": "tsx scripts/get-avicommons.ts"
+    "get-avicommons": "tsx scripts/get-avicommons.ts",
+    "tz-sync-regions": "tsx scripts/tz-sync-regions.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

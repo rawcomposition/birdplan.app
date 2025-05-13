@@ -77,7 +77,6 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   startDate: { type: String, default: null },
   startMonth: { type: Number, required: true },
   endMonth: { type: Number, required: true },
-  timezone: { type: String, required: true },
   imgUrl: { type: String, default: null },
   targetStars: [{ type: String, default: [] }],
   targetNotes: { type: Map, of: String, default: {} },

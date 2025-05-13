@@ -5,7 +5,7 @@ import { EBIRD_BASE_URL } from "lib/config";
 
 type Props = Omit<SelectProps, "options" | "isLoading" | "isDisabled" | "instanceId" | "placeholder"> & {
   type: "country" | "subnational1" | "subnational2";
-  parent?: string;
+  parent: string;
 };
 
 type Region = {

@@ -1,4 +1,4 @@
-import { get } from "lib/helpers";
+import { get } from "lib/http";
 
 type TravelTimeProps = {
   method: "driving" | "walking" | "cycling";

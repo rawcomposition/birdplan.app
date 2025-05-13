@@ -1,0 +1,2682 @@
+[
+  {
+    "code": "AF",
+    "tz": "Asia/Kabul"
+  },
+  {
+    "code": "AL",
+    "tz": "Europe/Tirane"
+  },
+  {
+    "code": "DZ",
+    "tz": "Africa/Algiers"
+  },
+  {
+    "code": "AS",
+    "tz": "Pacific/Pago_Pago"
+  },
+  {
+    "code": "AD",
+    "tz": "Europe/Andorra"
+  },
+  {
+    "code": "AO",
+    "tz": "Africa/Luanda"
+  },
+  {
+    "code": "AI",
+    "tz": "America/Anguilla"
+  },
+  {
+    "code": "AQ",
+    "tz": "Antarctica/Casey"
+  },
+  {
+    "code": "AG",
+    "tz": "America/Antigua"
+  },
+  {
+    "code": "AR",
+    "tz": "America/Argentina/Buenos_Aires"
+  },
+  {
+    "code": "AM",
+    "tz": "Asia/Yerevan"
+  },
+  {
+    "code": "AW",
+    "tz": "America/Aruba"
+  },
+  {
+    "code": "AC",
+    "tz": "Atlantic/St_Helena"
+  },
+  {
+    "code": "AU",
+    "tz": "Australia/Sydney",
+    "subregions": [
+      {
+        "code": "AU-ACT",
+        "tz": "Australia/Sydney"
+      },
+      {
+        "code": "AU-NSW",
+        "tz": "Australia/Sydney"
+      },
+      {
+        "code": "AU-NT",
+        "tz": "Australia/Darwin"
+      },
+      {
+        "code": "AU-QLD",
+        "tz": "Australia/Brisbane"
+      },
+      {
+        "code": "AU-SA",
+        "tz": "Australia/Adelaide"
+      },
+      {
+        "code": "AU-TAS",
+        "tz": "Australia/Hobart"
+      },
+      {
+        "code": "AU-VIC",
+        "tz": "Australia/Melbourne"
+      },
+      {
+        "code": "AU-WA",
+        "tz": "Australia/Perth"
+      }
+    ]
+  },
+  {
+    "code": "AT",
+    "tz": "Europe/Vienna"
+  },
+  {
+    "code": "AZ",
+    "tz": "Asia/Baku"
+  },
+  {
+    "code": "BS",
+    "tz": "America/Nassau"
+  },
+  {
+    "code": "BH",
+    "tz": "Asia/Bahrain"
+  },
+  {
+    "code": "BD",
+    "tz": "Asia/Dhaka"
+  },
+  {
+    "code": "BB",
+    "tz": "America/Barbados"
+  },
+  {
+    "code": "BY",
+    "tz": "Europe/Minsk"
+  },
+  {
+    "code": "BE",
+    "tz": "Europe/Brussels"
+  },
+  {
+    "code": "BZ",
+    "tz": "America/Belize"
+  },
+  {
+    "code": "BJ",
+    "tz": "Africa/Porto-Novo"
+  },
+  {
+    "code": "BM",
+    "tz": "Atlantic/Bermuda"
+  },
+  {
+    "code": "BT",
+    "tz": "Asia/Thimphu"
+  },
+  {
+    "code": "BO",
+    "tz": "America/La_Paz"
+  },
+  {
+    "code": "BA",
+    "tz": "Europe/Sarajevo"
+  },
+  {
+    "code": "BW",
+    "tz": "Africa/Gaborone"
+  },
+  {
+    "code": "BV",
+    "tz": "Antarctica/Troll"
+  },
+  {
+    "code": "BR",
+    "tz": "America/Sao_Paulo",
+    "subregions": [
+      {
+        "code": "BR-AC",
+        "tz": "America/Rio_Branco"
+      },
+      {
+        "code": "BR-AL",
+        "tz": "America/Maceio"
+      },
+      {
+        "code": "BR-AP",
+        "tz": "America/Belem"
+      },
+      {
+        "code": "BR-AM",
+        "tz": "America/Manaus"
+      },
+      {
+        "code": "BR-BA",
+        "tz": "America/Bahia"
+      },
+      {
+        "code": "BR-CE",
+        "tz": "America/Fortaleza"
+      },
+      {
+        "code": "BR-DF",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-ES",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-GO",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-MA",
+        "tz": "America/Fortaleza"
+      },
+      {
+        "code": "BR-MT",
+        "tz": "America/Cuiaba"
+      },
+      {
+        "code": "BR-MS",
+        "tz": "America/Campo_Grande"
+      },
+      {
+        "code": "BR-MG",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-PR",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-PB",
+        "tz": "America/Fortaleza"
+      },
+      {
+        "code": "BR-PA",
+        "tz": "America/Belem"
+      },
+      {
+        "code": "BR-PE",
+        "tz": "America/Recife"
+      },
+      {
+        "code": "BR-PI",
+        "tz": "America/Fortaleza"
+      },
+      {
+        "code": "BR-RN",
+        "tz": "America/Fortaleza"
+      },
+      {
+        "code": "BR-RS",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-RJ",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-RO",
+        "tz": "America/Porto_Velho"
+      },
+      {
+        "code": "BR-RR",
+        "tz": "America/Boa_Vista"
+      },
+      {
+        "code": "BR-SC",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-SE",
+        "tz": "America/Maceio"
+      },
+      {
+        "code": "BR-SP",
+        "tz": "America/Sao_Paulo"
+      },
+      {
+        "code": "BR-TO",
+        "tz": "America/Araguaina"
+      }
+    ]
+  },
+  {
+    "code": "IO",
+    "tz": "Indian/Chagos"
+  },
+  {
+    "code": "BN",
+    "tz": "Asia/Brunei"
+  },
+  {
+    "code": "BG",
+    "tz": "Europe/Sofia"
+  },
+  {
+    "code": "BF",
+    "tz": "Africa/Ouagadougou"
+  },
+  {
+    "code": "BI",
+    "tz": "Africa/Bujumbura"
+  },
+  {
+    "code": "KH",
+    "tz": "Asia/Phnom_Penh"
+  },
+  {
+    "code": "CM",
+    "tz": "Africa/Douala"
+  },
+  {
+    "code": "CA",
+    "tz": "America/Toronto",
+    "subregions": [
+      {
+        "code": "CA-AB",
+        "tz": "America/Edmonton"
+      },
+      {
+        "code": "CA-BC",
+        "tz": "America/Vancouver"
+      },
+      {
+        "code": "CA-MB",
+        "tz": "America/Winnipeg"
+      },
+      {
+        "code": "CA-NB",
+        "tz": "America/Moncton"
+      },
+      {
+        "code": "CA-NL",
+        "tz": "America/St_Johns"
+      },
+      {
+        "code": "CA-NT",
+        "tz": "America/Yellowknife"
+      },
+      {
+        "code": "CA-NS",
+        "tz": "America/Halifax"
+      },
+      {
+        "code": "CA-NU",
+        "tz": "America/Iqaluit"
+      },
+      {
+        "code": "CA-ON",
+        "tz": "America/Toronto"
+      },
+      {
+        "code": "CA-PE",
+        "tz": "America/Halifax"
+      },
+      {
+        "code": "CA-QC",
+        "tz": "America/Toronto"
+      },
+      {
+        "code": "CA-SK",
+        "tz": "America/Regina"
+      },
+      {
+        "code": "CA-YT",
+        "tz": "America/Whitehorse"
+      }
+    ]
+  },
+  {
+    "code": "CV",
+    "tz": "Atlantic/Cape_Verde"
+  },
+  {
+    "code": "BQ",
+    "tz": "America/Kralendijk"
+  },
+  {
+    "code": "KY",
+    "tz": "America/Cayman"
+  },
+  {
+    "code": "CF",
+    "tz": "Africa/Bangui"
+  },
+  {
+    "code": "TD",
+    "tz": "Africa/Ndjamena"
+  },
+  {
+    "code": "CL",
+    "tz": "America/Santiago",
+    "subregions": [
+      {
+        "code": "CL-AI",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-AN",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-AR",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-AP",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-AT",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-BI",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-CO",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-LI",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-LL",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-LR",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-MA",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-ML",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-RM",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-TA",
+        "tz": "America/Santiago"
+      },
+      {
+        "code": "CL-VS",
+        "tz": "Pacific/Easter"
+      },
+      {
+        "code": "CL-NB",
+        "tz": "America/Santiago"
+      }
+    ]
+  },
+  {
+    "code": "CN",
+    "tz": "Asia/Shanghai"
+  },
+  {
+    "code": "CX",
+    "tz": "Indian/Christmas"
+  },
+  {
+    "code": "CP",
+    "tz": "Pacific/Tahiti"
+  },
+  {
+    "code": "CC",
+    "tz": "Indian/Cocos"
+  },
+  {
+    "code": "CO",
+    "tz": "America/Bogota"
+  },
+  {
+    "code": "KM",
+    "tz": "Indian/Comoro"
+  },
+  {
+    "code": "CG",
+    "tz": "Africa/Brazzaville"
+  },
+  {
+    "code": "CK",
+    "tz": "Pacific/Rarotonga"
+  },
+  {
+    "code": "CS",
+    "tz": "America/Costa_Rica"
+  },
+  {
+    "code": "CR",
+    "tz": "America/Costa_Rica"
+  },
+  {
+    "code": "CI",
+    "tz": "Africa/Abidjan"
+  },
+  {
+    "code": "HR",
+    "tz": "Europe/Zagreb"
+  },
+  {
+    "code": "CU",
+    "tz": "America/Havana"
+  },
+  {
+    "code": "CW",
+    "tz": "America/Curacao"
+  },
+  {
+    "code": "CY",
+    "tz": "Asia/Nicosia"
+  },
+  {
+    "code": "CZ",
+    "tz": "Europe/Prague"
+  },
+  {
+    "code": "DK",
+    "tz": "Europe/Copenhagen"
+  },
+  {
+    "code": "DJ",
+    "tz": "Africa/Djibouti"
+  },
+  {
+    "code": "DM",
+    "tz": "America/Dominica"
+  },
+  {
+    "code": "DO",
+    "tz": "America/Santo_Domingo"
+  },
+  {
+    "code": "CD",
+    "tz": "Africa/Kinshasa",
+    "subregions": [
+      {
+        "code": "CD-BN",
+        "tz": "Africa/Lubumbashi"
+      },
+      {
+        "code": "CD-BC",
+        "tz": "Africa/Kinshasa"
+      },
+      {
+        "code": "CD-KW",
+        "tz": "Africa/Kinshasa"
+      },
+      {
+        "code": "CD-KE",
+        "tz": "Africa/Kinshasa"
+      },
+      {
+        "code": "CD-KA",
+        "tz": "Africa/Lubumbashi"
+      },
+      {
+        "code": "CD-KN",
+        "tz": "Africa/Kinshasa"
+      },
+      {
+        "code": "CD-MA",
+        "tz": "Africa/Lubumbashi"
+      },
+      {
+        "code": "CD-NK",
+        "tz": "Africa/Lubumbashi"
+      },
+      {
+        "code": "CD-OR",
+        "tz": "Africa/Lubumbashi"
+      },
+      {
+        "code": "CD-SK",
+        "tz": "Africa/Lubumbashi"
+      },
+      {
+        "code": "CD-EQ",
+        "tz": "Africa/Kinshasa"
+      }
+    ]
+  },
+  {
+    "code": "EC",
+    "tz": "America/Guayaquil",
+    "subregions": [
+      {
+        "code": "EC-A",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-B",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-C",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-F",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-H",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-X",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-O",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-E",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-W",
+        "tz": "Pacific/Galapagos"
+      },
+      {
+        "code": "EC-G",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-I",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-L",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-R",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-M",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-S",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-N",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-D",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-Y",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-P",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-SE",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-SD",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-U",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-T",
+        "tz": "America/Guayaquil"
+      },
+      {
+        "code": "EC-Z",
+        "tz": "America/Guayaquil"
+      }
+    ]
+  },
+  {
+    "code": "EG",
+    "tz": "Africa/Cairo"
+  },
+  {
+    "code": "SV",
+    "tz": "America/El_Salvador"
+  },
+  {
+    "code": "GQ",
+    "tz": "Africa/Malabo"
+  },
+  {
+    "code": "ER",
+    "tz": "Africa/Asmara"
+  },
+  {
+    "code": "EE",
+    "tz": "Europe/Tallinn"
+  },
+  {
+    "code": "SZ",
+    "tz": "Africa/Mbabane"
+  },
+  {
+    "code": "ET",
+    "tz": "Africa/Addis_Ababa"
+  },
+  {
+    "code": "FK",
+    "tz": "Atlantic/Stanley"
+  },
+  {
+    "code": "FO",
+    "tz": "Atlantic/Faroe"
+  },
+  {
+    "code": "FJ",
+    "tz": "Pacific/Fiji"
+  },
+  {
+    "code": "FI",
+    "tz": "Europe/Helsinki"
+  },
+  {
+    "code": "FR",
+    "tz": "Europe/Paris"
+  },
+  {
+    "code": "GF",
+    "tz": "America/Cayenne"
+  },
+  {
+    "code": "PF",
+    "tz": "Pacific/Tahiti",
+    "subregions": [
+      {
+        "code": "PF-TI",
+        "tz": "Pacific/Tahiti"
+      },
+      {
+        "code": "PF-LI",
+        "tz": "Pacific/Tahiti"
+      },
+      {
+        "code": "PF-MI",
+        "tz": "Pacific/Marquesas"
+      },
+      {
+        "code": "PF-TG",
+        "tz": "Pacific/Gambier"
+      },
+      {
+        "code": "PF-WI",
+        "tz": "Pacific/Tahiti"
+      }
+    ]
+  },
+  {
+    "code": "TF",
+    "tz": "Indian/Kerguelen"
+  },
+  {
+    "code": "GA",
+    "tz": "Africa/Libreville"
+  },
+  {
+    "code": "GM",
+    "tz": "Africa/Banjul"
+  },
+  {
+    "code": "GE",
+    "tz": "Asia/Tbilisi"
+  },
+  {
+    "code": "DE",
+    "tz": "Europe/Berlin"
+  },
+  {
+    "code": "GH",
+    "tz": "Africa/Accra"
+  },
+  {
+    "code": "GI",
+    "tz": "Europe/Gibraltar"
+  },
+  {
+    "code": "GR",
+    "tz": "Europe/Athens"
+  },
+  {
+    "code": "GL",
+    "tz": "America/Nuuk"
+  },
+  {
+    "code": "GD",
+    "tz": "America/Grenada"
+  },
+  {
+    "code": "GP",
+    "tz": "America/Guadeloupe"
+  },
+  {
+    "code": "GU",
+    "tz": "Pacific/Guam"
+  },
+  {
+    "code": "GT",
+    "tz": "America/Guatemala"
+  },
+  {
+    "code": "GG",
+    "tz": "Europe/Guernsey"
+  },
+  {
+    "code": "GN",
+    "tz": "Africa/Conakry"
+  },
+  {
+    "code": "GW",
+    "tz": "Africa/Bissau"
+  },
+  {
+    "code": "GY",
+    "tz": "America/Guyana"
+  },
+  {
+    "code": "HT",
+    "tz": "America/Port-au-Prince"
+  },
+  {
+    "code": "HM",
+    "tz": "Indian/Kerguelen"
+  },
+  {
+    "code": "XX",
+    "tz": "Etc/UTC"
+  },
+  {
+    "code": "HN",
+    "tz": "America/Tegucigalpa"
+  },
+  {
+    "code": "HK",
+    "tz": "Asia/Hong_Kong"
+  },
+  {
+    "code": "HU",
+    "tz": "Europe/Budapest"
+  },
+  {
+    "code": "IS",
+    "tz": "Atlantic/Reykjavik"
+  },
+  {
+    "code": "IN",
+    "tz": "Asia/Kolkata"
+  },
+  {
+    "code": "ID",
+    "tz": "Asia/Jakarta",
+    "subregions": [
+      {
+        "code": "ID-JW",
+        "tz": "Asia/Jakarta"
+      },
+      {
+        "code": "ID-KA",
+        "tz": "Asia/Makassar"
+      },
+      {
+        "code": "ID-MA",
+        "tz": "Asia/Makassar"
+      },
+      {
+        "code": "ID-NU",
+        "tz": "Asia/Makassar"
+      },
+      {
+        "code": "ID-IJ",
+        "tz": "Asia/Jayapura"
+      },
+      {
+        "code": "ID-SL",
+        "tz": "Asia/Jakarta"
+      },
+      {
+        "code": "ID-SM",
+        "tz": "Asia/Jakarta"
+      }
+    ]
+  },
+  {
+    "code": "IR",
+    "tz": "Asia/Tehran"
+  },
+  {
+    "code": "IQ",
+    "tz": "Asia/Baghdad"
+  },
+  {
+    "code": "IE",
+    "tz": "Europe/Dublin"
+  },
+  {
+    "code": "IM",
+    "tz": "Europe/Isle_of_Man"
+  },
+  {
+    "code": "IL",
+    "tz": "Asia/Jerusalem"
+  },
+  {
+    "code": "IT",
+    "tz": "Europe/Rome"
+  },
+  {
+    "code": "JM",
+    "tz": "America/Jamaica"
+  },
+  {
+    "code": "JP",
+    "tz": "Asia/Tokyo"
+  },
+  {
+    "code": "JE",
+    "tz": "Europe/Jersey"
+  },
+  {
+    "code": "JO",
+    "tz": "Asia/Amman"
+  },
+  {
+    "code": "KZ",
+    "tz": "Asia/Almaty",
+    "subregions": [
+      {
+        "code": "KZ-ALA",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-ALM",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-AKM",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-AKT",
+        "tz": "Asia/Aqtobe"
+      },
+      {
+        "code": "KZ-AST",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-ATY",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-ZAP",
+        "tz": "Asia/Aqtau"
+      },
+      {
+        "code": "KZ-MAN",
+        "tz": "Asia/Aqtau"
+      },
+      {
+        "code": "KZ-YUZ",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-PAV",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-KAR",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-KUS",
+        "tz": "Asia/Aqtobe"
+      },
+      {
+        "code": "KZ-KZY",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-VOS",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-SEV",
+        "tz": "Asia/Almaty"
+      },
+      {
+        "code": "KZ-ZHA",
+        "tz": "Asia/Aqtobe"
+      }
+    ]
+  },
+  {
+    "code": "KE",
+    "tz": "Africa/Nairobi"
+  },
+  {
+    "code": "KI",
+    "tz": "Pacific/Tarawa",
+    "subregions": [
+      {
+        "code": "KI-G",
+        "tz": "Pacific/Tarawa"
+      },
+      {
+        "code": "KI-L",
+        "tz": "Pacific/Kanton"
+      },
+      {
+        "code": "KI-P",
+        "tz": "Pacific/Enderbury"
+      }
+    ]
+  },
+  {
+    "code": "XK",
+    "tz": "Europe/Belgrade"
+  },
+  {
+    "code": "KW",
+    "tz": "Asia/Kuwait"
+  },
+  {
+    "code": "KG",
+    "tz": "Asia/Bishkek"
+  },
+  {
+    "code": "LA",
+    "tz": "Asia/Vientiane"
+  },
+  {
+    "code": "LV",
+    "tz": "Europe/Riga"
+  },
+  {
+    "code": "LB",
+    "tz": "Asia/Beirut"
+  },
+  {
+    "code": "LS",
+    "tz": "Africa/Maseru"
+  },
+  {
+    "code": "LR",
+    "tz": "Africa/Monrovia"
+  },
+  {
+    "code": "LY",
+    "tz": "Africa/Tripoli"
+  },
+  {
+    "code": "LI",
+    "tz": "Europe/Vaduz"
+  },
+  {
+    "code": "LT",
+    "tz": "Europe/Vilnius"
+  },
+  {
+    "code": "LU",
+    "tz": "Europe/Luxembourg"
+  },
+  {
+    "code": "MO",
+    "tz": "Asia/Macau"
+  },
+  {
+    "code": "MG",
+    "tz": "Indian/Antananarivo"
+  },
+  {
+    "code": "MW",
+    "tz": "Africa/Blantyre"
+  },
+  {
+    "code": "MY",
+    "tz": "Asia/Kuala_Lumpur"
+  },
+  {
+    "code": "MV",
+    "tz": "Indian/Maldives"
+  },
+  {
+    "code": "ML",
+    "tz": "Africa/Bamako"
+  },
+  {
+    "code": "MT",
+    "tz": "Europe/Malta"
+  },
+  {
+    "code": "MH",
+    "tz": "Pacific/Majuro"
+  },
+  {
+    "code": "MQ",
+    "tz": "America/Martinique"
+  },
+  {
+    "code": "MR",
+    "tz": "Africa/Nouakchott"
+  },
+  {
+    "code": "MU",
+    "tz": "Indian/Mauritius"
+  },
+  {
+    "code": "YT",
+    "tz": "Indian/Mayotte"
+  },
+  {
+    "code": "MX",
+    "tz": "America/Mexico_City",
+    "subregions": [
+      {
+        "code": "MX-AGU",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-BCN",
+        "tz": "America/Tijuana"
+      },
+      {
+        "code": "MX-BCS",
+        "tz": "America/Mazatlan"
+      },
+      {
+        "code": "MX-CAM",
+        "tz": "America/Merida"
+      },
+      {
+        "code": "MX-CHP",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-CHH",
+        "tz": "America/Chihuahua"
+      },
+      {
+        "code": "MX-DIF",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-COA",
+        "tz": "America/Monterrey"
+      },
+      {
+        "code": "MX-COL",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-DUR",
+        "tz": "America/Monterrey"
+      },
+      {
+        "code": "MX-MEX",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-GUA",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-GRO",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-HID",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-JAL",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-MIC",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-MOR",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-NAY",
+        "tz": "America/Mazatlan"
+      },
+      {
+        "code": "MX-NLE",
+        "tz": "America/Monterrey"
+      },
+      {
+        "code": "MX-OAX",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-PUE",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-QUE",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-ROO",
+        "tz": "America/Cancun"
+      },
+      {
+        "code": "MX-SLP",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-SIN",
+        "tz": "America/Mazatlan"
+      },
+      {
+        "code": "MX-SON",
+        "tz": "America/Hermosillo"
+      },
+      {
+        "code": "MX-TAB",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-TAM",
+        "tz": "America/Monterrey"
+      },
+      {
+        "code": "MX-TLA",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-VER",
+        "tz": "America/Mexico_City"
+      },
+      {
+        "code": "MX-YUC",
+        "tz": "America/Merida"
+      },
+      {
+        "code": "MX-ZAC",
+        "tz": "America/Mexico_City"
+      }
+    ]
+  },
+  {
+    "code": "FM",
+    "tz": "Pacific/Chuuk",
+    "subregions": [
+      {
+        "code": "FM-TRK",
+        "tz": "Pacific/Chuuk"
+      },
+      {
+        "code": "FM-KSA",
+        "tz": "Pacific/Kosrae"
+      },
+      {
+        "code": "FM-PNI",
+        "tz": "Pacific/Pohnpei"
+      },
+      {
+        "code": "FM-YAP",
+        "tz": "Pacific/Chuuk"
+      }
+    ]
+  },
+  {
+    "code": "MD",
+    "tz": "Europe/Chisinau"
+  },
+  {
+    "code": "MC",
+    "tz": "Europe/Monaco"
+  },
+  {
+    "code": "MN",
+    "tz": "Asia/Ulaanbaatar",
+    "subregions": [
+      {
+        "code": "MN-073",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-071",
+        "tz": "Asia/Hovd"
+      },
+      {
+        "code": "MN-069",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-067",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-037",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-061",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-063",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-059",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-057",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-065",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-064",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-039",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-043",
+        "tz": "Asia/Hovd"
+      },
+      {
+        "code": "MN-041",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-035",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-049",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-051",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-047",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-1",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-046",
+        "tz": "Asia/Hovd"
+      },
+      {
+        "code": "MN-053",
+        "tz": "Asia/Ulaanbaatar"
+      },
+      {
+        "code": "MN-055",
+        "tz": "Asia/Ulaanbaatar"
+      }
+    ]
+  },
+  {
+    "code": "ME",
+    "tz": "Europe/Podgorica"
+  },
+  {
+    "code": "MS",
+    "tz": "America/Montserrat"
+  },
+  {
+    "code": "MA",
+    "tz": "Africa/Casablanca"
+  },
+  {
+    "code": "MZ",
+    "tz": "Africa/Maputo"
+  },
+  {
+    "code": "MM",
+    "tz": "Asia/Yangon"
+  },
+  {
+    "code": "NA",
+    "tz": "Africa/Windhoek"
+  },
+  {
+    "code": "NR",
+    "tz": "Pacific/Nauru"
+  },
+  {
+    "code": "NP",
+    "tz": "Asia/Kathmandu"
+  },
+  {
+    "code": "NL",
+    "tz": "Europe/Amsterdam"
+  },
+  {
+    "code": "NC",
+    "tz": "Pacific/Noumea"
+  },
+  {
+    "code": "NZ",
+    "tz": "Pacific/Auckland",
+    "subregions": [
+      {
+        "code": "NZ-AUK",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-BOP",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-CAN",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-CI",
+        "tz": "Pacific/Chatham"
+      },
+      {
+        "code": "NZ-GIS",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-HKB",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-MWT",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-MBH",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-NSN",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-NTL",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-OTA",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-STL",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-TKI",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-TAS",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-WKO",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-WGN",
+        "tz": "Pacific/Auckland"
+      },
+      {
+        "code": "NZ-WTC",
+        "tz": "Pacific/Auckland"
+      }
+    ]
+  },
+  {
+    "code": "NI",
+    "tz": "America/Managua"
+  },
+  {
+    "code": "NE",
+    "tz": "Africa/Niamey"
+  },
+  {
+    "code": "NG",
+    "tz": "Africa/Lagos"
+  },
+  {
+    "code": "NU",
+    "tz": "Pacific/Niue"
+  },
+  {
+    "code": "NF",
+    "tz": "Pacific/Norfolk"
+  },
+  {
+    "code": "MP",
+    "tz": "Pacific/Saipan"
+  },
+  {
+    "code": "KP",
+    "tz": "Asia/Pyongyang"
+  },
+  {
+    "code": "MK",
+    "tz": "Europe/Skopje"
+  },
+  {
+    "code": "NO",
+    "tz": "Europe/Oslo"
+  },
+  {
+    "code": "OM",
+    "tz": "Asia/Muscat"
+  },
+  {
+    "code": "PK",
+    "tz": "Asia/Karachi"
+  },
+  {
+    "code": "PW",
+    "tz": "Pacific/Palau"
+  },
+  {
+    "code": "PS",
+    "tz": "Asia/Gaza"
+  },
+  {
+    "code": "PA",
+    "tz": "America/Panama"
+  },
+  {
+    "code": "PG",
+    "tz": "Pacific/Port_Moresby",
+    "subregions": [
+      {
+        "code": "PG-CPM",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-CPK",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-EBR",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-ESW",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-EHG",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-EPW",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-GPK",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-MPM",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-MRL",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-MBA",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-MPL",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-NCD",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-NIK",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-NSA",
+        "tz": "Pacific/Bougainville"
+      },
+      {
+        "code": "PG-NPP",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-SAN",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-SHM",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-WBK",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-WPD",
+        "tz": "Pacific/Port_Moresby"
+      },
+      {
+        "code": "PG-WHM",
+        "tz": "Pacific/Port_Moresby"
+      }
+    ]
+  },
+  {
+    "code": "PY",
+    "tz": "America/Asuncion"
+  },
+  {
+    "code": "PE",
+    "tz": "America/Lima"
+  },
+  {
+    "code": "PH",
+    "tz": "Asia/Manila"
+  },
+  {
+    "code": "PN",
+    "tz": "Pacific/Pitcairn"
+  },
+  {
+    "code": "PL",
+    "tz": "Europe/Warsaw"
+  },
+  {
+    "code": "PT",
+    "tz": "Europe/Lisbon",
+    "subregions": [
+      {
+        "code": "PT-01",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-02",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-03",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-04",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-05",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-06",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-08",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-09",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-10",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-11",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-12",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-13",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-30",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-20",
+        "tz": "Europe/Azores"
+      },
+      {
+        "code": "PT-14",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-15",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-16",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-17",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-18",
+        "tz": "Europe/Lisbon"
+      },
+      {
+        "code": "PT-07",
+        "tz": "Europe/Lisbon"
+      }
+    ]
+  },
+  {
+    "code": "PR",
+    "tz": "America/Puerto_Rico"
+  },
+  {
+    "code": "QA",
+    "tz": "Asia/Qatar"
+  },
+  {
+    "code": "RE",
+    "tz": "Indian/Reunion"
+  },
+  {
+    "code": "RO",
+    "tz": "Europe/Bucharest"
+  },
+  {
+    "code": "RU",
+    "tz": "Europe/Moscow",
+    "subregions": [
+      {
+        "code": "RU-AD",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-ALT",
+        "tz": "Asia/Barnaul"
+      },
+      {
+        "code": "RU-AL",
+        "tz": "Asia/Gorno-Altaysk"
+      },
+      {
+        "code": "RU-AMU",
+        "tz": "Asia/Yakutsk"
+      },
+      {
+        "code": "RU-ARK",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-AST",
+        "tz": "Europe/Astrakhan"
+      },
+      {
+        "code": "RU-BA",
+        "tz": "Asia/Ufa"
+      },
+      {
+        "code": "RU-BEL",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-BRY",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-BU",
+        "tz": "Asia/Irkutsk"
+      },
+      {
+        "code": "RU-CE",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-CHE",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-CHU",
+        "tz": "Asia/Anadyr"
+      },
+      {
+        "code": "RU-CU",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-DA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-IN",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-IRK",
+        "tz": "Asia/Irkutsk"
+      },
+      {
+        "code": "RU-IVA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-YEV",
+        "tz": "Asia/Vladivostok"
+      },
+      {
+        "code": "RU-KB",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KGD",
+        "tz": "Europe/Kaliningrad"
+      },
+      {
+        "code": "RU-KL",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KLU",
+        "tz": "Europe/Kaliningrad"
+      },
+      {
+        "code": "RU-KAM",
+        "tz": "Asia/Kamchatka"
+      },
+      {
+        "code": "RU-KC",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KEM",
+        "tz": "Asia/Novokuznetsk"
+      },
+      {
+        "code": "RU-KHA",
+        "tz": "Asia/Vladivostok"
+      },
+      {
+        "code": "RU-KK",
+        "tz": "Asia/Krasnoyarsk"
+      },
+      {
+        "code": "RU-KHM",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-KIR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KO",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KOS",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KDA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KYA",
+        "tz": "Asia/Krasnoyarsk"
+      },
+      {
+        "code": "RU-KGN",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-KRS",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-LEN",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-LIP",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-MAG",
+        "tz": "Asia/Magadan"
+      },
+      {
+        "code": "RU-ME",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-MO",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-MOW",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-MOS",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-MUR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-NEN",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-NIZ",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-SE",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-NGR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-NVS",
+        "tz": "Asia/Novosibirsk"
+      },
+      {
+        "code": "RU-OMS",
+        "tz": "Asia/Omsk"
+      },
+      {
+        "code": "RU-ORE",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-ORL",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-PNZ",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-PER",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-PRI",
+        "tz": "Asia/Vladivostok"
+      },
+      {
+        "code": "RU-PSK",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-KR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-ROS",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-RYA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-SPE",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-SA",
+        "tz": "Asia/Yakutsk"
+      },
+      {
+        "code": "RU-SAK",
+        "tz": "Asia/Sakhalin"
+      },
+      {
+        "code": "RU-SAM",
+        "tz": "Europe/Samara"
+      },
+      {
+        "code": "RU-SAR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-SMO",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-STA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-SVE",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-TAM",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-TA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-TOM",
+        "tz": "Asia/Tomsk"
+      },
+      {
+        "code": "RU-TUL",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-TY",
+        "tz": "Asia/Krasnoyarsk"
+      },
+      {
+        "code": "RU-TVE",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-TYU",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-UD",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-ULY",
+        "tz": "Europe/Ulyanovsk"
+      },
+      {
+        "code": "RU-VLA",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-VGG",
+        "tz": "Europe/Volgograd"
+      },
+      {
+        "code": "RU-VLG",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-VOR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-YAN",
+        "tz": "Asia/Yekaterinburg"
+      },
+      {
+        "code": "RU-YAR",
+        "tz": "Europe/Moscow"
+      },
+      {
+        "code": "RU-CHI",
+        "tz": "Asia/Chita"
+      }
+    ]
+  },
+  {
+    "code": "RW",
+    "tz": "Africa/Kigali"
+  },
+  {
+    "code": "BL",
+    "tz": "America/St_Barthelemy"
+  },
+  {
+    "code": "SH",
+    "tz": "Atlantic/St_Helena"
+  },
+  {
+    "code": "KN",
+    "tz": "America/St_Kitts"
+  },
+  {
+    "code": "LC",
+    "tz": "America/St_Lucia"
+  },
+  {
+    "code": "MF",
+    "tz": "America/Marigot"
+  },
+  {
+    "code": "PM",
+    "tz": "America/Miquelon"
+  },
+  {
+    "code": "VC",
+    "tz": "America/St_Vincent"
+  },
+  {
+    "code": "WS",
+    "tz": "Pacific/Apia"
+  },
+  {
+    "code": "SM",
+    "tz": "Europe/San_Marino"
+  },
+  {
+    "code": "ST",
+    "tz": "Africa/Sao_Tome"
+  },
+  {
+    "code": "SA",
+    "tz": "Asia/Riyadh"
+  },
+  {
+    "code": "SN",
+    "tz": "Africa/Dakar"
+  },
+  {
+    "code": "RS",
+    "tz": "Europe/Belgrade"
+  },
+  {
+    "code": "SC",
+    "tz": "Indian/Mahe"
+  },
+  {
+    "code": "SL",
+    "tz": "Africa/Freetown"
+  },
+  {
+    "code": "SG",
+    "tz": "Asia/Singapore"
+  },
+  {
+    "code": "SX",
+    "tz": "America/Lower_Princes"
+  },
+  {
+    "code": "SK",
+    "tz": "Europe/Bratislava"
+  },
+  {
+    "code": "SI",
+    "tz": "Europe/Ljubljana"
+  },
+  {
+    "code": "SB",
+    "tz": "Pacific/Guadalcanal"
+  },
+  {
+    "code": "SO",
+    "tz": "Africa/Mogadishu"
+  },
+  {
+    "code": "ZA",
+    "tz": "Africa/Johannesburg"
+  },
+  {
+    "code": "GS",
+    "tz": "Atlantic/South_Georgia"
+  },
+  {
+    "code": "KR",
+    "tz": "Asia/Seoul"
+  },
+  {
+    "code": "SS",
+    "tz": "Africa/Juba"
+  },
+  {
+    "code": "ES",
+    "tz": "Europe/Madrid",
+    "subregions": [
+      {
+        "code": "ES-AN",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-AR",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-AS",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-CN",
+        "tz": "Atlantic/Canary"
+      },
+      {
+        "code": "ES-CB",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-CL",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-CM",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-CT",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-CE",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-EX",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-GA",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-IB",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-RI",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-MD",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-ML",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-MC",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-NC",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-PV",
+        "tz": "Europe/Madrid"
+      },
+      {
+        "code": "ES-VC",
+        "tz": "Europe/Madrid"
+      }
+    ]
+  },
+  {
+    "code": "LK",
+    "tz": "Asia/Colombo"
+  },
+  {
+    "code": "SD",
+    "tz": "Africa/Khartoum"
+  },
+  {
+    "code": "SR",
+    "tz": "America/Paramaribo"
+  },
+  {
+    "code": "SJ",
+    "tz": "Europe/Oslo"
+  },
+  {
+    "code": "SE",
+    "tz": "Europe/Stockholm"
+  },
+  {
+    "code": "CH",
+    "tz": "Europe/Zurich"
+  },
+  {
+    "code": "SY",
+    "tz": "Asia/Damascus"
+  },
+  {
+    "code": "TW",
+    "tz": "Asia/Taipei"
+  },
+  {
+    "code": "TJ",
+    "tz": "Asia/Dushanbe"
+  },
+  {
+    "code": "TZ",
+    "tz": "Africa/Dar_es_Salaam"
+  },
+  {
+    "code": "TH",
+    "tz": "Asia/Bangkok"
+  },
+  {
+    "code": "TL",
+    "tz": "Asia/Dili"
+  },
+  {
+    "code": "TG",
+    "tz": "Africa/Lome"
+  },
+  {
+    "code": "TK",
+    "tz": "Pacific/Fakaofo"
+  },
+  {
+    "code": "TO",
+    "tz": "Pacific/Tongatapu"
+  },
+  {
+    "code": "TT",
+    "tz": "America/Port_of_Spain"
+  },
+  {
+    "code": "TN",
+    "tz": "Africa/Tunis"
+  },
+  {
+    "code": "TR",
+    "tz": "Europe/Istanbul"
+  },
+  {
+    "code": "TM",
+    "tz": "Asia/Ashgabat"
+  },
+  {
+    "code": "TC",
+    "tz": "America/Grand_Turk"
+  },
+  {
+    "code": "TV",
+    "tz": "Pacific/Funafuti"
+  },
+  {
+    "code": "UG",
+    "tz": "Africa/Kampala"
+  },
+  {
+    "code": "UA",
+    "tz": "Europe/Kyiv"
+  },
+  {
+    "code": "AE",
+    "tz": "Asia/Dubai"
+  },
+  {
+    "code": "GB",
+    "tz": "Europe/London"
+  },
+  {
+    "code": "US",
+    "tz": "America/New_York",
+    "subregions": [
+      {
+        "code": "US-AL",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-AK",
+        "tz": "America/Anchorage"
+      },
+      {
+        "code": "US-AZ",
+        "tz": "America/Phoenix"
+      },
+      {
+        "code": "US-AR",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-CA",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-CO",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-CT",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-DE",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-DC",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-FL",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-GA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-HI",
+        "tz": "Pacific/Honolulu"
+      },
+      {
+        "code": "US-ID",
+        "tz": "America/Boise"
+      },
+      {
+        "code": "US-IL",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-IN",
+        "tz": "America/Indiana/Indianapolis"
+      },
+      {
+        "code": "US-IA",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-KS",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-KY",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-LA",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-ME",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-MD",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-MA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-MI",
+        "tz": "America/Detroit"
+      },
+      {
+        "code": "US-MN",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-MS",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-MO",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-MT",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-NE",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-NV",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-NH",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-NJ",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-NM",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-NY",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-NC",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-ND",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-OH",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-OK",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-OR",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-PA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-RI",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-SC",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-SD",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-TN",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-TX",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-UT",
+        "tz": "America/Denver"
+      },
+      {
+        "code": "US-VT",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-VA",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-WA",
+        "tz": "America/Los_Angeles"
+      },
+      {
+        "code": "US-WV",
+        "tz": "America/New_York"
+      },
+      {
+        "code": "US-WI",
+        "tz": "America/Chicago"
+      },
+      {
+        "code": "US-WY",
+        "tz": "America/Denver"
+      }
+    ]
+  },
+  {
+    "code": "UM",
+    "tz": "Pacific/Wake",
+    "subregions": [
+      {
+        "code": "UM-81",
+        "tz": "Pacific/Johnston"
+      },
+      {
+        "code": "UM-84",
+        "tz": "Pacific/Wake"
+      },
+      {
+        "code": "UM-86",
+        "tz": "Pacific/Palau"
+      },
+      {
+        "code": "UM-67",
+        "tz": "Pacific/Pago_Pago"
+      },
+      {
+        "code": "UM-89",
+        "tz": "Pacific/Palau"
+      },
+      {
+        "code": "UM-71",
+        "tz": "Pacific/Pago_Pago"
+      },
+      {
+        "code": "UM-76",
+        "tz": "Pacific/Pago_Pago"
+      },
+      {
+        "code": "UM-95",
+        "tz": "Pacific/Kwajalein"
+      },
+      {
+        "code": "UM-79",
+        "tz": "Pacific/Pago_Pago"
+      }
+    ]
+  },
+  {
+    "code": "UY",
+    "tz": "America/Montevideo"
+  },
+  {
+    "code": "UZ",
+    "tz": "Asia/Tashkent"
+  },
+  {
+    "code": "VU",
+    "tz": "Pacific/Efate"
+  },
+  {
+    "code": "VA",
+    "tz": "Europe/Vatican"
+  },
+  {
+    "code": "VE",
+    "tz": "America/Caracas"
+  },
+  {
+    "code": "VN",
+    "tz": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "code": "VG",
+    "tz": "America/Tortola"
+  },
+  {
+    "code": "VI",
+    "tz": "America/St_Thomas"
+  },
+  {
+    "code": "WF",
+    "tz": "Pacific/Wallis"
+  },
+  {
+    "code": "EH",
+    "tz": "Africa/El_Aaiun"
+  },
+  {
+    "code": "YE",
+    "tz": "Asia/Aden"
+  },
+  {
+    "code": "ZM",
+    "tz": "Africa/Lusaka"
+  },
+  {
+    "code": "ZW",
+    "tz": "Africa/Harare"
+  }
+]

@@ -1,7 +1,7 @@
 import { authenticate, APIError } from "lib/api";
 import { connect, Trip } from "lib/db";
 import { TripInput } from "lib/types";
-import { getBounds, getCenterOfBounds, getTimezone } from "lib/helpers";
+import { getBounds } from "lib/helpers";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin";
 
 export async function GET(request: Request) {
@@ -25,10 +25,9 @@ export async function POST(request: Request) {
 
     const bounds = await getBounds(data.region);
     if (!bounds) throw new Error("Failed to fetch region info");
-    const { lat, lng } = getCenterOfBounds(bounds);
 
     const mapboxImgUrl = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.MAPBOX_SERVER_KEY}&padding=30`;
-    const [imgUrl, timezone] = await Promise.all([uploadMapboxImageToStorage(mapboxImgUrl), getTimezone(lat, lng)]);
+    const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
 
     await connect();
     const trip = await Trip.create({
@@ -37,7 +36,6 @@ export async function POST(request: Request) {
       ownerId: session.uid,
       ownerName: session.name,
       bounds,
-      timezone,
       imgUrl,
       itinerary: [],
       hotspots: [],

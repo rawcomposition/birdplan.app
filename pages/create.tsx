@@ -139,7 +139,7 @@ export default function CreateTrip() {
                   <Field label="State/Province Region" isOptional={!requireSubregion}>
                     <RegionSelect
                       type="subnational1"
-                      parent={country?.value}
+                      parent={country?.value || ""}
                       onChange={setState}
                       value={state}
                       menuPortalTarget={typeof document !== "undefined" ? document.body : null}

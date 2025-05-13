@@ -26,6 +26,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
   const queryClient = useQueryClient();
+  const regionCode = trip?.region.split(",")[0] || "";
 
   const addStarMutation = useTripMutation<{ code: string }>({
     url: `/api/v1/trips/${trip?._id}/targets/add-star`,
@@ -145,10 +146,10 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
         <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{percent}%</td>
         <td className="text-[14px] text-gray-600 hidden sm:table-cell">
           {lastReport?.date
-            ? dateTimeToRelative(lastReport.date, trip?.timezone, true)
+            ? dateTimeToRelative(lastReport.date, regionCode, true)
             : loadingRecent
-            ? "loading last seen..."
-            : "> 30 days ago"}
+              ? "loading last seen..."
+              : "> 30 days ago"}
         </td>
         <td>
           <div className="flex items-center gap-4 sm:gap-6 mr-4 sm:mr-6 ml-2 justify-end whitespace-nowrap">
