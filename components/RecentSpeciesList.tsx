@@ -17,9 +17,9 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
   const { recentSpecies, isLoading, error, refetch } = useFetchRecentSpecies(locId);
   const [viewAll, setViewAll] = React.useState(false);
   const { trip, setSelectedSpecies } = useTrip();
-  const timezone = trip?.timezone;
   const hotspot = trip?.hotspots.find((it) => it.id === locId);
   const favCodes = hotspot?.favs?.map((it) => it.code) || [];
+  const regionCode = trip?.region.split(",")[0] || "";
 
   const filteredObs = viewAll ? recentSpecies : recentSpecies.slice(0, previewCount);
 
@@ -56,7 +56,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
                 </td>
                 <td>
                   <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>
-                    {dateTimeToRelative(date, timezone)}
+                    {dateTimeToRelative(date, regionCode)}
                   </time>
                 </td>
                 <td>{count}</td>

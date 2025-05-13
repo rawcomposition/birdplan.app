@@ -14,13 +14,18 @@ export default function HotspotStats({ id, speciesTotal }: Props) {
   const { checklists } = useFetchRecentChecklists(id);
   const { trip } = useTrip();
   const { data } = useFetchHotspotInfo(trip?._id || "", id);
-  const timezone = trip?.timezone;
 
-  const lastChecklistIsoDate = checklists?.[0]?.isoObsDate;
-  const lastChecklistDate = checklists?.[0]?.obsDt;
-  const lastChecklistTime = checklists?.[0]?.obsTime;
+  const lastChecklistRow = checklists?.[0];
+  const lastChecklistIsoDate = lastChecklistRow?.isoObsDate;
+  const lastChecklistDate = lastChecklistRow?.obsDt;
+  const lastChecklistTime = lastChecklistRow?.obsTime;
+  const lastChecklistRegion =
+    lastChecklistRow?.loc.subnational2Code ||
+    lastChecklistRow?.loc.subnational1Code ||
+    lastChecklistRow?.loc.countryCode ||
+    "";
   const lastChecklist = lastChecklistIsoDate
-    ? dateTimeToRelative(lastChecklistIsoDate, timezone).replace("months", "mo").replace("month", "mo")
+    ? dateTimeToRelative(lastChecklistIsoDate, lastChecklistRegion).replace("months", "mo").replace("month", "mo")
     : "Never";
 
   return (

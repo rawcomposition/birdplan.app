@@ -21,7 +21,6 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
   const [view, setView] = React.useState<string>("all");
   const [expanded, setExpanded] = React.useState(false);
   const { trip } = useTrip();
-  const timezone = trip?.timezone;
 
   const { data: info } = useFetchHotspotInfo(trip?._id || "", hotspotId);
   const { groupedChecklists, isLoading, error, refetch } = useFetchRecentChecklists(hotspotId);
@@ -85,11 +84,16 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                   const timestamp = dayjs(`${obsDt} ${time}`).format();
                   const hasObs = obs?.some((it) => checklistIds.includes(it.checklistId));
                   const obsLabel = !obs?.length ? "--" : hasObs ? "✅" : "❌";
+                  const region =
+                    checklist?.loc.subnational2Code ||
+                    checklist?.loc.subnational1Code ||
+                    checklist?.loc.countryCode ||
+                    "";
                   return (
                     <tr key={subId} className="even:bg-neutral-50">
                       <td className="pl-1.5 py-[5px]">
                         <time dateTime={timestamp} title={`${obsDt} ${time}`}>
-                          {dateTimeToRelative(`${obsDt} ${time}`, timezone)}
+                          {dateTimeToRelative(`${obsDt} ${time}`, region)}
                         </time>
                       </td>
                       {speciesCode && <td className="text-center">{obsLabel}</td>}

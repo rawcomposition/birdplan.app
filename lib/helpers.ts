@@ -4,6 +4,7 @@ import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { getTzByRegion } from "lib/tz";
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -150,12 +151,6 @@ export const getBounds = async (regionString: string) => {
   return combinedBounds;
 };
 
-export const getCenterOfBounds = ({ minX, minY, maxX, maxY }: Trip["bounds"]) => {
-  const lat = (minY + maxY) / 2;
-  const lng = (minX + maxX) / 2;
-  return { lat, lng };
-};
-
 export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
   if (!bounds) return { lat: null, lng: null };
   const { minX, minY, maxX, maxY } = bounds;
@@ -168,12 +163,15 @@ export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
 
-export const dateTimeToRelative = (date: string, timezone?: string, includeAgo?: boolean) => {
-  if (!timezone || !date) return "";
+export const dateTimeToRelative = (date: string, regionCode: string, includeAgo?: boolean) => {
+  const timezone = getTzByRegion(regionCode);
+  if (!regionCode || !date) return "";
+
   const today = dayjs().tz(timezone).format("YYYY-MM-DD");
   const yesterday = dayjs().tz(timezone).subtract(1, "day").format("YYYY-MM-DD");
+  const tomorrow = dayjs().tz(timezone).add(1, "day").format("YYYY-MM-DD");
   const dateFormatted = dayjs(date).tz(timezone).format("YYYY-MM-DD");
-  if (dateFormatted === today) return "Today";
+  if (dateFormatted === today || dateFormatted === tomorrow) return "Today";
   if (dateFormatted === yesterday) return "Yesterday";
   const result = dayjs
     .tz(date, timezone)

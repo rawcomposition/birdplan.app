@@ -105,7 +105,6 @@ export type Trip = {
   startDate?: string;
   startMonth: number;
   endMonth: number;
-  timezone: string;
   imgUrl: string | null;
   targetStars?: string[];
   targetNotes?: {
