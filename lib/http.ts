@@ -39,7 +39,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
     if (res.status === 404) throw new Error("Route not found");
     if (res.status === 405) throw new Error("Method not allowed");
     if (res.status === 504) throw new Error("Operation timed out. Please try again.");
-    throw new Error(json.message || "An error ocurred");
+    throw new Error(json.message || "An error occurred");
   }
   return json;
 };
