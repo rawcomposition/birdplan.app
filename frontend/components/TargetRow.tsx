@@ -56,10 +56,10 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   });
 
   const seenMutation = useMutation({
-    url: `/api/v1/my-profile/add-to-lifelist`,
+    url: `/account/profile/add-to-lifelist`,
     method: "POST",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/my-profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/account/profile`] });
     },
     onMutate: async (data: any) => {
       await queryClient.cancelQueries({ queryKey: ["/api/v1/profile"] });

@@ -1,4 +1,5 @@
 import Trip from "models/Trip.js";
+import Profile from "models/Profile.js";
 import mongoose from "mongoose";
 
 let isConnected = false;
@@ -40,4 +41,4 @@ export async function connect() {
   }
 }
 
-export { Trip };
+export { Trip, Profile };

@@ -75,3 +75,16 @@ export type Hotspot = {
   targetsId?: string;
   favs?: HotspotFav[];
 };
+
+export type Profile = {
+  _id: string;
+  uid: string;
+  name?: string;
+  email?: string;
+  lifelist: string[];
+  exceptions?: string[];
+  dismissedNoticeId?: string;
+  lastActiveAt: Date | null;
+  resetToken?: string;
+  resetTokenExpires?: Date;
+};

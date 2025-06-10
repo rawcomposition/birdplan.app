@@ -21,7 +21,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
     method: "POST",
     onSuccess: () => {
       toast.success("Email updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["/api/v1/my-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/account/profile"] });
       router.push("/login?event=emailUpdated");
     },
   });
