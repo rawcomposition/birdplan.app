@@ -1,3 +1,62 @@
+export type Trip = {
+  _id: string;
+  userIds: string[];
+  ownerId: string;
+  ownerName: string;
+  isPublic: boolean;
+  name: string;
+  region: string;
+  bounds: {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+  };
+  hotspots: Hotspot[];
+  markers: CustomMarker[];
+  itinerary?: Day[];
+  startDate?: string;
+  startMonth: number;
+  endMonth: number;
+  imgUrl: string | null;
+  targetStars?: string[];
+  targetNotes?: {
+    [key: string]: string;
+  };
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type CustomMarker = {
+  name: string;
+  lat: number;
+  lng: number;
+  icon: string;
+  id: string;
+  notes?: string;
+  placeId?: string;
+  placeType?: string;
+};
+
+export type Day = {
+  id: string;
+  notes?: string;
+  locations: {
+    travel?: TravelData;
+    locationId: string;
+    type: "hotspot" | "marker";
+    id: string;
+  }[];
+};
+
+export type TravelData = {
+  time: number;
+  distance: number;
+  method: "driving" | "walking" | "cycling";
+  locationId: string; // Traveling from this location
+  isDeleted?: boolean;
+};
+
 export type HotspotFav = {
   name: string;
   code: string;
