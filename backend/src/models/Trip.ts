@@ -1,5 +1,5 @@
 import type { Trip } from "shared/types.js";
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 
 const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
@@ -88,6 +88,6 @@ const TripSchema = new Schema(fields, {
 
 TripSchema.index({ userIds: 1, createdAt: -1 });
 
-const TripModel = (models.Trip as Model<Trip>) || model<Trip>("Trip", TripSchema);
+const TripModel = (mongoose.models.Trip as Model<Trip>) || model<Trip>("Trip", TripSchema);
 
 export default TripModel;
