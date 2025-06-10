@@ -16,7 +16,7 @@ export default function Trips() {
   const { user } = useUser();
 
   const { data, isLoading, error, refetch } = useQuery<Trip[]>({
-    queryKey: ["/api/v1/trips"],
+    queryKey: ["/trips"],
     enabled: !!user?.uid,
   });
 
@@ -37,9 +37,7 @@ export default function Trips() {
           </div>
           <Notice />
           <div className="grid md:grid-cols-2 gap-4 mb-4">
-            {data?.map((trip) => (
-              <TripCard key={trip._id} trip={trip} />
-            ))}
+            {data?.map((trip) => <TripCard key={trip._id} trip={trip} />)}
           </div>
           {isLoading && <p className="text-gray-500 text-lg">Loading...</p>}
           {!isLoading && data?.length === 0 && (

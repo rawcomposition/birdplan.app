@@ -29,7 +29,7 @@ export function initQueryClient() {
         gcTime: 24 * 24 * 60 * 60 * 1000, // 24 days
         staleTime: 0,
         queryFn: async ({ queryKey, meta }) =>
-          get(queryKey[0] as string, (queryKey[1] || {}) as any, !!meta?.showLoading),
+          get(`${process.env.NEXT_PUBLIC_API_URL}${queryKey[0]}`, (queryKey[1] || {}) as any, !!meta?.showLoading),
       },
     },
     queryCache: new QueryCache({
