@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { authenticate, nanoId } from "lib/utils.js";
-import { connect, Profile, Trip, TargetList, Invite } from "lib/db.js";
+import { nanoId } from "lib/utils.js";
+import { connect, Profile } from "lib/db.js";
 import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
 import { RESET_TOKEN_EXPIRATION } from "lib/config.js";
