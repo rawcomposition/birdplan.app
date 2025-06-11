@@ -26,13 +26,13 @@ export default function ResetPassword() {
     isLoading: isVerifying,
     error: verificationError,
   } = useQuery<VerificationData, Error>({
-    queryKey: ["/api/v1/verify-reset-token", { token }],
+    queryKey: ["/api/v1/auth/verify-reset-token", { token }],
     enabled: !!token,
     retry: false,
   });
 
   const mutation = useMutation({
-    url: "/api/v1/reset-password",
+    url: "/api/v1/auth/reset-password",
     method: "POST",
     onSuccess: () => {
       toast.success("Password reset successfully");

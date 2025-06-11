@@ -16,7 +16,7 @@ export default function ForgotPassword() {
   if (user?.uid && !userLoading) router.push("/trips");
 
   const mutation = useMutation({
-    url: "/api/v1/forgot-password",
+    url: "/api/v1/auth/forgot-password",
     method: "POST",
     onSuccess: () => {
       setSubmitted(true);

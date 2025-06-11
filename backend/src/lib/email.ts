@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { RESET_TOKEN_EXPIRATION } from "lib/config";
+import { RESET_TOKEN_EXPIRATION } from "lib/config.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

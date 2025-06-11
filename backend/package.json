@@ -8,11 +8,13 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.14.4",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
     "firebase-admin": "^13.4.0",
     "hono": "^4.7.11",
     "mongoose": "^8.15.1",
-    "nanoid": "^5.1.5"
+    "nanoid": "^5.1.5",
+    "resend": "^4.5.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
