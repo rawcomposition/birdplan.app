@@ -6,6 +6,7 @@ import profile from "./profile.js";
 import auth from "./auth.js";
 import support from "./support.js";
 import taxonomy from "./taxonomy.js";
+import quiz from "./quiz.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
@@ -23,6 +24,7 @@ app.route("/v1/trips", trips);
 app.route("/v1/auth", auth);
 app.route("/v1/support", support);
 app.route("/v1/taxonomy", taxonomy);
+app.route("/v1/quiz", quiz);
 
 app.notFound((c) => {
   return c.json({ message: "Not Found" }, 404);

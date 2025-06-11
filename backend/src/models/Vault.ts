@@ -1,6 +1,6 @@
-import { Vault } from "lib/types";
-import { Schema, model, models, Model } from "mongoose";
-import { nanoId } from "lib/helpers";
+import type { Vault } from "shared/types.js";
+import mongoose, { Schema, model, Model } from "mongoose";
+import { nanoId } from "lib/utils.js";
 
 const fields: Record<keyof Omit<Vault, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
@@ -12,6 +12,6 @@ const VaultSchema = new Schema(fields, {
   timestamps: true,
 });
 
-const VaultModel = (models.Vault as Model<Vault>) || model<Vault>("Vault", VaultSchema);
+const VaultModel = (mongoose.models.Vault as Model<Vault>) || model<Vault>("Vault", VaultSchema);
 
 export default VaultModel;

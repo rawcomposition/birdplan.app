@@ -144,16 +144,6 @@ export type Option = {
   label: string;
 };
 
-export type Invite = {
-  _id: string;
-  email: string;
-  tripId: string;
-  ownerId: string;
-  accepted: boolean;
-  name?: string;
-  uid?: string;
-};
-
 export type InviteInput = {
   email: string;
   tripId: string;
@@ -210,19 +200,6 @@ export type GooglePlaceT = {
   lat: number;
   lng: number;
   type?: string;
-};
-
-export type QuizImages = {
-  _id: string;
-  code: string;
-  ids: string[];
-  name: string;
-};
-
-export type Vault = {
-  _id: string;
-  key: string;
-  value: string;
 };
 
 export type RegionTz = {

@@ -129,3 +129,26 @@ export type eBirdTaxonomy = {
   familyComName: string;
   familySciName: string;
 };
+
+export type Invite = {
+  _id: string;
+  email: string;
+  tripId: string;
+  ownerId: string;
+  accepted: boolean;
+  name?: string;
+  uid?: string;
+};
+
+export type QuizImages = {
+  _id: string;
+  code: string;
+  ids: string[];
+  name: string;
+};
+
+export type Vault = {
+  _id: string;
+  key: string;
+  value: string;
+};

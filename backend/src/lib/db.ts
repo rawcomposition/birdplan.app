@@ -2,6 +2,8 @@ import Trip from "models/Trip.js";
 import Profile from "models/Profile.js";
 import TargetList from "models/TargetList.js";
 import Invite from "models/Invite.js";
+import QuizImages from "models/QuizImages.js";
+import Vault from "models/Vault.js";
 import mongoose from "mongoose";
 
 let isConnected = false;
@@ -43,4 +45,4 @@ export async function connect() {
   }
 }
 
-export { Trip, Profile, TargetList, Invite };
+export { Trip, Profile, TargetList, Invite, QuizImages, Vault };

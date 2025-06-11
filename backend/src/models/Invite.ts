@@ -1,6 +1,6 @@
-import { Invite } from "lib/types";
-import { Schema, model, models, Model } from "mongoose";
-import { nanoId } from "lib/helpers";
+import type { Invite } from "shared/types.js";
+import mongoose, { Schema, model, Model } from "mongoose";
+import { nanoId } from "lib/utils.js";
 
 const fields: Record<keyof Omit<Invite, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
@@ -19,6 +19,6 @@ const InviteSchema = new Schema(fields, {
 InviteSchema.index({ tripId: 1, createdAt: -1 }); // share modal
 InviteSchema.index({ tripId: 1, uid: 1 }); // trip editors endpoint
 
-const InviteModel = (models.Invite as Model<Invite>) || model<Invite>("Invite", InviteSchema);
+const InviteModel = (mongoose.models.Invite as Model<Invite>) || model<Invite>("Invite", InviteSchema);
 
 export default InviteModel;
