@@ -9,6 +9,7 @@ import taxonomy from "./taxonomy.js";
 import quiz from "./quiz.js";
 import piper from "./piper.js";
 import region from "./region.js";
+import ebirdProxy from "./ebird-proxy.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
@@ -29,6 +30,7 @@ app.route("/v1/taxonomy", taxonomy);
 app.route("/v1/quiz", quiz);
 app.route("/v1/piper", piper);
 app.route("/v1/region", region);
+app.route("/v1/ebird-proxy", ebirdProxy);
 
 app.notFound((c) => {
   return c.json({ message: "Not Found" }, 404);
