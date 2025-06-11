@@ -75,4 +75,15 @@ profile.patch("/", async (c) => {
   return c.json({});
 });
 
+profile.post("/add-to-lifelist", async (c) => {
+  const session = await authenticate(c);
+  await connect();
+
+  const data = await c.req.json<{ code: string }>();
+  const { code } = data;
+
+  await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code }, $pull: { exclusions: code } });
+  return c.json({});
+});
+
 export default profile;

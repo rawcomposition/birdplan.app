@@ -28,7 +28,7 @@ const ProfileProvider = ({ children }: Props) => {
   const uid = user?.uid;
 
   const { data: profile } = useQuery<Profile>({
-    queryKey: [`/account/profile`],
+    queryKey: [`/profile`],
     enabled: !!uid,
   });
 

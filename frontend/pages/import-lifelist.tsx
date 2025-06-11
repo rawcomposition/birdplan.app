@@ -25,15 +25,15 @@ export default function ImportLifelist() {
   const exceptionsString = exceptions?.join(",");
 
   const setExceptionsMutation = useMutation({
-    url: "/account/profile",
+    url: "/profile",
     method: "PATCH",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/account/profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/profile`] });
     },
   });
 
   const setLifelistMutation = useMutation({
-    url: "/account/profile",
+    url: "/profile",
     method: "PATCH",
     onMutate: () => {
       toast.loading("Importing life list...", { id: "import-lifelist" });
@@ -43,7 +43,7 @@ export default function ImportLifelist() {
     },
     onSuccess: () => {
       toast.success("Life list imported");
-      queryClient.invalidateQueries({ queryKey: [`/account/profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/profile`] });
       router.push(redirectUrl);
     },
   });

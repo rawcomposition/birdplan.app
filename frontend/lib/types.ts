@@ -128,13 +128,6 @@ export type Observation = {
   evidence: "N" | "P" | "A";
 };
 
-export type Target = {
-  code: string;
-  name: string;
-  percent: number;
-  percentYr: number;
-};
-
 export type CustomMarker = {
   name: string;
   lat: number;
@@ -207,23 +200,6 @@ export type RecentSpecies = {
   date: string;
   checklistId: string;
   count: number;
-};
-
-export enum TargetListType {
-  trip = "trip",
-  hotspot = "hotspot",
-}
-
-export type TargetList = {
-  _id: string;
-  type: TargetListType;
-  tripId: string;
-  items: Target[];
-  N: number;
-  yrN: number;
-  hotspotId?: string;
-  updatedAt: string;
-  createdAt: string;
 };
 
 export type TargetListInput = Omit<TargetList, "_id" | "updatedAt" | "createdAt" | "type" | "tripId">;

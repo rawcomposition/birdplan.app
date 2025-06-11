@@ -88,3 +88,29 @@ export type Profile = {
   resetToken?: string;
   resetTokenExpires?: Date;
 };
+
+export type Target = {
+  code: string;
+  name: string;
+  percent: number;
+  percentYr: number;
+};
+
+enum TargetListType {
+  trip = "trip",
+  hotspot = "hotspot",
+}
+
+export type TargetList = {
+  _id: string;
+  type: TargetListType;
+  tripId: string;
+  items: Target[];
+  N: number;
+  yrN: number;
+  hotspotId?: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
+module.exports = { TargetListType };

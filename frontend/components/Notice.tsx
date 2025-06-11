@@ -12,13 +12,13 @@ export default function Notice() {
   const queryClient = useQueryClient();
 
   const dismissMutation = useMutation({
-    url: "/account/profile",
+    url: "/profile",
     method: "PATCH",
     onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: [`/account/profile`] });
-      const prevData = queryClient.getQueryData([`/account/profile`]);
+      await queryClient.cancelQueries({ queryKey: [`/profile`] });
+      const prevData = queryClient.getQueryData([`/profile`]);
 
-      queryClient.setQueryData<Profile | undefined>([`/account/profile`], (old) => {
+      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) => {
         if (!old) return old;
         return { ...old, dismissedNoticeId: data.dismissedNoticeId };
       });
@@ -26,7 +26,7 @@ export default function Notice() {
       return { prevData };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/account/profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/profile`] });
     },
   });
 

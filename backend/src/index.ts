@@ -1,7 +1,8 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import trips from "./trips/index.js";
-import account from "./account/index.js";
+import account from "./account.js";
+import profile from "./profile.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
@@ -13,6 +14,7 @@ if (process.env.FRONTEND_URL) {
   console.error("FRONTEND_URL is not set");
 }
 
+app.route("/v1/profile", profile);
 app.route("/v1/account", account);
 app.route("/v1/trips", trips);
 

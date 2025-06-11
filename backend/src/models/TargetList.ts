@@ -1,6 +1,6 @@
-import { TargetList } from "lib/types";
+import type { TargetList } from "shared/types.js";
 import { Schema, model, models, Model } from "mongoose";
-import { nanoId } from "lib/helpers";
+import { nanoId } from "lib/utils.js";
 
 const fields: Record<keyof Omit<TargetList, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
