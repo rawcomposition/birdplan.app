@@ -152,3 +152,19 @@ export type Vault = {
   key: string;
   value: string;
 };
+
+export type eBirdHotspot = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species: number;
+};
+
+export type SpeciesObservation = {
+  code: string;
+  name: string;
+  date: string;
+  checklistId: string;
+  count: number;
+};

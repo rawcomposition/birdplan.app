@@ -8,6 +8,7 @@ import support from "./support.js";
 import taxonomy from "./taxonomy.js";
 import quiz from "./quiz.js";
 import piper from "./piper.js";
+import region from "./region.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
@@ -27,6 +28,7 @@ app.route("/v1/support", support);
 app.route("/v1/taxonomy", taxonomy);
 app.route("/v1/quiz", quiz);
 app.route("/v1/piper", piper);
+app.route("/v1/region", region);
 
 app.notFound((c) => {
   return c.json({ message: "Not Found" }, 404);

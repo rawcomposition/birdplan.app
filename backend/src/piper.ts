@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { connect, Vault } from "lib/db.js";
 
 const piper = new Hono();
@@ -7,12 +8,12 @@ piper.post("/set-cookiejar", async (c) => {
   const key: string | undefined = c.req.query("key");
 
   if (!key || key !== process.env.PIPER_KEY) {
-    return c.json({ error: "Invalid key" }, 401);
+    throw new HTTPException(401, { message: "Invalid key" });
   }
 
   const rawBody: string = await c.req.text();
   if (!rawBody) {
-    return c.json({ error: "Missing body" }, 400);
+    throw new HTTPException(400, { message: "Missing body" });
   }
 
   await connect();
@@ -24,7 +25,7 @@ piper.post("/set-cookiejar", async (c) => {
 piper.get("/get-cookiejar", async (c) => {
   const key: string | undefined = c.req.query("key");
   if (!key || key !== process.env.PIPER_KEY) {
-    return c.json({ error: "Invalid key" }, 401);
+    throw new HTTPException(401, { message: "Invalid key" });
   }
 
   await connect();
