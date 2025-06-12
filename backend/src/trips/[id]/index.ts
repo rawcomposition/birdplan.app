@@ -184,4 +184,28 @@ trip.get("/export", async (c) => {
   });
 });
 
+trip.get("/invites", async (c) => {
+  const session = await authenticate(c);
+  const id: string | undefined = c.req.param("id");
+
+  if (!id) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  await connect();
+  const [trip, invites] = await Promise.all([
+    Trip.findById(id),
+    Invite.find({ tripId: id }, ["name", "email", "uid"]).sort({ createdAt: -1 }),
+  ]);
+
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!trip.userIds.includes(session.uid)) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  return c.json(invites);
+});
+
 export default trip;
