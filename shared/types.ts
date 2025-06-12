@@ -1,3 +1,5 @@
+import { TargetListType } from "./enums.js";
+
 export type Trip = {
   _id: string;
   userIds: string[];
@@ -96,11 +98,6 @@ export type Target = {
   percentYr: number;
 };
 
-enum TargetListType {
-  trip = "trip",
-  hotspot = "hotspot",
-}
-
 export type TargetList = {
   _id: string;
   type: TargetListType;
@@ -112,8 +109,6 @@ export type TargetList = {
   updatedAt: string;
   createdAt: string;
 };
-
-module.exports = { TargetListType };
 
 export type eBirdTaxonomy = {
   sciName: string;
@@ -148,6 +143,12 @@ export type InviteInput = {
 export type TripInput = {
   name: string;
   region: string;
+  startMonth: number;
+  endMonth: number;
+};
+
+export type TripUpdateInput = {
+  name: string;
   startMonth: number;
   endMonth: number;
 };
