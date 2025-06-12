@@ -92,4 +92,24 @@ trip.delete("/", async (c) => {
   return c.json({});
 });
 
+trip.get("/all-hotspot-targets", async (c) => {
+  const id: string | undefined = c.req.param("id");
+
+  if (!id) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  await connect();
+  const [trip, results] = await Promise.all([
+    Trip.findById(id),
+    TargetList.find({ type: TargetListType.hotspot, tripId: id }).sort({ createdAt: -1 }),
+  ]);
+
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+
+  return c.json(results);
+});
+
 export default trip;
