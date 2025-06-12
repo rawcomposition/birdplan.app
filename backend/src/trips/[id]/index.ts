@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
-import { connect, Trip, TargetList, Invite } from "lib/db.js";
-import type { TripUpdateInput } from "shared/types.js";
+import { connect, Trip, TargetList, Invite, Profile } from "lib/db.js";
+import type { TripUpdateInput, Editor } from "shared/types.js";
 import { TargetListType } from "shared/enums.js";
 
 const trip = new Hono();
@@ -110,6 +110,39 @@ trip.get("/all-hotspot-targets", async (c) => {
   }
 
   return c.json(results);
+});
+
+trip.get("/editors", async (c) => {
+  const session = await authenticate(c);
+  const id: string | undefined = c.req.param("id");
+
+  if (!id) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(id);
+
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!trip.isPublic && (!session?.uid || !trip.userIds.includes(session.uid))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  if (trip.userIds.length === 0) {
+    return c.json([]);
+  }
+
+  const profiles = await Profile.find({ uid: { $in: trip.userIds } });
+
+  const editors: Editor[] = profiles.map((profile) => ({
+    uid: profile.uid!,
+    name: profile?.name || `User ${profile.uid}`,
+    lifelist: profile?.lifelist || [],
+  }));
+
+  return c.json(editors);
 });
 
 export default trip;

@@ -153,6 +153,12 @@ export type TripUpdateInput = {
   endMonth: number;
 };
 
+export type Editor = {
+  uid: string;
+  name: string;
+  lifelist: string[];
+};
+
 export type QuizImages = {
   _id: string;
   code: string;
