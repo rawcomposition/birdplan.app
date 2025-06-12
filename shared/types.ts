@@ -140,6 +140,11 @@ export type Invite = {
   uid?: string;
 };
 
+export type InviteInput = {
+  email: string;
+  tripId: string;
+};
+
 export type QuizImages = {
   _id: string;
   code: string;
