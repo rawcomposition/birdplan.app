@@ -54,7 +54,7 @@ export default function ImportLifelist() {
     isError,
     refetch,
   } = useQuery<{ name: string; code: string }[]>({
-    queryKey: ["/api/v1/taxonomy"],
+    queryKey: ["/taxonomy"],
   });
 
   React.useEffect(() => {

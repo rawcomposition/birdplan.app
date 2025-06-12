@@ -1,5 +1,5 @@
 import type { TargetList } from "shared/types.js";
-import { Schema, model, models, Model } from "mongoose";
+import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 
 const fields: Record<keyof Omit<TargetList, "createdAt" | "updatedAt">, any> = {
@@ -27,6 +27,7 @@ const TargetListSchema = new Schema(fields, {
 TargetListSchema.index({ tripId: 1, type: 1, createdAt: -1 });
 TargetListSchema.index({ tripId: 1, type: 1, hotspotId: 1, createdAt: -1 });
 
-const TargetListModel = (models.TargetList as Model<TargetList>) || model<TargetList>("TargetList", TargetListSchema);
+const TargetListModel =
+  (mongoose.models.TargetList as Model<TargetList>) || model<TargetList>("TargetList", TargetListSchema);
 
 export default TargetListModel;

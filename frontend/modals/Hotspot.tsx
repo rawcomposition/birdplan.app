@@ -58,7 +58,7 @@ export default function Hotspot({ hotspot }: Props) {
   }
 
   const removeMutation = useTripMutation({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${id}`,
+    url: `/trips/${trip?._id}/hotspots/${id}`,
     method: "DELETE",
     updateCache: (old, input) => ({
       ...old,
@@ -67,7 +67,7 @@ export default function Hotspot({ hotspot }: Props) {
   });
 
   const saveNotesMutation = useTripMutation<{ notes: string }>({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${id}/notes`,
+    url: `/trips/${trip?._id}/hotspots/${id}/notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -76,7 +76,7 @@ export default function Hotspot({ hotspot }: Props) {
   });
 
   const translateMutation = useMutation<{ originalName: string; translatedName: string }>({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${id}/translate-name`,
+    url: `/trips/${trip?._id}/hotspots/${id}/translate-name`,
     method: "PATCH",
     onSuccess: (data) => {
       const { originalName, translatedName } = data;
@@ -84,7 +84,7 @@ export default function Hotspot({ hotspot }: Props) {
         toast("No translation found");
         return;
       }
-      queryClient.setQueryData<Trip | undefined>([`/api/v1/trips/${trip?._id}`], (old) => {
+      queryClient.setQueryData<Trip | undefined>([`/trips/${trip?._id}`], (old) => {
         if (!old) return old;
         return {
           ...old,
@@ -93,12 +93,12 @@ export default function Hotspot({ hotspot }: Props) {
           ),
         };
       });
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
     },
   });
 
   const resetMutation = useTripMutation({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${id}/reset-name`,
+    url: `/trips/${trip?._id}/hotspots/${id}/reset-name`,
     method: "PATCH",
     updateCache: (old) => ({
       ...old,
@@ -109,7 +109,7 @@ export default function Hotspot({ hotspot }: Props) {
   });
 
   const addHotspotMutation = useTripMutation<HotspotInput>({
-    url: `/api/v1/trips/${trip?._id}/hotspots`,
+    url: `/trips/${trip?._id}/hotspots`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,

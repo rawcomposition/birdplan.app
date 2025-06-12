@@ -9,7 +9,7 @@ export default function useFetchHotspots(showHotspots: boolean) {
   const region = trip?.region;
 
   const { data } = useQuery<eBirdHotspot[]>({
-    queryKey: [`/api/v1/region/${region}/hotspots`],
+    queryKey: [`/region/${region}/hotspots`],
     enabled: !!region && showHotspots,
     meta: {
       errorMessage: "Failed to load hotspots",

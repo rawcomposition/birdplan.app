@@ -27,7 +27,7 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
   const { trip } = useTrip();
 
   const addMarkerMutation = useTripMutation<CustomMarker>({
-    url: `/api/v1/trips/${trip?._id}/markers`,
+    url: `/trips/${trip?._id}/markers`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,

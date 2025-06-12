@@ -30,7 +30,7 @@ export default function Itinerary() {
   }, [shouldDefaultEdit]);
 
   const setStartDateMutation = useTripMutation<{ startDate: string }>({
-    url: `/api/v1/trips/${trip?._id}/set-start-date`,
+    url: `/trips/${trip?._id}/set-start-date`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -39,7 +39,7 @@ export default function Itinerary() {
   });
 
   const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
-    url: `/api/v1/trips/${trip?._id}/itinerary`,
+    url: `/trips/${trip?._id}/itinerary`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,
@@ -136,9 +136,7 @@ export default function Itinerary() {
                     No itinerary has been set for this trip yet.
                   </div>
                 )}
-                {trip?.itinerary?.map((day) => (
-                  <ItineraryDay key={day.id} day={day} isEditing={isEditing} />
-                ))}
+                {trip?.itinerary?.map((day) => <ItineraryDay key={day.id} day={day} isEditing={isEditing} />)}
                 {isEditing && hasStartDate && (
                   <Button color="primary" onClick={handleAddDay} className="mb-8">
                     Add Day

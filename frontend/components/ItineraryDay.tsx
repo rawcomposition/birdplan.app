@@ -22,17 +22,17 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
   const { open } = useModal();
 
   const isAddingLocation = useMutationState({
-    filters: { mutationKey: [`/api/v1/trips/${trip?._id}/itinerary/${day.id}/add-location`] },
+    filters: { mutationKey: [`/trips/${trip?._id}/itinerary/${day.id}/add-location`] },
     select: (mutation) => mutation?.state.status === "pending",
   })?.some(Boolean);
 
   const isCalculatingTravelTime = useMutationState({
-    filters: { mutationKey: [`/api/v1/trips/${trip?._id}/itinerary/${day.id}/calc-travel-time`] },
+    filters: { mutationKey: [`/trips/${trip?._id}/itinerary/${day.id}/calc-travel-time`] },
     select: (mutation) => mutation?.state.status === "pending",
   })?.some(Boolean);
 
   const removeDayMutation = useTripMutation({
-    url: `/api/v1/trips/${trip?._id}/itinerary/${day.id}`,
+    url: `/trips/${trip?._id}/itinerary/${day.id}`,
     method: "DELETE",
     updateCache: (old, input) => ({
       ...old,
@@ -41,7 +41,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
   });
 
   const removeLocationMutation = useTripMutation<{ id: string }>({
-    url: `/api/v1/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
+    url: `/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -55,7 +55,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
   });
 
   const moveLocationMutation = useTripMutation<{ id: string; direction: "up" | "down" }>({
-    url: `/api/v1/trips/${trip?._id}/itinerary/${day.id}/move-location`,
+    url: `/trips/${trip?._id}/itinerary/${day.id}/move-location`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -72,7 +72,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
   });
 
   const setNotesMutation = useTripMutation<{ notes: string }>({
-    url: `/api/v1/trips/${trip?._id}/itinerary/${day.id}/set-notes`,
+    url: `/trips/${trip?._id}/itinerary/${day.id}/set-notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,

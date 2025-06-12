@@ -40,12 +40,12 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const hasResults = !!items?.length;
 
   const resetTargetsMutation = useMutation({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${hotspotId}/reset-targets`,
+    url: `/trips/${trip?._id}/hotspots/${hotspotId}/reset-targets`,
     method: "PATCH",
     onMutate: () => setIsPending(true),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
-      await queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/all-hotspot-targets`] });
+      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/all-hotspot-targets`] });
       setIsPending(false);
     },
     onError: () => {

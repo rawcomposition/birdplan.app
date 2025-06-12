@@ -7,7 +7,7 @@ type Info = {
 
 export default function useFetchHotspotInfo(tripId: string, hotspotId: string) {
   const { data, isLoading, error } = useQuery<Info>({
-    queryKey: [`/api/v1/trips/${tripId}/hotspots/${hotspotId}/info`],
+    queryKey: [`/trips/${tripId}/hotspots/${hotspotId}/info`],
     enabled: !!hotspotId && !!tripId,
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 60 minutes

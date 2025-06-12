@@ -16,7 +16,7 @@ export default function Support() {
   const [submitted, setSubmitted] = React.useState(false);
 
   const mutation = useMutation({
-    url: "/api/v1/support",
+    url: "/support",
     method: "POST",
     onSuccess: () => {
       toast.success("Your message has been sent!");

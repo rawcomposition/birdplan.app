@@ -31,25 +31,25 @@ export default function TripSettings() {
   }, [trip]);
 
   const deleteTripMutation = useMutation({
-    url: `/api/v1/trips/${trip?._id}`,
+    url: `/trips/${trip?._id}`,
     method: "DELETE",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/v1/trips"] });
+      queryClient.invalidateQueries({ queryKey: ["/trips"] });
       router.push("/trips");
     },
   });
 
   const updateTripMutation = useMutation({
-    url: `/api/v1/trips/${trip?._id}`,
+    url: `/trips/${trip?._id}`,
     method: "PATCH",
     onSuccess: async ({ hasChangedDates }: any) => {
       toast.success("Trip updated");
-      queryClient.invalidateQueries({ queryKey: ["/api/v1/trips"] });
-      await queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
+      queryClient.invalidateQueries({ queryKey: ["/trips"] });
+      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
       if (hasChangedDates) {
         router.push(`/${trip?._id}/import-targets`);
-        queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/targets`] });
-        queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/all-hotspot-targets`] });
+        queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/targets`] });
+        queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/all-hotspot-targets`] });
       } else {
         router.push(`/${trip?._id}`);
       }

@@ -36,7 +36,7 @@ export default function TripTargets() {
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
   const { data: editors } = useQuery<Editor[]>({
-    queryKey: [`/api/v1/trips/${trip?._id}/editors`],
+    queryKey: [`/trips/${trip?._id}/editors`],
     enabled: !!trip?._id,
     refetchOnWindowFocus: false,
   });
@@ -171,9 +171,7 @@ export default function TripTargets() {
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {truncatedTargets?.map((it, index) => (
-                        <TargetRow key={it.code} {...it} index={index} />
-                      ))}
+                      {truncatedTargets?.map((it, index) => <TargetRow key={it.code} {...it} index={index} />)}
                     </tbody>
                   </table>
                 )}

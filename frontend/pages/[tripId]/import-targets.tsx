@@ -41,10 +41,10 @@ export default function ImportTargets() {
   });
 
   const mutation = useMutation({
-    url: `/api/v1/trips/${tripId}/targets`,
+    url: `/trips/${tripId}/targets`,
     method: "PATCH",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${tripId}/targets`] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${tripId}/targets`] });
       setTimeout(() => {
         router.push(redirectUrl);
       }, 1000);

@@ -23,10 +23,10 @@ export default function useTripMutation<TInput>({ url, method, updateCache, muta
     },
     onMutate: async (input) => {
       if (!trip?._id) return;
-      await queryClient.cancelQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
-      const prevData = queryClient.getQueryData([`/api/v1/trips/${trip?._id}`]);
+      await queryClient.cancelQueries({ queryKey: [`/trips/${trip?._id}`] });
+      const prevData = queryClient.getQueryData([`/trips/${trip?._id}`]);
 
-      queryClient.setQueryData<Trip | undefined>([`/api/v1/trips/${trip?._id}`], (old) => {
+      queryClient.setQueryData<Trip | undefined>([`/trips/${trip?._id}`], (old) => {
         if (!old) return old;
         return updateCache(old, input);
       });
@@ -34,11 +34,11 @@ export default function useTripMutation<TInput>({ url, method, updateCache, muta
       return { prevData };
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
     },
     onError: (error, data, context: any) => {
       toast.error(error.message || "An error occurred");
-      queryClient.setQueryData([`/api/v1/trips/${trip?._id}`], context?.prevData);
+      queryClient.setQueryData([`/trips/${trip?._id}`], context?.prevData);
     },
   });
 }

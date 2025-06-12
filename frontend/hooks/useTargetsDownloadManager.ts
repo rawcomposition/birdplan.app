@@ -50,7 +50,7 @@ export default function useTargetsDownloadManager() {
     try {
       const token = await auth.currentUser?.getIdToken();
       const input: TargetListInput = { ...data, hotspotId: locId };
-      await fetch(`/api/v1/trips/${trip?._id}/hotspots/${locId}/targets`, {
+      await fetch(`/trips/${trip?._id}/hotspots/${locId}/targets`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -62,9 +62,9 @@ export default function useTargetsDownloadManager() {
       console.error(`Failed to upload targets for ${locId}:`, error);
     }
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] }),
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/hotspots/${locId}/targets`] }),
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/all-hotspot-targets`] }),
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] }),
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/hotspots/${locId}/targets`] }),
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/all-hotspot-targets`] }),
     ]);
   };
 

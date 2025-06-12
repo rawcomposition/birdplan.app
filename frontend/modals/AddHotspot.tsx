@@ -17,7 +17,7 @@ export default function AddHotspot() {
   const { hotspots } = useFetchHotspots(true);
 
   const addHotspotMutation = useTripMutation<HotspotInput>({
-    url: `/api/v1/trips/${trip?._id}/hotspots`,
+    url: `/trips/${trip?._id}/hotspots`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,

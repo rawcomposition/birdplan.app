@@ -18,10 +18,10 @@ export default function Share() {
   const queryClient = useQueryClient();
 
   const inviteMutation = useMutation({
-    url: `/api/v1/invites`,
+    url: `/invites`,
     method: "POST",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/invites`] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/invites`] });
       formRef.current?.reset();
     },
   });

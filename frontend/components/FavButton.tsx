@@ -19,7 +19,7 @@ export default function FavButton({ hotspotId, code, name, range, percent }: Pro
   const isFav = favIds.includes(code);
 
   const addFavMutation = useTripMutation<HotspotFav>({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${hotspotId}/add-species-fav`,
+    url: `/trips/${trip?._id}/hotspots/${hotspotId}/add-species-fav`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,
@@ -28,7 +28,7 @@ export default function FavButton({ hotspotId, code, name, range, percent }: Pro
   });
 
   const removeFavMutation = useTripMutation<{ code: string }>({
-    url: `/api/v1/trips/${trip?._id}/hotspots/${hotspotId}/remove-species-fav`,
+    url: `/trips/${trip?._id}/hotspots/${hotspotId}/remove-species-fav`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,

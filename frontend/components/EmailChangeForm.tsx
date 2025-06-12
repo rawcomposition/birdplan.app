@@ -17,7 +17,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
   const router = useRouter();
 
   const updateEmailMutation = useMutation({
-    url: "/api/v1/account/update-email",
+    url: "/account/update-email",
     method: "POST",
     onSuccess: () => {
       toast.success("Email updated successfully");

@@ -21,13 +21,13 @@ export default function InviteRow({ invite }: Props) {
   const router = useRouter();
 
   const deleteMutation = useMutation({
-    url: `/api/v1/invites/${invite._id}`,
+    url: `/invites/${invite._id}`,
     method: "DELETE",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}/invites`] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/invites`] });
       if (isMe) {
-        queryClient.invalidateQueries({ queryKey: [`/api/v1/trips/${trip?._id}`] });
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/trips"] });
+        queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+        queryClient.invalidateQueries({ queryKey: ["/trips"] });
       }
       close();
       if (isMe) router.push("/trips");

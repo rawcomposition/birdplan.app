@@ -6,7 +6,7 @@ export default function useFetchRecentSpecies(region?: string) {
   const { lifelist } = useProfile();
 
   const { data, isLoading, error, refetch } = useQuery<RecentSpecies[]>({
-    queryKey: [`/api/v1/region/${region}/species`],
+    queryKey: [`/region/${region}/species`],
     enabled: !!region,
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 60 minutes

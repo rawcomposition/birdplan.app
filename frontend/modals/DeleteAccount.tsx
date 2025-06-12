@@ -16,7 +16,7 @@ export default function DeleteAccount() {
   const isConfirmed = confirmInput === CONFIRM_TEXT;
 
   const deleteAccountMutation = useMutation({
-    url: "/api/v1/account",
+    url: "/account",
     method: "DELETE",
     onSuccess: async () => {
       close();

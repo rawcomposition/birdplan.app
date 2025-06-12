@@ -29,7 +29,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const regionCode = trip?.region.split(",")[0] || "";
 
   const addStarMutation = useTripMutation<{ code: string }>({
-    url: `/api/v1/trips/${trip?._id}/targets/add-star`,
+    url: `/trips/${trip?._id}/targets/add-star`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -38,7 +38,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   });
 
   const removeStarMutation = useTripMutation<{ code: string }>({
-    url: `/api/v1/trips/${trip?._id}/targets/remove-star`,
+    url: `/trips/${trip?._id}/targets/remove-star`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -47,7 +47,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   });
 
   const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
-    url: `/api/v1/trips/${trip?._id}/targets/set-notes`,
+    url: `/trips/${trip?._id}/targets/set-notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
@@ -62,10 +62,10 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
       queryClient.invalidateQueries({ queryKey: [`/profile`] });
     },
     onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: ["/api/v1/profile"] });
-      const prevData = queryClient.getQueryData([`/api/v1/profile`]);
+      await queryClient.cancelQueries({ queryKey: ["/profile"] });
+      const prevData = queryClient.getQueryData([`/profile`]);
 
-      queryClient.setQueryData<Profile | undefined>([`/api/v1/profile`], (old) => {
+      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) => {
         if (!old) return old;
         return { ...old, lifelist: [...old.lifelist, data.code] };
       });
@@ -73,7 +73,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
       return { prevData };
     },
     onError: (error, data, context: any) => {
-      queryClient.setQueryData([`/api/v1/profile`], context?.prevData);
+      queryClient.setQueryData([`/profile`], context?.prevData);
     },
   });
 
