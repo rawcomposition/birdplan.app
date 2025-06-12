@@ -209,3 +209,31 @@ export interface MarkerInput {
 export interface MarkerNotesInput {
   notes: string;
 }
+
+export interface HotspotInput {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  zoom?: number;
+  notes?: string;
+  favs?: HotspotFav[];
+}
+
+export interface HotspotNotesInput {
+  notes: string;
+}
+
+export interface HotspotTargetListInput {
+  hotspotId: string;
+  targets: string[];
+}
+
+export interface SpeciesFavInput {
+  code: string;
+}
+
+export interface TranslateNameResponse {
+  originalName: string;
+  translatedName: string;
+}
