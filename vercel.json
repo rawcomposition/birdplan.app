@@ -1,4 +1,4 @@
 {
-  "rootDirectory": "frontend",
+  "buildCommand": "cd frontend && npm run build",
   "regions": ["pdx1"]
 }
