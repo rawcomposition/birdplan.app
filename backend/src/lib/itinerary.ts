@@ -1,27 +1,6 @@
-import { mostFrequentValue } from "./utils.js";
-import { getTravelTime } from "./mapbox.js";
-import type { ItineraryLocation } from "shared/types.js";
-
-interface Day {
-  id: string;
-  date: string;
-  notes?: string;
-  locations: ItineraryLocation[];
-}
-
-interface Trip {
-  itinerary?: Day[];
-  hotspots?: Array<{ id: string; name?: string; lat: number; lng: number }>;
-  markers?: Array<{ id: string; name?: string; lat: number; lng: number }>;
-}
-
-type TravelDataRef = {
-  fromId: string;
-  toId: string;
-  method: "walking" | "driving" | "cycling";
-  distance: number;
-  time: number;
-};
+import { mostFrequentValue } from "lib/utils.js";
+import { getTravelTime } from "lib/mapbox.js";
+import type { ItineraryLocation, Day, Trip } from "shared/types.js";
 
 export const updateDayTravelTimes = async (trip: Trip, day: Day): Promise<Day> => {
   if (!trip) throw new Error("Trip is required for updating travel times");
@@ -94,6 +73,14 @@ export const updateDayTravelTimes = async (trip: Trip, day: Day): Promise<Day> =
     console.error("Error updating travel times:", error);
     return day;
   }
+};
+
+type TravelDataRef = {
+  fromId: string;
+  toId: string;
+  method: "walking" | "driving" | "cycling";
+  distance: number;
+  time: number;
 };
 
 const getAllTravelData = async (itinerary?: Day[], updatedDay?: Day): Promise<TravelDataRef[]> => {
