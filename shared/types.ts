@@ -190,27 +190,27 @@ export type SpeciesObservation = {
   count: number;
 };
 
-export interface TargetStarInput {
+export type TargetStarInput = {
   code: string;
-}
+};
 
-export interface TargetNotesInput {
+export type TargetNotesInput = {
   code: string;
   notes: string;
-}
+};
 
-export interface MarkerInput {
+export type MarkerInput = {
   id: string;
   lat: number;
   lng: number;
   notes?: string;
-}
+};
 
-export interface MarkerNotesInput {
+export type MarkerNotesInput = {
   notes: string;
-}
+};
 
-export interface HotspotInput {
+export type HotspotInput = {
   id: string;
   name: string;
   lat: number;
@@ -218,22 +218,66 @@ export interface HotspotInput {
   zoom?: number;
   notes?: string;
   favs?: HotspotFav[];
-}
+};
 
-export interface HotspotNotesInput {
+export type HotspotNotesInput = {
   notes: string;
-}
+};
 
-export interface HotspotTargetListInput {
+export type HotspotTargetListInput = {
   hotspotId: string;
   targets: string[];
-}
+};
 
-export interface SpeciesFavInput {
+export type SpeciesFavInput = {
   code: string;
-}
+};
 
-export interface TranslateNameResponse {
+export type TranslateNameResponse = {
   originalName: string;
   translatedName: string;
-}
+};
+
+export type ItineraryDayInput = {
+  id: string;
+  date: string;
+  notes?: string;
+  locations?: ItineraryLocation[];
+};
+
+export type ItineraryNotesInput = {
+  notes: string;
+};
+
+export type MoveLocationInput = {
+  id: string;
+  direction: "up" | "down";
+};
+
+export type RemoveLocationInput = {
+  id: string;
+};
+
+export type AddLocationInput = {
+  type: "hotspot" | "marker";
+  locationId: string;
+  id: string;
+};
+
+export type CalcTravelTimeInput = {
+  id: string;
+  method: "walking" | "driving" | "cycling";
+};
+
+export type ItineraryLocation = {
+  id: string;
+  type: "hotspot" | "marker";
+  locationId: string;
+  travel?: {
+    method: "walking" | "driving" | "cycling";
+    time: number;
+    distance: number;
+    locationId: string;
+    isDeleted?: boolean;
+  };
+};

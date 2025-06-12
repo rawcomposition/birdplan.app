@@ -133,3 +133,14 @@ export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
   };
   return geojson;
 };
+
+export const mostFrequentValue = (arr: any[]) => {
+  const filteredArr = arr.filter(Boolean);
+  if (!filteredArr.length) return null;
+  const counts: any = {};
+  filteredArr.forEach((it) => {
+    counts[it] = counts[it] ? counts[it] + 1 : 1;
+  });
+  const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  return sorted[0];
+};
