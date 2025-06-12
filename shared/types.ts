@@ -145,6 +145,13 @@ export type InviteInput = {
   tripId: string;
 };
 
+export type TripInput = {
+  name: string;
+  region: string;
+  startMonth: number;
+  endMonth: number;
+};
+
 export type QuizImages = {
   _id: string;
   code: string;
