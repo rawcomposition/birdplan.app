@@ -4,10 +4,15 @@ import { authenticate, tripToGeoJson, sanitizeFileName } from "lib/utils.js";
 import { connect, Trip, TargetList, Invite, Profile } from "lib/db.js";
 import type { TripUpdateInput, Editor } from "shared/types.js";
 import { TargetListType } from "shared/enums.js";
+import targets from "./targets.js";
+import markers from "./markers.js";
 // @ts-ignore
 import * as tokml from "@maphubs/tokml";
 
 const trip = new Hono();
+
+trip.route("/targets", targets);
+trip.route("/markers", markers);
 
 trip.get("/", async (c) => {
   const session = await authenticate(c);

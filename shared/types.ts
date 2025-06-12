@@ -110,6 +110,8 @@ export type TargetList = {
   createdAt: string;
 };
 
+export type TargetListInput = Omit<TargetList, "_id" | "updatedAt" | "createdAt" | "type" | "tripId">;
+
 export type eBirdTaxonomy = {
   sciName: string;
   comName: string;
@@ -187,3 +189,23 @@ export type SpeciesObservation = {
   checklistId: string;
   count: number;
 };
+
+export interface TargetStarInput {
+  code: string;
+}
+
+export interface TargetNotesInput {
+  code: string;
+  notes: string;
+}
+
+export interface MarkerInput {
+  id: string;
+  lat: number;
+  lng: number;
+  notes?: string;
+}
+
+export interface MarkerNotesInput {
+  notes: string;
+}
