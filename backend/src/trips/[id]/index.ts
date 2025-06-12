@@ -208,4 +208,28 @@ trip.get("/invites", async (c) => {
   return c.json(invites);
 });
 
+trip.patch("/set-start-date", async (c) => {
+  const session = await authenticate(c);
+  const id: string | undefined = c.req.param("id");
+
+  if (!id) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { startDate } = await c.req.json<{ startDate: string }>();
+
+  await connect();
+  const trip = await Trip.findById(id).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!trip.userIds.includes(session.uid)) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne({ _id: id }, { startDate });
+
+  return c.json({});
+});
+
 export default trip;
