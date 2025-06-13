@@ -5,6 +5,7 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import { useModal } from "providers/modals";
 import useTripMutation from "hooks/useTripMutation";
 import { nanoId } from "lib/helpers";
+import { MarkerIconT } from "lib/icons";
 
 type Props = {
   dayId: string;
@@ -43,7 +44,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                 >
                   <MarkerWithIcon
                     showStroke={false}
-                    icon={marker.icon}
+                    icon={marker.icon as MarkerIconT}
                     className="inline-block scale-75 flex-shrink-0"
                   />
                   <span className="truncate">{marker.name}</span>
