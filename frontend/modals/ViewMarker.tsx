@@ -10,6 +10,7 @@ import { Menu } from "@headlessui/react";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
 import useTripMutation from "hooks/useTripMutation";
+import { MarkerIconT } from "lib/icons";
 
 type Props = {
   marker: CustomMarker;
@@ -54,7 +55,7 @@ export default function ViewMarker({ marker }: Props) {
   return (
     <>
       <Header>
-        <MarkerWithIcon icon={marker.icon} className="-mb-2 mr-2 -ml-1" />
+        <MarkerWithIcon icon={marker.icon as MarkerIconT} className="-mb-2 mr-2 -ml-1" />
         {name}
       </Header>
       <Body className="relative min-h-[200px]" noPadding>

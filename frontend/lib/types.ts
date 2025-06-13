@@ -1,131 +1,10 @@
 import { MarkerIconT } from "lib/icons";
 
-export type Profile = {
-  _id: string;
-  uid: string;
-  name?: string;
-  email?: string;
-  lifelist: string[];
-  exceptions?: string[];
-  dismissedNoticeId?: string;
-  lastActiveAt: Date | null;
-  resetToken?: string;
-  resetTokenExpires?: Date;
-};
-
 export type Marker = {
   lat: number;
   lng: number;
   id: string;
   shade?: number;
-};
-
-export type HotspotFav = {
-  name: string;
-  code: string;
-  range: string;
-  percent: number;
-};
-
-export type Hotspot = {
-  id: string;
-  name: string;
-  originalName?: string;
-  lat: number;
-  lng: number;
-  species?: number;
-  notes?: string;
-  targetsId?: string;
-  favs?: HotspotFav[];
-};
-
-export type HotspotInput = {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  species: number;
-};
-
-export type eBirdHotspot = {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  species?: number;
-};
-
-export type KeyValue = {
-  [key: string]: any;
-};
-
-export type Bounds = {
-  swLat: number;
-  swLng: number;
-  neLat: number;
-  neLng: number;
-};
-
-export type TravelData = {
-  time: number;
-  distance: number;
-  method: "driving" | "walking" | "cycling";
-  locationId: string; // Traveling from this location
-  isDeleted?: boolean;
-};
-
-export type Day = {
-  id: string;
-  notes?: string;
-  locations: {
-    travel?: TravelData;
-    locationId: string;
-    type: "hotspot" | "marker";
-    id: string;
-  }[];
-};
-
-export type Trip = {
-  _id: string;
-  userIds: string[];
-  ownerId: string;
-  ownerName: string;
-  isPublic: boolean;
-  name: string;
-  region: string;
-  bounds: {
-    minX: number;
-    maxX: number;
-    minY: number;
-    maxY: number;
-  };
-  hotspots: Hotspot[];
-  markers: CustomMarker[];
-  itinerary?: Day[];
-  startDate?: string;
-  startMonth: number;
-  endMonth: number;
-  imgUrl: string | null;
-  targetStars?: string[];
-  targetNotes?: {
-    [key: string]: string;
-  };
-  updatedAt: string;
-  createdAt: string;
-};
-
-export type TripInput = {
-  name: string;
-  region: string;
-  startMonth: number;
-  endMonth: number;
-};
-
-export type Observation = {
-  checklistId: string;
-  count: number;
-  date: string;
-  evidence: "N" | "P" | "A";
 };
 
 export type CustomMarker = {
@@ -139,20 +18,20 @@ export type CustomMarker = {
   placeType?: string;
 };
 
+export type KeyValue = {
+  [key: string]: any;
+};
+
+export type Bounds = {
+  swLat: number;
+  swLng: number;
+  neLat: number;
+  neLng: number;
+};
+
 export type Option = {
   value: string;
   label: string;
-};
-
-export type InviteInput = {
-  email: string;
-  tripId: string;
-};
-
-export type Editor = {
-  uid: string;
-  name: string;
-  lifelist: string[];
 };
 
 export type RecentChecklist = {
@@ -192,7 +71,12 @@ export type RecentSpecies = {
   count: number;
 };
 
-export type TargetListInput = Omit<TargetList, "_id" | "updatedAt" | "createdAt" | "type" | "tripId">;
+export type Observation = {
+  checklistId: string;
+  count: number;
+  date: string;
+  evidence: "N" | "P" | "A";
+};
 
 export type GooglePlaceT = {
   id?: string;

@@ -295,7 +295,7 @@ const markerColos = {
   yellow: "#f59e0b",
 };
 
-export const markerIcons: MarkerIconsT = {
+export const markerIcons = {
   utensils: {
     icon: "utensils",
     color: markerColos.yellow,
@@ -404,7 +404,7 @@ export const markerIcons: MarkerIconsT = {
     icon: "star",
     color: markerColos.sky,
   },
-};
+} as const;
 
 export const iconNames = Object.keys(icons) as IconNameT[];
 export type IconNameT = keyof typeof icons;

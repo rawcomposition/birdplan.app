@@ -5,8 +5,7 @@ import Field from "components/Field";
 import { useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import { nanoId } from "lib/helpers";
-import { GooglePlaceT } from "lib/types";
-import { CustomMarker } from "shared/types";
+import { CustomMarker, GooglePlaceT } from "lib/types";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
@@ -90,13 +89,13 @@ export default function AddPlace() {
                       <button
                         type="button"
                         key={it}
-                        onClick={() => setIcon(it)}
+                        onClick={() => setIcon(it as MarkerIconT)}
                         className={clsx(
                           "border-2 p-1",
                           icon === it ? "border-blue-500 rounded-md" : "border-transparent"
                         )}
                       >
-                        <MarkerWithIcon icon={it} className="scale-125" />
+                        <MarkerWithIcon icon={it as MarkerIconT} className="scale-125" />
                       </button>
                     ))}
                   </div>
