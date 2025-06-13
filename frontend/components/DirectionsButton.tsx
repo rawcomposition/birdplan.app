@@ -7,6 +7,7 @@ import Link from "next/link";
 import Icon from "components/Icon";
 import OrganicMapsIcon from "components/OrganicMapsIcon";
 import GoogleMapsIcon from "components/GoogleMapsIcon";
+import { MarkerIconT } from "lib/icons";
 
 type Props = {
   lat: number;
@@ -67,7 +68,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                   >
                     <MarkerWithIcon
                       showStroke={false}
-                      icon={marker.icon}
+                      icon={marker.icon as MarkerIconT}
                       className="inline-block ml-1 scale-75 flex-shrink-0"
                     />
                     <span className="truncate">{marker.name}</span>
