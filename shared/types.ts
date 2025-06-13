@@ -215,9 +215,7 @@ export type HotspotInput = {
   name: string;
   lat: number;
   lng: number;
-  zoom?: number;
-  notes?: string;
-  favs?: HotspotFav[];
+  species: number;
 };
 
 export type HotspotNotesInput = {

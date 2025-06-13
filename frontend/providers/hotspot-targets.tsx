@@ -1,6 +1,6 @@
 import React from "react";
 import { useTrip } from "providers/trip";
-import { TargetList } from "lib/types";
+import { TargetList } from "shared/types";
 import useTargetsDownloadManager from "hooks/useTargetsDownloadManager";
 import { useQuery } from "@tanstack/react-query";
 

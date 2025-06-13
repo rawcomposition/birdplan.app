@@ -9,7 +9,7 @@ import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
 import useTripMutation from "hooks/useTripMutation";
 import { useMutationState } from "@tanstack/react-query";
-import { Day } from "lib/types";
+import { Day } from "shared/types";
 import { removeInvalidTravelData, moveLocation } from "lib/itinerary";
 
 type PropsT = {

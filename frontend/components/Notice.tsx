@@ -3,7 +3,7 @@ import CloseButton from "components/CloseButton";
 import { useProfile } from "providers/profile";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Profile } from "lib/types";
+import { Profile } from "shared/types";
 
 const noticeId = "";
 

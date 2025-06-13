@@ -1,5 +1,5 @@
 import React from "react";
-import { Trip, TargetList, Invite } from "lib/types";
+import { Trip, TargetList, Invite } from "shared/types";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";

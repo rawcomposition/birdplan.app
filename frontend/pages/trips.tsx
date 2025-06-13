@@ -8,7 +8,7 @@ import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import Notice from "components/Notice";
 import { useQuery } from "@tanstack/react-query";
-import { Trip } from "lib/types";
+import { Trip } from "shared/types";
 import { useUser } from "providers/user";
 import Error from "components/Error";
 

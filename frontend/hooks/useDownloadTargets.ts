@@ -1,4 +1,4 @@
-import { Target } from "lib/types";
+import { Target } from "shared/types";
 import { useQuery } from "@tanstack/react-query";
 
 type PropsT = {

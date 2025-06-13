@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
-import { CustomMarker } from "lib/types";
+import { CustomMarker } from "shared/types";
 import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";

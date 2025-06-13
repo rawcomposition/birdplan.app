@@ -1,4 +1,5 @@
-import { Trip, TargetList, Hotspot, RegionTz } from "lib/types";
+import { RegionTz } from "lib/types";
+import { TargetList, Trip, Hotspot } from "shared/types";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";

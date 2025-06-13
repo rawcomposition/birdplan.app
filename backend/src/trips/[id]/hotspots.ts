@@ -5,7 +5,6 @@ import { connect, Trip, TargetList } from "lib/db.js";
 import type {
   HotspotInput,
   HotspotNotesInput,
-  HotspotTargetListInput,
   TargetListInput,
   HotspotFav,
   SpeciesFavInput,

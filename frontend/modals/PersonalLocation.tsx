@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
-import { Hotspot as HotspotT } from "lib/types";
+import { Hotspot as HotspotT } from "shared/types";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
 import { Menu } from "@headlessui/react";

@@ -1,6 +1,7 @@
 import React from "react";
 import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
-import { Marker as MarkerT, Trip, CustomMarker } from "lib/types";
+import { Marker as MarkerT } from "lib/types";
+import { Trip, CustomMarker } from "shared/types";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";

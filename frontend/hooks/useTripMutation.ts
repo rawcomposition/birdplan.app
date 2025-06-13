@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mutate } from "lib/http";
-import { Trip } from "lib/types";
+import { Trip } from "shared/types";
 import { useTrip } from "providers/trip";
 
 type Options<TInput> = {

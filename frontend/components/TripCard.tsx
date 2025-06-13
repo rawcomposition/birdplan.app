@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Trip } from "lib/types";
+import { Trip } from "shared/types";
 import ReactCountryFlag from "react-country-flag";
 
 type Props = {
