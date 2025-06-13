@@ -4,13 +4,19 @@ WORKDIR /app
 
 RUN apk add --no-cache libc6-compat
 
+# Copy root package.json and install dependencies
 COPY package*.json ./
 RUN npm ci
 
-COPY backend ./backend
+# Copy shared and backend directories
 COPY shared ./shared
+COPY backend ./backend
 
+# Install backend dependencies (including devDependencies for build)
 WORKDIR /app/backend
+RUN npm ci
+
+# Build the backend
 RUN npm run build
 
 FROM node:20-alpine AS runner
@@ -22,8 +28,11 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 honojs \
   && adduser --system --uid 1001 appuser
 
+# Copy the built application
 COPY --from=builder /app/backend/dist ./dist
 COPY --from=builder /app/backend/package*.json ./
+
+# Copy production dependencies from root node_modules
 COPY --from=builder /app/node_modules ./node_modules
 
 USER appuser
