@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --require dotenv/config src/index.ts",
-    "build": "tsc",
-    "start": "node --require dotenv/config dist/index.js"
+    "build": "../node_modules/.bin/tsc && ../node_modules/.bin/tsc-alias",
+    "start": "node --require dotenv/config dist/backend/src/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.4",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }
