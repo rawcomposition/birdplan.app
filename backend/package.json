@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --require dotenv/config src/index.ts",
-    "build": "../node_modules/.bin/tsc && ../node_modules/.bin/tsc-alias",
+    "build": "tsc && tsc-alias",
     "start": "node --require dotenv/config dist/backend/src/index.js"
   },
   "dependencies": {
