@@ -84,10 +84,10 @@ export default function AddMarker({ lat: defaultLat, lng: defaultLng }: Props) {
                   <button
                     type="button"
                     key={it}
-                    onClick={() => setIcon(it)}
+                    onClick={() => setIcon(it as MarkerIconT)}
                     className={clsx("border-2 p-1", icon === it ? "border-blue-500 rounded-md" : "border-transparent")}
                   >
-                    <MarkerWithIcon icon={it} className="scale-125" />
+                    <MarkerWithIcon icon={it as MarkerIconT} className="scale-125" />
                   </button>
                 ))}
               </div>
