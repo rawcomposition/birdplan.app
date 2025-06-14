@@ -34,9 +34,7 @@ jobs:
             cd backend
 
             echo "📄 Writing .env file"
-cat <<EOF > .env
-${{ secrets.ENV_FILE }}
-EOF
+            echo "$ENV_FILE" | sed 's/\\n/\n/g' > .env
 
             echo "🐳 Docker: building and starting containers..."
             sudo docker-compose pull
