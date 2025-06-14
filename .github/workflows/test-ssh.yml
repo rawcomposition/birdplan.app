@@ -1,4 +1,4 @@
-name: Test SSH Connectivity
+name: Test SSH Login
 
 on:
   workflow_dispatch:
@@ -7,6 +7,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Test port 22
-        run: |
-          nc -zv 5.78.97.227 22 || echo "Port 22 closed or unreachable"
+      - name: Try SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}  # should be root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: echo "✅ SSH login worked from GitHub Actions"
