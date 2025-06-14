@@ -1,0 +1,12 @@
+name: Test SSH Connectivity
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test port 22
+        run: |
+          nc -zv 5.78.97.227 22 || echo "Port 22 closed or unreachable"
