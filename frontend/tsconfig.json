@@ -14,10 +14,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "baseUrl": ".",
-    "paths": {
-      "*": ["*"],
-      "shared/*": ["../shared/*"]
-    },
     "target": "ES2017",
     "plugins": [
       {
