@@ -1,16 +1,18 @@
-name: Test SSH Login
+name: Debug Secrets
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
+  debug:
     runs-on: ubuntu-latest
     steps:
-      - name: Try SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}  # should be root
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: echo "✅ SSH login worked from GitHub Actions"
+      - name: Check secrets
+        run: |
+          echo "VPS_HOST: $VPS_HOST"
+          echo "VPS_USER: $VPS_USER"
+          echo "VPS_SSH_KEY: ${VPS_SSH_KEY:+✅ Present}"
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
