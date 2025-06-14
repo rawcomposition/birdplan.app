@@ -35,6 +35,9 @@ COPY --from=builder /app/backend/package*.json ./
 # Copy production dependencies from root node_modules
 COPY --from=builder /app/node_modules ./node_modules
 
+# Copy the .env file from the builder stage
+COPY --from=builder /app/backend/.env ./.env
+
 USER appuser
 
 EXPOSE 5100
