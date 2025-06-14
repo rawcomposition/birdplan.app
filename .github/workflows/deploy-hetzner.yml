@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -32,9 +34,7 @@ jobs:
             cd backend
 
             echo "📄 Writing .env file"
-            cat > .env << 'EOF'
-${{ secrets.ENV_FILE }}
-EOF
+            echo "$ENV_FILE" > .env
 
             echo "🐳 Docker: building and starting containers..."
             docker-compose pull
