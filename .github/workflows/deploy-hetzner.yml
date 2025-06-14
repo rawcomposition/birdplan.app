@@ -14,7 +14,6 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          fail-on-error: true
           script: |
             cd /opt/birdplan-app || { echo "App directory not found"; exit 1; }
 
