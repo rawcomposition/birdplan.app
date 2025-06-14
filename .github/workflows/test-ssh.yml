@@ -1,18 +1,16 @@
-name: Debug Secrets
+name: Manual SSH Test
 
 on:
   workflow_dispatch:
 
 jobs:
-  debug:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Check secrets
+      - name: Setup SSH and connect manually
         run: |
-          echo "VPS_HOST: $VPS_HOST"
-          echo "VPS_USER: $VPS_USER"
-          echo "VPS_SSH_KEY: ${VPS_SSH_KEY:+✅ Present}"
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo '✅ SSH connected manually'"
