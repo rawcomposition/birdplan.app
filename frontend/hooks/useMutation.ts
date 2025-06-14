@@ -15,9 +15,10 @@ export default function useMutation<TData = unknown, TVariables = unknown>({
   onError,
   ...options
 }: Options<TData, TVariables>) {
+  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
   return tanMutation<TData, Error, TVariables>({
     mutationFn: async (data?: TVariables) => {
-      const res = await mutate(method, url, data);
+      const res = await mutate(method, fullUrl, data);
       return res as TData;
     },
     onError: (err: any, variables, context) => {

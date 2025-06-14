@@ -28,8 +28,11 @@ export function initQueryClient() {
         retry: 1,
         gcTime: 24 * 24 * 60 * 60 * 1000, // 24 days
         staleTime: 0,
-        queryFn: async ({ queryKey, meta }) =>
-          get(`${process.env.NEXT_PUBLIC_API_URL}${queryKey[0]}`, (queryKey[1] || {}) as any, !!meta?.showLoading),
+        queryFn: async ({ queryKey, meta }) => {
+          const url = queryKey[0] as string;
+          const fullUrl = url.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${url}` : url;
+          return get(fullUrl, (queryKey[1] || {}) as any, !!meta?.showLoading);
+        },
       },
     },
     queryCache: new QueryCache({
