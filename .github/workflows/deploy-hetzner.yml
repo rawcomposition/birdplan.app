@@ -32,7 +32,9 @@ jobs:
             cd backend
 
             echo "📄 Writing .env file"
-            echo "${{ secrets.ENV_FILE }}" > .env
+            cat > .env << 'EOF'
+${{ secrets.ENV_FILE }}
+EOF
 
             echo "🐳 Docker: building and starting containers..."
             docker-compose pull
