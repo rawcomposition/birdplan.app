@@ -2,8 +2,8 @@ import { Hono } from "hono";
 
 const ebirdProxy = new Hono();
 
-ebirdProxy.get("/*", async (c) => {
-  const path: string | undefined = c.req.param("*");
+ebirdProxy.get("/:path{.*}", async (c) => {
+  const path: string | undefined = c.req.param("path");
   const searchParams: URLSearchParams = new URLSearchParams(c.req.query());
 
   if (!path) {
