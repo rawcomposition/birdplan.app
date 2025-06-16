@@ -6,7 +6,7 @@ const taxonomy = new Hono();
 
 taxonomy.get("/", async (c) => {
   const response = await fetch(
-    `https://api.ebird.org/v2/ref/taxonomy/ebird?fmt=json&cat=species&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    `https://api.ebird.org/v2/ref/taxonomy/ebird?fmt=json&cat=species&key=${process.env.EBIRD_API_KEY}`
   );
 
   if (!response.ok) {

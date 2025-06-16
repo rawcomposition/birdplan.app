@@ -19,7 +19,7 @@ region.get("/:region/hotspots", async (c) => {
   const region: string = c.req.param("region");
 
   const response = await fetch(
-    `https://api.ebird.org/v2/ref/hotspot/${region}?fmt=json&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    `https://api.ebird.org/v2/ref/hotspot/${region}?fmt=json&key=${process.env.EBIRD_API_KEY}`
   );
   const json: eBirdHotspotResult[] = await response.json();
 
@@ -42,7 +42,7 @@ region.get("/:region/species", async (c) => {
   const region: string = c.req.param("region");
 
   const response = await fetch(
-    `https://api.ebird.org/v2/data/obs/${region}/recent?fmt=json&cat=species&includeProvisional=true&back=30&key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+    `https://api.ebird.org/v2/data/obs/${region}/recent?fmt=json&cat=species&includeProvisional=true&back=30&key=${process.env.EBIRD_API_KEY}`
   );
 
   if (!response.ok) {

@@ -28,7 +28,7 @@ export async function authenticate(c: Context) {
 export const getBounds = async (regionString: string) => {
   const regions = regionString.split(",");
   const boundsPromises = regions.map((region) =>
-    fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
+    fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.EBIRD_API_KEY}`).then((res) =>
       res.json()
     )
   );
