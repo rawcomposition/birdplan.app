@@ -1,5 +1,5 @@
 import { RegionTz } from "lib/types";
-import { TargetList, Trip, Hotspot } from "shared/types";
+import { TargetList, Trip, Hotspot } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";

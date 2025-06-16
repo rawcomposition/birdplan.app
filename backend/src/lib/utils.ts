@@ -2,7 +2,7 @@ import { HTTPException } from "hono/http-exception";
 import type { Context } from "hono";
 import { auth } from "lib/firebaseAdmin.js";
 import { customAlphabet } from "nanoid";
-import type { Trip, TargetList, Hotspot } from "shared/types.js";
+import type { Trip, TargetList, Hotspot } from "@birdplan/shared";
 
 export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();

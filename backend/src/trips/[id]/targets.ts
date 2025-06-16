@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip, TargetList } from "lib/db.js";
-import type { TargetListInput, TargetStarInput, TargetNotesInput } from "shared/types.js";
-import { TargetListType } from "shared/enums.js";
+import type { TargetListInput, TargetStarInput, TargetNotesInput } from "@birdplan/shared";
+import { TargetListType } from "@birdplan/shared";
 
 const targets = new Hono();
 

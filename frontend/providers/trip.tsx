@@ -1,5 +1,5 @@
 import React from "react";
-import { Trip, TargetList, Invite } from "shared/types";
+import { Trip, TargetList, Invite } from "@birdplan/shared";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";

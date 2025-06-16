@@ -2,7 +2,7 @@ import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useUser } from "providers/user";
 import Icon from "components/Icon";
-import { Editor } from "shared/types";
+import { Editor } from "@birdplan/shared";
 
 type PropsT = {
   value?: string;

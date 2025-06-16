@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { connect, Invite, Trip } from "lib/db.js";
 import { authenticate } from "./lib/utils.js";
 import { sendInviteEmail } from "./lib/email.js";
-import type { InviteInput } from "shared/types.js";
+import type { InviteInput } from "@birdplan/shared";
 
 const invites = new Hono();
 

@@ -1,4 +1,4 @@
-import { Target } from "shared/types";
+import { Target } from "@birdplan/shared";
 import { useQuery } from "@tanstack/react-query";
 
 type PropsT = {

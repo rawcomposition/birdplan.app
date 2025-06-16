@@ -1,6 +1,6 @@
 import { mostFrequentValue } from "lib/utils.js";
 import { getTravelTime } from "lib/mapbox.js";
-import type { ItineraryLocation, Day, Trip } from "shared/types.js";
+import type { ItineraryLocation, Day, Trip } from "@birdplan/shared";
 
 export const updateDayTravelTimes = async (trip: Trip, day: Day): Promise<Day> => {
   if (!trip) throw new Error("Trip is required for updating travel times");

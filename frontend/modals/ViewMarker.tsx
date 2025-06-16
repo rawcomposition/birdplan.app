@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "providers/modals";
-import { CustomMarker } from "shared/types";
+import { CustomMarker } from "@birdplan/shared";
 import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";

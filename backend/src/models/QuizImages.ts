@@ -1,4 +1,4 @@
-import type { QuizImages } from "shared/types.js";
+import type { QuizImages } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 

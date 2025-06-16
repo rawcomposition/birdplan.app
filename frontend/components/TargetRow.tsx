@@ -7,7 +7,7 @@ import Button from "components/Button";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import TextareaAutosize from "react-textarea-autosize";
-import { Profile, Target } from "shared/types";
+import { Profile, Target } from "@birdplan/shared";
 import { useSpeciesImages } from "providers/species-images";
 import BestTargetHotspots from "components/BestTargetHotspots";
 import useMutation from "hooks/useMutation";

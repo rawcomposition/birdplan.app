@@ -1,6 +1,6 @@
 import React from "react";
 import { useUser } from "providers/user";
-import { Profile } from "shared/types";
+import { Profile } from "@birdplan/shared";
 import { useQuery } from "@tanstack/react-query";
 
 interface ContextT extends Profile {}

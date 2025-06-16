@@ -10,7 +10,7 @@ import type {
   RemoveLocationInput,
   AddLocationInput,
   CalcTravelTimeInput,
-} from "shared/types.js";
+} from "@birdplan/shared";
 
 const itinerary = new Hono();
 

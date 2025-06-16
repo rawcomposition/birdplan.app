@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { TargetList, TargetListInput } from "shared/types";
+import { TargetList, TargetListInput } from "@birdplan/shared";
 import { auth } from "lib/firebase";
 import { useTrip } from "providers/trip";
 import { useWindowActive } from "hooks/useWindowActive";

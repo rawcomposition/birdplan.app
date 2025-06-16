@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { connect, QuizImages } from "lib/db.js";
-import type { QuizImages as QuizImagesT } from "shared/types.js";
+import type { QuizImages as QuizImagesT } from "@birdplan/shared";
 
 const quiz = new Hono();
 

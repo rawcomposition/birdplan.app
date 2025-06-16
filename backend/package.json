@@ -3,10 +3,12 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --require dotenv/config src/index.ts",
+    "prebuild": "cd ../shared && npm run build",
     "build": "tsc && tsc-alias",
     "start": "node --require dotenv/config dist/backend/src/index.js"
   },
   "dependencies": {
+    "@birdplan/shared": "file:../shared",
     "@hono/node-server": "^1.14.4",
     "@maphubs/tokml": "^0.6.1",
     "axios": "^1.9.0",

@@ -1,6 +1,6 @@
 import React from "react";
 import { Body } from "providers/modals";
-import { HotspotInput, Hotspot as HotspotT, Trip } from "shared/types";
+import { HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
 import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";

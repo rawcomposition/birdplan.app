@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import type { eBirdHotspot, SpeciesObservation } from "shared/types.js";
+import type { eBirdHotspot, SpeciesObservation } from "@birdplan/shared";
 
 const region = new Hono();
 

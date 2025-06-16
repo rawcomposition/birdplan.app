@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
-import type { MarkerInput, MarkerNotesInput } from "shared/types.js";
+import type { MarkerInput, MarkerNotesInput } from "@birdplan/shared";
 
 const markers = new Hono();
 

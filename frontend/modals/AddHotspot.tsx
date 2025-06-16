@@ -4,7 +4,7 @@ import Input from "components/Input";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "providers/trip";
-import { eBirdHotspot, HotspotInput } from "shared/types";
+import { eBirdHotspot, HotspotInput } from "@birdplan/shared";
 import Icon from "components/Icon";
 import clsx from "clsx";
 import useTripMutation from "hooks/useTripMutation";

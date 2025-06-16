@@ -1,5 +1,5 @@
 import React from "react";
-import { Target } from "shared/types";
+import { Target } from "@birdplan/shared";
 import FavButton from "components/FavButton";
 
 type Props = Target & {

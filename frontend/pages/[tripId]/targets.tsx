@@ -17,7 +17,7 @@ import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import { useQuery } from "@tanstack/react-query";
-import { Editor } from "shared/types";
+import { Editor } from "@birdplan/shared";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {

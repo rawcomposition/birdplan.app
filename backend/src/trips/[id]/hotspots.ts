@@ -9,8 +9,8 @@ import type {
   HotspotFav,
   SpeciesFavInput,
   TranslateNameResponse,
-} from "shared/types.js";
-import { TargetListType } from "shared/enums.js";
+} from "@birdplan/shared";
+import { TargetListType } from "@birdplan/shared";
 import * as deepl from "deepl-node";
 import axios from "axios";
 import dayjs from "dayjs";

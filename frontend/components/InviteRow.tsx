@@ -3,7 +3,7 @@ import Button from "components/Button";
 import { useTrip } from "providers/trip";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Invite } from "shared/types";
+import { Invite } from "@birdplan/shared";
 import { useUser } from "providers/user";
 import { useRouter } from "next/router";
 import { useModal } from "providers/modals";

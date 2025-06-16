@@ -1,4 +1,4 @@
-import type { Trip } from "shared/types.js";
+import type { Trip } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 

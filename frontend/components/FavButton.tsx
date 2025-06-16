@@ -2,7 +2,7 @@ import React from "react";
 import Icon from "components/Icon";
 import { useTrip } from "providers/trip";
 import useTripMutation from "hooks/useTripMutation";
-import { HotspotFav } from "shared/types";
+import { HotspotFav } from "@birdplan/shared";
 
 type Props = {
   hotspotId: string;

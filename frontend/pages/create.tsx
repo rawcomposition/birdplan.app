@@ -12,7 +12,7 @@ import Icon from "components/Icon";
 import Field from "components/Field";
 import Input from "components/Input";
 import { Option } from "lib/types";
-import { TripInput } from "shared/types";
+import { TripInput } from "@birdplan/shared";
 import { useModal } from "providers/modals";
 import dayjs from "dayjs";
 import useMutation from "hooks/useMutation";

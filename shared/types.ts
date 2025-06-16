@@ -1,4 +1,7 @@
-import { TargetListType } from "./enums.js";
+export enum TargetListType {
+  trip = "trip",
+  hotspot = "hotspot",
+}
 
 export type Trip = {
   _id: string;

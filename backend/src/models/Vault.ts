@@ -1,4 +1,4 @@
-import type { Vault } from "shared/types.js";
+import type { Vault } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 

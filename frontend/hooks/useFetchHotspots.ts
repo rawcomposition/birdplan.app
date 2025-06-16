@@ -1,5 +1,5 @@
 import React from "react";
-import { eBirdHotspot } from "shared/types";
+import { eBirdHotspot } from "@birdplan/shared";
 import { getMarkerColorIndex } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import { useQuery } from "@tanstack/react-query";

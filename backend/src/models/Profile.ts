@@ -1,4 +1,4 @@
-import type { Profile } from "shared/types.js";
+import type { Profile } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 
