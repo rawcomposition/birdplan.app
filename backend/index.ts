@@ -16,10 +16,10 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 
-if (process.env.FRONTEND_URL) {
-  app.use("*", cors({ origin: process.env.FRONTEND_URL }));
+if (process.env.CORS_ORIGINS) {
+  app.use("*", cors({ origin: process.env.CORS_ORIGINS.split(",") }));
 } else {
-  console.error("FRONTEND_URL is not set");
+  console.error("CORS_ORIGINS is not set");
 }
 
 app.route("/v1/profile", profile);
