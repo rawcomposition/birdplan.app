@@ -1,23 +1,5 @@
 {
   "name": "@birdplan/shared",
   "version": "1.0.0",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.3"
-  }
+  "type": "module"
 }
