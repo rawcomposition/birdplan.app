@@ -1,0 +1,49 @@
+{
+  "name": "bird-planner",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "get-avicommons": "tsx scripts/get-avicommons.ts",
+    "tz-sync-regions": "tsx scripts/tz-sync-regions.ts"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@tanstack/query-async-storage-persister": "^5.67.2",
+    "@tanstack/react-query": "^5.66.11",
+    "@tanstack/react-query-persist-client": "^5.67.2",
+    "clsx": "^1.2.1",
+    "dayjs": "^1.11.0",
+    "dotenv": "^16.4.6",
+    "firebase": "^9.6.8",
+    "idb-keyval": "^6.2.1",
+    "mapbox-gl": "^2.13.0",
+    "nanoid": "^5.1.2",
+    "next": "15.2.0",
+    "papaparse": "^5.4.0",
+    "react": "19.0.0",
+    "react-country-flag": "^3.1.0",
+    "react-dom": "19.0.0",
+    "react-hot-toast": "^2.4.0",
+    "react-map-gl": "^7.0.21",
+    "react-select": "^5.7.0",
+    "react-textarea-autosize": "^8.4.1",
+    "tsx": "^4.19.2",
+    "usehooks-ts": "^3.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/mapbox__mapbox-sdk": "^0.13.4",
+    "@types/mapbox-gl": "^2.7.10",
+    "@types/papaparse": "^5.3.7",
+    "@types/uuid": "^9.0.2",
+    "autoprefixer": "^10.4.2",
+    "eslint": "^8.36.0",
+    "eslint-config-next": "15.2.0",
+    "postcss": "^8.4.8",
+    "tailwindcss": "^3.0.23"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "lib/*": ["lib/*"],
+      "models/*": ["models/*"],
+      "routes/*": ["routes/*"],
+      "shared/*": ["../shared/*"],
+      "@birdplan/shared": ["../shared/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

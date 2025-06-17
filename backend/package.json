@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --require dotenv/config index.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node --require dotenv/config dist/backend/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.4",
+    "@maphubs/tokml": "^0.6.1",
+    "axios": "^1.9.0",
+    "dayjs": "^1.11.13",
+    "deepl-node": "^1.18.0",
+    "dotenv": "^16.5.0",
+    "firebase-admin": "^13.4.0",
+    "hono": "^4.7.11",
+    "mongoose": "^8.15.1",
+    "nanoid": "^5.1.5",
+    "resend": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}
