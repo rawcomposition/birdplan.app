@@ -11,11 +11,11 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "lib/*": ["src/lib/*"],
-      "models/*": ["src/models/*"],
+      "lib/*": ["lib/*"],
+      "models/*": ["models/*"],
+      "routes/*": ["routes/*"],
       "shared/*": ["../shared/*"]
     }
   },
-  "include": ["src/**/*", "../shared/**/*"],
   "exclude": ["node_modules", "dist"]
 }

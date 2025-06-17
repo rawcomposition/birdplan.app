@@ -2,10 +2,10 @@
   "name": "backend",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --require dotenv/config src/index.ts",
+    "dev": "tsx watch --require dotenv/config index.ts",
     "prebuild": "cd ../shared && npm run build",
     "build": "tsc && tsc-alias",
-    "start": "node --require dotenv/config dist/backend/src/index.js"
+    "start": "node --require dotenv/config dist/index.js"
   },
   "dependencies": {
     "@birdplan/shared": "file:../shared",

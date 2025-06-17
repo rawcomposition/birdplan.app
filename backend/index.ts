@@ -1,16 +1,16 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import trips from "./trips/index.js";
-import account from "./account.js";
-import profile from "./profile.js";
-import auth from "./auth.js";
-import support from "./support.js";
-import taxonomy from "./taxonomy.js";
-import quiz from "./quiz.js";
-import piper from "./piper.js";
-import region from "./region.js";
-import ebirdProxy from "./ebird-proxy.js";
-import invites from "./invites.js";
+import trips from "routes/trips/index.js";
+import account from "routes/account.js";
+import profile from "routes/profile.js";
+import auth from "routes/auth.js";
+import support from "routes/support.js";
+import taxonomy from "routes/taxonomy.js";
+import quiz from "routes/quiz.js";
+import piper from "routes/piper.js";
+import region from "routes/region.js";
+import ebirdProxy from "routes/ebird-proxy.js";
+import invites from "routes/invites.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
