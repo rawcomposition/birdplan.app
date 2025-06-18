@@ -36,7 +36,7 @@ invites.post("/", async (c) => {
     tripName: trip.name,
     fromName: session.name || "",
     email,
-    url: `${process.env.NEXT_PUBLIC_URL}/accept/${invite._id}`,
+    url: `${process.env.FRONTEND_URL}/accept/${invite._id}`,
   });
 
   return c.json({});

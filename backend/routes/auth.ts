@@ -23,7 +23,7 @@ auth.post("/forgot-password", async (c) => {
 
   const resetToken = nanoId(64);
   const resetTokenExpires = dayjs().add(RESET_TOKEN_EXPIRATION, "hours").toDate();
-  const url = `${process.env.NEXT_PUBLIC_URL}/reset-password?token=${resetToken}`;
+  const url = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
   await Profile.updateOne({ uid: user.uid }, { resetToken, resetTokenExpires });
   await sendResetEmail({ email, url });
