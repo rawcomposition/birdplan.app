@@ -50,7 +50,7 @@ export default function useTargetsDownloadManager() {
     try {
       const token = await auth.currentUser?.getIdToken();
       const input: TargetListInput = { ...data, hotspotId: locId };
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/trips/${trip?._id}/hotspots/${locId}/targets`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/hotspots/${locId}/targets`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
