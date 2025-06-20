@@ -2,8 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import fs from "fs";
 import path from "path";
-import { RegionTz } from "lib/types";
-import { flattenTimezones } from "lib/helpers";
+import { RegionTz } from "../shared";
 
 type SubRegionTz = Omit<RegionTz, "subregions">;
 
@@ -30,10 +29,31 @@ const countriesWithMultipleTz = [
   "UM",
 ];
 
+export const flattenTimezones = (regions: RegionTz[]) => {
+  const result: Record<string, string> = {};
+
+  for (const region of regions) {
+    const defaultTz = region.tz;
+    if (region.subregions?.length) {
+      for (const subregion of region.subregions) {
+        if (subregion.tz && subregion.tz !== defaultTz) {
+          result[subregion.code] = subregion.tz;
+        }
+      }
+    }
+
+    if (defaultTz) {
+      result[region.code] = defaultTz;
+    }
+  }
+
+  return result;
+};
+
 const fetchSubregions = async (countryCode: string): Promise<SubRegionTz[]> => {
   try {
     const subregionsReq = await fetch(
-      `https://api.ebird.org/v2/ref/region/list/subnational1/${countryCode}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+      `https://api.ebird.org/v2/ref/region/list/subnational1/${countryCode}?key=${process.env.EBIRD_API_KEY}`
     );
 
     if (!subregionsReq.ok) {
@@ -60,7 +80,7 @@ const fetchSubregions = async (countryCode: string): Promise<SubRegionTz[]> => {
 const syncCountries = async () => {
   console.log("Syncing countries and subregions...");
   try {
-    const filePath = path.join(__dirname, "../timezones.json");
+    const filePath = path.join(__dirname, "../frontend/timezones.json");
 
     let oldData: RegionTz[] = [];
     if (fs.existsSync(filePath)) {
@@ -69,7 +89,7 @@ const syncCountries = async () => {
     }
 
     const countriesReq = await fetch(
-      `https://api.ebird.org/v2/ref/region/list/country/world?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`
+      `https://api.ebird.org/v2/ref/region/list/country/world?key=${process.env.EBIRD_API_KEY}`
     );
     if (!countriesReq.ok) {
       throw new Error(`HTTP error: ${countriesReq.status}`);
@@ -122,7 +142,10 @@ const syncCountries = async () => {
     const flattenedTimezones = flattenTimezones(newData);
 
     fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
-    fs.writeFileSync(path.join(__dirname, "../timezones-flat.json"), JSON.stringify(flattenedTimezones, null, 2));
+    fs.writeFileSync(
+      path.join(__dirname, "../frontend/timezones-flat.json"),
+      JSON.stringify(flattenedTimezones, null, 2)
+    );
 
     const countriesWithNullTz = newData.filter((it) => it.tz === null);
     const subregionsWithNullTz = newData

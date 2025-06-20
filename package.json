@@ -14,10 +14,14 @@
     "start:frontend": "npm run start --workspace=frontend",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "npm run dev --workspace=frontend",
-    "dev:backend": "npm run dev --workspace=backend"
+    "dev:backend": "npm run dev --workspace=backend",
+    "get-avicommons": "tsx scripts/get-avicommons.ts",
+    "tz-sync-regions": "tsx scripts/tz-sync-regions.ts"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "tsx": "^4.19.2",
+    "dotenv": "^16.4.6"
   },
   "engines": {
     "node": ">=18.0.0"

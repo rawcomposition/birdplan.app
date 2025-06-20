@@ -85,9 +85,3 @@ export type GooglePlaceT = {
   lng: number;
   type?: string;
 };
-
-export type RegionTz = {
-  code: string;
-  tz: string | null;
-  subregions?: RegionTz[];
-};

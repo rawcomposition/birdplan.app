@@ -282,3 +282,9 @@ export type ItineraryLocation = {
     isDeleted?: boolean;
   };
 };
+
+export type RegionTz = {
+  code: string;
+  tz: string | null;
+  subregions?: RegionTz[];
+};

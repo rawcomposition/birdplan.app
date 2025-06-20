@@ -13,7 +13,7 @@ const downloadAndSaveData = async () => {
     }
 
     const jsonData = await response.json();
-    const filePath = path.join(__dirname, "../public/avicommons.json");
+    const filePath = path.join(__dirname, "../frontend/public/avicommons.json");
     fs.writeFileSync(filePath, JSON.stringify(jsonData));
 
     console.log("Successfully downloaded from Avicommons.org");

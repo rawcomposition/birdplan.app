@@ -1,4 +1,4 @@
-import { RegionTz } from "lib/types";
+import { RegionTz } from "@birdplan/shared";
 import { TargetList, Trip, Hotspot } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
@@ -322,24 +322,3 @@ export function sanitizeFileName(fileName: string): string {
   sanitized = sanitized.replace(/\s+/g, " ");
   return sanitized.trim();
 }
-
-export const flattenTimezones = (regions: RegionTz[]) => {
-  const result: Record<string, string> = {};
-
-  for (const region of regions) {
-    const defaultTz = region.tz;
-    if (region.subregions?.length) {
-      for (const subregion of region.subregions) {
-        if (subregion.tz && subregion.tz !== defaultTz) {
-          result[subregion.code] = subregion.tz;
-        }
-      }
-    }
-
-    if (defaultTz) {
-      result[region.code] = defaultTz;
-    }
-  }
-
-  return result;
-};
