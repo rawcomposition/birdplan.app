@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import fs from "fs";
 import path from "path";
-import { RegionTz } from "../shared";
+import { RegionTz } from "../shared/types";
 
 type SubRegionTz = Omit<RegionTz, "subregions">;
 
