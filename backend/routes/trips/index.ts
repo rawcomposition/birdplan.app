@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import trip from "./[id]/index.js";
+import trip from "./[tripId]/index.js";
 import { authenticate, getBounds } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
@@ -8,7 +8,7 @@ import type { TripInput } from "@birdplan/shared";
 
 const trips = new Hono();
 
-trips.route("/:id", trip);
+trips.route("/:tripId", trip);
 
 trips.get("/", async (c) => {
   const session = await authenticate(c);

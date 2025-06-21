@@ -20,14 +20,14 @@ trip.route("/itinerary", itinerary);
 
 trip.get("/", async (c) => {
   const session = await authenticate(c);
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
@@ -41,14 +41,14 @@ trip.get("/", async (c) => {
 trip.patch("/", async (c) => {
   const session = await authenticate(c);
 
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
@@ -64,13 +64,13 @@ trip.patch("/", async (c) => {
   if (hasChangedDates) {
     await Promise.all([
       Trip.updateOne(
-        { _id: id },
+        { _id: tripId },
         { ...newData, hotspots: trip.hotspots?.map(({ targetsId, ...hotspot }) => hotspot) || [] }
       ),
-      TargetList.deleteMany({ tripId: id, type: TargetListType.hotspot }),
+      TargetList.deleteMany({ tripId, type: TargetListType.hotspot }),
     ]);
   } else {
-    await Trip.updateOne({ _id: id }, newData);
+    await Trip.updateOne({ _id: tripId }, newData);
   }
 
   return c.json({ hasChangedDates });
@@ -79,14 +79,14 @@ trip.patch("/", async (c) => {
 trip.delete("/", async (c) => {
   const session = await authenticate(c);
 
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
@@ -95,25 +95,25 @@ trip.delete("/", async (c) => {
   }
 
   await Promise.all([
-    Trip.deleteOne({ _id: id }),
-    TargetList.deleteMany({ tripId: id }),
-    Invite.deleteMany({ tripId: id }),
+    Trip.deleteOne({ _id: tripId }),
+    TargetList.deleteMany({ tripId }),
+    Invite.deleteMany({ tripId }),
   ]);
 
   return c.json({});
 });
 
 trip.get("/all-hotspot-targets", async (c) => {
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
   const [trip, results] = await Promise.all([
-    Trip.findById(id),
-    TargetList.find({ type: TargetListType.hotspot, tripId: id }).sort({ createdAt: -1 }),
+    Trip.findById(tripId),
+    TargetList.find({ type: TargetListType.hotspot, tripId }).sort({ createdAt: -1 }),
   ]);
 
   if (!trip) {
@@ -125,14 +125,14 @@ trip.get("/all-hotspot-targets", async (c) => {
 
 trip.get("/editors", async (c) => {
   const session = await authenticate(c);
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
-  const trip = await Trip.findById(id);
+  const trip = await Trip.findById(tripId);
 
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
@@ -157,17 +157,17 @@ trip.get("/editors", async (c) => {
 });
 
 trip.get("/export", async (c) => {
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
   const uid: string | undefined = c.req.query("uid");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
   const [trip, hotspotTargets, profile] = await Promise.all([
-    Trip.findById(id).lean(),
-    TargetList.find({ tripId: id, type: TargetListType.hotspot }).lean(),
+    Trip.findById(tripId).lean(),
+    TargetList.find({ tripId, type: TargetListType.hotspot }).lean(),
     Profile.findOne({ uid }).lean(),
   ]);
 
@@ -195,16 +195,16 @@ trip.get("/export", async (c) => {
 
 trip.get("/invites", async (c) => {
   const session = await authenticate(c);
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   await connect();
   const [trip, invites] = await Promise.all([
-    Trip.findById(id),
-    Invite.find({ tripId: id }, ["name", "email", "uid"]).sort({ createdAt: -1 }),
+    Trip.findById(tripId),
+    Invite.find({ tripId }, ["name", "email", "uid"]).sort({ createdAt: -1 }),
   ]);
 
   if (!trip) {
@@ -219,16 +219,16 @@ trip.get("/invites", async (c) => {
 
 trip.patch("/set-start-date", async (c) => {
   const session = await authenticate(c);
-  const id: string | undefined = c.req.param("id");
+  const tripId: string | undefined = c.req.param("tripId");
 
-  if (!id) {
+  if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
   }
 
   const { startDate } = await c.req.json<{ startDate: string }>();
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
@@ -236,7 +236,7 @@ trip.patch("/set-start-date", async (c) => {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
-  await Trip.updateOne({ _id: id }, { startDate });
+  await Trip.updateOne({ _id: tripId }, { startDate });
 
   return c.json({});
 });
