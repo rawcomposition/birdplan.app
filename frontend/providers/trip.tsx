@@ -83,14 +83,14 @@ const TripProvider = ({ children }: Props) => {
 
   const { data: invites } = useQuery<Invite[]>({
     queryKey: [`/trips/${id}/invites`],
-    enabled: !!id && !!auth.currentUser && !!canEdit,
+    enabled: !!id && !!auth?.currentUser && !!canEdit,
     refetchOnWindowFocus: false,
   });
 
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
-  const is404 = !!auth.currentUser && !!id && !trip && !isLoading;
+  const is404 = !!auth?.currentUser && !!id && !trip && !isLoading;
 
   const dateRangeLabel =
     trip?.startMonth && trip?.endMonth

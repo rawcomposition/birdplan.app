@@ -19,7 +19,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   }
 
   if (showLoading) toast.loading("Loading...", { id: url });
-  const token = await auth.currentUser?.getIdToken();
+  const token = await auth?.currentUser?.getIdToken();
   const res = await fetch(urlWithParams, {
     method: "GET",
     headers: {
@@ -45,7 +45,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 };
 
 export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
-  const token = await auth.currentUser?.getIdToken();
+  const token = await auth?.currentUser?.getIdToken();
   const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
   const res = await fetch(fullUrl, {
     method,

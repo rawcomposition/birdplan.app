@@ -25,7 +25,7 @@ account.delete("/", async (c) => {
     Trip.updateMany({ userIds: uid, ownerId: { $ne: uid } }, { $pull: { userIds: uid } }),
   ]);
 
-  await firebaseAuth.deleteUser(uid);
+  await firebaseAuth?.deleteUser(uid);
 
   return c.json({});
 });
@@ -35,7 +35,7 @@ account.post("/update-email", async (c) => {
   const { email } = await c.req.json<{ email: string }>();
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
-  const user = await firebaseAuth.getUser(session.uid);
+  const user = await firebaseAuth?.getUser(session.uid);
   if (!user) throw new HTTPException(404, { message: "User not found" });
 
   if (!user.providerData.some((provider) => provider.providerId === "password")) {
@@ -44,7 +44,10 @@ account.post("/update-email", async (c) => {
     });
   }
 
-  await Promise.all([firebaseAuth.updateUser(user.uid, { email }), Profile.updateOne({ uid: session.uid }, { email })]);
+  await Promise.all([
+    firebaseAuth?.updateUser(user.uid, { email }),
+    Profile.updateOne({ uid: session.uid }, { email }),
+  ]);
   return c.json({ message: "Email updated successfully" });
 });
 
