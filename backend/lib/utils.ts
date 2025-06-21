@@ -9,6 +9,10 @@ export const nanoId = (length: number = 16) => {
 };
 
 export async function authenticate(c: Context) {
+  if (!auth) {
+    throw new HTTPException(503, { message: "Authentication service not available" });
+  }
+
   const authHeader = c.req.header("authorization");
 
   if (!authHeader?.startsWith("Bearer ")) {
