@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { authenticate } from "lib/utils.js";
 import { connect, Profile } from "lib/db.js";
 import { auth } from "lib/firebaseAdmin.js";
+import { HTTPException } from "hono/http-exception";
 
 const profile = new Hono();
 
@@ -15,13 +16,19 @@ profile.get("/", async (c) => {
   ]);
 
   if (!profile) {
-    const user = await auth.getUser(session.uid);
+    const user = await auth?.getUser(session.uid);
+    if (!user) {
+      throw new HTTPException(400, { message: "User not found" });
+    }
     const newProfile = await Profile.create({ uid: session.uid, name: user.displayName, email: user.email });
     profile = newProfile.toObject();
   }
 
   if (!profile.name) {
-    const user = await auth.getUser(session.uid);
+    const user = await auth?.getUser(session.uid);
+    if (!user) {
+      throw new HTTPException(400, { message: "User not found" });
+    }
     if (user.displayName) {
       await Profile.updateOne({ uid: session.uid }, { name: user.displayName });
       profile = { ...profile, name: user.displayName };

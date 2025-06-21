@@ -22,6 +22,10 @@ const UserProvider = ({ children }: Props) => {
   const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -29,6 +33,7 @@ const UserProvider = ({ children }: Props) => {
   }, []);
 
   const refreshUser = React.useCallback(async () => {
+    if (!auth) return;
     await auth.currentUser?.reload();
     if (auth.currentUser) {
       setUser({ ...auth.currentUser });

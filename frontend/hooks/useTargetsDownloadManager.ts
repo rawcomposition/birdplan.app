@@ -48,7 +48,7 @@ export default function useTargetsDownloadManager() {
   const handleAddTargets = async (locId: string, data: TargetList) => {
     if (!trip) return;
     try {
-      const token = await auth.currentUser?.getIdToken();
+      const token = await auth?.currentUser?.getIdToken();
       const input: TargetListInput = { ...data, hotspotId: locId };
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/hotspots/${locId}/targets`, {
         method: "PATCH",

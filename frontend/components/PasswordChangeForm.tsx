@@ -35,7 +35,7 @@ export default function PasswordChangeForm() {
     setIsLoading(true);
 
     try {
-      const user = auth.currentUser;
+      const user = auth?.currentUser;
       if (!user || !user.email) {
         throw new Error("User not found");
       }

@@ -2,7 +2,9 @@ import firebase from "firebase-admin";
 import { nanoId } from "lib/utils.js";
 import { getStorage } from "firebase-admin/storage";
 
-if (!firebase.apps.length) {
+const hasFirebaseConfig = !!(process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL);
+
+if (hasFirebaseConfig && !firebase.apps.length) {
   firebase.initializeApp({
     credential: firebase.credential.cert({
       projectId: "bird-planner",
@@ -14,9 +16,14 @@ if (!firebase.apps.length) {
 }
 
 export const admin = firebase;
-export const auth = firebase.auth();
+export const auth = hasFirebaseConfig ? firebase.auth() : null;
 
 export async function uploadMapboxImageToStorage(mapboxImageUrl: string): Promise<string | null> {
+  if (!hasFirebaseConfig) {
+    console.warn("Firebase not configured, skipping image upload");
+    return null;
+  }
+
   const id = nanoId();
   const res = await fetch(mapboxImageUrl);
 
