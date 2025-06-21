@@ -10,13 +10,13 @@ const targets = new Hono();
 targets.get("/", async (c) => {
   const session = await authenticate(c);
 
-  const id = c.req.param("id");
-  if (!id) throw new HTTPException(400, { message: "Trip ID is required" });
+  const tripId = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   await connect();
   const [trip, targetList] = await Promise.all([
-    Trip.findById(id),
-    TargetList.findOne({ type: TargetListType.trip, tripId: id }).sort({ createdAt: -1 }),
+    Trip.findById(tripId),
+    TargetList.findOne({ type: TargetListType.trip, tripId }).sort({ createdAt: -1 }),
   ]);
 
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
@@ -29,22 +29,22 @@ targets.get("/", async (c) => {
 targets.patch("/", async (c) => {
   const session = await authenticate(c);
 
-  const id = c.req.param("id");
-  if (!id) throw new HTTPException(400, { message: "Trip ID is required" });
+  const tripId = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   const data = await c.req.json<TargetListInput>();
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
   const targetList = await TargetList.findOneAndUpdate(
-    { type: TargetListType.trip, tripId: id },
+    { type: TargetListType.trip, tripId },
     {
       ...data,
       type: TargetListType.trip,
-      tripId: id,
+      tripId,
     },
     { upsert: true, new: true }
   );
@@ -55,17 +55,17 @@ targets.patch("/", async (c) => {
 targets.patch("/add-star", async (c) => {
   const session = await authenticate(c);
 
-  const id = c.req.param("id");
-  if (!id) throw new HTTPException(400, { message: "Trip ID is required" });
+  const tripId = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   const data = await c.req.json<TargetStarInput>();
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Trip.updateOne({ _id: id }, { $addToSet: { targetStars: data.code } });
+  await Trip.updateOne({ _id: tripId }, { $addToSet: { targetStars: data.code } });
 
   return c.json({});
 });
@@ -73,17 +73,17 @@ targets.patch("/add-star", async (c) => {
 targets.patch("/remove-star", async (c) => {
   const session = await authenticate(c);
 
-  const id = c.req.param("id");
-  if (!id) throw new HTTPException(400, { message: "Trip ID is required" });
+  const tripId = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   const data = await c.req.json<TargetStarInput>();
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Trip.updateOne({ _id: id }, { $pull: { targetStars: data.code } });
+  await Trip.updateOne({ _id: tripId }, { $pull: { targetStars: data.code } });
 
   return c.json({});
 });
@@ -91,17 +91,17 @@ targets.patch("/remove-star", async (c) => {
 targets.patch("/set-notes", async (c) => {
   const session = await authenticate(c);
 
-  const id = c.req.param("id");
-  if (!id) throw new HTTPException(400, { message: "Trip ID is required" });
+  const tripId = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   const data = await c.req.json<TargetNotesInput>();
 
   await connect();
-  const trip = await Trip.findById(id).lean();
+  const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Trip.updateOne({ _id: id }, { $set: { [`targetNotes.${data.code}`]: data.notes } });
+  await Trip.updateOne({ _id: tripId }, { $set: { [`targetNotes.${data.code}`]: data.notes } });
 
   return c.json({});
 });
