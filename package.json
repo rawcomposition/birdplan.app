@@ -18,12 +18,14 @@
     "dev:frontend": "npm run dev --workspace=frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "get-avicommons": "npm run get-avicommons --workspace=scripts",
-    "tz-sync-regions": "npm run tz-sync-regions --workspace=scripts"
+    "tz-sync-regions": "npm run tz-sync-regions --workspace=scripts",
+    "lint": "npm run lint --workspace=frontend",
+    "typecheck": "npm run build --workspace=backend && npm run build --workspace=frontend && npm run typecheck --workspace=scripts && npm run typecheck --workspace=shared"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   }
 }

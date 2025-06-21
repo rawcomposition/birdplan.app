@@ -1,5 +1,16 @@
 {
   "name": "@birdplan/shared",
   "version": "1.0.0",
-  "type": "module"
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
 }

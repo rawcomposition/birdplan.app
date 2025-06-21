@@ -5,14 +5,16 @@
   "private": true,
   "scripts": {
     "get-avicommons": "tsx get-avicommons.ts",
-    "tz-sync-regions": "tsx tz-sync-regions.ts"
+    "tz-sync-regions": "tsx tz-sync-regions.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "tsx": "^4.19.2",
     "dotenv": "^16.4.6",
-    "@types/node": "^18.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   }
 }
