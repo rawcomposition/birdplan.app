@@ -11,6 +11,7 @@ export default function useGoogleLogin() {
   const login = async () => {
     setLoading(true);
     try {
+      if (!auth) throw new Error("Firebase auth not initialized");
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/trips");

@@ -12,6 +12,7 @@ export default function useEmailSignup() {
     setLoading(true);
     const toastId = toast.loading("Creating account...");
     try {
+      if (!auth) throw new Error("Firebase auth not initialized");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       toast.success("Account created successfully!", { id: toastId });

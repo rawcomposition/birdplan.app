@@ -12,6 +12,7 @@ export default function useFirebaseLogout() {
   const logout = async () => {
     setLoading(true);
     try {
+      if (!auth) throw new Error("Firebase auth not initialized");
       await signOut(auth);
       queryClient.clear();
       router.push("/");

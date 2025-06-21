@@ -12,6 +12,7 @@ export default function useEmailLogin() {
     setLoading(true);
     const toastId = disableLoader ? undefined : toast.loading("Signing in...");
     try {
+      if (!auth) throw new Error("Firebase auth not initialized");
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/trips");
       toast.dismiss(toastId);
