@@ -28,9 +28,9 @@ export default function InviteRow({ invite }: Props) {
       if (isMe) {
         queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
         queryClient.invalidateQueries({ queryKey: ["/trips"] });
+        close();
+        router.push("/trips");
       }
-      close();
-      if (isMe) router.push("/trips");
     },
   });
 
