@@ -46,7 +46,7 @@ export default function Mapbox({
 
   const handleMarkerClick = (marker: CustomMarker) => {
     isOpeningModal.current = true;
-    open("viewMarker", { marker });
+    open("viewMarker", { markerId: marker.id });
     setTimeout(() => {
       isOpeningModal.current = false;
     }, 500);

@@ -17,22 +17,25 @@ import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
+import Error from "components/Error";
 
 type Props = {
-  marker?: CustomMarker;
+  markerId?: string;
   lat?: number;
   lng?: number;
 };
 
-export default function Marker({ marker, lat: defaultLat, lng: defaultLng }: Props) {
+export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: Props) {
+  const { close } = useModal();
+  const { trip, canEdit, setSelectedMarkerId, refetch } = useTrip();
+
+  const marker = markerId ? trip?.markers?.find((m) => m.id === markerId) : undefined;
   const isEditing = !!marker;
   const [isEditMode, setIsEditMode] = React.useState(!isEditing);
   const [icon, setIcon] = React.useState<MarkerIconT>((marker?.icon as MarkerIconT) || undefined);
   const [name, setName] = React.useState(marker?.name || "");
   const [lat, setLat] = React.useState<number>(marker?.lat || defaultLat || 0);
   const [lng, setLng] = React.useState<number>(marker?.lng || defaultLng || 0);
-  const { close } = useModal();
-  const { trip, canEdit, setSelectedMarkerId } = useTrip();
 
   const addMarkerMutation = useTripMutation<MarkerInput>({
     url: `/trips/${trip?._id}/markers`,
@@ -85,7 +88,7 @@ export default function Marker({ marker, lat: defaultLat, lng: defaultLng }: Pro
   };
 
   const handleCancel = () => {
-    if (isEditing) {
+    if (isEditing && marker) {
       setIcon(marker.icon as MarkerIconT);
       setName(marker.name);
       setLat(marker.lat);
@@ -103,13 +106,24 @@ export default function Marker({ marker, lat: defaultLat, lng: defaultLng }: Pro
   };
 
   React.useEffect(() => {
-    if (marker) {
-      setSelectedMarkerId(marker.id);
+    if (markerId) {
+      setSelectedMarkerId(markerId);
       return () => setSelectedMarkerId(undefined);
     }
-  }, [marker?.id]);
+  }, [markerId, setSelectedMarkerId]);
 
   const googleUrl = marker && getGooglePlaceUrl(marker.lat, marker.lng, marker.placeId);
+
+  if (markerId && !marker) {
+    return (
+      <>
+        <Header>Marker Not Found</Header>
+        <Body>
+          <Error message="The marker you're trying to view could not be found." onReload={refetch} />
+        </Body>
+      </>
+    );
+  }
 
   if (isEditing && !isEditMode) {
     return (

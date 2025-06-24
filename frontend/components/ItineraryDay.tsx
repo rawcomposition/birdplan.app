@@ -132,7 +132,7 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
                               ? () =>
                                   type === "hotspot"
                                     ? open("hotspot", { hotspot: location })
-                                    : open("viewMarker", { marker: location })
+                                    : open("viewMarker", { markerId: location.id })
                               : undefined
                           }
                           disabled={!location}
