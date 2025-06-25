@@ -12,8 +12,8 @@ import useTripMutation from "hooks/useTripMutation";
 export default function AddHotspot() {
   const [query, setQuery] = React.useState("");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const { open } = useModal();
-  const { trip } = useTrip();
+  const { open, close } = useModal();
+  const { trip, showAllHotspots, setShowAllHotspots } = useTrip();
   const { hotspots } = useFetchHotspots(true);
 
   const addHotspotMutation = useTripMutation<HotspotInput>({
@@ -87,6 +87,20 @@ export default function AddHotspot() {
               autoFocus
               onChange={(e: any) => setQuery(e.target.value)}
             />
+            {!showAllHotspots && (
+              <p className="text-[12px] text-gray-700 -mt-3">
+                <button
+                  type="button"
+                  className="text-sky-600 font-bold"
+                  onClick={() => {
+                    setShowAllHotspots(true);
+                    close();
+                  }}
+                >
+                  Or view hotspot map
+                </button>
+              </p>
+            )}
             <div className="flex flex-col gap-2">
               {!!slicedResults?.length && <p className="text-[13px] text-gray-600">Select a hotspot to add</p>}
               {slicedResults.map((it, index) => {

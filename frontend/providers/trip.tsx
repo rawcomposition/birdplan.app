@@ -29,9 +29,13 @@ type ContextT = {
   selectedMarkerId?: string;
   halo?: HaloT;
   dateRangeLabel: string;
+  showAllHotspots: boolean;
+  showSatellite: boolean;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   setHalo: (data?: HaloT) => void;
+  setShowAllHotspots: (show: boolean | ((prev: boolean) => boolean)) => void;
+  setShowSatellite: (show: boolean | ((prev: boolean) => boolean)) => void;
   refetch: () => void;
 };
 
@@ -44,6 +48,8 @@ const initialState = {
   isOwner: false,
   is404: false,
   dateRangeLabel: "",
+  showAllHotspots: false,
+  showSatellite: false,
 };
 
 export const TripContext = React.createContext<ContextT>({
@@ -51,6 +57,8 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpecies: () => {},
   setSelectedMarkerId: () => {},
   setHalo: () => {},
+  setShowAllHotspots: () => {},
+  setShowSatellite: () => {},
   refetch: () => {},
 });
 
@@ -93,6 +101,8 @@ const TripProvider = ({ children }: Props) => {
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();
   const [selectedMarkerId, setSelectedMarkerId] = React.useState<string>();
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
+  const [showAllHotspots, setShowAllHotspots] = React.useState(false);
+  const [showSatellite, setShowSatellite] = React.useState(false);
   const is404 = !!auth?.currentUser && !!id && !trip && !isLoading;
 
   const dateRangeLabel =
@@ -112,6 +122,8 @@ const TripProvider = ({ children }: Props) => {
         setSelectedSpecies,
         setSelectedMarkerId,
         setHalo,
+        setShowAllHotspots,
+        setShowSatellite,
         refetch,
         invites: invites || null,
         canEdit,
@@ -124,6 +136,8 @@ const TripProvider = ({ children }: Props) => {
         selectedMarkerId,
         halo,
         dateRangeLabel,
+        showAllHotspots,
+        showSatellite,
       }}
     >
       {children}

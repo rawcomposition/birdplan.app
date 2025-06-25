@@ -17,14 +17,21 @@ import NotFound from "components/NotFound";
 
 export default function Trip() {
   const { open } = useModal();
-  const [showAll, setShowAll] = React.useState(false);
-  const [showSatellite, setShowSatellite] = React.useState(false);
-  const { trip, canEdit, is404, setSelectedSpecies } = useTrip();
+  const {
+    trip,
+    canEdit,
+    is404,
+    setSelectedSpecies,
+    showAllHotspots,
+    setShowAllHotspots,
+    showSatellite,
+    setShowSatellite,
+  } = useTrip();
   const { user } = useUser();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
   const savedHotspots = trip?.hotspots || [];
-  const { hotspots, hotspotLayer } = useFetchHotspots(showAll);
+  const { hotspots, hotspotLayer } = useFetchHotspots(showAllHotspots);
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,
@@ -49,7 +56,7 @@ export default function Trip() {
 
   React.useEffect(() => {
     if (tripIsLoaded && tripIsNew) {
-      setShowAll(true);
+      setShowAllHotspots(true);
     }
   }, [tripIsLoaded, tripIsNew]);
 
@@ -68,9 +75,9 @@ export default function Trip() {
       <main className="flex h-[calc(100%-60px-55px)] relative">
         <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
           <MapButton
-            onClick={() => setShowAll((prev) => !prev)}
-            tooltip={showAll ? "Hide hotspots" : "Show hotspots"}
-            active={showAll}
+            onClick={() => setShowAllHotspots((prev) => !prev)}
+            tooltip={showAllHotspots ? "Hide hotspots" : "Show hotspots"}
+            active={showAllHotspots}
           >
             <Icon name="mapFlatPin" />
           </MapButton>
@@ -114,7 +121,7 @@ export default function Trip() {
                     onHotspotClick={hotspotClick}
                     markers={markers}
                     customMarkers={customMarkers}
-                    hotspotLayer={showAll && hotspotLayer}
+                    hotspotLayer={showAllHotspots && hotspotLayer}
                     bounds={trip.bounds}
                     addingMarker={isAddingMarker}
                     onDisableAddingMarker={() => setIsAddingMarker(false)}
@@ -122,7 +129,7 @@ export default function Trip() {
                   />
                 )}
                 {isAddingMarker && (
-                  <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center">
+                  <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center justify-between">
                     <div>
                       Click anywhere on map to add marker
                       <br />
@@ -137,7 +144,7 @@ export default function Trip() {
                         enter coordinates
                       </button>
                     </div>
-                    <CloseButton onClick={() => setIsAddingMarker(false)} className="ml-auto" />
+                    <CloseButton onClick={() => setIsAddingMarker(false)} />
                   </div>
                 )}
               </div>
