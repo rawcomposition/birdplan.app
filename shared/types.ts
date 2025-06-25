@@ -202,17 +202,6 @@ export type TargetNotesInput = {
   notes: string;
 };
 
-export type MarkerInput = {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  icon: string;
-  notes?: string;
-  placeId?: string;
-  placeType?: string;
-};
-
 export type MarkerUpdateInput = {
   name: string;
   lat: number;

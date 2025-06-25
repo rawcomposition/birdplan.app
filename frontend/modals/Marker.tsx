@@ -11,7 +11,7 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import useTripMutation from "hooks/useTripMutation";
-import { CustomMarker, MarkerInput, MarkerUpdateInput } from "@birdplan/shared";
+import { CustomMarker, MarkerUpdateInput } from "@birdplan/shared";
 import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
 import { Menu } from "@headlessui/react";
@@ -37,7 +37,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
   const [lat, setLat] = React.useState<number>(marker?.lat || defaultLat || 0);
   const [lng, setLng] = React.useState<number>(marker?.lng || defaultLng || 0);
 
-  const addMarkerMutation = useTripMutation<MarkerInput>({
+  const addMarkerMutation = useTripMutation<CustomMarker>({
     url: `/trips/${trip?._id}/markers`,
     method: "POST",
     updateCache: (old, input) => ({

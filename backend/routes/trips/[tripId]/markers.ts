@@ -2,12 +2,12 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
-import type { MarkerInput, MarkerNotesInput, MarkerUpdateInput } from "@birdplan/shared";
+import type { CustomMarker, MarkerNotesInput, MarkerUpdateInput } from "@birdplan/shared";
 
 const markers = new Hono();
 
 markers.post("/", async (c) => {
-  const data = await c.req.json<MarkerInput>();
+  const data = await c.req.json<CustomMarker>();
   const session = await authenticate(c);
 
   const tripId = c.req.param("tripId");
