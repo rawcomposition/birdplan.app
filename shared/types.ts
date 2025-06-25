@@ -202,15 +202,11 @@ export type TargetNotesInput = {
   notes: string;
 };
 
-export type MarkerInput = {
-  id: string;
+export type MarkerUpdateInput = {
+  name: string;
   lat: number;
   lng: number;
-  notes?: string;
-};
-
-export type MarkerNotesInput = {
-  notes: string;
+  icon: string;
 };
 
 export type HotspotInput = {

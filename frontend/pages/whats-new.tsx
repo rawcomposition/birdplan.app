@@ -15,6 +15,10 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 25, 2025</h2>
+          <ul>
+            <li>✨ Added ability to edit custom markers.</li>
+          </ul>
           <h2>June 17, 2025</h2>
           <ul>
             <li>🛠️ Migrated to a new backend. If you experience any issues, please let us know.</li>

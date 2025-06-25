@@ -32,6 +32,7 @@ type ContextT = {
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   setHalo: (data?: HaloT) => void;
+  refetch: () => void;
 };
 
 const initialState = {
@@ -50,6 +51,7 @@ export const TripContext = React.createContext<ContextT>({
   setSelectedSpecies: () => {},
   setSelectedMarkerId: () => {},
   setHalo: () => {},
+  refetch: () => {},
 });
 
 type Props = {
@@ -64,6 +66,7 @@ const TripProvider = ({ children }: Props) => {
     data: trip,
     isFetching,
     isLoading,
+    refetch,
   } = useQuery<Trip>({
     queryKey: [`/trips/${id}`],
     enabled: !!id,
@@ -109,6 +112,7 @@ const TripProvider = ({ children }: Props) => {
         setSelectedSpecies,
         setSelectedMarkerId,
         setHalo,
+        refetch,
         invites: invites || null,
         canEdit,
         isOwner,

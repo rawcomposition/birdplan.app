@@ -10,8 +10,7 @@ import clsx from "clsx";
 // modals
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
-import AddMarker from "modals/AddMarker";
-import ViewMarker from "modals/ViewMarker";
+import Marker from "modals/Marker";
 import Share from "modals/Share";
 import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
@@ -41,7 +40,7 @@ const modals: ModalConfig[] = [
   },
   {
     id: "addMarker",
-    Component: AddMarker,
+    Component: Marker,
     small: true,
     position: "right",
   },
@@ -57,7 +56,7 @@ const modals: ModalConfig[] = [
   },
   {
     id: "viewMarker",
-    Component: ViewMarker,
+    Component: Marker,
     small: true,
     position: "right",
   },
