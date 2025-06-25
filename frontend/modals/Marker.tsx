@@ -119,7 +119,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
       <>
         <Header>Marker Not Found</Header>
         <Body>
-          <Error message="The marker you're trying to view could not be found." onReload={refetch} />
+          <Error message="The marker could not be found in this trip." onReload={refetch} />
         </Body>
       </>
     );
