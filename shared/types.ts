@@ -209,10 +209,6 @@ export type MarkerUpdateInput = {
   icon: string;
 };
 
-export type MarkerNotesInput = {
-  notes: string;
-};
-
 export type HotspotInput = {
   id: string;
   name: string;

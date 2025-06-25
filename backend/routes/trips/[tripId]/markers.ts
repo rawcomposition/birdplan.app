@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
-import type { CustomMarker, MarkerNotesInput, MarkerUpdateInput } from "@birdplan/shared";
+import type { CustomMarker, MarkerUpdateInput } from "@birdplan/shared";
 
 const markers = new Hono();
 
@@ -50,7 +50,7 @@ markers.patch("/:markerId/notes", async (c) => {
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
   if (!markerId) throw new HTTPException(400, { message: "Marker ID is required" });
 
-  const data = await c.req.json<MarkerNotesInput>();
+  const data = await c.req.json<{ notes: string }>();
 
   await connect();
   const trip = await Trip.findById(tripId).lean();
