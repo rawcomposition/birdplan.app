@@ -19,7 +19,6 @@ export default function Support() {
     url: "/support",
     method: "POST",
     onSuccess: () => {
-      toast.success("Your message has been sent!");
       setSubmitted(true);
     },
   });
