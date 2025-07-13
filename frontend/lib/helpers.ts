@@ -1,5 +1,4 @@
-import { RegionTz } from "@birdplan/shared";
-import { TargetList, Trip, Hotspot } from "@birdplan/shared";
+import { Trip } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -65,29 +64,6 @@ export function truncate(string: string, length: number): string {
   return string.length > length ? `${string.substring(0, length)}...` : string;
 }
 
-// Adapted from https://www.geodatasource.com/developers/javascript
-export function distanceBetween(lat1: number, lon1: number, lat2: number, lon2: number, metric = true): number {
-  if (lat1 === lat2 && lon1 === lon2) {
-    return 0;
-  } else {
-    const radlat1 = (Math.PI * lat1) / 180;
-    const radlat2 = (Math.PI * lat2) / 180;
-    const theta = lon1 - lon2;
-    const radtheta = (Math.PI * theta) / 180;
-    let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    if (dist > 1) {
-      dist = 1;
-    }
-    dist = Math.acos(dist);
-    dist = (dist * 180) / Math.PI;
-    dist = dist * 60 * 1.1515;
-    if (metric) {
-      dist = dist * 1.609344;
-    }
-    return parseFloat(dist.toFixed(2));
-  }
-}
-
 export const markerColors = [
   "#bcbcbc",
   "#8f9ca0",
@@ -129,28 +105,6 @@ export const radiusOptions = [
   { label: "400 mi", value: 400 },
   { label: "500 mi", value: 500 },
 ];
-
-export const getBounds = async (regionString: string) => {
-  const regions = regionString.split(",");
-  const boundsPromises = regions.map((region) =>
-    fetch(`https://api.ebird.org/v2/ref/region/info/${region}?key=${process.env.NEXT_PUBLIC_EBIRD_KEY}`).then((res) =>
-      res.json()
-    )
-  );
-  const boundsResults = await Promise.all(boundsPromises);
-  const combinedBounds = boundsResults.reduce(
-    (acc, bounds) => {
-      return {
-        minX: Math.min(acc.minX, bounds.bounds.minX),
-        maxX: Math.max(acc.maxX, bounds.bounds.maxX),
-        minY: Math.min(acc.minY, bounds.bounds.minY),
-        maxY: Math.max(acc.maxY, bounds.bounds.maxY),
-      };
-    },
-    { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
-  );
-  return combinedBounds;
-};
 
 export const getLatLngFromBounds = (bounds?: Trip["bounds"]) => {
   if (!bounds) return { lat: null, lng: null };
@@ -214,92 +168,6 @@ export const formatDistance = (meters: number, metric: boolean) => {
   return `${rounded} ${units}`;
 };
 
-export const mostFrequentValue = (arr: any[]) => {
-  const filteredArr = arr.filter(Boolean);
-  if (!filteredArr.length) return null;
-  const counts: any = {};
-  filteredArr.forEach((it) => {
-    counts[it] = counts[it] ? counts[it] + 1 : 1;
-  });
-  const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-  return sorted[0];
-};
-
-const targetsToHtml = (targets: TargetList[], id?: string) => {
-  const items = targets.find((it) => it._id === id)?.items;
-  if (!items?.length) {
-    return "";
-  }
-  let html = "<b>Targets</b><br/>";
-  items.forEach((it) => {
-    html += `<b>${it.name}</b> (${it.percentYr}%)<br/>`;
-    const percent = it.percentYr;
-    const numBlocks = Math.round(percent / 10) * 1;
-    const blocks = "🟩".repeat(numBlocks) + "⬜".repeat(10 - numBlocks);
-    html += `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a><br/><br/>`;
-  });
-  return html;
-};
-
-const favsToHtml = (favs: Hotspot["favs"]) => {
-  if (!favs?.length) {
-    return "";
-  }
-  let html = "<b>Favorites</b><br/>";
-  favs.forEach((it) => {
-    const percent = it.percent > 1 ? Math.round(it.percent) : it.percent;
-    html += `<b>${it.name}</b> (${percent}% ${it.range})<br/>`;
-    const numBlocks = Math.round(percent / 10) * 1;
-    const blocks = "🟩".repeat(numBlocks) + "⬜".repeat(10 - numBlocks);
-    html += `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a><br/><br/>`;
-  });
-  return html + "<br/><br/>";
-};
-
-export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
-  const hotspots = trip?.hotspots || [];
-  const markers = trip?.markers || [];
-
-  const geojson = {
-    type: "FeatureCollection",
-    features: [
-      ...hotspots.map((it) => ({
-        type: "Feature",
-        properties: {
-          name: it.name,
-          description: `<b>Links</b><br/><a href=${getGooglePlaceUrl(
-            it.lat,
-            it.lng
-          )}>Directions</a> • <a href='https://ebird.org/targets?r1=${
-            it.id
-          }&bmo=1&emo=12&r2=world&t2=life'>Targets</a><br/><br/><b>Notes</b><br/>${
-            it.notes || "None"
-          }<br/><br/>${favsToHtml(it.favs)}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [it.lng, it.lat],
-        },
-      })),
-      ...markers.map((it) => ({
-        type: "Feature",
-        properties: {
-          name: it.name,
-          description: `<b>Links</b><br/><a href=${getGooglePlaceUrl(
-            it.lat,
-            it.lng
-          )}>Directions</a><br/><br/><b>Notes</b><br/>${it.notes || "None"}`,
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [it.lng, it.lat],
-        },
-      })),
-    ],
-  };
-  return geojson;
-};
-
 export function getRandomItemsFromArray(arr: any[], count: number): any[] {
   const result: string[] = [];
 
@@ -315,10 +183,4 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
   return placeId
     ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-}
-
-export function sanitizeFileName(fileName: string): string {
-  let sanitized = fileName.replace(/[^a-zA-Z0-9_-]/g, " ");
-  sanitized = sanitized.replace(/\s+/g, " ");
-  return sanitized.trim();
 }
