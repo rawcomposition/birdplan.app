@@ -2,11 +2,11 @@ import React from "react";
 import { RecentChecklist } from "lib/types";
 import { nanoId } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
+import { EBIRD_BASE_URL } from "lib/config";
 
 export default function useFetchRecentChecklists(region?: string) {
   const { data, isLoading, error, refetch } = useQuery<RecentChecklist[]>({
-    // Proxy required for this particular eBird endpoint to avoid CORS error
-    queryKey: [`/ebird-proxy/product/lists/${region}`, { maxResults: 40, key: process.env.NEXT_PUBLIC_EBIRD_KEY }],
+    queryKey: [`${EBIRD_BASE_URL}/product/lists/${region}`, { maxResults: 40 }],
     enabled: !!region,
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 60 minutes

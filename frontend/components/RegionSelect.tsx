@@ -15,7 +15,7 @@ type Region = {
 
 export default function RegionSelect({ type, parent, ...props }: Props) {
   const { data, isFetching } = useQuery<Region[]>({
-    queryKey: [`${EBIRD_BASE_URL}/ref/region/list/${type}/${parent}`, { key: process.env.NEXT_PUBLIC_EBIRD_KEY }],
+    queryKey: [`${EBIRD_BASE_URL}/ref/region/list/${type}/${parent}`],
     enabled: !!type && !!parent,
     meta: {
       errorMessage: "Failed to load regions",

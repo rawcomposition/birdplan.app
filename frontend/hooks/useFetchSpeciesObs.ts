@@ -17,10 +17,7 @@ type Props = {
 
 export default function useFetchSpeciesObs({ region, code }: Props) {
   const { data } = useQuery<Obs[]>({
-    queryKey: [
-      `${EBIRD_BASE_URL}/data/obs/${region}/recent/${code}`,
-      { key: process.env.NEXT_PUBLIC_EBIRD_KEY, back: 30, includeProvisional: true },
-    ],
+    queryKey: [`${EBIRD_BASE_URL}/data/obs/${region}/recent/${code}`, { back: 30, includeProvisional: true }],
     enabled: !!region && !!code,
     meta: {
       errorMessage: "Failed to load observations",
