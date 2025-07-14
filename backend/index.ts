@@ -18,7 +18,13 @@ import { auth as betterAuth } from "lib/betterAuth.js";
 const app = new Hono();
 
 if (process.env.CORS_ORIGINS) {
-  app.use("*", cors({ origin: process.env.CORS_ORIGINS.split(",") }));
+  app.use(
+    "*",
+    cors({
+      origin: process.env.CORS_ORIGINS.split(","),
+      credentials: true,
+    })
+  );
 } else {
   console.error("CORS_ORIGINS is not set");
 }

@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import authClient from "lib/betterAuth";
 
 export default function useEmailLogin() {
   const router = useRouter();
@@ -10,17 +11,13 @@ export default function useEmailLogin() {
     setLoading(true);
     const toastId = disableLoader ? undefined : toast.loading("Signing in...");
     try {
-      const response = await fetch("/api/auth/sign-in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
+      const { data, error } = await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: "/trips",
       });
 
-      if (!response.ok) {
-        const error = await response.json();
+      if (error) {
         throw new Error(error.message || "Sign in failed");
       }
 

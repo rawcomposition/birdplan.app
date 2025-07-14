@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import authClient from "lib/betterAuth";
 
 export default function useEmailSignup() {
   const router = useRouter();
@@ -10,17 +11,14 @@ export default function useEmailSignup() {
     setLoading(true);
     const toastId = toast.loading("Creating account...");
     try {
-      const response = await fetch("/api/auth/sign-up", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ name, email, password }),
+      const { data, error } = await authClient.signUp.email({
+        email,
+        password,
+        name,
+        callbackURL: "/trips",
       });
 
-      if (!response.ok) {
-        const error = await response.json();
+      if (error) {
         throw new Error(error.message || "Sign up failed");
       }
 
