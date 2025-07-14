@@ -1,6 +1,6 @@
-import { HTTPException } from "hono/http-exception";
 import type { Context } from "hono";
-import { auth } from "lib/firebaseAdmin.js";
+import { HTTPException } from "hono/http-exception";
+import { auth } from "lib/betterAuth.js";
 import { customAlphabet } from "nanoid";
 import type { Trip, TargetList, Hotspot } from "@birdplan/shared";
 
@@ -9,22 +9,16 @@ export const nanoId = (length: number = 16) => {
 };
 
 export async function authenticate(c: Context) {
-  if (!auth) {
-    throw new HTTPException(503, { message: "Authentication service not available" });
-  }
-
-  const authHeader = c.req.header("authorization");
-
-  if (!authHeader?.startsWith("Bearer ")) {
-    throw new HTTPException(401, { message: "Unauthorized" });
-  }
-
-  const token = authHeader.split("Bearer ")[1];
-
   try {
-    return await auth.verifyIdToken(token);
+    const session = await auth.api.getSession({
+      headers: c.req.raw.headers,
+    });
+    if (!session) {
+      throw new HTTPException(401, { message: "Unauthorized" });
+    }
+    return session;
   } catch (error) {
-    console.error("Firebase auth error:", error);
+    console.error("Better Auth error:", error);
     throw new HTTPException(401, { message: "Unauthorized" });
   }
 }

@@ -1,6 +1,5 @@
 import React from "react";
-import { auth } from "lib/firebase";
-import { signOut } from "firebase/auth";
+import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -12,12 +11,19 @@ export default function useFirebaseLogout() {
   const logout = async () => {
     setLoading(true);
     try {
-      if (!auth) throw new Error("Firebase auth not initialized");
-      await signOut(auth);
+      const response = await fetch("/api/auth/sign-out", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Logout failed");
+      }
+
       queryClient.clear();
       router.push("/");
     } catch (error) {
-      alert("Error logging out");
+      toast.error("Error logging out");
       console.error(error);
     } finally {
       setLoading(false);

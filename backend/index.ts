@@ -13,6 +13,7 @@ import ebirdProxy from "routes/ebird-proxy.js";
 import invites from "routes/invites.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
+import { auth as betterAuth } from "lib/betterAuth.js";
 
 const app = new Hono();
 
@@ -23,9 +24,9 @@ if (process.env.CORS_ORIGINS) {
 }
 
 app.route("/v1/profile", profile);
-app.route("/v1/account", account);
 app.route("/v1/trips", trips);
 app.route("/v1/auth", auth);
+app.route("/v1/account", account);
 app.route("/v1/support", support);
 app.route("/v1/taxonomy", taxonomy);
 app.route("/v1/quiz", quiz);
@@ -34,23 +35,23 @@ app.route("/v1/region", region);
 app.route("/v1/ebird-proxy", ebirdProxy);
 app.route("/v1/invites", invites);
 
-app.notFound((c) => {
-  return c.json({ message: "Not Found" }, 404);
+app.all("/api/auth/*", async (c) => {
+  const response = await betterAuth.handler(c.req.raw);
+  return response;
 });
 
 app.onError((err, c) => {
-  const message = err instanceof Error ? err.message : "Internal Server Error";
-  const status = err instanceof HTTPException ? err.status : 500;
-  return c.json({ message }, status);
+  if (err instanceof HTTPException) {
+    return c.json({ message: err.message }, err.status);
+  }
+  console.error("Server error:", err);
+  return c.json({ message: "Internal server error" }, 500);
 });
 
-serve(
-  {
-    fetch: app.fetch,
-    port: 5100,
-    hostname: "0.0.0.0",
-  },
-  (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
-  }
-);
+const port = parseInt(process.env.PORT || "3001");
+console.log(`Server is running on port ${port}`);
+
+serve({
+  fetch: app.fetch,
+  port,
+});

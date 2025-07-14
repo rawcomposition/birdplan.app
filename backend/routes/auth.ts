@@ -5,7 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
 import { RESET_TOKEN_EXPIRATION } from "lib/config.js";
 import { sendResetEmail } from "lib/email.js";
-import { auth as firebaseAuth } from "lib/firebaseAdmin.js";
+import { auth as betterAuth } from "lib/betterAuth.js";
 
 const auth = new Hono();
 
@@ -14,10 +14,10 @@ auth.post("/forgot-password", async (c) => {
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
   await connect();
-  const user = await firebaseAuth?.getUserByEmail(email);
+  const user = await Profile.findOne({ email }).lean();
 
-  if (!user || !user.providerData.some((provider) => provider.providerId === "password")) {
-    console.log("User not found/invalid provider", user?.providerData);
+  if (!user) {
+    console.log("User not found for email:", email);
     return Response.json({});
   }
 
@@ -41,25 +41,11 @@ auth.post("/reset-password", async (c) => {
     throw new HTTPException(400, { message: "Invalid or expired token" });
   }
 
-  const user = await firebaseAuth?.getUser(profile.uid);
-
-  if (!user) {
-    throw new HTTPException(400, { message: "User not found" });
-  }
-
-  if (user.providerData.some((provider) => provider.providerId === "google.com")) {
-    throw new HTTPException(400, { message: "You must use 'Sign in with Google' to login" });
-  } else if (user.providerData.some((provider) => provider.providerId === "apple.com")) {
-    throw new HTTPException(400, { message: "You must use 'Sign in with Apple' to login" });
-  }
-
   if (!profile.resetTokenExpires || dayjs().isAfter(dayjs(profile.resetTokenExpires))) {
     throw new HTTPException(400, { message: "Reset token has expired" });
   }
 
-  await firebaseAuth?.updateUser(user.uid, { password });
-
-  await Profile.updateOne({ uid: user.uid }, { $unset: { resetToken: "", resetTokenExpires: "" } });
+  await Profile.updateOne({ uid: profile.uid }, { $unset: { resetToken: "", resetTokenExpires: "" } });
 
   return c.json({ message: "Password reset successfully" });
 });

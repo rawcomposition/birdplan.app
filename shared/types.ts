@@ -92,6 +92,10 @@ export type Profile = {
   lastActiveAt: Date | null;
   resetToken?: string;
   resetTokenExpires?: Date;
+  sessionId?: string;
+  sessionExpires?: Date;
+  verificationToken?: string;
+  verificationTokenExpires?: Date;
 };
 
 export type Target = {

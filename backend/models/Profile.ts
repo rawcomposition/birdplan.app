@@ -13,6 +13,10 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   lastActiveAt: { type: Date, default: new Date() },
   resetToken: String,
   resetTokenExpires: Date,
+  sessionId: String,
+  sessionExpires: Date,
+  verificationToken: String,
+  verificationTokenExpires: Date,
 };
 
 const ProfileSchema = new Schema(fields, {

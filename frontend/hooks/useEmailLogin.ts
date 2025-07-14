@@ -1,5 +1,3 @@
-import { auth } from "lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -12,14 +10,26 @@ export default function useEmailLogin() {
     setLoading(true);
     const toastId = disableLoader ? undefined : toast.loading("Signing in...");
     try {
-      if (!auth) throw new Error("Firebase auth not initialized");
-      await signInWithEmailAndPassword(auth, email, password);
+      const response = await fetch("/api/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Sign in failed");
+      }
+
       router.push("/trips");
       toast.dismiss(toastId);
     } catch (error: any) {
-      if (error.code === "auth/wrong-password") {
-        toast.error("Invalid password", { id: toastId });
-      } else if (error.code === "auth/too-many-requests") {
+      if (error.message?.includes("Invalid credentials")) {
+        toast.error("Invalid email or password", { id: toastId });
+      } else if (error.message?.includes("Too many attempts")) {
         toast.error("Too many attempts. Please try again later.", { id: toastId });
       } else {
         toast.error("Error signing in", { id: toastId });

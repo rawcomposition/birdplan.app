@@ -1,5 +1,3 @@
-import { auth } from "lib/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -12,16 +10,27 @@ export default function useEmailSignup() {
     setLoading(true);
     const toastId = toast.loading("Creating account...");
     try {
-      if (!auth) throw new Error("Firebase auth not initialized");
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: name });
+      const response = await fetch("/api/auth/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Sign up failed");
+      }
+
       toast.success("Account created successfully!", { id: toastId });
       router.push("/trips");
     } catch (error: any) {
       console.error("Signup error:", error);
-      if (error.code === "auth/email-already-in-use") {
+      if (error.message?.includes("already exists")) {
         toast.error("Email address is already in use.", { id: toastId });
-      } else if (error.code === "auth/weak-password") {
+      } else if (error.message?.includes("weak password")) {
         toast.error("Password is too weak. Please choose a stronger password.", { id: toastId });
       } else {
         toast.error("Error creating account. Please try again.", { id: toastId });

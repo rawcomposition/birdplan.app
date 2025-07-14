@@ -16,7 +16,7 @@ export default function Signup() {
   const { signup: emailSignup, loading: emailSignupLoading } = useEmailSignup();
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
 
-  if (user?.uid && !userLoading) router.push("/trips");
+  if (user?.id && !userLoading) router.push("/trips");
 
   const isLoading = userLoading || emailSignupLoading || googleLoading;
 

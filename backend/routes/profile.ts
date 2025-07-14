@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import { authenticate } from "lib/utils.js";
 import { connect, Profile } from "lib/db.js";
-import { auth } from "lib/firebaseAdmin.js";
 import { HTTPException } from "hono/http-exception";
 
 const profile = new Hono();
@@ -11,29 +10,24 @@ profile.get("/", async (c) => {
 
   await connect();
   let [profile] = await Promise.all([
-    Profile.findOne({ uid: session.uid }).lean(),
-    Profile.updateOne({ uid: session.uid }, { lastActiveAt: new Date() }),
+    Profile.findOne({ uid: session.user.id }).lean(),
+    Profile.updateOne({ uid: session.user.id }, { lastActiveAt: new Date() }),
   ]);
 
   if (!profile) {
-    const user = await auth?.getUser(session.uid);
-    if (!user) {
-      throw new HTTPException(400, { message: "User not found" });
-    }
-    const newProfile = await Profile.create({ uid: session.uid, name: user.displayName, email: user.email });
+    const newProfile = await Profile.create({
+      uid: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+    });
     profile = newProfile.toObject();
   }
 
-  if (!profile.name) {
-    const user = await auth?.getUser(session.uid);
-    if (!user) {
-      throw new HTTPException(400, { message: "User not found" });
-    }
-    if (user.displayName) {
-      await Profile.updateOne({ uid: session.uid }, { name: user.displayName });
-      profile = { ...profile, name: user.displayName };
-    }
+  if (!profile.name && session.user.name) {
+    await Profile.updateOne({ uid: session.user.id }, { name: session.user.name });
+    profile = { ...profile, name: session.user.name };
   }
+
   return c.json(profile);
 });
 
@@ -74,9 +68,9 @@ profile.patch("/", async (c) => {
       })
       .filter((code) => code);
 
-    await Profile.updateOne({ uid: session.uid }, { ...data, lifelist: codes });
+    await Profile.updateOne({ uid: session.user.id }, { ...data, lifelist: codes });
   } else {
-    await Profile.updateOne({ uid: session.uid }, data);
+    await Profile.updateOne({ uid: session.user.id }, data);
   }
 
   return c.json({});
@@ -89,7 +83,7 @@ profile.post("/add-to-lifelist", async (c) => {
   const data = await c.req.json<{ code: string }>();
   const { code } = data;
 
-  await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code }, $pull: { exclusions: code } });
+  await Profile.updateOne({ uid: session.user.id }, { $addToSet: { lifelist: code }, $pull: { exclusions: code } });
   return c.json({});
 });
 

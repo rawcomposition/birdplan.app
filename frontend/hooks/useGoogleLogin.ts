@@ -1,6 +1,4 @@
 import React from "react";
-import { auth } from "lib/firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 
@@ -11,10 +9,7 @@ export default function useGoogleLogin() {
   const login = async () => {
     setLoading(true);
     try {
-      if (!auth) throw new Error("Firebase auth not initialized");
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      router.push("/trips");
+      window.location.href = "/api/auth/sign-in/google";
     } catch (error) {
       toast.error("Login failed");
       console.error(error);

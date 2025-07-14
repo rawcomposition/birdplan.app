@@ -1,5 +1,5 @@
 import { toast } from "react-hot-toast";
-import { auth } from "lib/firebase";
+import { useSession } from "lib/betterAuth";
 
 type Params = {
   [key: string]: string | number | boolean;
@@ -19,13 +19,12 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   }
 
   if (showLoading) toast.loading("Loading...", { id: url });
-  const token = await auth?.currentUser?.getIdToken();
+
   const res = await fetch(urlWithParams, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token || ""}`,
-    },
+    credentials: "include",
   });
+
   if (showLoading) toast.dismiss(url);
 
   let json: any = {};
@@ -45,14 +44,13 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 };
 
 export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
-  const token = await auth?.currentUser?.getIdToken();
   const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
   const res = await fetch(fullUrl, {
     method,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token || ""}`,
     },
+    credentials: "include",
     body: JSON.stringify(data),
   });
 

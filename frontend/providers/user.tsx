@@ -1,10 +1,14 @@
 import React from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "lib/firebase";
-import { User as FirebaseUser } from "firebase/auth";
+import { useSession } from "lib/betterAuth";
+
+type User = {
+  id: string;
+  name?: string;
+  email?: string;
+};
 
 export const UserContext = React.createContext<{
-  user: FirebaseUser | null;
+  user: User | null;
   refreshUser: () => Promise<void>;
   loading: boolean;
 }>({
@@ -18,34 +22,31 @@ type Props = {
 };
 
 const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = React.useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-    onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-  }, []);
+  const { data: session, isPending } = useSession();
 
   const refreshUser = React.useCallback(async () => {
-    if (!auth) return;
-    await auth.currentUser?.reload();
-    if (auth.currentUser) {
-      setUser({ ...auth.currentUser });
-    }
+    // Better Auth handles session refresh automatically
   }, []);
 
-  return <UserContext.Provider value={{ loading, user, refreshUser }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider
+      value={{
+        loading: isPending,
+        user: session?.user || null,
+        refreshUser,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };
 
-const useUser = () => {
-  const state = React.useContext(UserContext);
-  return { ...state };
+export const useUser = () => {
+  const context = React.useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
 };
 
-export { UserProvider, useUser };
+export default UserProvider;
