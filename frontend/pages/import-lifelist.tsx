@@ -147,22 +147,28 @@ export default function ImportLifelist() {
                 </button>
               </Alert>
             )}
-            <AsyncSelect
-              value={exceptionsValue}
-              loadOptions={taxonomySearch}
-              noOptionsMessage={({ inputValue }) =>
-                inputValue.length > 0 ? "No species found" : "Search for a species..."
-              }
-              menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-              isMulti
-              isLoading={isLoading}
-              onChange={(newValue: Option[]) => {
-                setExceptionsValue(newValue);
-                setExceptionsMutation.mutate({
-                  exceptions: newValue.map((it) => it.value),
-                });
-              }}
-            />
+            {isLoading ? (
+              <div className="flex items-center justify-center h-20">
+                <Icon name="loading" className="animate-spin" />
+              </div>
+            ) : (
+              <AsyncSelect
+                value={exceptionsValue}
+                loadOptions={taxonomySearch}
+                noOptionsMessage={({ inputValue }) =>
+                  inputValue.length > 0 ? "No species found" : "Search for a species..."
+                }
+                menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                isMulti
+                isLoading={isLoading}
+                onChange={(newValue: Option[]) => {
+                  setExceptionsValue(newValue);
+                  setExceptionsMutation.mutate({
+                    exceptions: newValue.map((it) => it.value),
+                  });
+                }}
+              />
+            )}
           </div>
           <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
             <h3 className="text-lg font-medium mb-4 text-gray-700">3. Upload file</h3>
