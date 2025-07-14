@@ -27,7 +27,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const UserProvider = ({ children }: Props) => {
+const ClientUserProvider = ({ children }: Props) => {
   const { data: session, isPending } = useSession();
 
   const refreshUser = React.useCallback(async () => {
@@ -57,6 +57,30 @@ const UserProvider = ({ children }: Props) => {
       {children}
     </UserContext.Provider>
   );
+};
+
+const UserProvider = ({ children }: Props) => {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <UserContext.Provider
+        value={{
+          loading: true,
+          user: null,
+          refreshUser: async () => {},
+        }}
+      >
+        {children}
+      </UserContext.Provider>
+    );
+  }
+
+  return <ClientUserProvider>{children}</ClientUserProvider>;
 };
 
 export const useUser = () => {
