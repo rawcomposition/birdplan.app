@@ -153,7 +153,7 @@ export const auth = betterAuth({
   secret: BETTER_AUTH_CONFIG.secret,
   baseUrl: BETTER_AUTH_CONFIG.baseUrl,
   trustedOrigins: BETTER_AUTH_CONFIG.trustedOrigins,
-  adapter: mongoAdapter,
+  database: mongoAdapter,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
