@@ -10,22 +10,22 @@ profile.get("/", async (c) => {
 
   await connect();
   let [profile] = await Promise.all([
-    Profile.findOne({ uid: session.user.id }).lean(),
-    Profile.updateOne({ uid: session.user.id }, { lastActiveAt: new Date() }),
+    Profile.findOne({ uid: session.uid }).lean(),
+    Profile.updateOne({ uid: session.uid }, { lastActiveAt: new Date() }),
   ]);
 
   if (!profile) {
     const newProfile = await Profile.create({
-      uid: session.user.id,
-      name: session.user.name,
-      email: session.user.email,
+      uid: session.uid,
+      name: session.name,
+      email: session.email,
     });
     profile = newProfile.toObject();
   }
 
-  if (!profile.name && session.user.name) {
-    await Profile.updateOne({ uid: session.user.id }, { name: session.user.name });
-    profile = { ...profile, name: session.user.name };
+  if (!profile.name && session.name) {
+    await Profile.updateOne({ uid: session.uid }, { name: session.name });
+    profile = { ...profile, name: session.name };
   }
 
   return c.json(profile);
@@ -68,9 +68,9 @@ profile.patch("/", async (c) => {
       })
       .filter((code) => code);
 
-    await Profile.updateOne({ uid: session.user.id }, { ...data, lifelist: codes });
+    await Profile.updateOne({ uid: session.uid }, { ...data, lifelist: codes });
   } else {
-    await Profile.updateOne({ uid: session.user.id }, data);
+    await Profile.updateOne({ uid: session.uid }, data);
   }
 
   return c.json({});
@@ -83,7 +83,7 @@ profile.post("/add-to-lifelist", async (c) => {
   const data = await c.req.json<{ code: string }>();
   const { code } = data;
 
-  await Profile.updateOne({ uid: session.user.id }, { $addToSet: { lifelist: code }, $pull: { exclusions: code } });
+  await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code }, $pull: { exclusions: code } });
   return c.json({});
 });
 

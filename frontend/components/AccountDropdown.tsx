@@ -4,7 +4,7 @@ import Icon from "components/Icon";
 import { useUser } from "providers/user";
 import Link from "next/link";
 import clsx from "clsx";
-import useFirebaseLogout from "hooks/useFirebaseLogout";
+import useFirebaseLogout from "hooks/useLogout";
 import { useProfile } from "providers/profile";
 
 type Props = {

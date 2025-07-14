@@ -16,7 +16,11 @@ export async function authenticate(c: Context) {
     if (!session) {
       throw new HTTPException(401, { message: "Unauthorized" });
     }
-    return session;
+    return {
+      uid: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+    };
   } catch (error) {
     console.error("Better Auth error:", error);
     throw new HTTPException(401, { message: "Unauthorized" });

@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import "styles/globals.css";
-import { UserProvider } from "providers/user";
+import UserProvider from "providers/user";
 import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";

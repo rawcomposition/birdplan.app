@@ -48,10 +48,13 @@ app.onError((err, c) => {
   return c.json({ message: "Internal server error" }, 500);
 });
 
-const port = parseInt(process.env.PORT || "3001");
-console.log(`Server is running on port ${port}`);
-
-serve({
-  fetch: app.fetch,
-  port,
-});
+serve(
+  {
+    fetch: app.fetch,
+    port: 5100,
+    hostname: "0.0.0.0",
+  },
+  (info) => {
+    console.log(`Server is running on http://localhost:${info.port}`);
+  }
+);

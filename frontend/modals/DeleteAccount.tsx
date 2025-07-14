@@ -4,7 +4,7 @@ import { Header, Body, Footer, useModal } from "providers/modals";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import Button from "components/Button";
-import useFirebaseLogout from "hooks/useFirebaseLogout";
+import useFirebaseLogout from "hooks/useLogout";
 
 export default function DeleteAccount() {
   const [confirmInput, setConfirmInput] = useState("");

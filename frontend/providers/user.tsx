@@ -3,8 +3,14 @@ import { useSession } from "lib/betterAuth";
 
 type User = {
   id: string;
+  uid: string;
   name?: string;
   email?: string;
+  displayName?: string;
+  photoURL?: string;
+  providerData?: Array<{
+    providerId: string;
+  }>;
 };
 
 export const UserContext = React.createContext<{
@@ -28,11 +34,23 @@ const UserProvider = ({ children }: Props) => {
     // Better Auth handles session refresh automatically
   }, []);
 
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        uid: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        displayName: session.user.name,
+        photoURL: session.user.image || undefined,
+        providerData: [],
+      }
+    : null;
+
   return (
     <UserContext.Provider
       value={{
         loading: isPending,
-        user: session?.user || null,
+        user,
         refreshUser,
       }}
     >

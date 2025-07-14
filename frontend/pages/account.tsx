@@ -41,11 +41,12 @@ export default function Account() {
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
 
-  const socialProviders = user.providerData
-    .filter((provider) => provider.providerId !== "password")
-    .map((provider) => providerNames[provider.providerId as keyof typeof providerNames]);
+  const socialProviders =
+    user.providerData
+      ?.filter((provider) => provider.providerId !== "password")
+      .map((provider) => providerNames[provider.providerId as keyof typeof providerNames]) || [];
 
-  const isEmailProvider = user.providerData.some((provider) => provider.providerId === "password");
+  const isEmailProvider = user.providerData?.some((provider) => provider.providerId === "password") || false;
 
   return (
     <div className="flex flex-col h-full">
