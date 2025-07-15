@@ -30,9 +30,9 @@ if (process.env.CORS_ORIGINS) {
 }
 
 app.route("/v1/profile", profile);
+app.route("/v1/account", account);
 app.route("/v1/trips", trips);
 app.route("/v1/auth", auth);
-app.route("/v1/account", account);
 app.route("/v1/support", support);
 app.route("/v1/taxonomy", taxonomy);
 app.route("/v1/quiz", quiz);
@@ -46,12 +46,14 @@ app.all("/api/auth/*", async (c) => {
   return response;
 });
 
+app.notFound((c) => {
+  return c.json({ message: "Not Found" }, 404);
+});
+
 app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    return c.json({ message: err.message }, err.status);
-  }
-  console.error("Server error:", err);
-  return c.json({ message: "Internal server error" }, 500);
+  const message = err instanceof Error ? err.message : "Internal Server Error";
+  const status = err instanceof HTTPException ? err.status : 500;
+  return c.json({ message }, status);
 });
 
 serve(
