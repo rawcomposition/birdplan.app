@@ -5,7 +5,6 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import mongoose from "mongoose";
 
 async function initializeAuth() {
-  // Ensure connection is established
   await connect();
 
   if (!mongoose.connection.db) {
