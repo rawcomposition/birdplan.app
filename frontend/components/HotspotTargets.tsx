@@ -13,9 +13,10 @@ import useMutation from "hooks/useMutation";
 type Props = {
   hotspotId: string;
   onSpeciesClick: () => void;
+  onAddToTrip: () => void;
 };
 
-export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
+export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const { lifelist } = useProfile();
   const queryClient = useQueryClient();
   const [view, setView] = React.useState<string>("all");
@@ -23,6 +24,8 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const { pendingLocIds, failedLocIds, allTargets, retryDownload } = useHotspotTargets();
   const [isPending, setIsPending] = React.useState(false);
 
+  const savedHotspot = trip?.hotspots.find((it) => it.id === hotspotId);
+  const isSaved = !!savedHotspot;
   const isDownloading = pendingLocIds.includes(hotspotId);
   const isFailed = failedLocIds.includes(hotspotId);
 
@@ -71,6 +74,30 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           Retry
         </button>
       </Alert>
+    );
+  }
+
+  if (!isSaved) {
+    return (
+      <>
+        <p className="text-gray-500 text-sm">You must add this hotspot to your trip to load targets.</p>
+        <p className="flex items-center gap-2 text-sm mt-2">
+          <button className="text-sky-600 font-medium inline-flex items-center gap-1" onClick={onAddToTrip}>
+            <Icon name="plus" className="text-sm text-sky-600" />
+            Add to trip
+          </button>{" "}
+          <span className="text-gray-500 px-1">•</span>
+          <a
+            href={`https://ebird.org/targets?r1=${hotspotId}&bmo=1&emo=12&r2=world&t2=life`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-sky-600 font-medium inline-flex items-center gap-1.5"
+          >
+            <Icon name="external" className="text-xs text-sky-600" />
+            View on eBird
+          </a>
+        </p>
+      </>
     );
   }
 

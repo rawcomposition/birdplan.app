@@ -47,15 +47,12 @@ export default function Hotspot({ hotspot }: Props) {
       title: "",
       id: "checklists",
     },
-  ];
-
-  if (isSaved) {
-    tabs.push({
+    {
       label: "Targets",
       title: "",
       id: "targets",
-    });
-  }
+    },
+  ];
 
   const removeMutation = useTripMutation({
     url: `/trips/${trip?._id}/hotspots/${id}`,
@@ -260,8 +257,8 @@ export default function Hotspot({ hotspot }: Props) {
               speciesName={selectedSpecies?.name}
             />
           )}
-          <div className={clsx(tab === "targets" && isSaved ? "block" : "hidden")}>
-            <HotspotTargets hotspotId={id} onSpeciesClick={() => setTab("checklists")} />
+          <div className={clsx(tab === "targets" ? "block" : "hidden")}>
+            <HotspotTargets hotspotId={id} onSpeciesClick={() => setTab("checklists")} onAddToTrip={handleSave} />
           </div>
         </div>
       </Body>
