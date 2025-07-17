@@ -83,8 +83,9 @@ const favsToHtml = (favs: Hotspot["favs"]) => {
   if (!favs?.length) {
     return "";
   }
+  const sortedFavs = favs.sort((a, b) => b.percent - a.percent);
   let html = "<b>Favorites</b><br/>";
-  favs.forEach((it) => {
+  sortedFavs.forEach((it) => {
     const percent = it.percent > 1 ? Math.round(it.percent) : it.percent;
     html += `<b>${it.name}</b> (${percent}% ${it.range})<br/>`;
     const numBlocks = Math.round(percent / 10) * 1;

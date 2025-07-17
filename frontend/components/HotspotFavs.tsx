@@ -11,10 +11,11 @@ export default function HotspotFavs({ hotspotId }: Props) {
   const hotspot = trip?.hotspots.find((it) => it.id === hotspotId);
 
   if (!hotspot?.favs?.length) return null;
+  const sortedFavs = hotspot.favs.sort((a, b) => b.percent - a.percent);
   return (
     <div className="mt-8 mb-4">
       <h3 className="text-gray-900 text-sm font-bold mb-2">Favorites</h3>
-      {hotspot?.favs?.map(({ code, name, range, percent }) => (
+      {sortedFavs.map(({ code, name, range, percent }) => (
         <div
           key={code}
           className="border-t last:border-b border-gray-100 py-1.5 text-gray-500/80 text-[13px] grid gap-2 grid-cols-1 sm:grid-cols-2 mx-1"
