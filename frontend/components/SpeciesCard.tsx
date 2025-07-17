@@ -2,6 +2,7 @@ import React from "react";
 import Icon from "components/Icon";
 import CloseButton from "components/CloseButton";
 import { useTrip } from "providers/trip";
+import { useModal } from "providers/modals";
 
 type Props = {
   name: string;
@@ -9,8 +10,20 @@ type Props = {
 };
 
 export default function Trip({ name, code }: Props) {
+  const { modalId } = useModal();
   const { targets, setSelectedSpecies, trip } = useTrip();
   const isTarget = targets?.items?.findIndex((it) => it.code === code) !== -1;
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !modalId) {
+        setSelectedSpecies(undefined);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalId]);
 
   return (
     <div className="sm:absolute sm:mt-0 sm:-translate-x-1/2 sm:rounded-b-lg sm:left-1/2 bg-white p-4 w-full sm:max-w-md z-10 shadow">
