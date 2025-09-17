@@ -164,13 +164,6 @@ export type Editor = {
   lifelist: string[];
 };
 
-export type QuizImages = {
-  _id: string;
-  code: string;
-  ids: string[];
-  name: string;
-};
-
 export type Vault = {
   _id: string;
   key: string;

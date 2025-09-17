@@ -28,11 +28,6 @@ export default function TripOptionsDropdown({ className }: Props) {
       hidden: !canEdit,
     },
     {
-      name: "Bird Quiz",
-      href: `/${trip?._id}/quiz`,
-      icon: "questionMark",
-    },
-    {
       name: "Share Trip",
       onClick: () => open("share"),
       icon: "share",
