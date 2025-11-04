@@ -87,7 +87,7 @@ export const getMarkerColor = (count: number) => {
   if (count <= 250) return markerColors[6];
   if (count <= 300) return markerColors[7];
   if (count <= 400) return markerColors[8];
-  if (count <= 500) return markerColors[9];
+  if (count <= 1000) return markerColors[9];
   return markerColors[0];
 };
 
@@ -163,8 +163,8 @@ export const formatDistance = (meters: number, metric: boolean) => {
     distance > 10
       ? Math.round(distance)
       : distance > 1
-        ? Math.round(distance * 10) / 10
-        : Math.round(distance * 100) / 100;
+      ? Math.round(distance * 10) / 10
+      : Math.round(distance * 100) / 100;
   return `${rounded} ${units}`;
 };
 
