@@ -20,9 +20,9 @@ export default function useMutation<TData = unknown, TVariables = unknown>({
       const res = await mutate(method, url, data);
       return res as TData;
     },
-    onError: (err: any, variables, context) => {
+    onError: (err: any, variables, onMutateResult, context) => {
       if (showToastError) toast.error(err.message || "An error occurred");
-      if (onError) onError(err, variables, context);
+      if (onError) onError(err, variables, onMutateResult, context);
     },
     ...options,
   });
