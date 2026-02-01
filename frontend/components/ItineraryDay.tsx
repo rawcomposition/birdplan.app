@@ -11,6 +11,7 @@ import useTripMutation from "hooks/useTripMutation";
 import { useMutationState } from "@tanstack/react-query";
 import { Day } from "@birdplan/shared";
 import { removeInvalidTravelData, moveLocation } from "lib/itinerary";
+import DayImportantTargets from "components/DayImportantTargets";
 
 type PropsT = {
   day: Day;
@@ -111,6 +112,9 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
                 canEdit={isEditing}
               />
             </div>
+            {locations?.some((loc) => loc.type === "hotspot") && (
+              <DayImportantTargets day={{ id: dayId, notes, locations }} />
+            )}
             {!!locations?.length && (
               <ul className="flex flex-col">
                 {locations?.map(({ locationId, type, id }, index) => {
