@@ -13,12 +13,14 @@ import BestTargetHotspots from "components/BestTargetHotspots";
 import useMutation from "hooks/useMutation";
 import useTripMutation from "hooks/useTripMutation";
 import { useQueryClient } from "@tanstack/react-query";
+import { SpeciesCoverage } from "lib/helpers";
 
 type PropsT = Target & {
   index: number;
+  coverage?: SpeciesCoverage;
 };
 
-export default function TargetRow({ index, code, name, percent }: PropsT) {
+export default function TargetRow({ index, code, name, percent, coverage }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
