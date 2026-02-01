@@ -330,7 +330,7 @@ export default function TripTargets() {
                 <div className="absolute top-4 right-4 flex flex-col gap-3 z-10">
                   <MapButton
                     onClick={() => setShowPersonalLocations((prev) => !prev)}
-                    tooltip={showPersonalLocations ? "Hide personal locations" : "Show personal locations"}
+                    tooltip={showPersonalLocations ? "Hide personal hotspots" : "Show personal hotspots"}
                     active={showPersonalLocations}
                   >
                     <Icon name="user" />
