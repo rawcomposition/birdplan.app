@@ -294,6 +294,7 @@ export const markerColos = {
   pink: "#ff385b",
   green: "#15803d",
   gray: "#64748b",
+  lightGray: "#94a3b8",
   blue: "#0369a1",
   purple: "#6a4ca7",
   yellow: "#f59e0b",

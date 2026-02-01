@@ -88,7 +88,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                     <MarkerWithIcon
                       showStroke={false}
                       icon="hotspot"
-                      color={isOnItinerary ? undefined : markerColos.gray}
+                      color={isOnItinerary ? undefined : markerColos.lightGray}
                       className="inline-block scale-75 flex-shrink-0"
                     />
                     <span className="truncate">{hotspot.name}</span>
