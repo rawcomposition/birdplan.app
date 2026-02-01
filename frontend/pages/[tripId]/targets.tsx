@@ -36,7 +36,12 @@ export default function TripTargets() {
   const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
   const { allTargets } = useHotspotTargets();
   const [showPersonalLocations, setShowPersonalLocations] = React.useState(false);
-  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
+  const { obs, obsLayer, hasFrequencyData } = useFetchSpeciesObs({
+    region: trip?.region,
+    code: selectedSpecies?.code,
+    allTargets,
+    showPersonalLocations,
+  });
 
   // Filter options
   const [search, setSearch] = React.useState("");
@@ -318,6 +323,7 @@ export default function TripTargets() {
                     key={trip._id}
                     onHotspotClick={obsClick}
                     obsLayer={selectedSpecies && obsLayer}
+                    hasFrequencyData={hasFrequencyData}
                     bounds={trip.bounds}
                   />
                 )}
