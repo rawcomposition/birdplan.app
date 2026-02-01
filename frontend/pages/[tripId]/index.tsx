@@ -147,6 +147,11 @@ export default function Trip() {
                     <CloseButton onClick={() => setIsAddingMarker(false)} />
                   </div>
                 )}
+                {showAllHotspots && (
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 text-xs text-gray-600 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow">
+                    Hotspot colors show all-time species counts.
+                  </div>
+                )}
               </div>
             </>
           </div>

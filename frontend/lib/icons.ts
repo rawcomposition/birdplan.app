@@ -288,7 +288,7 @@ type MarkerIconsT = {
   };
 };
 
-const markerColos = {
+export const markerColos = {
   sky: "#0284c7",
   black: "#334155",
   pink: "#ff385b",
