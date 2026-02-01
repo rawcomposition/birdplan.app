@@ -127,7 +127,8 @@ export default function Hotspot({ hotspot }: Props) {
   const hasSpecies = !!selectedSpecies && router.pathname.includes("targets");
   React.useEffect(() => {
     if (hasSpecies) {
-      setHalo({ lat, lng, color: "#ce0d02" });
+      // Use cyan color to distinguish selected hotspot from frequency colors
+      setHalo({ lat, lng, color: "#0891b2" });
     } else if (isSaved) {
       setSelectedMarkerId(id);
     } else if (!isSaved) {
