@@ -116,7 +116,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
           onChange={setView}
           options={[
             { label: "All Year", value: "all" },
-            { label: dateRangeLabel, value: "obs" },
+            { label: "Trip dates", value: "obs" },
           ]}
         />
       )}
