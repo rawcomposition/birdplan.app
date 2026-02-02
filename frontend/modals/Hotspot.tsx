@@ -5,7 +5,7 @@ import Button from "components/Button";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import DirectionsButton from "components/DirectionsButton";
-import { isRegionEnglish, getMarkerColor } from "lib/helpers";
+import { isRegionEnglish, getMarkerColor, nanoId } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -18,7 +18,8 @@ import Icon from "components/Icon";
 import { useRouter } from "next/router";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation as useTanMutation, useQueryClient } from "@tanstack/react-query";
+import { mutate } from "lib/http";
 
 type Props = {
   hotspot: HotspotT;
@@ -112,6 +113,41 @@ export default function Hotspot({ hotspot }: Props) {
       ...old,
       hotspots: [...(old.hotspots || []), input],
     }),
+  });
+
+  type AddToItineraryInput = { dayId: string; locationEntryId: string; dayIndex: number };
+  const addToItineraryMutation = useTanMutation<any, Error, AddToItineraryInput>({
+    mutationFn: async ({ dayId, locationEntryId }) => {
+      const payload = { type: "hotspot" as const, locationId: id, id: locationEntryId };
+      await mutate("POST", `/trips/${trip?._id}/itinerary/${dayId}/add-location`, payload);
+    },
+    onMutate: async ({ dayId, locationEntryId }) => {
+      if (!trip?._id) return;
+      await queryClient.cancelQueries({ queryKey: [`/trips/${trip._id}`] });
+      const prevData = queryClient.getQueryData([`/trips/${trip._id}`]);
+      const payload = { type: "hotspot" as const, locationId: id, id: locationEntryId };
+      queryClient.setQueryData<Trip | undefined>([`/trips/${trip._id}`], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          itinerary:
+            old.itinerary?.map((it) =>
+              it.id === dayId ? { ...it, locations: [...(it.locations || []), payload] } : it
+            ) ?? [],
+        };
+      });
+      return { prevData };
+    },
+    onError: (err, _variables, context: any) => {
+      toast.error(err.message || "An error occurred");
+      if (context?.prevData) queryClient.setQueryData([`/trips/${trip?._id}`], context.prevData);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+    },
+    onSuccess: (_data, { dayIndex }) => {
+      toast.success(`Added to Day ${dayIndex}`);
+    },
   });
 
   const handleSave = async () => {
@@ -231,6 +267,45 @@ export default function Hotspot({ hotspot }: Props) {
         {isSaved && (
           <InputNotes key={id} value={notes} onBlur={(value) => saveNotesMutation.mutate({ notes: value })} />
         )}
+
+        {isSaved && canEdit && trip?.itinerary && trip.itinerary.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-sm font-bold text-gray-700 mb-2">Add to itinerary</h4>
+            <ul className="flex flex-col gap-1.5">
+              {trip.itinerary.map((day, index) => {
+                const dayNumber = index + 1;
+                const stopCount = day.locations?.length ?? 0;
+                const isAlreadyOnDay = day.locations?.some((loc) => loc.locationId === id);
+                return (
+                  <li key={day.id} className="flex items-center justify-between gap-2 text-sm">
+                    <span className="text-gray-600">
+                      Day {dayNumber} ({stopCount} {stopCount === 1 ? "stop" : "stops"})
+                    </span>
+                    {isAlreadyOnDay ? (
+                      <span className="text-gray-400 text-xs">Already on Day {dayNumber}</span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          addToItineraryMutation.mutate({
+                            dayId: day.id,
+                            locationEntryId: nanoId(6),
+                            dayIndex: dayNumber,
+                          })
+                        }
+                        disabled={addToItineraryMutation.isPending}
+                        className="text-sky-600 font-medium hover:underline disabled:opacity-60"
+                      >
+                        Add to Day {dayNumber}
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
         <div className="-mx-4 sm:-mx-6 mb-3">
           <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
             {tabs.map(({ label, id, title }) => (
