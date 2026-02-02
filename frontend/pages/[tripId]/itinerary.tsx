@@ -149,14 +149,17 @@ export default function Itinerary() {
                       </Button>
                     )}
                   </div>
-                  {canEdit && !!trip?.startDate && !editingStartDate && (
-                    <button
+                  {canEdit && !!trip?.startDate && isEditing && !editingStartDate && (
+                    <Button
                       type="button"
+                      size="smPill"
+                      color="pillOutlineGray"
+                      className="mt-2 print:hidden inline-flex gap-2"
                       onClick={() => setEditingStartDate(true)}
-                      className="text-[14px] text-gray-600 hover:text-gray-700 block mt-2 hover:underline"
                     >
+                      <Icon name="calendar" className="w-4 h-4" />
                       Edit dates
-                    </button>
+                    </Button>
                   )}
                 </div>
 
