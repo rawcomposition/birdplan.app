@@ -92,6 +92,8 @@ export default function DayImportantTargets({ day }: Props) {
         );
         const thisPercent = getPercentOnDay(hotspotId, code);
         const isBestAtThisHotspotOnDay = bestPercentOnDay > 0 && thisPercent === bestPercentOnDay;
+        const firstBestHotspotId = hotspotsInOrder.find((hid) => getPercentOnDay(hid, code) === bestPercentOnDay);
+        if (firstBestHotspotId !== hotspotId) continue;
 
         species.push({
           code,
