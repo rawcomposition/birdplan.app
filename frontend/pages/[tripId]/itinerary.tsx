@@ -14,6 +14,13 @@ import NotFound from "components/NotFound";
 import useTripMutation from "hooks/useTripMutation";
 import { nanoId } from "lib/helpers";
 import ItineraryDay from "components/ItineraryDay";
+import dayjs from "dayjs";
+
+function daysBetweenInclusive(startDateStr: string, endDateStr: string): number {
+  const start = dayjs(startDateStr);
+  const end = dayjs(endDateStr);
+  return end.diff(start, "day") + 1;
+}
 
 export default function Itinerary() {
   const { user } = useUser();
@@ -38,6 +45,23 @@ export default function Itinerary() {
     }),
   });
 
+  const setDateRangeMutation = useTripMutation<{ startDate: string; endDate: string }>({
+    url: `/trips/${trip?._id}/set-date-range`,
+    method: "PATCH",
+    updateCache: (old, input) => {
+      const M = old.itinerary?.length ?? 0;
+      const N = daysBetweenInclusive(input.startDate, input.endDate);
+      let newItinerary = old.itinerary ?? [];
+      if (M === 0) {
+        newItinerary = Array.from({ length: N }, () => ({ id: nanoId(6), locations: [] }));
+      } else if (N > M) {
+        const extra = Array.from({ length: N - M }, () => ({ id: nanoId(6), locations: [] }));
+        newItinerary = [...newItinerary, ...extra];
+      }
+      return { ...old, startDate: input.startDate, itinerary: newItinerary };
+    },
+  });
+
   const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
     url: `/trips/${trip?._id}/itinerary`,
     method: "POST",
@@ -47,12 +71,33 @@ export default function Itinerary() {
     }),
   });
 
-  const submitStartDate = (e: React.FormEvent<HTMLFormElement>) => {
+  const derivedEndDate =
+    trip?.startDate && trip?.itinerary?.length
+      ? dayjs(trip.startDate).add((trip.itinerary.length ?? 1) - 1, "day").format("YYYY-MM-DD")
+      : trip?.startDate ?? "";
+
+  const submitDateRange = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const date = form.date.value;
-    if (!date) return toast.error("Please choose a date");
-    setStartDateMutation.mutate({ startDate: date });
+    const startDate = form.startDate.value;
+    const endDate = form.endDate.value;
+    if (!startDate) return toast.error("Please choose a start date");
+    if (!endDate) return toast.error("Please choose an end date");
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    if (end.isBefore(start)) return toast.error("End date cannot be before start date");
+
+    const M = trip?.itinerary?.length ?? 0;
+    const N = daysBetweenInclusive(startDate, endDate);
+    if (M > 0 && N < M) {
+      const lastDayDate = dayjs(trip!.startDate!).add(M - 1, "day").format("MMMM D, YYYY");
+      toast.error(
+        `End date cannot be before ${lastDayDate} because you have ${M} itinerary days. Use "Remove day" to shorten the trip.`
+      );
+      return;
+    }
+
+    setDateRangeMutation.mutate({ startDate, endDate });
     setEditingStartDate(false);
     setEditing(true);
   };
@@ -110,23 +155,36 @@ export default function Itinerary() {
                       onClick={() => setEditingStartDate(true)}
                       className="text-[14px] text-gray-600 hover:text-gray-700 block mt-2 hover:underline"
                     >
-                      Edit start date
+                      Edit dates
                     </button>
                   )}
                 </div>
 
                 {canEdit && (!trip?.startDate || editingStartDate) && (
                   <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-                    <h2 className="text-xl font-bold text-gray-700 mb-4">Choose start date</h2>
-                    <form className="flex gap-2" onSubmit={submitStartDate}>
-                      <Input
-                        name="date"
-                        type="date"
-                        defaultValue={trip?.startDate}
-                        className="flex-grow flex xs:block"
-                      />
+                    <h2 className="text-xl font-bold text-gray-700 mb-4">Trip dates</h2>
+                    <form className="flex flex-col gap-4" onSubmit={submitDateRange}>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                        <label className="text-sm font-medium text-gray-700">Start date</label>
+                        <Input
+                          name="startDate"
+                          type="date"
+                          defaultValue={trip?.startDate}
+                          className="flex-grow max-w-xs"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                        <label className="text-sm font-medium text-gray-700">End date</label>
+                        <Input
+                          name="endDate"
+                          type="date"
+                          defaultValue={derivedEndDate || trip?.startDate}
+                          min={trip?.startDate}
+                          className="flex-grow max-w-xs"
+                        />
+                      </div>
                       <Button type="submit" color="primary">
-                        Set
+                        Set dates
                       </Button>
                     </form>
                   </div>
