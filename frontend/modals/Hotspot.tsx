@@ -15,6 +15,7 @@ import { Menu } from "@headlessui/react";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
+import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
@@ -276,10 +277,14 @@ export default function Hotspot({ hotspot }: Props) {
                 const dayNumber = index + 1;
                 const stopCount = day.locations?.length ?? 0;
                 const isAlreadyOnDay = day.locations?.some((loc) => loc.locationId === id);
+                const dateLabel = trip?.startDate
+                  ? dayjs(trip.startDate).add(index, "day").format("ddd, MMM D")
+                  : null;
                 return (
                   <li key={day.id} className="flex items-center justify-between gap-2 text-sm">
                     <span className="text-gray-600">
-                      Day {dayNumber} ({stopCount} {stopCount === 1 ? "stop" : "stops"})
+                      Day {dayNumber}
+                      {dateLabel && ` · ${dateLabel}`} ({stopCount} {stopCount === 1 ? "stop" : "stops"})
                     </span>
                     {isAlreadyOnDay ? (
                       <span className="text-gray-400 text-xs">Already on Day {dayNumber}</span>
