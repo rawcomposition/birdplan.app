@@ -185,6 +185,31 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 }
 
+/** Google Maps allows up to 9 waypoints (11 stops total). Returns null if fewer than 2 points. */
+export function getGoogleMapsFullDayRouteUrl(
+  points: { lat: number; lng: number }[]
+): string | null {
+  if (points.length < 2) return null;
+  const capped = points.slice(0, 11);
+  const origin = `${capped[0].lat},${capped[0].lng}`;
+  const destination = `${capped[capped.length - 1].lat},${capped[capped.length - 1].lng}`;
+  const waypoints =
+    capped.length > 2
+      ? capped
+          .slice(1, -1)
+          .map((p) => `${p.lat},${p.lng}`)
+          .join("|")
+      : undefined;
+  const params = new URLSearchParams({
+    api: "1",
+    origin,
+    destination,
+    travelmode: "driving",
+  });
+  if (waypoints) params.set("waypoints", waypoints);
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
+}
+
 export type SpeciesCoverage = {
   code: string;
   maxPercent: number;

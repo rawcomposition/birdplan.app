@@ -37,6 +37,7 @@ function getSpeciesName(code: string, allTargets: { items: { code: string; name:
 }
 
 export default function DayImportantTargets({ day }: Props) {
+  const [expanded, setExpanded] = React.useState(true);
   const { trip } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { lifelist } = useProfile();
@@ -90,10 +91,19 @@ export default function DayImportantTargets({ day }: Props) {
 
   return (
     <div className="mb-4 p-3 bg-amber-50/80 rounded-lg border border-amber-100">
-      <h3 className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-1.5">
+      <button
+        type="button"
+        onClick={() => setExpanded((e) => !e)}
+        className="w-full text-left text-sm font-bold text-gray-700 mb-2 flex items-center gap-1.5 hover:text-gray-800"
+      >
+        <Icon
+          name="angleDown"
+          className={`w-4 h-4 text-amber-500 transition-transform ${expanded ? "" : "-rotate-90"}`}
+        />
         <Icon name="star" className="w-4 h-4 text-amber-500" />
         Key targets today
-      </h3>
+      </button>
+      {expanded && (
       <div className="text-sm text-gray-700 space-y-3">
         {byHotspot.map(({ hotspotId, hotspotName, species }) => (
           <div key={hotspotId}>
@@ -142,6 +152,7 @@ export default function DayImportantTargets({ day }: Props) {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }
