@@ -5,6 +5,7 @@ import { useHotspotTargets } from "providers/hotspot-targets";
 import { useProfile } from "providers/profile";
 import {
   getHotspotSpeciesImportance,
+  getDaySpeciesImportance,
   getBestHotspotsForSpecies,
   getAllHotspotsForSpecies,
 } from "lib/helpers";
@@ -50,10 +51,30 @@ export default function DayImportantTargets({ day }: Props) {
     [day.locations]
   );
 
+  const dayIndex = React.useMemo(
+    () => trip?.itinerary?.findIndex((d: Day) => d.id === day.id) ?? -1,
+    [trip?.itinerary, day.id]
+  );
+
+  const dayImportance = React.useMemo(
+    () =>
+      allTargets?.length && trip?.itinerary?.length && dayIndex >= 0
+        ? getDaySpeciesImportance(allTargets, trip.itinerary)
+        : new Map(),
+    [allTargets, trip?.itinerary, dayIndex]
+  );
+
+  const getPercentOnDay = React.useCallback(
+    (hotspotId: string, code: string): number =>
+      allTargets?.find((t) => t.hotspotId === hotspotId)?.items.find((it) => it.code === code)?.percent ?? 0,
+    [allTargets]
+  );
+
   const byHotspot = React.useMemo((): HotspotSpecies[] => {
-    if (!allTargets?.length || !hotspotsInOrder.length) return [];
+    if (!allTargets?.length || !hotspotsInOrder.length || dayIndex < 0) return [];
 
     const result: HotspotSpecies[] = [];
+    const dayImpByCode = dayImportance.get(dayIndex);
 
     for (const hotspotId of hotspotsInOrder) {
       const hotspot = trip?.hotspots?.find((h) => h.id === hotspotId);
@@ -61,12 +82,21 @@ export default function DayImportantTargets({ day }: Props) {
       const species: SpeciesAtHotspot[] = [];
 
       for (const [code, imp] of importanceMap) {
-        if (!imp.isBestAtThisHotspot && !imp.isCritical) continue;
+        const dayImp = dayImpByCode?.get(code);
+        const showByDay = dayImp?.isBestDay && dayImp?.isSubstantiallyBetterDay;
+        if (!showByDay && !imp.isCritical) continue;
         if (lifelist?.includes(code)) continue;
+
+        const bestPercentOnDay = Math.max(
+          ...hotspotsInOrder.map((hid) => getPercentOnDay(hid, code))
+        );
+        const thisPercent = getPercentOnDay(hotspotId, code);
+        const isBestAtThisHotspotOnDay = bestPercentOnDay > 0 && thisPercent === bestPercentOnDay;
+
         species.push({
           code,
           name: getSpeciesName(code, allTargets),
-          isBestAtThisHotspot: imp.isBestAtThisHotspot,
+          isBestAtThisHotspot: isBestAtThisHotspotOnDay,
           isCritical: imp.isCritical,
         });
       }
@@ -82,7 +112,7 @@ export default function DayImportantTargets({ day }: Props) {
     }
 
     return result;
-  }, [allTargets, hotspotsInOrder, trip?.hotspots, lifelist]);
+  }, [allTargets, hotspotsInOrder, trip?.hotspots, trip?.itinerary, dayIndex, dayImportance, getPercentOnDay, lifelist]);
 
   const locationIds = trip?.hotspots?.map((h) => h.id) ?? [];
   const hotspots = trip?.hotspots ?? [];
