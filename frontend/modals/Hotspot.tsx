@@ -280,9 +280,21 @@ export default function Hotspot({ hotspot }: Props) {
                 const dateLabel = trip?.startDate
                   ? dayjs(trip.startDate).add(index, "day").format("ddd, MMM D")
                   : null;
+                const dayStopTooltip =
+                  day.locations
+                    ?.map((loc, i) => {
+                      const spot = trip?.hotspots?.find((h) => h.id === loc.locationId);
+                      const marker = trip?.markers?.find((m) => m.id === loc.locationId);
+                      const name = spot?.name ?? marker?.name ?? "Unknown";
+                      return `${i + 1}. ${name}`;
+                    })
+                    .join("\n") ?? "";
                 return (
                   <li key={day.id} className="flex items-center justify-between gap-2 text-sm">
-                    <span className="text-gray-600">
+                    <span
+                      className="text-gray-600 cursor-help"
+                      title={dayStopTooltip || "No stops yet"}
+                    >
                       Day {dayNumber}
                       {dateLabel && ` · ${dateLabel}`} ({stopCount} {stopCount === 1 ? "stop" : "stops"})
                     </span>
