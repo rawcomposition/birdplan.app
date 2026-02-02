@@ -11,6 +11,7 @@ import useTripMutation from "hooks/useTripMutation";
 import { useMutationState } from "@tanstack/react-query";
 import { Day } from "@birdplan/shared";
 import { removeInvalidTravelData, moveLocation } from "lib/itinerary";
+import { getGoogleMapsFullDayRouteUrl, formatTime, formatDistance } from "lib/helpers";
 import DayImportantTargets from "components/DayImportantTargets";
 
 type PropsT = {
@@ -98,12 +99,55 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
   const date = trip?.startDate ? dayjs(trip.startDate).add(dayIndex, "day").format("dddd, MMMM D") : "";
   const { notes, locations } = day;
 
+  const dayRoutePoints =
+    locations
+      ?.map(({ locationId }) =>
+        trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId)
+      )
+      .filter((loc): loc is { lat: number; lng: number } => loc != null && "lat" in loc && "lng" in loc)
+      .map((loc) => ({ lat: loc.lat, lng: loc.lng })) ?? [];
+  const fullDayRouteUrl = getGoogleMapsFullDayRouteUrl(dayRoutePoints);
+
+  const totalTravel = locations?.reduce(
+    (acc, loc) => {
+      const t = loc.travel;
+      if (!t?.isDeleted && t?.time != null && t?.distance != null) {
+        acc.time += t.time;
+        acc.distance += t.distance;
+      }
+      return acc;
+    },
+    { time: 0, distance: 0 }
+  );
+  const hasTotalTravel = totalTravel && totalTravel.time > 0;
+
   return (
     <div className="mb-8">
       <div className="mb-3">
         <div className="flex flex-col">
-          <h1 className="text-xl font-bold text-gray-700">Day {dayIndex + 1}</h1>
-          <span className="text-gray-500 text-[13px]">{date}</span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <h1 className="text-xl font-bold text-gray-700">Day {dayIndex + 1}</h1>
+            <span className="text-gray-500 text-[13px]">{date}</span>
+            {fullDayRouteUrl && (
+              <a
+                href={fullDayRouteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-[13px] text-[#c2410d] hover:underline print:hidden"
+              >
+                <Icon name="directions" className="text-[#c2410d]" />
+                Drive full route
+              </a>
+            )}
+            {hasTotalTravel && (
+              <span className="text-gray-500 text-[13px]">
+                Total travel: {formatTime(totalTravel.time)}
+                {totalTravel.distance > 0 && (
+                  <> • {formatDistance(totalTravel.distance, false)}</>
+                )}
+              </span>
+            )}
+          </div>
         </div>
         <InputNotesSimple
           value={notes}
