@@ -9,6 +9,7 @@ import {
   getAllHotspotsForSpecies,
 } from "lib/helpers";
 import Icon from "components/Icon";
+import MerlinkLink from "components/MerlinLink";
 
 type Props = {
   day: Day;
@@ -111,7 +112,7 @@ export default function DayImportantTargets({ day }: Props) {
                 return (
                   <li key={code} className="group relative flex items-center gap-1.5">
                     <Icon name="star" className="w-3 h-3 text-amber-500 flex-shrink-0" />
-                    <span>{name}</span>
+                    <MerlinkLink code={code}>{name}</MerlinkLink>
                     <span className="text-gray-500 text-xs">
                       {isBestAtThisHotspot && isCritical
                         ? " · best here, hard elsewhere"
