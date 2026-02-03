@@ -20,7 +20,7 @@ type Props = {
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const { lifelist } = useProfile();
   const queryClient = useQueryClient();
-  const [view, setView] = React.useState<string>("all");
+  const [view, setView] = React.useState<string>("obs");
   const { trip, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { pendingLocIds, failedLocIds, allTargets, retryDownload } = useHotspotTargets();
   const [isPending, setIsPending] = React.useState(false);
