@@ -130,7 +130,7 @@ export default function Itinerary() {
           <div className="h-full grow flex sm:relative flex-col w-full">
             <div className="h-full overflow-auto" onClick={handleDivClick}>
               <div className="mt-2 sm:mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
-                <div className="mb-8 sm:mb-10">
+                <div className="sticky top-0 z-10 bg-white pb-2 mb-8 sm:mb-10 -mx-4 px-4 md:-mx-0 md:px-0">
                   <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold text-gray-700">Trip Itinerary</h1>
                     {canEdit && hasStartDate && (
