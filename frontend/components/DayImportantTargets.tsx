@@ -37,8 +37,10 @@ function getSpeciesName(code: string, allTargets: { items: { code: string; name:
   return code;
 }
 
+const COLLAPSED_SPECIES_PREVIEW = 4;
+
 export default function DayImportantTargets({ day }: Props) {
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = React.useState(false);
   const { trip } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { lifelist } = useProfile();
@@ -119,6 +121,13 @@ export default function DayImportantTargets({ day }: Props) {
   const locationIds = trip?.hotspots?.map((h) => h.id) ?? [];
   const hotspots = trip?.hotspots ?? [];
 
+  const flatSpecies = React.useMemo(
+    () => byHotspot.flatMap((h) => h.species),
+    [byHotspot]
+  );
+  const collapsedPreview = flatSpecies.slice(0, COLLAPSED_SPECIES_PREVIEW);
+  const hasMoreSpecies = flatSpecies.length > COLLAPSED_SPECIES_PREVIEW;
+
   if (!byHotspot.length) return null;
 
   return (
@@ -135,6 +144,21 @@ export default function DayImportantTargets({ day }: Props) {
         <Icon name="star" className="w-4 h-4 text-amber-500" />
         Key targets today
       </button>
+      {!expanded && (
+        <div className="text-sm text-gray-700 pl-6 space-y-1">
+          {collapsedPreview.map(({ code, name }) => (
+            <div key={code} className="flex items-center gap-1.5">
+              <Icon name="star" className="w-3 h-3 text-amber-500 flex-shrink-0" />
+              <MerlinkLink code={code}>{name}</MerlinkLink>
+            </div>
+          ))}
+          {hasMoreSpecies && (
+            <div className="text-gray-500 italic" aria-hidden="true">
+              …
+            </div>
+          )}
+        </div>
+      )}
       {expanded && (
       <div className="text-sm text-gray-700 space-y-3">
         {byHotspot.map(({ hotspotId, hotspotName, species }) => (
