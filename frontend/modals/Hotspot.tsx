@@ -183,7 +183,10 @@ export default function Hotspot({ hotspot }: Props) {
   return (
     <>
       <div className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50">
-        <h3 className="text-lg font-medium">{name}</h3>
+        <h3 className="text-lg font-medium flex items-center gap-2">
+          {isSaved && <Icon name="star" className="text-amber-500 flex-shrink-0 w-5 h-5" />}
+          {name}
+        </h3>
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
             {!originalName && !translateMutation.isPending && (
