@@ -153,9 +153,13 @@ export default function DayImportantTargets({ day }: Props) {
             </div>
           ))}
           {hasMoreSpecies && (
-            <div className="text-gray-500 italic" aria-hidden="true">
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="text-gray-500 italic hover:text-gray-700 cursor-pointer"
+            >
               …
-            </div>
+            </button>
           )}
         </div>
       )}
