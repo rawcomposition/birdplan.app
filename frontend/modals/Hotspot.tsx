@@ -15,6 +15,7 @@ import { Menu } from "@headlessui/react";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
+import MarkerWithIcon from "components/MarkerWithIcon";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import useTripMutation from "hooks/useTripMutation";
@@ -184,7 +185,7 @@ export default function Hotspot({ hotspot }: Props) {
     <>
       <div className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50">
         <h3 className="text-lg font-medium flex items-center gap-2">
-          {isSaved && <Icon name="star" className="text-amber-500 flex-shrink-0 w-5 h-5" />}
+          {isSaved && <MarkerWithIcon icon="hotspot" className="flex-shrink-0 !w-5 !h-5" />}
           {name}
         </h3>
         {canTranslate && (
