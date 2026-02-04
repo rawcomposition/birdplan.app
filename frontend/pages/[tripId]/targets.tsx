@@ -19,7 +19,7 @@ import TargetRow from "components/TargetRow";
 import { useQuery } from "@tanstack/react-query";
 import { Editor, Target } from "@birdplan/shared";
 import { useHotspotTargets } from "providers/hotspot-targets";
-import { calculateSpeciesCoverage, isLowCoverageSpecies } from "lib/helpers";
+import { calculateSpeciesCoverage, getMarkerColorIndex, isLowCoverageSpecies } from "lib/helpers";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import clsx from "clsx";
 import MapButton from "components/MapButton";
@@ -135,7 +135,27 @@ export default function TripTargets() {
     );
   };
 
+  const savedHotspotMarkers = React.useMemo(
+    () =>
+      (trip?.hotspots || []).map((it) => ({
+        lat: it.lat,
+        lng: it.lng,
+        shade: getMarkerColorIndex(it.species || 0),
+        id: it.id,
+      })),
+    [trip?.hotspots]
+  );
+
   const obsClick = (id: string) => {
+    const savedHotspot = trip?.hotspots?.find((it) => it.id === id);
+    if (savedHotspot) {
+      open("hotspot", {
+        hotspot: savedHotspot,
+        speciesCode: selectedSpecies?.code,
+        speciesName: selectedSpecies?.name,
+      });
+      return;
+    }
     const observation = obs.find((it) => it.id === id);
     if (!observation) return toast.error("Observation not found");
     observation.isPersonal
@@ -158,7 +178,8 @@ export default function TripTargets() {
       !target.closest("button") &&
       !target.closest("a") &&
       !target.closest('[role="button"]') &&
-      !target.closest(".mapboxgl-canvas")
+      !target.closest(".mapboxgl-canvas") &&
+      !target.closest(".mapboxgl-map")
     ) {
       close();
     }
@@ -322,6 +343,7 @@ export default function TripTargets() {
                   <MapBox
                     key={trip._id}
                     onHotspotClick={obsClick}
+                    markers={savedHotspotMarkers}
                     obsLayer={selectedSpecies && obsLayer}
                     hasFrequencyData={hasFrequencyData}
                     bounds={trip.bounds}
@@ -330,7 +352,7 @@ export default function TripTargets() {
                 <div className="absolute top-4 right-4 flex flex-col gap-3 z-10">
                   <MapButton
                     onClick={() => setShowPersonalLocations((prev) => !prev)}
-                    tooltip={showPersonalLocations ? "Hide personal locations" : "Show personal locations"}
+                    tooltip={showPersonalLocations ? "Hide personal hotspots" : "Show personal hotspots"}
                     active={showPersonalLocations}
                   >
                     <Icon name="user" />

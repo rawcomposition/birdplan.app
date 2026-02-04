@@ -29,6 +29,8 @@ export default function TargetRow({ index, code, name, percent, coverage }: Prop
   const isStarred = trip?.targetStars?.includes(code);
   const queryClient = useQueryClient();
   const regionCode = trip?.region.split(",")[0] || "";
+  const displayPercent =
+    coverage && coverage.hotspotCount > 0 ? coverage.weightedAvgPercent : percent;
 
   const addStarMutation = useTripMutation<{ code: string }>({
     url: `/trips/${trip?._id}/targets/add-star`,
@@ -145,7 +147,7 @@ export default function TargetRow({ index, code, name, percent, coverage }: Prop
             cacheMeasurements
           />
         </td>
-        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{percent}%</td>
+        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{displayPercent}%</td>
         <td className="text-[14px] text-gray-600 hidden sm:table-cell">
           {lastReport?.date
             ? dateTimeToRelative(lastReport.date, regionCode, true)

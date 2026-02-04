@@ -1,4 +1,4 @@
-import { Trip } from "@birdplan/shared";
+import { Day, Trip } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -359,6 +359,67 @@ export function getHotspotSpeciesImportance(
       isBestAtThisHotspot: cov?.bestHotspotId === hotspotId,
       isCritical: isLowCoverageSpecies(cov),
     });
+  }
+
+  return result;
+}
+
+const BEST_DAY_MIN_LEAD_PERCENT = 5;
+
+export type DaySpeciesImportance = {
+  isBestDay: boolean;
+  isSubstantiallyBetterDay: boolean;
+};
+
+/**
+ * Per-day, per-species importance for "Key targets today".
+ * A species on a day is important when this day is the best chance on the trip and substantially better than other days.
+ */
+export function getDaySpeciesImportance(
+  allTargets: HotspotTargetData[],
+  itinerary: Day[]
+): Map<number, Map<string, DaySpeciesImportance>> {
+  const result = new Map<number, Map<string, DaySpeciesImportance>>();
+
+  if (!allTargets?.length || !itinerary?.length) return result;
+
+  // Best percent for each (speciesCode, dayIndex)
+  const speciesCodes = new Set<string>();
+  for (const t of allTargets) {
+    for (const item of t.items ?? []) speciesCodes.add(item.code);
+  }
+
+  const getPercent = (hotspotId: string, code: string): number =>
+    allTargets.find((t) => t.hotspotId === hotspotId)?.items.find((it) => it.code === code)?.percent ?? 0;
+
+  for (const code of speciesCodes) {
+    const dayBestPercents: { dayIndex: number; bestPercent: number }[] = [];
+    for (let dayIndex = 0; dayIndex < itinerary.length; dayIndex++) {
+      const day = itinerary[dayIndex];
+      const hotspotIds = (day.locations ?? [])
+        .filter((loc) => loc.type === "hotspot")
+        .map((loc) => loc.locationId);
+      let bestPercent = 0;
+      for (const hid of hotspotIds) {
+        const p = getPercent(hid, code);
+        if (p > bestPercent) bestPercent = p;
+      }
+      dayBestPercents.push({ dayIndex, bestPercent });
+    }
+    const sorted = [...dayBestPercents].sort((a, b) => b.bestPercent - a.bestPercent);
+    const top = sorted[0];
+    if (!top || top.bestPercent === 0) continue;
+    const secondBestPercent = sorted[1]?.bestPercent ?? 0;
+    const isSubstantiallyBetter = top.bestPercent - secondBestPercent >= BEST_DAY_MIN_LEAD_PERCENT;
+
+    for (const { dayIndex, bestPercent } of dayBestPercents) {
+      if (bestPercent === 0) continue;
+      if (!result.has(dayIndex)) result.set(dayIndex, new Map());
+      result.get(dayIndex)!.set(code, {
+        isBestDay: dayIndex === top.dayIndex,
+        isSubstantiallyBetterDay: dayIndex === top.dayIndex && isSubstantiallyBetter,
+      });
+    }
   }
 
   return result;

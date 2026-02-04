@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate, tripToGeoJson, sanitizeFileName } from "lib/utils.js";
+import { authenticate, tripToGeoJson, sanitizeFileName, nanoId } from "lib/utils.js";
 import { connect, Trip, TargetList, Invite, Profile } from "lib/db.js";
 import type { TripUpdateInput, Editor } from "@birdplan/shared";
 import { TargetListType } from "@birdplan/shared";
@@ -237,6 +237,80 @@ trip.patch("/set-start-date", async (c) => {
   }
 
   await Trip.updateOne({ _id: tripId }, { startDate });
+
+  return c.json({});
+});
+
+function daysBetweenInclusive(startDateStr: string, endDateStr: string): number {
+  const start = new Date(startDateStr);
+  const end = new Date(endDateStr);
+  const diffTime = end.getTime() - start.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays + 1;
+}
+
+trip.patch("/set-date-range", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const body = await c.req.json<{ startDate: string; endDate: string }>();
+  const { startDate, endDate } = body;
+
+  if (!startDate || !endDate) {
+    throw new HTTPException(400, { message: "Start date and end date are required" });
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (end < start) {
+    throw new HTTPException(400, { message: "End date cannot be before start date" });
+  }
+
+  const N = daysBetweenInclusive(startDate, endDate);
+  if (N < 1) {
+    throw new HTTPException(400, { message: "Invalid date range" });
+  }
+
+  await connect();
+  const tripDoc = await Trip.findById(tripId).lean();
+  if (!tripDoc) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!tripDoc.userIds.includes(session.uid)) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  const M = tripDoc.itinerary?.length ?? 0;
+
+  if (N < M) {
+    throw new HTTPException(400, {
+      message:
+        "End date would remove days that have content. Use a later end date or remove days from the itinerary first.",
+    });
+  }
+
+  if (M === 0) {
+    const newDays = Array.from({ length: N }, () => ({
+      id: nanoId(6),
+      locations: [],
+    }));
+    await Trip.updateOne({ _id: tripId }, { startDate, itinerary: newDays });
+  } else {
+    if (N > M) {
+      const extraDays = Array.from({ length: N - M }, () => ({
+        id: nanoId(6),
+        locations: [],
+      }));
+      const updatedItinerary = [...(tripDoc.itinerary ?? []), ...extraDays];
+      await Trip.updateOne({ _id: tripId }, { startDate, itinerary: updatedItinerary });
+    } else {
+      await Trip.updateOne({ _id: tripId }, { startDate });
+    }
+  }
 
   return c.json({});
 });

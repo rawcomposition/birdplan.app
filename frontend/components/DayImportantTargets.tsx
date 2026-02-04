@@ -5,10 +5,12 @@ import { useHotspotTargets } from "providers/hotspot-targets";
 import { useProfile } from "providers/profile";
 import {
   getHotspotSpeciesImportance,
+  getDaySpeciesImportance,
   getBestHotspotsForSpecies,
   getAllHotspotsForSpecies,
 } from "lib/helpers";
 import Icon from "components/Icon";
+import MerlinkLink from "components/MerlinLink";
 
 type Props = {
   day: Day;
@@ -35,8 +37,10 @@ function getSpeciesName(code: string, allTargets: { items: { code: string; name:
   return code;
 }
 
+const COLLAPSED_SPECIES_PREVIEW = 4;
+
 export default function DayImportantTargets({ day }: Props) {
-  const [expanded, setExpanded] = React.useState(true);
+  const [expanded, setExpanded] = React.useState(false);
   const { trip } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { lifelist } = useProfile();
@@ -49,10 +53,30 @@ export default function DayImportantTargets({ day }: Props) {
     [day.locations]
   );
 
+  const dayIndex = React.useMemo(
+    () => trip?.itinerary?.findIndex((d: Day) => d.id === day.id) ?? -1,
+    [trip?.itinerary, day.id]
+  );
+
+  const dayImportance = React.useMemo(
+    () =>
+      allTargets?.length && trip?.itinerary?.length && dayIndex >= 0
+        ? getDaySpeciesImportance(allTargets, trip.itinerary)
+        : new Map(),
+    [allTargets, trip?.itinerary, dayIndex]
+  );
+
+  const getPercentOnDay = React.useCallback(
+    (hotspotId: string, code: string): number =>
+      allTargets?.find((t) => t.hotspotId === hotspotId)?.items.find((it) => it.code === code)?.percent ?? 0,
+    [allTargets]
+  );
+
   const byHotspot = React.useMemo((): HotspotSpecies[] => {
-    if (!allTargets?.length || !hotspotsInOrder.length) return [];
+    if (!allTargets?.length || !hotspotsInOrder.length || dayIndex < 0) return [];
 
     const result: HotspotSpecies[] = [];
+    const dayImpByCode = dayImportance.get(dayIndex);
 
     for (const hotspotId of hotspotsInOrder) {
       const hotspot = trip?.hotspots?.find((h) => h.id === hotspotId);
@@ -60,12 +84,23 @@ export default function DayImportantTargets({ day }: Props) {
       const species: SpeciesAtHotspot[] = [];
 
       for (const [code, imp] of importanceMap) {
-        if (!imp.isBestAtThisHotspot && !imp.isCritical) continue;
+        const dayImp = dayImpByCode?.get(code);
+        const showByDay = dayImp?.isBestDay && dayImp?.isSubstantiallyBetterDay;
+        if (!showByDay && !imp.isCritical) continue;
         if (lifelist?.includes(code)) continue;
+
+        const bestPercentOnDay = Math.max(
+          ...hotspotsInOrder.map((hid) => getPercentOnDay(hid, code))
+        );
+        const thisPercent = getPercentOnDay(hotspotId, code);
+        const isBestAtThisHotspotOnDay = bestPercentOnDay > 0 && thisPercent === bestPercentOnDay;
+        const firstBestHotspotId = hotspotsInOrder.find((hid) => getPercentOnDay(hid, code) === bestPercentOnDay);
+        if (firstBestHotspotId !== hotspotId) continue;
+
         species.push({
           code,
           name: getSpeciesName(code, allTargets),
-          isBestAtThisHotspot: imp.isBestAtThisHotspot,
+          isBestAtThisHotspot: isBestAtThisHotspotOnDay,
           isCritical: imp.isCritical,
         });
       }
@@ -81,10 +116,17 @@ export default function DayImportantTargets({ day }: Props) {
     }
 
     return result;
-  }, [allTargets, hotspotsInOrder, trip?.hotspots, lifelist]);
+  }, [allTargets, hotspotsInOrder, trip?.hotspots, trip?.itinerary, dayIndex, dayImportance, getPercentOnDay, lifelist]);
 
   const locationIds = trip?.hotspots?.map((h) => h.id) ?? [];
   const hotspots = trip?.hotspots ?? [];
+
+  const flatSpecies = React.useMemo(
+    () => byHotspot.flatMap((h) => h.species),
+    [byHotspot]
+  );
+  const collapsedPreview = flatSpecies.slice(0, COLLAPSED_SPECIES_PREVIEW);
+  const hasMoreSpecies = flatSpecies.length > COLLAPSED_SPECIES_PREVIEW;
 
   if (!byHotspot.length) return null;
 
@@ -102,6 +144,25 @@ export default function DayImportantTargets({ day }: Props) {
         <Icon name="star" className="w-4 h-4 text-amber-500" />
         Key targets today
       </button>
+      {!expanded && (
+        <div className="text-sm text-gray-700 pl-6 space-y-1">
+          {collapsedPreview.map(({ code, name }) => (
+            <div key={code} className="flex items-center gap-1.5">
+              <Icon name="star" className="w-3 h-3 text-amber-500 flex-shrink-0" />
+              <MerlinkLink code={code}>{name}</MerlinkLink>
+            </div>
+          ))}
+          {hasMoreSpecies && (
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="text-gray-500 italic hover:text-gray-700 cursor-pointer"
+            >
+              …
+            </button>
+          )}
+        </div>
+      )}
       {expanded && (
       <div className="text-sm text-gray-700 space-y-3">
         {byHotspot.map(({ hotspotId, hotspotName, species }) => (
@@ -121,7 +182,7 @@ export default function DayImportantTargets({ day }: Props) {
                 return (
                   <li key={code} className="group relative flex items-center gap-1.5">
                     <Icon name="star" className="w-3 h-3 text-amber-500 flex-shrink-0" />
-                    <span>{name}</span>
+                    <MerlinkLink code={code}>{name}</MerlinkLink>
                     <span className="text-gray-500 text-xs">
                       {isBestAtThisHotspot && isCritical
                         ? " · best here, hard elsewhere"

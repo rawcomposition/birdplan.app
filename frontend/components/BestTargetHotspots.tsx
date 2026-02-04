@@ -13,9 +13,9 @@ type Props = {
 };
 
 export default function BestTargetHotspots({ speciesCode, speciesName, className }: Props) {
-  const [filter, setFilter] = React.useState("year");
+  const [filter, setFilter] = React.useState("range");
   const [isExpanded, setIsExpanded] = React.useState(false);
-  const { trip, dateRangeLabel } = useTrip();
+  const { trip } = useTrip();
   const { allTargets } = useHotspotTargets();
   const { open } = useModal();
 
@@ -70,7 +70,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
           onChange={setFilter}
           options={[
             { label: "All Year", value: "year" },
-            { label: dateRangeLabel, value: "range" },
+            { label: "Trip dates", value: "range" },
           ]}
         />
       </div>

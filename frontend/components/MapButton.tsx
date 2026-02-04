@@ -38,6 +38,7 @@ export default function MapButton({
         )}
         disabled={disabled}
         {...props}
+        title={tooltip}
       >
         {children}
         {tooltip && <Tooltip>{tooltip}</Tooltip>}
@@ -47,6 +48,7 @@ export default function MapButton({
   return (
     <Menu as="div" className="relative z-20 ml-auto">
       <Menu.Button
+        title={tooltip}
         className={clsx(
           className,
           "w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg text-[20px] group relative",
