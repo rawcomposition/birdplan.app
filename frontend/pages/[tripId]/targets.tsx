@@ -178,7 +178,8 @@ export default function TripTargets() {
       !target.closest("button") &&
       !target.closest("a") &&
       !target.closest('[role="button"]') &&
-      !target.closest(".mapboxgl-canvas")
+      !target.closest(".mapboxgl-canvas") &&
+      !target.closest(".mapboxgl-map")
     ) {
       close();
     }
