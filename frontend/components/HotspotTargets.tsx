@@ -7,6 +7,7 @@ import { useProfile } from "providers/profile";
 import { useHotspotTargets } from "providers/hotspot-targets";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
+import { getHotspotSpeciesImportance } from "lib/helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import useMutation from "hooks/useMutation";
 
@@ -19,7 +20,7 @@ type Props = {
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const { lifelist } = useProfile();
   const queryClient = useQueryClient();
-  const [view, setView] = React.useState<string>("all");
+  const [view, setView] = React.useState<string>("obs");
   const { trip, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { pendingLocIds, failedLocIds, allTargets, retryDownload } = useHotspotTargets();
   const [isPending, setIsPending] = React.useState(false);
@@ -30,6 +31,11 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
   const isFailed = failedLocIds.includes(hotspotId);
 
   const items = allTargets.find((it) => it.hotspotId === hotspotId)?.items;
+
+  const importanceMap = React.useMemo(
+    () => getHotspotSpeciesImportance(allTargets, hotspotId),
+    [allTargets, hotspotId]
+  );
 
   const sortedItems = (() => {
     if (!items?.length) return [];
@@ -110,7 +116,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
           onChange={setView}
           options={[
             { label: "All Year", value: "all" },
-            { label: dateRangeLabel, value: "obs" },
+            { label: "Trip dates", value: "obs" },
           ]}
         />
       )}
@@ -127,6 +133,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
           view={view}
           hotspotId={hotspotId}
           range={dateRangeLabel}
+          importance={importanceMap.get(it.code)}
           onClick={() => {
             setSelectedSpecies({ code: it.code, name: it.name });
             onSpeciesClick();

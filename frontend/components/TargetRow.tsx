@@ -13,12 +13,14 @@ import BestTargetHotspots from "components/BestTargetHotspots";
 import useMutation from "hooks/useMutation";
 import useTripMutation from "hooks/useTripMutation";
 import { useQueryClient } from "@tanstack/react-query";
+import { SpeciesCoverage } from "lib/helpers";
 
 type PropsT = Target & {
   index: number;
+  coverage?: SpeciesCoverage;
 };
 
-export default function TargetRow({ index, code, name, percent }: PropsT) {
+export default function TargetRow({ index, code, name, percent, coverage }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
@@ -27,6 +29,8 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
   const isStarred = trip?.targetStars?.includes(code);
   const queryClient = useQueryClient();
   const regionCode = trip?.region.split(",")[0] || "";
+  const displayPercent =
+    coverage && coverage.hotspotCount > 0 ? coverage.weightedAvgPercent : percent;
 
   const addStarMutation = useTripMutation<{ code: string }>({
     url: `/trips/${trip?._id}/targets/add-star`,
@@ -143,7 +147,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             cacheMeasurements
           />
         </td>
-        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{percent}%</td>
+        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{displayPercent}%</td>
         <td className="text-[14px] text-gray-600 hidden sm:table-cell">
           {lastReport?.date
             ? dateTimeToRelative(lastReport.date, regionCode, true)
