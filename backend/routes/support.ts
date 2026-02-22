@@ -26,7 +26,7 @@ support.post("/", async (c) => {
   }
 
   // Basic spam detection
-  if (message.toUpperCase().includes("SEO")) {
+  if (message.toUpperCase().includes("SEO") || email.split(".").length > 5) {
     return Response.json({ success: true });
   }
 
