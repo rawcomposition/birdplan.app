@@ -1,5 +1,5 @@
 import React from "react";
-import { Trip, TargetList, Invite } from "@birdplan/shared";
+import { Trip, Invite } from "@birdplan/shared";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
@@ -20,7 +20,6 @@ type HaloT = {
 type ContextT = {
   trip: Trip | null;
   isFetching: boolean;
-  targets: TargetList | null;
   invites: Invite[] | null;
   selectedSpecies?: SelectedSpecies;
   canEdit: boolean;
@@ -42,7 +41,6 @@ type ContextT = {
 const initialState = {
   trip: null,
   isFetching: false,
-  targets: null,
   invites: null,
   canEdit: false,
   isOwner: false,
@@ -79,13 +77,6 @@ const TripProvider = ({ children }: Props) => {
     queryKey: [`/trips/${id}`],
     enabled: !!id,
     refetchInterval: 1000 * 60 * 2,
-  });
-
-  const { data: targets } = useQuery<TargetList | null>({
-    queryKey: [`/trips/${id}/targets`],
-    enabled: !!id,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 60 * 24,
   });
 
   const { user } = useUser();
@@ -131,7 +122,6 @@ const TripProvider = ({ children }: Props) => {
         is404,
         trip: trip || null,
         isFetching,
-        targets: targets || null,
         selectedSpecies,
         selectedMarkerId,
         halo,

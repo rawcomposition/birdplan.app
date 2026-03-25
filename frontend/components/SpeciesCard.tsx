@@ -11,8 +11,7 @@ type Props = {
 
 export default function Trip({ name, code }: Props) {
   const { modalId } = useModal();
-  const { targets, setSelectedSpecies, trip } = useTrip();
-  const isTarget = targets?.items?.findIndex((it) => it.code === code) !== -1;
+  const { setSelectedSpecies, trip } = useTrip();
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -29,7 +28,6 @@ export default function Trip({ name, code }: Props) {
     <div className="sm:absolute sm:mt-0 sm:-translate-x-1/2 sm:rounded-b-lg sm:left-1/2 bg-white p-4 w-full sm:max-w-md z-10 shadow">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold inline-flex gap-1.5 items-center">
-          {isTarget && <Icon name="bullseye" className="text-[#c2410d] text-sm" />}
           {name}
         </h2>
         <CloseButton onClick={() => setSelectedSpecies(undefined)} className="ml-auto" />

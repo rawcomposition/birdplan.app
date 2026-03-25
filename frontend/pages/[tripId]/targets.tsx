@@ -18,12 +18,14 @@ import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import { useQuery } from "@tanstack/react-query";
 import { Editor } from "@birdplan/shared";
+import useDownloadTargets from "hooks/useDownloadTargets";
+import Icon from "components/Icon";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {
   const { open, close } = useModal();
   const { user } = useUser();
-  const { is404, targets, trip, selectedSpecies, canEdit } = useTrip();
+  const { is404, trip, selectedSpecies, canEdit } = useTrip();
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
 
   // Filter options
@@ -32,6 +34,19 @@ export default function TripTargets() {
   const [uid, setUid] = React.useState<string | undefined>();
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
+
+  // Fetch targets from OpenBirding
+  const {
+    data: regionData,
+    isLoading: isLoadingTargets,
+    error: targetsError,
+    refetch: refetchTargets,
+  } = useDownloadTargets({
+    region: trip?.region,
+    startMonth: trip?.startMonth,
+    endMonth: trip?.endMonth,
+    enabled: !!trip,
+  });
 
   // Exclude non-lifers
   const { lifelist: myLifelist } = useProfile();
@@ -43,7 +58,7 @@ export default function TripTargets() {
   const myUid = user?.uid;
   const ownerId = trip?.ownerId;
   const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
-  const targetSpecies = targets?.items?.filter((it) => !lifelist.includes(it.code)) || [];
+  const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
   const filteredTargets = targetSpecies?.filter(
@@ -101,6 +116,20 @@ export default function TripTargets() {
             <div className="h-full grow flex sm:relative flex-col w-full">
               <div className="h-full w-full mx-auto max-w-6xl">
                 <ProfileSelect value={uid} onChange={setUid} editors={editors} />
+                {isLoadingTargets && (
+                  <div className="flex items-center flex-col gap-2 my-8">
+                    <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
+                    <p className="text-sm text-slate-600">Loading targets...</p>
+                  </div>
+                )}
+                {targetsError && (
+                  <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-2">
+                    <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
+                    <button className="text-sky-600 font-medium" onClick={() => refetchTargets()}>
+                      Try Again
+                    </button>
+                  </div>
+                )}
                 {!!targetSpecies?.length && (
                   <div className="flex items-center gap-2 my-2 sm:my-4 px-2 sm:px-0">
                     <Input
@@ -121,34 +150,17 @@ export default function TripTargets() {
                     </label>
                   </div>
                 )}
-                {!!targets?.N && !truncatedTargets?.length && (
+                {!!regionData?.items?.length && !truncatedTargets?.length && (
                   <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4">
                     <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                     <p className="text-gray-500 text-sm">
-                      {truncatedTargets?.length === truncatedTargets?.length
-                        ? "It looks like you have already seen all the species in this region."
-                        : "No targets found for your search."}
+                      It looks like you have already seen all the species in this region.
                     </p>
                   </div>
                 )}
-                {!targets?.N && !truncatedTargets?.length && (
+                {!isLoadingTargets && !targetsError && !regionData?.items?.length && (
                   <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-2">
-                    {canEdit ? (
-                      <h3 className="text-lg font-medium text-gray-700">You haven&apos;t imported your targets yet</h3>
-                    ) : (
-                      <h3 className="text-lg font-medium text-gray-700">No targets have been imported yet</h3>
-                    )}
-                    {canEdit && (
-                      <p>
-                        <Button
-                          href={`/${trip?._id}/import-targets?redirect=targets&back=true`}
-                          color="primary"
-                          size="sm"
-                        >
-                          Import Targets
-                        </Button>
-                      </p>
-                    )}
+                    <h3 className="text-lg font-medium text-gray-700">No target data available for this region</h3>
                   </div>
                 )}
                 {!!truncatedTargets?.length && (
@@ -183,6 +195,9 @@ export default function TripTargets() {
                     </button>
                   )}
                 </div>
+                {regionData?.citation && (
+                  <p className="text-gray-400 text-xs text-center pb-6 px-4">{regionData.citation}</p>
+                )}
               </div>
             </div>
           </div>

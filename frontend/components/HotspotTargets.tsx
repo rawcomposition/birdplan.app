@@ -4,11 +4,10 @@ import Icon from "components/Icon";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import FilterTabs from "components/FilterTabs";
 import { useProfile } from "providers/profile";
-import { useHotspotTargets } from "providers/hotspot-targets";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
-import { useQueryClient } from "@tanstack/react-query";
-import useMutation from "hooks/useMutation";
+import useLocationTargets from "hooks/useLocationTargets";
+import { computeFrequency, getMonthRange } from "lib/targets";
 
 type Props = {
   hotspotId: string;
@@ -18,92 +17,52 @@ type Props = {
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const { lifelist } = useProfile();
-  const queryClient = useQueryClient();
   const [view, setView] = React.useState<string>("all");
   const { trip, setSelectedSpecies, dateRangeLabel } = useTrip();
-  const { pendingLocIds, failedLocIds, allTargets, retryDownload } = useHotspotTargets();
-  const [isPending, setIsPending] = React.useState(false);
+  const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
 
-  const savedHotspot = trip?.hotspots.find((it) => it.id === hotspotId);
-  const isSaved = !!savedHotspot;
-  const isDownloading = pendingLocIds.includes(hotspotId);
-  const isFailed = failedLocIds.includes(hotspotId);
+  const isSaved = !!trip?.hotspots.find((it) => it.id === hotspotId);
 
-  const items = allTargets.find((it) => it.hotspotId === hotspotId)?.items;
+  const allMonths = getMonthRange(1, 12);
+  const tripMonths = getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
 
-  const sortedItems = (() => {
-    if (!items?.length) return [];
-    const needs = items.filter((it) => !lifelist?.includes(it.code));
-    const filtered = view === "all" ? needs.filter((it) => it.percentYr >= 5) : needs.filter((it) => it.percent >= 5);
-    return view === "all"
-      ? filtered.sort((a, b) => b.percentYr - a.percentYr)
-      : filtered.sort((a, b) => b.percent - a.percent);
-  })();
+  const sortedItems = React.useMemo(() => {
+    if (!data?.items?.length) return [];
+    const months = view === "all" ? allMonths : tripMonths;
+    return data.items
+      .map((item) => ({
+        code: item.code,
+        name: item.name,
+        frequency: computeFrequency(item.obs, data.samples, months),
+      }))
+      .filter((it) => !lifelist?.includes(it.code) && it.frequency >= HOTSPOT_TARGET_CUTOFF)
+      .sort((a, b) => b.frequency - a.frequency);
+  }, [data, view, lifelist, allMonths, tripMonths]);
 
-  const hasResults = !!items?.length;
-
-  const resetTargetsMutation = useMutation({
-    url: `/trips/${trip?._id}/hotspots/${hotspotId}/reset-targets`,
-    method: "PATCH",
-    onMutate: () => setIsPending(true),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
-      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/all-hotspot-targets`] });
-      setIsPending(false);
-    },
-    onError: () => {
-      setIsPending(false);
-    },
-  });
-
-  if (isDownloading) {
+  if (isLoading) {
     return (
       <Alert style="info" className="-mx-1 my-1">
         <Icon name="loading" className="text-xl animate-spin" />
-        Downloading targets from eBird...
+        Loading targets...
       </Alert>
     );
   }
 
-  if (isFailed) {
+  if (isError) {
     return (
       <Alert style="error" className="-mx-1 my-1">
         <Icon name="xMarkCircle" className="text-xl" />
-        Failed to download targets from eBird
-        <button className="text-sky-600 font-medium" onClick={() => retryDownload(hotspotId)}>
+        Failed to load targets
+        <button className="text-sky-600 font-medium" onClick={() => refetch()}>
           Retry
         </button>
       </Alert>
     );
   }
 
-  if (!isSaved) {
-    return (
-      <>
-        <p className="text-gray-500 text-sm">You must add this hotspot to your trip to load targets.</p>
-        <p className="flex items-center gap-2 text-sm mt-2">
-          <button className="text-sky-600 font-medium inline-flex items-center gap-1" onClick={onAddToTrip}>
-            <Icon name="plus" className="text-sm text-sky-600" />
-            Add to trip
-          </button>{" "}
-          <span className="text-gray-500 px-1">•</span>
-          <a
-            href={`https://ebird.org/targets?r1=${hotspotId}&bmo=1&emo=12&r2=world&t2=life`}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sky-600 font-medium inline-flex items-center gap-1.5"
-          >
-            <Icon name="external" className="text-xs text-sky-600" />
-            View on eBird
-          </a>
-        </p>
-      </>
-    );
-  }
-
   return (
     <>
-      {hasResults && (
+      {!!data?.items?.length && (
         <FilterTabs
           className="my-4"
           value={view}
@@ -122,11 +81,13 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
       {sortedItems.map((it, index) => (
         <HotspotTargetRow
           key={it.code}
-          {...it}
+          code={it.code}
+          name={it.name}
+          frequency={it.frequency}
           index={index}
-          view={view}
           hotspotId={hotspotId}
-          range={dateRangeLabel}
+          range={view === "all" ? "All Year" : dateRangeLabel}
+          isSaved={isSaved}
           onClick={() => {
             setSelectedSpecies({ code: it.code, name: it.name });
             onSpeciesClick();
@@ -146,15 +107,6 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
         >
           View on eBird
         </a>
-        <button
-          type="button"
-          className="text-sky-600 text-[12px] font-bold pl-3 py-1 inline-flex items-center gap-1"
-          onClick={() => resetTargetsMutation.mutate({})}
-          disabled={isPending}
-        >
-          <Icon name="refresh" />
-          {isPending ? "Refreshing..." : "Refresh Targets"}
-        </button>
       </div>
     </>
   );

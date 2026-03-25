@@ -49,7 +49,6 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
       lng: { type: Number, required: true },
       notes: String,
       species: Number,
-      targetsId: String,
       favs: [
         {
           _id: false,

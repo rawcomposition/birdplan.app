@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate, tripToGeoJson, sanitizeFileName } from "lib/utils.js";
-import { connect, Trip, TargetList, Invite, Profile } from "lib/db.js";
-import type { TripUpdateInput, Editor } from "@birdplan/shared";
-import { TargetListType } from "@birdplan/shared";
-import targets from "./targets.js";
+import { authenticate, tripToGeoJson, sanitizeFileName, getMonthRange, computeFrequency } from "lib/utils.js";
+import { connect, Trip, Invite, Profile } from "lib/db.js";
+import { OPENBIRDING_API_URL } from "lib/config.js";
+import type { TripUpdateInput, Editor, OpenBirdingLocationResponse } from "@birdplan/shared";
+import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
 import itinerary from "./itinerary.js";
@@ -13,7 +13,7 @@ import tokml from "@maphubs/tokml";
 
 const trip = new Hono();
 
-trip.route("/targets", targets);
+trip.route("/targets", targetStars);
 trip.route("/markers", markers);
 trip.route("/hotspots", hotspots);
 trip.route("/itinerary", itinerary);
@@ -61,17 +61,7 @@ trip.patch("/", async (c) => {
   const hasChangedDates = data.startMonth !== trip.startMonth || data.endMonth !== trip.endMonth;
   const newData = { name: data.name, startMonth: data.startMonth, endMonth: data.endMonth };
 
-  if (hasChangedDates) {
-    await Promise.all([
-      Trip.updateOne(
-        { _id: tripId },
-        { ...newData, hotspots: trip.hotspots?.map(({ targetsId, ...hotspot }) => hotspot) || [] }
-      ),
-      TargetList.deleteMany({ tripId, type: TargetListType.hotspot }),
-    ]);
-  } else {
-    await Trip.updateOne({ _id: tripId }, newData);
-  }
+  await Trip.updateOne({ _id: tripId }, newData);
 
   return c.json({ hasChangedDates });
 });
@@ -94,33 +84,9 @@ trip.delete("/", async (c) => {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
-  await Promise.all([
-    Trip.deleteOne({ _id: tripId }),
-    TargetList.deleteMany({ tripId }),
-    Invite.deleteMany({ tripId }),
-  ]);
+  await Promise.all([Trip.deleteOne({ _id: tripId }), Invite.deleteMany({ tripId })]);
 
   return c.json({});
-});
-
-trip.get("/all-hotspot-targets", async (c) => {
-  const tripId: string | undefined = c.req.param("tripId");
-
-  if (!tripId) {
-    throw new HTTPException(400, { message: "Trip ID is required" });
-  }
-
-  await connect();
-  const [trip, results] = await Promise.all([
-    Trip.findById(tripId),
-    TargetList.find({ type: TargetListType.hotspot, tripId }).sort({ createdAt: -1 }),
-  ]);
-
-  if (!trip) {
-    throw new HTTPException(404, { message: "Trip not found" });
-  }
-
-  return c.json(results);
 });
 
 trip.get("/editors", async (c) => {
@@ -165,26 +131,46 @@ trip.get("/export", async (c) => {
   }
 
   await connect();
-  const [trip, hotspotTargets, profile] = await Promise.all([
-    Trip.findById(tripId).lean(),
-    TargetList.find({ tripId, type: TargetListType.hotspot }).lean(),
-    Profile.findOne({ uid }).lean(),
-  ]);
+  const [trip, profile] = await Promise.all([Trip.findById(tripId).lean(), Profile.findOne({ uid }).lean()]);
 
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
 
   const lifelist = profile?.lifelist || [];
+  const months = getMonthRange(trip.startMonth, trip.endMonth);
 
-  const filteredTargets = hotspotTargets.map((target) => {
-    const needs = target.items?.filter((it) => !lifelist?.includes(it.code));
-    const filtered = needs?.filter((it) => it.percentYr >= 5);
-    const items = filtered?.sort((a, b) => b.percentYr - a.percentYr);
-    return { ...target, items };
-  });
+  // Fetch targets from OpenBirding for each saved hotspot
+  const hotspotTargets: Record<string, { name: string; frequency: number }[]> = {};
+  if (OPENBIRDING_API_URL && trip.hotspots?.length) {
+    const results = await Promise.all(
+      trip.hotspots.map(async (hotspot) => {
+        try {
+          const res = await fetch(`${OPENBIRDING_API_URL}/api/v1/targets/location/${hotspot.id}`);
+          if (!res.ok) return { id: hotspot.id, data: null };
+          const data: OpenBirdingLocationResponse = await res.json();
+          return { id: hotspot.id, data };
+        } catch {
+          return { id: hotspot.id, data: null };
+        }
+      })
+    );
 
-  const geoJson = tripToGeoJson(trip, filteredTargets);
+    for (const { id, data } of results) {
+      if (!data) continue;
+      const items = data.items
+        .map((item) => ({
+          name: item.name,
+          code: item.code,
+          frequency: computeFrequency(item.obs, data.samples, months),
+        }))
+        .filter((it) => !lifelist.includes(it.code) && it.frequency >= 5)
+        .sort((a, b) => b.frequency - a.frequency);
+      hotspotTargets[id] = items;
+    }
+  }
+
+  const geoJson = tripToGeoJson(trip, hotspotTargets);
   const kml = tokml(geoJson);
 
   return c.body(kml, 200, {

@@ -42,17 +42,11 @@ export default function TripSettings() {
   const updateTripMutation = useMutation({
     url: `/trips/${trip?._id}`,
     method: "PATCH",
-    onSuccess: async ({ hasChangedDates }: any) => {
+    onSuccess: async () => {
       toast.success("Trip updated");
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
       await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
-      if (hasChangedDates) {
-        router.push(`/${trip?._id}/import-targets`);
-        queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/targets`] });
-        queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/all-hotspot-targets`] });
-      } else {
-        router.push(`/${trip?._id}`);
-      }
+      router.push(`/${trip?._id}`);
     },
   });
 

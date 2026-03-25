@@ -1,16 +1,8 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
-import { connect, Trip, TargetList } from "lib/db.js";
-import type {
-  HotspotInput,
-  HotspotNotesInput,
-  TargetListInput,
-  HotspotFav,
-  SpeciesFavInput,
-  TranslateNameResponse,
-} from "@birdplan/shared";
-import { TargetListType } from "@birdplan/shared";
+import { connect, Trip } from "lib/db.js";
+import type { HotspotInput, HotspotNotesInput, HotspotFav, SpeciesFavInput, TranslateNameResponse } from "@birdplan/shared";
 import * as deepl from "deepl-node";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -48,88 +40,8 @@ hotspots.delete("/:hotspotId", async (c) => {
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Promise.all([
-    Trip.updateOne({ _id: tripId }, { $pull: { hotspots: { id: hotspotId } } }),
-    TargetList.deleteMany({ tripId, hotspotId }),
-  ]);
+  await Trip.updateOne({ _id: tripId }, { $pull: { hotspots: { id: hotspotId } } });
   return c.json({});
-});
-
-hotspots.patch("/:hotspotId/reset-targets", async (c) => {
-  const session = await authenticate(c);
-
-  const tripId = c.req.param("tripId");
-  const hotspotId = c.req.param("hotspotId");
-  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
-  if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
-
-  await connect();
-  const trip = await Trip.findById(tripId).lean();
-  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
-
-  const hotspot = trip.hotspots.find((it) => it.id === hotspotId);
-  if (!hotspot) throw new HTTPException(404, { message: "Hotspot not found" });
-
-  await Promise.all([
-    Trip.updateOne({ _id: tripId, "hotspots.id": hotspotId }, { $unset: { "hotspots.$.targetsId": "" } }),
-    TargetList.deleteMany({ tripId, hotspotId }),
-  ]);
-
-  return c.json({});
-});
-
-hotspots.get("/:hotspotId/targets", async (c) => {
-  const session = await authenticate(c);
-
-  const tripId = c.req.param("tripId");
-  const hotspotId = c.req.param("hotspotId");
-  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
-  if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
-
-  await connect();
-  const [trip, targetList] = await Promise.all([
-    Trip.findById(tripId),
-    TargetList.findOne({ type: TargetListType.hotspot, tripId, hotspotId }).sort({ createdAt: -1 }),
-  ]);
-  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.isPublic && (!session?.uid || !trip.userIds.includes(session.uid)))
-    throw new HTTPException(403, { message: "Forbidden" });
-
-  return c.json(targetList || null);
-});
-
-hotspots.patch("/:hotspotId/targets", async (c) => {
-  const session = await authenticate(c);
-
-  const tripId = c.req.param("tripId");
-  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
-
-  const data = await c.req.json<TargetListInput>();
-
-  await connect();
-  const trip = await Trip.findById(tripId).lean();
-  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
-
-  if (!data.hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
-  const targetList = await TargetList.findOneAndUpdate(
-    { type: TargetListType.hotspot, tripId, hotspotId: data.hotspotId },
-    {
-      ...data,
-      type: TargetListType.hotspot,
-      tripId,
-      hotspotId: data.hotspotId,
-    },
-    { upsert: true, new: true }
-  );
-  if (targetList._id) {
-    await Trip.updateOne(
-      { _id: tripId, "hotspots.id": data.hotspotId },
-      { $set: { "hotspots.$.targetsId": targetList._id } }
-    );
-  }
-  return c.json({ id: targetList._id });
 });
 
 hotspots.patch("/:hotspotId/translate-name", async (c) => {

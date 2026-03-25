@@ -18,7 +18,7 @@ type PropsT = Target & {
   index: number;
 };
 
-export default function TargetRow({ index, code, name, percent }: PropsT) {
+export default function TargetRow({ index, code, name, frequency }: PropsT) {
   const [expandedCodes, setExpandedCodes] = React.useState<string[]>([]);
   const { trip, canEdit, setSelectedSpecies } = useTrip();
   const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
@@ -143,7 +143,7 @@ export default function TargetRow({ index, code, name, percent }: PropsT) {
             cacheMeasurements
           />
         </td>
-        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{percent}%</td>
+        <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{frequency}%</td>
         <td className="text-[14px] text-gray-600 hidden sm:table-cell">
           {lastReport?.date
             ? dateTimeToRelative(lastReport.date, regionCode, true)
