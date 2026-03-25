@@ -29,7 +29,8 @@ export function initQueryClient() {
         staleTime: 0,
         queryFn: async ({ queryKey, meta }) => {
           const url = queryKey[0] as string;
-          const fullUrl = url.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${url}` : url;
+          const isApiRoute = url.startsWith("/") && !url.startsWith(process.env.NEXT_PUBLIC_OPENBIRDING_API_URL || "");
+          const fullUrl = isApiRoute ? `${process.env.NEXT_PUBLIC_API_URL}${url}` : url;
           return get(fullUrl, (queryKey[1] || {}) as any, !!meta?.showLoading);
         },
       },
