@@ -15,6 +15,10 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>March 25, 2026</h2>
+          <ul>
+            <li>✨ Target species now load significantly faster, powered by <a href="https://openbirding.org" target="_blank" rel="noreferrer">OpenBirding.org</a>.</li>
+          </ul>
           <h2>December 17, 2025</h2>
           <ul>
             <li>✨ Updated to the latest version of Avicommons.org data for species thumbnails.</li>
