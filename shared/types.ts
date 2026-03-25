@@ -143,12 +143,6 @@ export type Editor = {
   lifelist: string[];
 };
 
-export type Vault = {
-  _id: string;
-  key: string;
-  value: string;
-};
-
 export type eBirdHotspot = {
   id: string;
   name: string;
