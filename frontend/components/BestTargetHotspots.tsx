@@ -4,6 +4,7 @@ import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import FilterTabs from "components/FilterTabs";
 import { OPENBIRDING_API_URL, HOTSPOT_TARGET_CUTOFF } from "lib/config";
+import { getMonthRange } from "lib/targets";
 import { useQuery } from "@tanstack/react-query";
 import type { OpenBirdingHotspotRankingResponse } from "@birdplan/shared";
 
@@ -22,15 +23,17 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
   const locationIds = trip?.hotspots?.map((it) => it.id) || [];
   const hasHotspots = !!trip?.hotspots?.length;
 
-  const month = filter === "year" ? undefined : trip?.startMonth;
+  const months = filter === "year" ? undefined : getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
 
-  const { data, isLoading } = useQuery<OpenBirdingHotspotRankingResponse>({
-    queryKey: ["openbirding-best-hotspots", speciesCode, locationIds, month],
+  const { data, isLoading, isError } = useQuery<OpenBirdingHotspotRankingResponse>({
+    queryKey: ["openbirding-best-hotspots", speciesCode, locationIds, months],
     queryFn: async () => {
+      const body: Record<string, any> = { locationIds };
+      if (months) body.months = months;
       const res = await fetch(`${OPENBIRDING_API_URL}/api/v1/hotspots/species/${speciesCode}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locationIds, month }),
+        body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error("Failed to fetch hotspot rankings");
       return res.json();
@@ -42,6 +45,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
 
   if (!hasHotspots) return <Alert style="warning">You have not saved any hotspots for this trip</Alert>;
   if (isLoading) return <div className="text-gray-500 text-sm py-2">Loading hotspot rankings...</div>;
+  if (isError) return <Alert style="error">Failed to load hotspot rankings</Alert>;
 
   const topHotspots =
     data?.items?.filter((it) => it.frequency >= HOTSPOT_TARGET_CUTOFF).sort((a, b) => b.frequency - a.frequency) || [];

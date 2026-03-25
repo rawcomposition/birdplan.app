@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: "/openbirding/:path*",
-        destination: `${process.env.OPENBIRDING_API_URL || "https://api.openbirding.org"}/:path*`,
+        destination: `${process.env.OPENBIRDING_PROXY_TARGET}/:path*`,
       },
     ];
   },

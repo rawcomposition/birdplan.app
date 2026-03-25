@@ -156,13 +156,17 @@ trip.get("/export", async (c) => {
       })
     );
 
-    for (const { id, data } of results) {
-      if (!data) continue;
-      const items = data.items
+    const succeeded = results.filter((r) => r.data !== null);
+    if (succeeded.length === 0 && results.length > 0) {
+      throw new HTTPException(502, { message: "Failed to fetch target data from OpenBirding" });
+    }
+
+    for (const { id, data } of succeeded) {
+      const items = data!.items
         .map((item) => ({
           name: item.name,
           code: item.code,
-          frequency: computeFrequency(item.obs, data.samples, months),
+          frequency: computeFrequency(item.obs, data!.samples, months),
         }))
         .filter((it) => !lifelist.includes(it.code) && it.frequency >= 5)
         .sort((a, b) => b.frequency - a.frequency);
