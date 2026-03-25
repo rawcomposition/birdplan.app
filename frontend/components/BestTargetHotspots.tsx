@@ -41,6 +41,7 @@ export default function BestTargetHotspots({ speciesCode, speciesName, className
     enabled: hasHotspots && !!OPENBIRDING_API_URL,
     staleTime: 24 * 60 * 60 * 1000,
     refetchOnWindowFocus: false,
+    placeholderData: (prev) => prev,
   });
 
   if (!hasHotspots) return <Alert style="warning">You have not saved any hotspots for this trip</Alert>;

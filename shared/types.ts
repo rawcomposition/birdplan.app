@@ -287,7 +287,6 @@ export type OpenBirdingHotspotRanking = {
   lat: number;
   lng: number;
   frequency: number;
-  score: number;
   samples: number;
 };
 
