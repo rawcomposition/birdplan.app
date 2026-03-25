@@ -18,6 +18,7 @@ export default function WhatsNew() {
           <h2>March 25, 2026</h2>
           <ul>
             <li>✨ Target species now load significantly faster, powered by <a href="https://openbirding.org" target="_blank" rel="noreferrer">OpenBirding.org</a>.</li>
+            <li>🐞 Fixed a bug where adding days to the itinerary would display duplicate days.</li>
           </ul>
           <h2>December 17, 2025</h2>
           <ul>
