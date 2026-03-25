@@ -14,10 +14,11 @@ import { removeInvalidTravelData, moveLocation } from "lib/itinerary";
 
 type PropsT = {
   day: Day;
+  dayIndex: number;
   isEditing: boolean;
 };
 
-export default function ItineraryDay({ day, isEditing }: PropsT) {
+export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
   const { trip, isFetching: isFetchingTrip } = useTrip();
   const { open } = useModal();
 
@@ -93,8 +94,6 @@ export default function ItineraryDay({ day, isEditing }: PropsT) {
     isAddingLocation ||
     isFetchingTrip;
 
-  // Find the index of this day in the itinerary for proper day numbering
-  const dayIndex = trip?.itinerary?.findIndex((it) => it.id === day.id) ?? 0;
   const date = trip?.startDate ? dayjs(trip.startDate).add(dayIndex, "day").format("dddd, MMMM D") : "";
   const { notes, locations } = day;
 

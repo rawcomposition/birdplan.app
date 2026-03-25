@@ -136,7 +136,7 @@ export default function Itinerary() {
                     No itinerary has been set for this trip yet.
                   </div>
                 )}
-                {trip?.itinerary?.map((day) => <ItineraryDay key={day.id} day={day} isEditing={isEditing} />)}
+                {trip?.itinerary?.map((day, index) => <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />)}
                 {isEditing && hasStartDate && (
                   <Button color="primary" onClick={handleAddDay} className="mb-8">
                     Add Day
