@@ -13,19 +13,13 @@ type Props = {
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
   const { lifelist, uid } = useProfile();
-  const { targets, trip, isOwner, canEdit } = useTrip();
+  const { trip, isOwner, canEdit } = useTrip();
 
   const links = [
     {
       name: !!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List",
       href: `/import-lifelist?tripId=${trip?._id}&back=true`,
       icon: "feather",
-    },
-    {
-      name: !!targets?.items?.length ? "Update Targets" : "Import Targets",
-      href: `/${trip?._id}/import-targets?redirect=targets&back=true`,
-      icon: "bullseye",
-      hidden: !canEdit,
     },
     {
       name: "Share Trip",

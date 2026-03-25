@@ -1,8 +1,3 @@
-export enum TargetListType {
-  trip = "trip",
-  hotspot = "hotspot",
-}
-
 export type Trip = {
   _id: string;
   userIds: string[];
@@ -77,7 +72,6 @@ export type Hotspot = {
   lng: number;
   species?: number;
   notes?: string;
-  targetsId?: string;
   favs?: HotspotFav[];
 };
 
@@ -97,23 +91,8 @@ export type Profile = {
 export type Target = {
   code: string;
   name: string;
-  percent: number;
-  percentYr: number;
+  frequency: number;
 };
-
-export type TargetList = {
-  _id: string;
-  type: TargetListType;
-  tripId: string;
-  items: Target[];
-  N: number;
-  yrN: number;
-  hotspotId?: string;
-  updatedAt: string;
-  createdAt: string;
-};
-
-export type TargetListInput = Omit<TargetList, "_id" | "updatedAt" | "createdAt" | "type" | "tripId">;
 
 export type eBirdTaxonomy = {
   sciName: string;
@@ -164,12 +143,6 @@ export type Editor = {
   lifelist: string[];
 };
 
-export type Vault = {
-  _id: string;
-  key: string;
-  value: string;
-};
-
 export type eBirdHotspot = {
   id: string;
   name: string;
@@ -212,11 +185,6 @@ export type HotspotInput = {
 
 export type HotspotNotesInput = {
   notes: string;
-};
-
-export type HotspotTargetListInput = {
-  hotspotId: string;
-  targets: string[];
 };
 
 export type SpeciesFavInput = {
@@ -276,4 +244,48 @@ export type RegionTz = {
   code: string;
   tz: string | null;
   subregions?: RegionTz[];
+};
+
+// OpenBirding API response types
+
+export type OpenBirdingRegionTarget = {
+  code: string;
+  name: string;
+  frequency: number;
+};
+
+export type OpenBirdingRegionResponse = {
+  items: OpenBirdingRegionTarget[];
+  samples: number;
+  citation: string;
+  queryTime: string;
+};
+
+export type OpenBirdingLocationTarget = {
+  code: string;
+  name: string;
+  obs: number[];
+};
+
+export type OpenBirdingLocationResponse = {
+  items: OpenBirdingLocationTarget[];
+  samples: number[];
+  citation: string;
+  queryTime: string;
+};
+
+export type OpenBirdingHotspotRanking = {
+  id: string;
+  name: string;
+  region: string;
+  lat: number;
+  lng: number;
+  frequency: number;
+  samples: number;
+};
+
+export type OpenBirdingHotspotRankingResponse = {
+  items: OpenBirdingHotspotRanking[];
+  citation: string;
+  queryTime: string;
 };

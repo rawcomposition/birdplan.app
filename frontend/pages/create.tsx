@@ -40,7 +40,7 @@ export default function CreateTrip() {
     url: "/trips",
     method: "POST",
     onSuccess: ({ id }) => {
-      router.push(`/${id}/import-targets`);
+      router.push(`/${id}`);
       close();
     },
   });

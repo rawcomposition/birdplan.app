@@ -32,11 +32,16 @@ export default function Hotspot({ hotspot }: Props) {
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
-  const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "needs");
+  const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "targets");
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const tabs = [
+    {
+      label: "Targets",
+      title: "",
+      id: "targets",
+    },
     {
       label: "Recent Needs",
       title: "",
@@ -46,11 +51,6 @@ export default function Hotspot({ hotspot }: Props) {
       label: "Checklists",
       title: "",
       id: "checklists",
-    },
-    {
-      label: "Targets",
-      title: "",
-      id: "targets",
     },
   ];
 

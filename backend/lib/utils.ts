@@ -2,7 +2,7 @@ import { HTTPException } from "hono/http-exception";
 import type { Context } from "hono";
 import { auth } from "lib/firebaseAdmin.js";
 import { customAlphabet } from "nanoid";
-import type { Trip, TargetList, Hotspot } from "@birdplan/shared";
+import type { Trip, Hotspot } from "@birdplan/shared";
 
 export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
@@ -63,18 +63,18 @@ export function sanitizeFileName(fileName: string): string {
   return sanitized.trim();
 }
 
-const targetsToHtml = (targets: TargetList[], id?: string) => {
-  const items = targets.find((it) => it._id === id)?.items;
+const targetsToHtml = (items?: { name: string; frequency: number; code?: string }[]) => {
   if (!items?.length) {
     return "";
   }
   let html = "<b>Targets</b><br/>";
   items.forEach((it) => {
-    html += `<b>${it.name}</b> (${it.percentYr}%)<br/>`;
-    const percent = it.percentYr;
-    const numBlocks = Math.round(percent / 10) * 1;
+    const freq = it.frequency > 1 ? Math.round(it.frequency) : it.frequency;
+    html += `<b>${it.name}</b> (${freq}%)<br/>`;
+    const numBlocks = Math.round(freq / 10);
     const blocks = "🟩".repeat(numBlocks) + "⬜".repeat(10 - numBlocks);
-    html += `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a><br/><br/>`;
+    const code = it.code ? `<a href='merlinbirdid://species/${it.code}' style="text-decoration:none">${blocks} ℹ️</a>` : blocks;
+    html += `${code}<br/><br/>`;
   });
   return html;
 };
@@ -95,7 +95,10 @@ const favsToHtml = (favs: Hotspot["favs"]) => {
   return html + "<br/><br/>";
 };
 
-export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
+export const tripToGeoJson = (
+  trip: Trip,
+  hotspotTargets: Record<string, { name: string; frequency: number; code?: string }[]>
+) => {
   const hotspots = trip?.hotspots || [];
   const markers = trip?.markers || [];
 
@@ -113,7 +116,7 @@ export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
             it.id
           }&bmo=1&emo=12&r2=world&t2=life'>Targets</a><br/><br/><b>Notes</b><br/>${
             it.notes || "None"
-          }<br/><br/>${favsToHtml(it.favs)}${targetsToHtml(targets, it.targetsId)}<br/><br/>`,
+          }<br/><br/>${favsToHtml(it.favs)}${targetsToHtml(hotspotTargets[it.id])}<br/><br/>`,
         },
         geometry: {
           type: "Point",
@@ -138,6 +141,24 @@ export const tripToGeoJson = (trip: Trip, targets: TargetList[]) => {
   };
   return geojson;
 };
+
+export function getMonthRange(startMonth: number, endMonth: number): number[] {
+  const months: number[] = [];
+  let m = startMonth;
+  while (true) {
+    months.push(m);
+    if (m === endMonth) break;
+    m = m === 12 ? 1 : m + 1;
+  }
+  return months;
+}
+
+export function computeFrequency(obs: number[], samples: number[], months: number[]): number {
+  const totalObs = months.reduce((sum, m) => sum + (obs[m - 1] || 0), 0);
+  const totalSamples = months.reduce((sum, m) => sum + (samples[m - 1] || 0), 0);
+  if (totalSamples === 0) return 0;
+  return Number(((totalObs / totalSamples) * 100).toFixed(1));
+}
 
 export const mostFrequentValue = (arr: any[]) => {
   const filteredArr = arr.filter(Boolean);

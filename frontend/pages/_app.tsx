@@ -4,7 +4,6 @@ import { UserProvider } from "providers/user";
 import { ModalProvider } from "providers/modals";
 import { ProfileProvider } from "providers/profile";
 import { TripProvider } from "providers/trip";
-import { HotspotTargetsProvider } from "providers/hotspot-targets";
 import { SpeciesImagesProvider } from "providers/species-images";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
@@ -30,7 +29,8 @@ export function initQueryClient() {
         staleTime: 0,
         queryFn: async ({ queryKey, meta }) => {
           const url = queryKey[0] as string;
-          const fullUrl = url.startsWith("/") ? `${process.env.NEXT_PUBLIC_API_URL}${url}` : url;
+          const isApiRoute = url.startsWith("/") && !url.startsWith(process.env.NEXT_PUBLIC_OPENBIRDING_API_URL || "");
+          const fullUrl = isApiRoute ? `${process.env.NEXT_PUBLIC_API_URL}${url}` : url;
           return get(fullUrl, (queryKey[1] || {}) as any, !!meta?.showLoading);
         },
       },
@@ -98,11 +98,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Toaster containerStyle={{ zIndex: 10001 }} />
             <ProfileProvider>
               <TripProvider>
-                <HotspotTargetsProvider>
-                  <ModalProvider>
-                    <Component {...pageProps} />
-                  </ModalProvider>
-                </HotspotTargetsProvider>
+                <ModalProvider>
+                  <Component {...pageProps} />
+                </ModalProvider>
               </TripProvider>
             </ProfileProvider>
           </UserProvider>
