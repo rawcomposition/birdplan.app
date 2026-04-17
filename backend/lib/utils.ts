@@ -160,6 +160,11 @@ export function computeFrequency(obs: number[], samples: number[], months: numbe
   return Number(((totalObs / totalSamples) * 100).toFixed(1));
 }
 
+export function generateOpenBirdingCode(): string {
+  const num = Math.floor(Math.random() * 1000000);
+  return num.toString().padStart(6, "0");
+}
+
 export const mostFrequentValue = (arr: any[]) => {
   const filteredArr = arr.filter(Boolean);
   if (!filteredArr.length) return null;

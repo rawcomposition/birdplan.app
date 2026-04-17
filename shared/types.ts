@@ -23,6 +23,8 @@ export type Trip = {
   targetNotes?: {
     [key: string]: string;
   };
+  shareCode?: string;
+  shareCodeCreatedAt?: string;
   updatedAt: string;
   createdAt: string;
 };
@@ -122,6 +124,17 @@ export type Invite = {
 export type InviteInput = {
   email: string;
   tripId: string;
+};
+
+export type TripShareTokenType = "openbirding";
+
+export type TripShareToken = {
+  _id: string;
+  tripId: string;
+  type: TripShareTokenType;
+  lastUsedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TripInput = {

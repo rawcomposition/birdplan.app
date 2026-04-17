@@ -1,8 +1,15 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate, tripToGeoJson, sanitizeFileName, getMonthRange, computeFrequency } from "lib/utils.js";
-import { connect, Trip, Invite, Profile } from "lib/db.js";
-import { OPENBIRDING_API_URL } from "lib/config.js";
+import {
+  authenticate,
+  tripToGeoJson,
+  sanitizeFileName,
+  getMonthRange,
+  computeFrequency,
+  generateOpenBirdingCode,
+} from "lib/utils.js";
+import { connect, Trip, Invite, Profile, TripShareToken } from "lib/db.js";
+import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, Editor, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
 import markers from "./markers.js";
@@ -35,7 +42,8 @@ trip.get("/", async (c) => {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
-  return c.json(trip);
+  const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
+  return c.json(tripData);
 });
 
 trip.patch("/", async (c) => {
@@ -84,7 +92,11 @@ trip.delete("/", async (c) => {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
-  await Promise.all([Trip.deleteOne({ _id: tripId }), Invite.deleteMany({ tripId })]);
+  await Promise.all([
+    Trip.deleteOne({ _id: tripId }),
+    Invite.deleteMany({ tripId }),
+    TripShareToken.deleteMany({ tripId }),
+  ]);
 
   return c.json({});
 });
@@ -181,6 +193,56 @@ trip.get("/export", async (c) => {
     "Content-Type": "application/vnd.google-earth.kml+xml",
     "Content-Disposition": `attachment; filename="${sanitizeFileName(trip.name)}.kml"`,
   });
+});
+
+trip.post("/share-code", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!existing.userIds.includes(session.uid)) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  const isExpired =
+    !existing.shareCode ||
+    !existing.shareCodeCreatedAt ||
+    Date.now() - new Date(existing.shareCodeCreatedAt).getTime() > SHARE_CODE_TTL_MINUTES * 60 * 1000;
+
+  if (!isExpired) {
+    const expiresAt = new Date(new Date(existing.shareCodeCreatedAt!).getTime() + SHARE_CODE_TTL_MINUTES * 60 * 1000);
+    return c.json({ shareCode: existing.shareCode, expiresAt: expiresAt.toISOString() });
+  }
+
+  const maxRetries = 5;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const code = generateOpenBirdingCode();
+      const now = new Date();
+      const updated = await Trip.findOneAndUpdate(
+        { _id: tripId },
+        { $set: { shareCode: code, shareCodeCreatedAt: now } },
+        { returnDocument: "after" }
+      );
+      const savedCode = updated!.shareCode!;
+      const savedAt = new Date(updated!.shareCodeCreatedAt!).getTime();
+      const expiresAt = new Date(savedAt + SHARE_CODE_TTL_MINUTES * 60 * 1000);
+      return c.json({ shareCode: savedCode, expiresAt: expiresAt.toISOString() });
+    } catch (error: any) {
+      const isDuplicateCode = error?.code === 11000 && error?.keyPattern?.shareCode;
+      if (!isDuplicateCode || attempt === maxRetries - 1) throw error;
+    }
+  }
+
+  throw new HTTPException(500, { message: "Failed to generate share code" });
 });
 
 trip.get("/invites", async (c) => {

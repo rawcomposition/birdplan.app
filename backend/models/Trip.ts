@@ -79,6 +79,8 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   imgUrl: { type: String, default: null },
   targetStars: [{ type: String, default: [] }],
   targetNotes: { type: Map, of: String, default: {} },
+  shareCode: { type: String, unique: true, sparse: true },
+  shareCodeCreatedAt: { type: Date, default: null },
 };
 
 const TripSchema = new Schema(fields, {

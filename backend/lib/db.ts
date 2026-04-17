@@ -1,6 +1,7 @@
 import Trip from "models/Trip.js";
 import Profile from "models/Profile.js";
 import Invite from "models/Invite.js";
+import TripShareToken from "models/TripShareToken.js";
 import mongoose from "mongoose";
 
 let isConnected = false;
@@ -42,4 +43,4 @@ export async function connect() {
   }
 }
 
-export { Trip, Profile, Invite };
+export { Trip, Profile, Invite, TripShareToken };

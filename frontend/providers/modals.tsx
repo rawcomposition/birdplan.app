@@ -16,6 +16,7 @@ import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
 import DeleteAccount from "modals/DeleteAccount";
+import OpenBirding from "modals/OpenBirding";
 
 export type ModalPosition = "right" | "center";
 
@@ -77,6 +78,11 @@ const modals: ModalConfig[] = [
     position: "center",
     maxHeight: "90vh",
   },
+  {
+    id: "openBirding",
+    Component: OpenBirding,
+    position: "center",
+  },
 ];
 
 type ModalId =
@@ -88,7 +94,8 @@ type ModalId =
   | "share"
   | "addItineraryLocation"
   | "addPlace"
-  | "deleteAccount";
+  | "deleteAccount"
+  | "openBirding";
 
 type Context = {
   open: (id: ModalId, props?: KeyValue) => void;
