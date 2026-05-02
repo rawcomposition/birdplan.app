@@ -37,7 +37,7 @@ export default function SpeciesDetail() {
   const { lifelist } = useProfile();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies } = useTrip();
   const { getSpeciesImg } = useSpeciesImages();
-  const { open } = useModal();
+  const { open, close } = useModal();
   const queryClient = useQueryClient();
 
   const [scope, setScope] = React.useState<Scope>("saved");
@@ -229,10 +229,22 @@ export default function SpeciesDetail() {
     });
   };
 
+  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (
+      !target.closest("button") &&
+      !target.closest("a") &&
+      !target.closest('[role="button"]') &&
+      !target.closest(".mapboxgl-canvas")
+    ) {
+      close();
+    }
+  };
+
   if (is404) return <NotFound />;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" onClick={handleContainerClick}>
       {trip && speciesName && (
         <Head>
           <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>

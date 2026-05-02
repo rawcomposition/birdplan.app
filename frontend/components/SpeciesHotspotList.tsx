@@ -8,6 +8,7 @@ export type HotspotItem = {
   region?: string;
   frequency: number;
   samples: number;
+  score?: number;
   saved: boolean;
   distanceKm?: number;
   lastSeen?: string;
