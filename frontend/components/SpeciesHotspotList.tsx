@@ -10,9 +10,7 @@ export type HotspotItem = {
   samples: number;
   score?: number;
   saved: boolean;
-  distanceKm?: number;
   lastSeen?: string;
-  lastSeenAt?: string; // ISO date used for sorting
 };
 
 type Props = {
@@ -49,15 +47,6 @@ function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number
       <div className="min-w-0 sm:col-auto col-start-1 col-span-2">
         <div className="text-[15px] font-semibold text-gray-800 truncate">{h.name}</div>
         <div className="flex items-center gap-2.5 text-xs text-gray-600 mt-1.5">
-          {h.distanceKm != null && (
-            <>
-              <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                <Icon name="genericMarker" className="text-[10px] text-gray-500" />
-                {h.distanceKm.toFixed(1)} km
-              </span>
-              <span className="w-[3px] h-[3px] rounded-full bg-gray-400" />
-            </>
-          )}
           <LastSeen value={h.lastSeen} />
         </div>
       </div>

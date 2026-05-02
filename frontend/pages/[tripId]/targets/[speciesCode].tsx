@@ -183,9 +183,7 @@ export default function SpeciesDetail() {
         samples: it.samples,
         score: it.score,
         saved: savedIdSet.has(it.id),
-        distanceKm: undefined,
         lastSeen: obsDt ? dateTimeToRelative(obsDt, regionCode, true) : "> 30 days ago",
-        lastSeenAt: obsDt,
       };
     });
   }, [rankings, trip?.hotspots, lastSeenByLocId, regionCode, savedIdSet]);
