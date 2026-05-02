@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 const AVICOMMONS_DOMAIN = "https://static.avicommons.org";
 
 type ContextT = {
-  getSpeciesImg: (code: string) => { url: string; by: string | undefined } | undefined;
+  getSpeciesImg: (
+    code: string,
+    size?: "240" | "320" | "480" | "900"
+  ) => { url: string; by: string | undefined } | undefined;
 };
 
 const initialState: ContextT = {

@@ -1,0 +1,319 @@
+import React from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import TextareaAutosize from "react-textarea-autosize";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Header from "components/Header";
+import TripNav from "components/TripNav";
+import ErrorBoundary from "components/ErrorBoundary";
+import NotFound from "components/NotFound";
+import Icon from "components/Icon";
+import Alert from "components/Alert";
+import SpeciesHero from "components/SpeciesHero";
+import SpeciesHotspotToolbar, { Scope, SortKey } from "components/SpeciesHotspotToolbar";
+import SpeciesHotspotList, { HotspotItem } from "components/SpeciesHotspotList";
+import { useTrip } from "providers/trip";
+import { useUser } from "providers/user";
+import { useProfile } from "providers/profile";
+import { useSpeciesImages } from "providers/species-images";
+import { useModal } from "providers/modals";
+import useDownloadTargets from "hooks/useDownloadTargets";
+import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
+import useTripMutation from "hooks/useTripMutation";
+import useMutation from "hooks/useMutation";
+import { OPENBIRDING_API_URL } from "lib/config";
+import { dateTimeToRelative } from "lib/helpers";
+import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
+
+export default function SpeciesDetail() {
+  const router = useRouter();
+  const speciesCode = router.query.speciesCode?.toString() || "";
+  const { user } = useUser();
+  const { lifelist } = useProfile();
+  const { trip, is404, canEdit } = useTrip();
+  const { getSpeciesImg } = useSpeciesImages();
+  const { open } = useModal();
+  const queryClient = useQueryClient();
+
+  const [scope, setScope] = React.useState<Scope>("saved");
+  const [sort, setSort] = React.useState<SortKey>("freq");
+  const [minChecklists, setMinChecklists] = React.useState(0);
+
+  const { data: regionData } = useDownloadTargets({
+    region: trip?.region,
+    startMonth: trip?.startMonth,
+    endMonth: trip?.endMonth,
+    enabled: !!trip,
+  });
+
+  const target = regionData?.items?.find((it) => it.code === speciesCode);
+  const speciesName = target?.name || "";
+
+  const { recentSpecies } = useFetchRecentSpecies(trip?.region);
+  const lastSeenInRegion = recentSpecies?.find((s) => s.code === speciesCode);
+  const regionCode = trip?.region.split(",")[0] || "";
+
+  const isStarred = !!trip?.targetStars?.includes(speciesCode);
+  const isSeen = lifelist.includes(speciesCode);
+
+  const addStarMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/targets/add-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: [...(old.targetStars ?? []), input.code],
+    }),
+  });
+
+  const removeStarMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/targets/remove-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
+    }),
+  });
+
+  const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
+    url: `/trips/${trip?._id}/targets/set-notes`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetNotes: { ...(old.targetNotes || {}), [input.code]: input.notes },
+    }),
+  });
+
+  const seenMutation = useMutation({
+    url: `/profile/add-to-lifelist`,
+    method: "POST",
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [`/profile`] }),
+    onMutate: async (data: any) => {
+      await queryClient.cancelQueries({ queryKey: ["/profile"] });
+      const prevData = queryClient.getQueryData([`/profile`]);
+      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) => {
+        if (!old) return old;
+        return { ...old, lifelist: [...old.lifelist, data.code] };
+      });
+      return { prevData };
+    },
+    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData([`/profile`], ctx?.prevData),
+  });
+
+  // Saved-hotspot rankings (same endpoint used by BestTargetHotspots)
+  const locationIds = trip?.hotspots?.map((it) => it.id) || [];
+  const hasSavedHotspots = !!trip?.hotspots?.length;
+
+  const {
+    data: savedRankings,
+    isLoading: loadingRankings,
+    isError: rankingsError,
+  } = useQuery<OpenBirdingHotspotRankingResponse>({
+    queryKey: ["openbirding-best-hotspots", speciesCode, locationIds, undefined],
+    queryFn: async () => {
+      const res = await fetch(`${OPENBIRDING_API_URL}/api/v1/hotspots/species/${speciesCode}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locationIds }),
+      });
+      if (!res.ok) throw new Error("Failed to fetch hotspot rankings");
+      return res.json();
+    },
+    enabled: !!speciesCode && hasSavedHotspots && !!OPENBIRDING_API_URL,
+    staleTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    placeholderData: (prev) => prev,
+  });
+
+  const savedHotspotItems: HotspotItem[] = React.useMemo(() => {
+    const items = savedRankings?.items || [];
+    return items.map((it) => ({
+      id: it.id,
+      name: trip?.hotspots?.find((h) => h.id === it.id)?.name || it.name,
+      region: it.region,
+      frequency: it.frequency,
+      samples: it.samples,
+      saved: true,
+      // TODO: distanceKm and lastSeen come from upcoming endpoints
+      distanceKm: undefined,
+      lastSeen: undefined,
+    }));
+  }, [savedRankings, trip?.hotspots]);
+
+  const filtered = React.useMemo(() => {
+    let list = scope === "saved" ? savedHotspotItems.slice() : [];
+    list = list.filter((h) => h.samples >= minChecklists);
+    const cmp: Record<SortKey, (a: HotspotItem, b: HotspotItem) => number> = {
+      freq: (a, b) => b.frequency - a.frequency,
+      checklists: (a, b) => b.samples - a.samples,
+      dist: (a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity),
+      lastSeen: () => 0,
+    };
+    list.sort(cmp[sort]);
+    return list;
+  }, [savedHotspotItems, scope, sort, minChecklists]);
+
+  // Notes (from trip.targetNotes)
+  const [tempNotes, setTempNotes] = React.useState("");
+  React.useEffect(() => {
+    setTempNotes(trip?.targetNotes?.[speciesCode] || "");
+  }, [trip?.targetNotes, speciesCode]);
+
+  // TODO: monthly frequency endpoint not implemented — placeholder zeros
+  const monthly = React.useMemo<number[]>(() => Array(12).fill(0), []);
+
+  const handleToggleStar = () => {
+    if (!canEdit) return;
+    if (isStarred) removeStarMutation.mutate({ code: speciesCode });
+    else addStarMutation.mutate({ code: speciesCode });
+  };
+
+  const handleMarkSeen = () => {
+    if (!canEdit || isSeen || !speciesName) return;
+    if (!confirm(`Are you sure you want to add ${speciesName} to your life list?`)) return;
+    seenMutation.mutate({ code: speciesCode });
+  };
+
+  const handleHotspotClick = (id: string) => {
+    const hotspot = trip?.hotspots?.find((it) => it.id === id);
+    const ranked = savedRankings?.items?.find((it) => it.id === id);
+    if (hotspot || ranked) {
+      open("hotspot", { hotspot: hotspot || ranked, speciesName });
+    }
+  };
+
+  const handleToggleSave = (_id: string) => {
+    // TODO: wire up save/unsave hotspot from species page (same endpoints
+    // already used elsewhere in the app — POST/DELETE /trips/:id/hotspots).
+    toast("Saving hotspots from this view is coming soon.");
+  };
+
+  const handleShowMap = () => {
+    toast("Map view is coming in phase 2.");
+  };
+
+  if (is404) return <NotFound />;
+
+  return (
+    <div className="flex flex-col h-full">
+      {trip && speciesName && (
+        <Head>
+          <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>
+        </Head>
+      )}
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <TripNav active="targets" />
+      <main className="flex-1 overflow-auto bg-gray-50">
+        <ErrorBoundary>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
+            <div className="mb-4">
+              <Link
+                href={`/${trip?._id}/targets`}
+                className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
+              >
+                <Icon name="angleLeft" className="text-xs" />
+                Back to targets
+              </Link>
+            </div>
+
+            {!target && regionData?.items && (
+              <Alert style="warning">Species not found in this region&apos;s targets.</Alert>
+            )}
+
+            <SpeciesHero
+              name={speciesName || speciesCode}
+              scientificName={undefined /* TODO: wire scientific name from taxonomy endpoint */}
+              photoUrl={getSpeciesImg(speciesCode, "900")?.url}
+              photoBy={getSpeciesImg(speciesCode)?.by}
+              ebirdUrl={`https://ebird.org/species/${speciesCode}`}
+              starred={isStarred}
+              seen={isSeen}
+              canEdit={canEdit}
+              monthly={monthly}
+              startMonth={trip?.startMonth}
+              endMonth={trip?.endMonth}
+              onToggleStar={handleToggleStar}
+              onMarkSeen={handleMarkSeen}
+              onShowMap={handleShowMap}
+            />
+
+            {target && (
+              <div className="mt-3 text-xs text-gray-500 flex items-center gap-3 flex-wrap">
+                <span>
+                  Region frequency: <span className="font-semibold text-gray-700">{target.frequency}%</span>
+                </span>
+                {lastSeenInRegion?.date && (
+                  <span>
+                    Last seen in region:{" "}
+                    <span className="font-semibold text-gray-700">
+                      {dateTimeToRelative(lastSeenInRegion.date, regionCode, true)}
+                    </span>
+                  </span>
+                )}
+              </div>
+            )}
+
+            <div className="mt-4 bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3">
+              <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-1">Notes</div>
+              <TextareaAutosize
+                placeholder="Add notes about this species..."
+                value={tempNotes}
+                onChange={(e) => setTempNotes(e.target.value)}
+                onBlur={(e) => {
+                  if (!canEdit) return;
+                  setNotesMutation.mutate({ code: speciesCode, notes: e.target.value });
+                }}
+                readOnly={!canEdit}
+                minRows={1}
+                maxRows={10}
+                className="w-full bg-transparent border-none outline-none resize-none text-sm text-gray-800 leading-relaxed"
+              />
+            </div>
+
+            <div className="mt-8 flex flex-col gap-4">
+              <SpeciesHotspotToolbar
+                scope={scope}
+                setScope={setScope}
+                sort={sort}
+                setSort={setSort}
+                minChecklists={minChecklists}
+                setMinChecklists={setMinChecklists}
+              />
+
+              {scope === "saved" && !hasSavedHotspots && (
+                <Alert style="warning">You have not saved any hotspots for this trip.</Alert>
+              )}
+              {scope === "saved" && rankingsError && (
+                <Alert style="error">Failed to load hotspot rankings.</Alert>
+              )}
+              {scope === "saved" && hasSavedHotspots && loadingRankings && !savedRankings && (
+                <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
+              )}
+              {scope === "all" && (
+                <Alert style="info">
+                  All hotspots ranking is coming soon — the OpenBirding endpoint for ranking every hotspot in the
+                  trip&apos;s region for a single species is not yet built.
+                </Alert>
+              )}
+
+              {scope === "saved" && hasSavedHotspots && !rankingsError && (
+                <SpeciesHotspotList
+                  hotspots={filtered}
+                  total={savedHotspotItems.length}
+                  onSelect={handleHotspotClick}
+                  onToggleSave={handleToggleSave}
+                  canEdit={canEdit}
+                />
+              )}
+
+              {savedRankings?.citation && scope === "saved" && (
+                <p className="text-gray-400 text-xs text-center pt-2">{savedRankings.citation}</p>
+              )}
+            </div>
+          </div>
+        </ErrorBoundary>
+      </main>
+    </div>
+  );
+}
