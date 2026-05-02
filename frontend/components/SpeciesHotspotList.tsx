@@ -18,11 +18,9 @@ type Props = {
   hotspots: HotspotItem[];
   total: number;
   onSelect: (id: string) => void;
-  onToggleSave: (id: string) => void;
-  canEdit: boolean;
 };
 
-export default function SpeciesHotspotList({ hotspots, total, onSelect, onToggleSave, canEdit }: Props) {
+export default function SpeciesHotspotList({ hotspots, total, onSelect }: Props) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-5 py-3.5 border-b border-gray-200 flex items-baseline justify-between">
@@ -34,41 +32,20 @@ export default function SpeciesHotspotList({ hotspots, total, onSelect, onToggle
       {hotspots.length === 0 ? (
         <div className="px-6 py-16 text-center text-gray-500 text-sm">No hotspots match these filters.</div>
       ) : (
-        hotspots.map((h, i) => (
-          <SpeciesHotspotRow
-            key={h.id}
-            h={h}
-            rank={i + 1}
-            onSelect={onSelect}
-            onToggleSave={onToggleSave}
-            canEdit={canEdit}
-          />
-        ))
+        hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
       )}
     </div>
   );
 }
 
-function SpeciesHotspotRow({
-  h,
-  rank,
-  onSelect,
-  onToggleSave,
-  canEdit,
-}: {
-  h: HotspotItem;
-  rank: number;
-  onSelect: (id: string) => void;
-  onToggleSave: (id: string) => void;
-  canEdit: boolean;
-}) {
+function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number; onSelect: (id: string) => void }) {
   const freqDisplay = h.frequency > 1 ? Math.round(h.frequency) : h.frequency;
   return (
     <div
       onClick={() => onSelect(h.id)}
       role="button"
       tabIndex={0}
-      className="px-5 py-3.5 border-b border-gray-100 last:border-b-0 hover:bg-sky-50/60 transition-colors cursor-pointer grid gap-4 items-center grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_220px_40px]"
+      className="px-5 py-3.5 border-b border-gray-100 last:border-b-0 hover:bg-sky-50/60 transition-colors cursor-pointer grid gap-4 items-center grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_220px_28px]"
     >
       <div className="text-gray-400 text-sm font-medium tabular-nums w-5 text-right hidden sm:block">{rank}.</div>
       <div className="min-w-0 sm:col-auto col-start-1 col-span-2">
@@ -93,29 +70,17 @@ function SpeciesHotspotRow({
           <span className="text-[11px] text-gray-600 whitespace-nowrap">of {h.samples} checklists</span>
         </div>
         <div className="w-full h-1 rounded-full bg-gray-100 overflow-hidden">
-          <div
-            className="h-full bg-green-600 rounded-full"
-            style={{ width: `${Math.min(100, h.frequency)}%` }}
-          />
+          <div className="h-full bg-green-600 rounded-full" style={{ width: `${Math.min(100, h.frequency)}%` }} />
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleSave(h.id);
-        }}
-        disabled={!canEdit}
-        title={h.saved ? "Unsave hotspot" : "Save hotspot"}
-        aria-label={h.saved ? "Unsave hotspot" : "Save hotspot"}
-        className={clsx(
-          "w-9 h-9 rounded-lg grid place-items-center disabled:opacity-60 row-start-1 sm:row-auto justify-self-end",
-          h.saved ? "text-yellow-500 bg-yellow-50" : "text-gray-400 hover:bg-gray-100"
-        )}
+      <div
+        className="row-start-1 sm:row-auto justify-self-end w-7 grid place-items-center"
+        title={h.saved ? "Saved hotspot" : undefined}
+        aria-label={h.saved ? "Saved hotspot" : undefined}
       >
-        <Icon name={h.saved ? "star" : "starOutline"} className="text-base" />
-      </button>
+        {h.saved && <Icon name="star" className="text-yellow-500 text-base" />}
+      </div>
     </div>
   );
 }

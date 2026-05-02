@@ -198,12 +198,6 @@ export default function SpeciesDetail() {
     }
   };
 
-  const handleToggleSave = (_id: string) => {
-    // TODO: wire up save/unsave hotspot from species page (same endpoints
-    // already used elsewhere in the app — POST/DELETE /trips/:id/hotspots).
-    toast("Saving hotspots from this view is coming soon.");
-  };
-
   const handleShowMap = () => {
     if (!speciesCode) return;
     setSelectedSpecies({ code: speciesCode, name: speciesName || speciesCode });
@@ -313,8 +307,6 @@ export default function SpeciesDetail() {
                   hotspots={filtered}
                   total={savedHotspotItems.length}
                   onSelect={handleHotspotClick}
-                  onToggleSave={handleToggleSave}
-                  canEdit={canEdit}
                 />
               )}
 
