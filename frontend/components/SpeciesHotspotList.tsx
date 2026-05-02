@@ -17,18 +17,15 @@ export type HotspotItem = {
 
 type Props = {
   hotspots: HotspotItem[];
-  total: number;
   onSelect: (id: string) => void;
 };
 
-export default function SpeciesHotspotList({ hotspots, total, onSelect }: Props) {
+export default function SpeciesHotspotList({ hotspots, onSelect }: Props) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-5 py-3.5 border-b border-gray-200 flex items-baseline justify-between">
         <div className="text-base font-bold text-gray-800">Top hotspots</div>
-        <div className="text-xs text-gray-500">
-          {hotspots.length} of {total}
-        </div>
+        <div className="text-xs text-gray-500">Showing {hotspots.length} results</div>
       </div>
       {hotspots.length === 0 ? (
         <div className="px-6 py-16 text-center text-gray-500 text-sm">No hotspots match these filters.</div>

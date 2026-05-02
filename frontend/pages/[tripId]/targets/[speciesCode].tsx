@@ -42,7 +42,7 @@ export default function SpeciesDetail() {
 
   const [scope, setScope] = React.useState<Scope>("saved");
   const [sort, setSort] = React.useState<SortKey>("best");
-  const [minChecklists, setMinChecklists] = React.useState(0);
+  const [minObservations, setMinObservations] = React.useState(1);
 
   const { data: regionData } = useDownloadTargets({
     region: trip?.region,
@@ -122,6 +122,7 @@ export default function SpeciesDetail() {
   const queryBody = {
     sortBy: apiSortBy,
     ...(months ? { months } : {}),
+    ...(minObservations > 1 ? { minObservations } : {}),
     ...(scope === "saved" ? { locationIds } : { region: trip?.region, limit: 500 }),
   };
   const queryEnabled =
@@ -168,18 +169,14 @@ export default function SpeciesDetail() {
   }, [rankings, trip?.hotspots, lastSeenByLocId, regionCode, savedIdSet]);
 
   const filtered = React.useMemo(() => {
-    let list = hotspotItems.slice();
-    list = list.filter((h) => h.samples >= minChecklists);
+    const list = hotspotItems.slice();
     const cmp: Record<SortKey, (a: HotspotItem, b: HotspotItem) => number> = {
       best: (a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity),
       freq: (a, b) => b.frequency - a.frequency,
-      checklists: (a, b) => b.samples - a.samples,
-      dist: (a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity),
-      lastSeen: (a, b) => (b.lastSeenAt || "").localeCompare(a.lastSeenAt || ""),
     };
     list.sort(cmp[sort]);
     return list;
-  }, [hotspotItems, sort, minChecklists]);
+  }, [hotspotItems, sort]);
 
   const [tempNotes, setTempNotes] = React.useState("");
   React.useEffect(() => {
@@ -310,8 +307,8 @@ export default function SpeciesDetail() {
                 setScope={setScope}
                 sort={sort}
                 setSort={setSort}
-                minChecklists={minChecklists}
-                setMinChecklists={setMinChecklists}
+                minObservations={minObservations}
+                setMinObservations={setMinObservations}
               />
 
               {scope === "saved" && !hasSavedHotspots && (
@@ -323,11 +320,7 @@ export default function SpeciesDetail() {
               )}
 
               {queryEnabled && !rankingsError && rankings && (
-                <SpeciesHotspotList
-                  hotspots={filtered}
-                  total={hotspotItems.length}
-                  onSelect={handleHotspotClick}
-                />
+                <SpeciesHotspotList hotspots={filtered} onSelect={handleHotspotClick} />
               )}
 
               {rankings?.citation && (
