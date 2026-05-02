@@ -1,10 +1,8 @@
 import React from "react";
 import { useTrip } from "providers/trip";
-import clsx from "clsx";
 import Icon from "components/Icon";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
-import TextareaAutosize from "react-textarea-autosize";
 import { Target } from "@birdplan/shared";
 import { useSpeciesImages } from "providers/species-images";
 import useTripMutation from "hooks/useTripMutation";
@@ -17,10 +15,10 @@ type PropsT = Target & {
 export default function TargetRow({ index, code, name, frequency }: PropsT) {
   const { trip, canEdit } = useTrip();
   const router = useRouter();
-  const [tempNotes, setTempNotes] = React.useState(trip?.targetNotes?.[code] || "");
   const { getSpeciesImg } = useSpeciesImages();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
+  const notes = trip?.targetNotes?.[code];
   const regionCode = trip?.region.split(",")[0] || "";
 
   const addStarMutation = useTripMutation<{ code: string }>({
@@ -41,15 +39,6 @@ export default function TargetRow({ index, code, name, frequency }: PropsT) {
     }),
   });
 
-  const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
-    url: `/trips/${trip?._id}/targets/set-notes`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      targetNotes: { ...(old.targetNotes || {}), [input.code]: input.notes },
-    }),
-  });
-
   const lastReport = recentSpecies?.find((species) => species.code === code);
   const img = React.useMemo(() => getSpeciesImg(code), [code, getSpeciesImg]);
 
@@ -58,10 +47,7 @@ export default function TargetRow({ index, code, name, frequency }: PropsT) {
     router.push(`/${trip._id}/targets/${code}`);
   };
 
-  const stop = (e: React.MouseEvent | React.SyntheticEvent) => e.stopPropagation();
-
-  const textareaBaseClasses =
-    "input border bg-transparent shadow-none opacity-75 hover:opacity-100 focus-within:opacity-100 border-transparent hover:border-gray-200 focus-within:border-gray-200 my-1 h-14 block p-1.5";
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
     <tr
@@ -92,17 +78,12 @@ export default function TargetRow({ index, code, name, frequency }: PropsT) {
           <h3 className="text-sm lg:text-base font-bold pl-2 sm:pl-0 text-gray-800">{name}</h3>
         </div>
       </td>
-      <td className="hidden md:table-cell" onClick={stop}>
-        <TextareaAutosize
-          className={clsx(textareaBaseClasses, "w-[150px] md:w-[200px] lg:w-[300px] md:mr-2 lg:mr-8 text-[13px]")}
-          placeholder="Add notes..."
-          value={tempNotes}
-          onChange={(e) => setTempNotes(e.target.value)}
-          onBlur={(e) => setNotesMutation.mutate({ code, notes: e.target.value })}
-          minRows={2}
-          maxRows={6}
-          cacheMeasurements
-        />
+      <td className="hidden md:table-cell">
+        {notes && (
+          <p className="w-[150px] md:w-[200px] lg:w-[300px] md:mr-2 lg:mr-8 text-[13px] text-gray-600 whitespace-pre-wrap line-clamp-3">
+            {notes}
+          </p>
+        )}
       </td>
       <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{frequency}%</td>
       <td className="text-[14px] text-gray-600 hidden sm:table-cell">

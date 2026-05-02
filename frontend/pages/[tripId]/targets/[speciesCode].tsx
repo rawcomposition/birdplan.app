@@ -11,6 +11,8 @@ import ErrorBoundary from "components/ErrorBoundary";
 import NotFound from "components/NotFound";
 import Icon from "components/Icon";
 import Alert from "components/Alert";
+import MapBox from "components/Mapbox";
+import SpeciesCard from "components/SpeciesCard";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { Scope, SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { HotspotItem } from "components/SpeciesHotspotList";
@@ -20,11 +22,10 @@ import { useProfile } from "providers/profile";
 import { useSpeciesImages } from "providers/species-images";
 import { useModal } from "providers/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
-import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
+import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { OPENBIRDING_API_URL } from "lib/config";
-import { dateTimeToRelative } from "lib/helpers";
 import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
@@ -32,7 +33,7 @@ export default function SpeciesDetail() {
   const speciesCode = router.query.speciesCode?.toString() || "";
   const { user } = useUser();
   const { lifelist } = useProfile();
-  const { trip, is404, canEdit } = useTrip();
+  const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies } = useTrip();
   const { getSpeciesImg } = useSpeciesImages();
   const { open } = useModal();
   const queryClient = useQueryClient();
@@ -50,10 +51,6 @@ export default function SpeciesDetail() {
 
   const target = regionData?.items?.find((it) => it.code === speciesCode);
   const speciesName = target?.name || "";
-
-  const { recentSpecies } = useFetchRecentSpecies(trip?.region);
-  const lastSeenInRegion = recentSpecies?.find((s) => s.code === speciesCode);
-  const regionCode = trip?.region.split(",")[0] || "";
 
   const isStarred = !!trip?.targetStars?.includes(speciesCode);
   const isSeen = lifelist.includes(speciesCode);
@@ -190,7 +187,20 @@ export default function SpeciesDetail() {
   };
 
   const handleShowMap = () => {
-    toast("Map view is coming in phase 2.");
+    if (!speciesCode) return;
+    setSelectedSpecies({ code: speciesCode, name: speciesName || speciesCode });
+  };
+
+  // Map overlay (existing pattern from the targets list page)
+  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
+  const obsClick = (id: string) => {
+    const observation = obs.find((it) => it.id === id);
+    if (!observation) return toast.error("Observation not found");
+    open(observation.isPersonal ? "personalLocation" : "hotspot", {
+      hotspot: observation,
+      speciesCode: selectedSpecies?.code,
+      speciesName: selectedSpecies?.name,
+    });
   };
 
   if (is404) return <NotFound />;
@@ -204,9 +214,10 @@ export default function SpeciesDetail() {
       )}
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="targets" />
-      <main className="flex-1 overflow-auto bg-gray-50">
+      <main className="flex-1 relative bg-gray-50">
         <ErrorBoundary>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
+          <div className="absolute inset-0 overflow-auto">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
             <div className="mb-4">
               <Link
                 href={`/${trip?._id}/targets`}
@@ -237,22 +248,6 @@ export default function SpeciesDetail() {
               onMarkSeen={handleMarkSeen}
               onShowMap={handleShowMap}
             />
-
-            {target && (
-              <div className="mt-3 text-xs text-gray-500 flex items-center gap-3 flex-wrap">
-                <span>
-                  Region frequency: <span className="font-semibold text-gray-700">{target.frequency}%</span>
-                </span>
-                {lastSeenInRegion?.date && (
-                  <span>
-                    Last seen in region:{" "}
-                    <span className="font-semibold text-gray-700">
-                      {dateTimeToRelative(lastSeenInRegion.date, regionCode, true)}
-                    </span>
-                  </span>
-                )}
-              </div>
-            )}
 
             <div className="mt-4 bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3">
               <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-1">Notes</div>
@@ -311,7 +306,18 @@ export default function SpeciesDetail() {
                 <p className="text-gray-400 text-xs text-center pt-2">{savedRankings.citation}</p>
               )}
             </div>
+            </div>
           </div>
+          {selectedSpecies && (
+            <div className="absolute inset-0 z-10 flex flex-col">
+              <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />
+              <div className="w-full flex-grow relative">
+                {trip?.bounds && (
+                  <MapBox key={trip._id} onHotspotClick={obsClick} obsLayer={obsLayer} bounds={trip.bounds} />
+                )}
+              </div>
+            </div>
+          )}
         </ErrorBoundary>
       </main>
     </div>
