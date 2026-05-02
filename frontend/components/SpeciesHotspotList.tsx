@@ -77,11 +77,11 @@ function LastSeen({ value }: { value?: string }) {
   const lower = value.toLowerCase();
   const isRecent = lower === "today" || lower === "yesterday";
   const isOld = value.includes("> 30");
-  const dot = isRecent ? "bg-green-600" : isOld ? "bg-gray-300" : "bg-yellow-500";
+  const dot = isRecent ? "bg-green-600" : "bg-yellow-500";
   const text = isRecent ? "text-green-700" : isOld ? "text-gray-500" : "text-gray-700";
   return (
     <span className={clsx("inline-flex items-center gap-1.5 whitespace-nowrap", text)}>
-      <span className={clsx("w-1.5 h-1.5 rounded-full", dot)} />
+      {!isOld && <span className={clsx("w-1.5 h-1.5 rounded-full", dot)} />}
       {value}
     </span>
   );
