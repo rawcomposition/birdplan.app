@@ -47,7 +47,7 @@ export default function SpeciesHotspotToolbar({
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <ScopeToggle scope={scope} setScope={setScope} />
-      <div className="ml-auto flex items-center gap-2.5 flex-wrap">
+      <div className="sm:ml-auto flex items-center gap-2.5 flex-wrap">
         <SortDropdown value={sort} onChange={setSort} />
         <MoreFiltersMenu
           minObservations={minObservations}

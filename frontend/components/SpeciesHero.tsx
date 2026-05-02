@@ -66,7 +66,7 @@ export default function SpeciesHero({
             <button
               type="button"
               onClick={onShowMap}
-              className="h-9 px-4 rounded-lg bg-gray-800 text-white hover:bg-gray-900 text-sm font-semibold inline-flex items-center gap-1.5"
+              className="hidden lg:inline-flex h-9 px-4 rounded-lg bg-gray-800 text-white hover:bg-gray-900 text-sm font-semibold items-center gap-1.5"
             >
               <Icon name="map" className="text-sm" />
               View Map
@@ -87,6 +87,21 @@ export default function SpeciesHero({
                 leaveTo="scale-95 opacity-0"
               >
                 <Menu.Items className="absolute right-0 top-10 z-30 min-w-[220px] origin-top-right ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white shadow-md py-1.5">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        type="button"
+                        onClick={onShowMap}
+                        className={clsx(
+                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left lg:hidden",
+                          active ? "bg-gray-50 text-gray-900" : "text-gray-800"
+                        )}
+                      >
+                        <Icon name="map" className="text-gray-500" />
+                        View Map
+                      </button>
+                    )}
+                  </Menu.Item>
                   <Menu.Item disabled={!canEdit}>
                     {({ active, disabled }) => (
                       <button
@@ -146,7 +161,12 @@ export default function SpeciesHero({
           </div>
         </div>
 
-        <MonthlyFrequencyChart monthly={monthly} startMonth={startMonth} endMonth={endMonth} className="mt-auto" />
+        <MonthlyFrequencyChart
+          monthly={monthly}
+          startMonth={startMonth}
+          endMonth={endMonth}
+          className="mt-10 sm:mt-auto"
+        />
       </div>
     </div>
   );

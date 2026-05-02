@@ -278,7 +278,7 @@ export default function SpeciesDetail() {
                 href={`/${trip?._id}/targets`}
                 className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
               >
-                <Icon name="angleLeft" className="text-xs" />
+                <Icon name="arrowRight" className="text-xs rotate-180" />
                 Back to targets
               </Link>
             </div>
