@@ -30,6 +30,8 @@ type Props = {
   setSort: (s: SortKey) => void;
   minObservations: number;
   setMinObservations: (n: number) => void;
+  recentDays: number | null;
+  setRecentDays: (n: number | null) => void;
 };
 
 export default function SpeciesHotspotToolbar({
@@ -39,13 +41,20 @@ export default function SpeciesHotspotToolbar({
   setSort,
   minObservations,
   setMinObservations,
+  recentDays,
+  setRecentDays,
 }: Props) {
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <ScopeToggle scope={scope} setScope={setScope} />
       <div className="ml-auto flex items-center gap-2.5 flex-wrap">
         <SortDropdown value={sort} onChange={setSort} />
-        <MoreFiltersMenu minObservations={minObservations} setMinObservations={setMinObservations} />
+        <MoreFiltersMenu
+          minObservations={minObservations}
+          setMinObservations={setMinObservations}
+          recentDays={recentDays}
+          setRecentDays={setRecentDays}
+        />
       </div>
     </div>
   );
@@ -128,12 +137,16 @@ function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortK
 function MoreFiltersMenu({
   minObservations,
   setMinObservations,
+  recentDays,
+  setRecentDays,
 }: {
   minObservations: number;
   setMinObservations: (n: number) => void;
+  recentDays: number | null;
+  setRecentDays: (n: number | null) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const activeCount = minObservations > 1 ? 1 : 0;
+  const activeCount = (minObservations > 1 ? 1 : 0) + (recentDays != null ? 1 : 0);
 
   return (
     <div className="relative">
@@ -158,6 +171,49 @@ function MoreFiltersMenu({
         <>
           <div onClick={() => setOpen(false)} className="fixed inset-0 z-30" />
           <div className="absolute top-full right-0 mt-2 z-40 w-[300px] bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold">
+                Last seen (days)
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setMinObservations(1);
+                  setRecentDays(null);
+                  setOpen(false);
+                }}
+                className={clsx(
+                  "text-[11px] font-semibold text-sky-600 hover:text-sky-700",
+                  activeCount === 0 && "invisible"
+                )}
+              >
+                Clear all
+              </button>
+            </div>
+            <div className="inline-flex bg-gray-100 p-0.5 rounded-lg border border-gray-200 mb-4">
+              {([
+                { value: null, label: "Any" },
+                { value: 3, label: "3" },
+                { value: 7, label: "7" },
+                { value: 14, label: "14" },
+                { value: 30, label: "30" },
+              ] as const).map((opt) => {
+                const active = recentDays === opt.value;
+                return (
+                  <button
+                    key={String(opt.value)}
+                    type="button"
+                    onClick={() => setRecentDays(opt.value)}
+                    className={clsx(
+                      "px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap",
+                      active ? "bg-white text-gray-800 shadow-sm" : "text-gray-600 hover:text-gray-800"
+                    )}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
             <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-2">
               Minimum observations
             </div>

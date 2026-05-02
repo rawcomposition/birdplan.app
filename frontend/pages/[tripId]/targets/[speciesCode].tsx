@@ -43,6 +43,7 @@ export default function SpeciesDetail() {
   const [scope, setScope] = React.useState<Scope>("saved");
   const [sort, setSort] = React.useState<SortKey>("best");
   const [minObservations, setMinObservations] = React.useState(1);
+  const [recentDays, setRecentDays] = React.useState<number | null>(null);
 
   const { data: regionData } = useDownloadTargets({
     region: trip?.region,
@@ -119,14 +120,35 @@ export default function SpeciesDetail() {
 
   const apiSortBy: "best" | "frequency" = sort === "freq" ? "frequency" : "best";
   const months = trip ? getMonthRange(trip.startMonth, trip.endMonth) : undefined;
+
+  const recentLocIds = React.useMemo(() => {
+    if (recentDays == null) return null;
+    const cutoff = new Date(Date.now() - recentDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const ids = new Set<string>();
+    for (const o of obs) if (o.obsDt && o.obsDt >= cutoff) ids.add(o.id);
+    return [...ids];
+  }, [obs, recentDays]);
+
+  let scopedLocationIds: string[] | null = null;
+  if (recentLocIds && scope === "saved") {
+    scopedLocationIds = recentLocIds.filter((id) => savedIdSet.has(id));
+  } else if (recentLocIds) {
+    scopedLocationIds = recentLocIds;
+  } else if (scope === "saved") {
+    scopedLocationIds = locationIds;
+  }
+
   const queryBody = {
     sortBy: apiSortBy,
     ...(months ? { months } : {}),
     ...(minObservations > 1 ? { minObservations } : {}),
-    ...(scope === "saved" ? { locationIds } : { region: trip?.region, limit: 500 }),
+    ...(scopedLocationIds ? { locationIds: scopedLocationIds } : { region: trip?.region, limit: 500 }),
   };
+
   const queryEnabled =
-    !!speciesCode && !!OPENBIRDING_API_URL && (scope === "saved" ? hasSavedHotspots : !!trip?.region);
+    !!speciesCode &&
+    !!OPENBIRDING_API_URL &&
+    (scopedLocationIds ? scopedLocationIds.length > 0 : !!trip?.region);
 
   const {
     data: rankings,
@@ -309,10 +331,17 @@ export default function SpeciesDetail() {
                 setSort={setSort}
                 minObservations={minObservations}
                 setMinObservations={setMinObservations}
+                recentDays={recentDays}
+                setRecentDays={setRecentDays}
               />
 
               {scope === "saved" && !hasSavedHotspots && (
                 <Alert style="warning">You have not saved any hotspots for this trip.</Alert>
+              )}
+              {recentDays != null && scopedLocationIds?.length === 0 && (
+                <Alert style="warning">
+                  No {scope === "saved" ? "saved hotspots" : "hotspots"} have had a sighting in the last {recentDays} days.
+                </Alert>
               )}
               {rankingsError && <Alert style="error">Failed to load hotspot rankings.</Alert>}
               {queryEnabled && loadingRankings && !rankings && (
