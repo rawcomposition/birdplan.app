@@ -172,11 +172,11 @@ export default function TripTargets() {
                           Image
                         </th>
                         <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Species</th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-0 hidden md:table-cell">
+                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-[150px] md:w-[200px] lg:w-[300px] hidden md:table-cell">
                           Notes
                         </th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-12 lg:w-20">
-                          %
+                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-20 lg:w-24">
+                          Frequency
                         </th>
                         <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Last seen</th>
                         <th className="w-0" />

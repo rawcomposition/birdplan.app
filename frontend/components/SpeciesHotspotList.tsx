@@ -11,6 +11,7 @@ export type HotspotItem = {
   saved: boolean;
   distanceKm?: number;
   lastSeen?: string;
+  lastSeenAt?: string; // ISO date used for sorting
 };
 
 type Props = {

@@ -24,13 +24,8 @@ export default function MonthlyFrequencyChart({ monthly, startMonth, endMonth, c
 
   return (
     <div className={className}>
-      <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-2">
-        Frequency by month
-        {hover !== null && (
-          <span className="ml-2 normal-case tracking-normal text-gray-700 font-medium">
-            {fullMonths[hover]} · {monthly[hover]}%
-          </span>
-        )}
+      <div className="text-[11px] text-gray-700 font-medium mb-2 h-4">
+        {hover !== null ? `${fullMonths[hover]} · ${monthly[hover]}%` : " "}
       </div>
       <div className="flex items-end gap-1.5 h-16">
         {monthly.map((v, i) => {

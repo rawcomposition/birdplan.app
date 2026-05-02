@@ -26,6 +26,7 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { OPENBIRDING_API_URL } from "lib/config";
+import { dateTimeToRelative } from "lib/helpers";
 import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
@@ -98,6 +99,20 @@ export default function SpeciesDetail() {
     onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData([`/profile`], ctx?.prevData),
   });
 
+  // Recent observations for this species (also feeds the map overlay)
+  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: speciesCode });
+  const regionCode = trip?.region.split(",")[0] || "";
+
+  const lastSeenByLocId = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    obs.forEach((o) => {
+      if (!o.obsDt) return;
+      const existing = map[o.id];
+      if (!existing || o.obsDt > existing) map[o.id] = o.obsDt;
+    });
+    return map;
+  }, [obs]);
+
   // Saved-hotspot rankings (same endpoint used by BestTargetHotspots)
   const locationIds = trip?.hotspots?.map((it) => it.id) || [];
   const hasSavedHotspots = !!trip?.hotspots?.length;
@@ -125,18 +140,21 @@ export default function SpeciesDetail() {
 
   const savedHotspotItems: HotspotItem[] = React.useMemo(() => {
     const items = savedRankings?.items || [];
-    return items.map((it) => ({
-      id: it.id,
-      name: trip?.hotspots?.find((h) => h.id === it.id)?.name || it.name,
-      region: it.region,
-      frequency: it.frequency,
-      samples: it.samples,
-      saved: true,
-      // TODO: distanceKm and lastSeen come from upcoming endpoints
-      distanceKm: undefined,
-      lastSeen: undefined,
-    }));
-  }, [savedRankings, trip?.hotspots]);
+    return items.map((it) => {
+      const obsDt = lastSeenByLocId[it.id];
+      return {
+        id: it.id,
+        name: trip?.hotspots?.find((h) => h.id === it.id)?.name || it.name,
+        region: it.region,
+        frequency: it.frequency,
+        samples: it.samples,
+        saved: true,
+        distanceKm: undefined, // TODO: needs reference points
+        lastSeen: obsDt ? dateTimeToRelative(obsDt, regionCode, true) : "> 30 days ago",
+        lastSeenAt: obsDt,
+      };
+    });
+  }, [savedRankings, trip?.hotspots, lastSeenByLocId, regionCode]);
 
   const filtered = React.useMemo(() => {
     let list = scope === "saved" ? savedHotspotItems.slice() : [];
@@ -145,7 +163,7 @@ export default function SpeciesDetail() {
       freq: (a, b) => b.frequency - a.frequency,
       checklists: (a, b) => b.samples - a.samples,
       dist: (a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity),
-      lastSeen: () => 0,
+      lastSeen: (a, b) => (b.lastSeenAt || "").localeCompare(a.lastSeenAt || ""),
     };
     list.sort(cmp[sort]);
     return list;
@@ -191,8 +209,6 @@ export default function SpeciesDetail() {
     setSelectedSpecies({ code: speciesCode, name: speciesName || speciesCode });
   };
 
-  // Map overlay (existing pattern from the targets list page)
-  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
     if (!observation) return toast.error("Observation not found");
