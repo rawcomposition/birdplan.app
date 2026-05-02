@@ -291,7 +291,7 @@ export default function SpeciesDetail() {
 
             <SpeciesHero
               name={speciesName || speciesCode}
-              scientificName={undefined /* TODO: wire scientific name from taxonomy endpoint */}
+              scientificName={target?.sciName}
               photoUrl={getSpeciesImg(speciesCode, "900")?.url}
               photoBy={getSpeciesImg(speciesCode)?.by}
               ebirdUrl={`https://ebird.org/species/${speciesCode}`}

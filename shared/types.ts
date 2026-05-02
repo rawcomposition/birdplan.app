@@ -265,6 +265,7 @@ export type RegionTz = {
 export type OpenBirdingRegionTarget = {
   code: string;
   name: string;
+  sciName?: string;
   frequency: number;
   obs: number[];
 };

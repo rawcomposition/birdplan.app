@@ -73,7 +73,7 @@ function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number
       </div>
 
       <div
-        className="row-start-1 sm:row-auto justify-self-end w-7 grid place-items-center"
+        className="row-start-1 row-span-2 sm:row-auto sm:row-span-1 col-start-3 sm:col-auto justify-self-end self-start sm:self-center w-7 pt-1 sm:pt-0 grid place-items-center"
         title={h.saved ? "Saved hotspot" : undefined}
         aria-label={h.saved ? "Saved hotspot" : undefined}
       >
