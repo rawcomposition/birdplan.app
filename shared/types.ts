@@ -94,6 +94,7 @@ export type Target = {
   code: string;
   name: string;
   frequency: number;
+  obs?: number[];
 };
 
 export type eBirdTaxonomy = {
@@ -265,11 +266,12 @@ export type OpenBirdingRegionTarget = {
   code: string;
   name: string;
   frequency: number;
+  obs: number[];
 };
 
 export type OpenBirdingRegionResponse = {
   items: OpenBirdingRegionTarget[];
-  samples: number;
+  samples: number[];
   citation: string;
   queryTime: string;
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
+import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { Target } from "@birdplan/shared";
@@ -10,9 +11,10 @@ import { useRouter } from "next/router";
 
 type PropsT = Target & {
   index: number;
+  samples?: number[];
 };
 
-export default function TargetRow({ index, code, name, frequency }: PropsT) {
+export default function TargetRow({ index, code, name, frequency, obs, samples }: PropsT) {
   const { trip, canEdit } = useTrip();
   const router = useRouter();
   const { getSpeciesImg } = useSpeciesImages();
@@ -41,6 +43,9 @@ export default function TargetRow({ index, code, name, frequency }: PropsT) {
 
   const lastReport = recentSpecies?.find((species) => species.code === code);
   const img = React.useMemo(() => getSpeciesImg(code), [code, getSpeciesImg]);
+
+  const monthly =
+    obs && samples ? obs.map((o, i) => (samples[i] > 0 ? Math.round((o / samples[i]) * 1000) / 10 : 0)) : null;
 
   const handleRowClick = () => {
     if (!trip?._id) return;
@@ -86,6 +91,16 @@ export default function TargetRow({ index, code, name, frequency }: PropsT) {
         )}
       </td>
       <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{frequency}%</td>
+      <td className="hidden md:table-cell pr-4 lg:pr-6">
+        {monthly && (
+          <MonthlyFrequencyChart
+            monthly={monthly}
+            startMonth={trip?.startMonth}
+            endMonth={trip?.endMonth}
+            variant="mini"
+          />
+        )}
+      </td>
       <td className="text-[14px] text-gray-600 hidden sm:table-cell">
         {lastReport?.date
           ? dateTimeToRelative(lastReport.date, regionCode, true)

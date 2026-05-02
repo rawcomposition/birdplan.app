@@ -40,7 +40,7 @@ export default function SpeciesHero({
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col sm:flex-row">
       <div
-        className="bg-gray-100 sm:w-[280px] sm:flex-shrink-0 aspect-[4/3] sm:aspect-auto bg-cover bg-center relative"
+        className="bg-gray-100 sm:w-[360px] sm:flex-shrink-0 aspect-[4/3] sm:self-start bg-cover bg-center"
         style={photoUrl ? { backgroundImage: `url(${photoUrl})` } : undefined}
         title={photoBy ? `Photo by ${photoBy}` : undefined}
       >

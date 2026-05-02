@@ -99,7 +99,6 @@ export default function SpeciesDetail() {
     onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData([`/profile`], ctx?.prevData),
   });
 
-  // Recent observations for this species (also feeds the map overlay)
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: speciesCode });
   const regionCode = trip?.region.split(",")[0] || "";
 
@@ -113,7 +112,6 @@ export default function SpeciesDetail() {
     return map;
   }, [obs]);
 
-  // Saved-hotspot rankings (same endpoint used by BestTargetHotspots)
   const locationIds = trip?.hotspots?.map((it) => it.id) || [];
   const hasSavedHotspots = !!trip?.hotspots?.length;
 
@@ -149,7 +147,7 @@ export default function SpeciesDetail() {
         frequency: it.frequency,
         samples: it.samples,
         saved: true,
-        distanceKm: undefined, // TODO: needs reference points
+        distanceKm: undefined,
         lastSeen: obsDt ? dateTimeToRelative(obsDt, regionCode, true) : "> 30 days ago",
         lastSeenAt: obsDt,
       };
@@ -169,14 +167,18 @@ export default function SpeciesDetail() {
     return list;
   }, [savedHotspotItems, scope, sort, minChecklists]);
 
-  // Notes (from trip.targetNotes)
   const [tempNotes, setTempNotes] = React.useState("");
   React.useEffect(() => {
     setTempNotes(trip?.targetNotes?.[speciesCode] || "");
   }, [trip?.targetNotes, speciesCode]);
 
-  // TODO: monthly frequency endpoint not implemented — placeholder zeros
-  const monthly = React.useMemo<number[]>(() => Array(12).fill(0), []);
+  const monthly =
+    target?.obs && regionData?.samples
+      ? target.obs.map((o, i) => {
+          const s = regionData.samples[i] || 0;
+          return s > 0 ? Math.round((o / s) * 1000) / 10 : 0;
+        })
+      : Array(12).fill(0);
 
   const handleToggleStar = () => {
     if (!canEdit) return;

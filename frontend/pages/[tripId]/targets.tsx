@@ -178,12 +178,17 @@ export default function TripTargets() {
                         <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-20 lg:w-24">
                           Frequency
                         </th>
+                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-32 lg:w-40 hidden md:table-cell">
+                          Chart
+                        </th>
                         <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Last seen</th>
                         <th className="w-0" />
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {truncatedTargets?.map((it, index) => <TargetRow key={it.code} {...it} index={index} />)}
+                      {truncatedTargets?.map((it, index) => (
+                        <TargetRow key={it.code} {...it} index={index} samples={regionData?.samples} />
+                      ))}
                     </tbody>
                   </table>
                 )}
