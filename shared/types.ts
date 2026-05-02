@@ -297,6 +297,7 @@ export type OpenBirdingHotspotRanking = {
   lng: number;
   frequency: number;
   samples: number;
+  score?: number;
 };
 
 export type OpenBirdingHotspotRankingResponse = {

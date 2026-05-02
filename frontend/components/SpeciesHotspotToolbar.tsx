@@ -3,9 +3,10 @@ import clsx from "clsx";
 import Icon from "components/Icon";
 
 export type Scope = "saved" | "all";
-export type SortKey = "freq" | "dist" | "lastSeen" | "checklists";
+export type SortKey = "best" | "freq" | "dist" | "lastSeen" | "checklists";
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "best", label: "Best" },
   { value: "freq", label: "Frequency" },
   { value: "dist", label: "Distance" },
   { value: "lastSeen", label: "Last seen" },

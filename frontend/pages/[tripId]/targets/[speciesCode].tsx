@@ -27,6 +27,7 @@ import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
+import { getMonthRange } from "lib/targets";
 import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
@@ -40,7 +41,7 @@ export default function SpeciesDetail() {
   const queryClient = useQueryClient();
 
   const [scope, setScope] = React.useState<Scope>("saved");
-  const [sort, setSort] = React.useState<SortKey>("freq");
+  const [sort, setSort] = React.useState<SortKey>("best");
   const [minChecklists, setMinChecklists] = React.useState(0);
 
   const { data: regionData } = useDownloadTargets({
@@ -114,30 +115,41 @@ export default function SpeciesDetail() {
 
   const locationIds = trip?.hotspots?.map((it) => it.id) || [];
   const hasSavedHotspots = !!trip?.hotspots?.length;
+  const savedIdSet = React.useMemo(() => new Set(locationIds), [locationIds]);
+
+  const apiSortBy: "best" | "frequency" = sort === "freq" ? "frequency" : "best";
+  const months = trip ? getMonthRange(trip.startMonth, trip.endMonth) : undefined;
+  const queryBody = {
+    sortBy: apiSortBy,
+    ...(months ? { months } : {}),
+    ...(scope === "saved" ? { locationIds } : { region: trip?.region, limit: 500 }),
+  };
+  const queryEnabled =
+    !!speciesCode && !!OPENBIRDING_API_URL && (scope === "saved" ? hasSavedHotspots : !!trip?.region);
 
   const {
-    data: savedRankings,
+    data: rankings,
     isLoading: loadingRankings,
     isError: rankingsError,
   } = useQuery<OpenBirdingHotspotRankingResponse>({
-    queryKey: ["openbirding-best-hotspots", speciesCode, locationIds, undefined],
+    queryKey: ["openbirding-best-hotspots", speciesCode, scope, queryBody],
     queryFn: async () => {
       const res = await fetch(`${OPENBIRDING_API_URL}/api/v1/hotspots/species/${speciesCode}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locationIds }),
+        body: JSON.stringify(queryBody),
       });
       if (!res.ok) throw new Error("Failed to fetch hotspot rankings");
       return res.json();
     },
-    enabled: !!speciesCode && hasSavedHotspots && !!OPENBIRDING_API_URL,
+    enabled: queryEnabled,
     staleTime: 24 * 60 * 60 * 1000,
     refetchOnWindowFocus: false,
     placeholderData: (prev) => prev,
   });
 
-  const savedHotspotItems: HotspotItem[] = React.useMemo(() => {
-    const items = savedRankings?.items || [];
+  const hotspotItems: HotspotItem[] = React.useMemo(() => {
+    const items = rankings?.items || [];
     return items.map((it) => {
       const obsDt = lastSeenByLocId[it.id];
       return {
@@ -146,18 +158,20 @@ export default function SpeciesDetail() {
         region: it.region,
         frequency: it.frequency,
         samples: it.samples,
-        saved: true,
+        score: it.score,
+        saved: savedIdSet.has(it.id),
         distanceKm: undefined,
         lastSeen: obsDt ? dateTimeToRelative(obsDt, regionCode, true) : "> 30 days ago",
         lastSeenAt: obsDt,
       };
     });
-  }, [savedRankings, trip?.hotspots, lastSeenByLocId, regionCode]);
+  }, [rankings, trip?.hotspots, lastSeenByLocId, regionCode, savedIdSet]);
 
   const filtered = React.useMemo(() => {
-    let list = scope === "saved" ? savedHotspotItems.slice() : [];
+    let list = hotspotItems.slice();
     list = list.filter((h) => h.samples >= minChecklists);
     const cmp: Record<SortKey, (a: HotspotItem, b: HotspotItem) => number> = {
+      best: (a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity),
       freq: (a, b) => b.frequency - a.frequency,
       checklists: (a, b) => b.samples - a.samples,
       dist: (a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity),
@@ -165,7 +179,7 @@ export default function SpeciesDetail() {
     };
     list.sort(cmp[sort]);
     return list;
-  }, [savedHotspotItems, scope, sort, minChecklists]);
+  }, [hotspotItems, sort, minChecklists]);
 
   const [tempNotes, setTempNotes] = React.useState("");
   React.useEffect(() => {
@@ -194,7 +208,7 @@ export default function SpeciesDetail() {
 
   const handleHotspotClick = (id: string) => {
     const hotspot = trip?.hotspots?.find((it) => it.id === id);
-    const ranked = savedRankings?.items?.find((it) => it.id === id);
+    const ranked = rankings?.items?.find((it) => it.id === id);
     if (hotspot || ranked) {
       open("hotspot", { hotspot: hotspot || ranked, speciesName });
     }
@@ -291,29 +305,21 @@ export default function SpeciesDetail() {
               {scope === "saved" && !hasSavedHotspots && (
                 <Alert style="warning">You have not saved any hotspots for this trip.</Alert>
               )}
-              {scope === "saved" && rankingsError && (
-                <Alert style="error">Failed to load hotspot rankings.</Alert>
-              )}
-              {scope === "saved" && hasSavedHotspots && loadingRankings && !savedRankings && (
+              {rankingsError && <Alert style="error">Failed to load hotspot rankings.</Alert>}
+              {queryEnabled && loadingRankings && !rankings && (
                 <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
               )}
-              {scope === "all" && (
-                <Alert style="info">
-                  All hotspots ranking is coming soon — the OpenBirding endpoint for ranking every hotspot in the
-                  trip&apos;s region for a single species is not yet built.
-                </Alert>
-              )}
 
-              {scope === "saved" && hasSavedHotspots && !rankingsError && (
+              {queryEnabled && !rankingsError && rankings && (
                 <SpeciesHotspotList
                   hotspots={filtered}
-                  total={savedHotspotItems.length}
+                  total={hotspotItems.length}
                   onSelect={handleHotspotClick}
                 />
               )}
 
-              {savedRankings?.citation && scope === "saved" && (
-                <p className="text-gray-400 text-xs text-center pt-2">{savedRankings.citation}</p>
+              {rankings?.citation && (
+                <p className="text-gray-400 text-xs text-center pt-2">{rankings.citation}</p>
               )}
             </div>
             </div>
