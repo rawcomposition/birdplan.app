@@ -309,9 +309,15 @@ export default function SpeciesDetail() {
               onShowMap={handleShowMap}
             />
 
-            <div className="mt-4 rounded-xl border border-transparent bg-white px-4 py-3 shadow-sm focus-within:outline focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
-              <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-1">Notes</div>
+            <div className="mt-4 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm focus-within:outline focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
+              <label
+                htmlFor="species-notes"
+                className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500"
+              >
+                Notes
+              </label>
               <TextareaAutosize
+                id="species-notes"
                 placeholder="Add notes about this species..."
                 value={tempNotes}
                 onChange={(e) => setTempNotes(e.target.value)}
