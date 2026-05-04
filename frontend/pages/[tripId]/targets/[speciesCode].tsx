@@ -309,7 +309,7 @@ export default function SpeciesDetail() {
               onShowMap={handleShowMap}
             />
 
-            <div className="mt-4 bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3">
+            <div className="mt-4 rounded-xl border border-transparent bg-white px-4 py-3 shadow-sm focus-within:outline focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
               <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-1">Notes</div>
               <TextareaAutosize
                 placeholder="Add notes about this species..."
@@ -322,7 +322,7 @@ export default function SpeciesDetail() {
                 readOnly={!canMutate}
                 minRows={1}
                 maxRows={10}
-                className="w-full bg-transparent border-none outline-none resize-none text-sm text-gray-800 leading-relaxed"
+                className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-none"
               />
             </div>
 
