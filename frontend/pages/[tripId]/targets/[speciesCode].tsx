@@ -211,14 +211,17 @@ export default function SpeciesDetail() {
         })
       : Array(12).fill(0);
 
+  const isValidTarget = !!target;
+  const canMutate = canEdit && isValidTarget;
+
   const handleToggleStar = () => {
-    if (!canEdit) return;
+    if (!canMutate) return;
     if (isStarred) removeStarMutation.mutate({ code: speciesCode });
     else addStarMutation.mutate({ code: speciesCode });
   };
 
   const handleMarkSeen = () => {
-    if (!canEdit || isSeen || !speciesName) return;
+    if (!canMutate || isSeen) return;
     if (!confirm(`Are you sure you want to add ${speciesName} to your life list?`)) return;
     seenMutation.mutate({ code: speciesCode });
   };
@@ -226,9 +229,11 @@ export default function SpeciesDetail() {
   const handleHotspotClick = (id: string) => {
     const hotspot = trip?.hotspots?.find((it) => it.id === id);
     const ranked = rankings?.items?.find((it) => it.id === id);
-    if (hotspot || ranked) {
-      open("hotspot", { hotspot: hotspot || ranked, speciesName });
+    if (!hotspot && !ranked) return;
+    if (speciesCode && speciesName) {
+      setSelectedSpecies({ code: speciesCode, name: speciesName });
     }
+    open("hotspot", { hotspot: hotspot || ranked });
   };
 
   const handleShowMap = () => {
@@ -295,7 +300,7 @@ export default function SpeciesDetail() {
               ebirdUrl={`https://ebird.org/species/${speciesCode}`}
               starred={isStarred}
               seen={isSeen}
-              canEdit={canEdit}
+              canEdit={canMutate}
               monthly={monthly}
               startMonth={trip?.startMonth}
               endMonth={trip?.endMonth}
@@ -311,10 +316,10 @@ export default function SpeciesDetail() {
                 value={tempNotes}
                 onChange={(e) => setTempNotes(e.target.value)}
                 onBlur={(e) => {
-                  if (!canEdit) return;
+                  if (!canMutate) return;
                   setNotesMutation.mutate({ code: speciesCode, notes: e.target.value });
                 }}
-                readOnly={!canEdit}
+                readOnly={!canMutate}
                 minRows={1}
                 maxRows={10}
                 className="w-full bg-transparent border-none outline-none resize-none text-sm text-gray-800 leading-relaxed"
