@@ -8,6 +8,7 @@ type Obs = {
   lng: number;
   name: string; // Hotspot name
   isPersonal: boolean;
+  obsDt: string; // Most recent observation date at this location
 };
 
 type Props = {
@@ -29,12 +30,13 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
   });
 
   const obs: Obs[] =
-    data?.map(({ lat, lng, locId, locationPrivate, locName }: any) => ({
+    data?.map(({ lat, lng, locId, locationPrivate, locName, obsDt }: any) => ({
       lat,
       lng,
       id: locId,
       name: locName,
       isPersonal: locationPrivate,
+      obsDt,
     })) || [];
 
   const obsRef = React.useRef<Obs[]>([]);

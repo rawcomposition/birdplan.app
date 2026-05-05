@@ -11,14 +11,14 @@ import { computeFrequency, getMonthRange } from "lib/targets";
 
 type Props = {
   hotspotId: string;
-  onSpeciesClick: () => void;
+  onSpeciesClick: (species: { code: string; name: string }) => void;
   onAddToTrip: () => void;
 };
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const { lifelist } = useProfile();
   const [view, setView] = React.useState<string>("all");
-  const { trip, setSelectedSpecies, dateRangeLabel } = useTrip();
+  const { trip, dateRangeLabel } = useTrip();
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
 
   const isSaved = !!trip?.hotspots.find((it) => it.id === hotspotId);
@@ -89,8 +89,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
           range={view === "all" ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
           onClick={() => {
-            setSelectedSpecies({ code: it.code, name: it.name });
-            onSpeciesClick();
+            onSpeciesClick({ code: it.code, name: it.name });
           }}
         />
       ))}
