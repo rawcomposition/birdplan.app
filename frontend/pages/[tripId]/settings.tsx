@@ -15,23 +15,54 @@ import { months } from "lib/helpers";
 import Button from "components/Button";
 import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
+import useResolvedRegion from "hooks/useResolvedRegion";
+import RegionFields from "components/RegionFields";
+import Icon from "components/Icon";
 import { useQueryClient } from "@tanstack/react-query";
+import { getRegionCode, validateRegionFields, RegionFieldsValue } from "lib/region";
+import { Trip } from "@birdplan/shared";
 
 export default function TripSettings() {
   const { trip, is404, isOwner } = useTrip();
-  const [startMonth, setStartMonth] = React.useState<Option>();
-  const [endMonth, setEndMonth] = React.useState<Option>();
+  const initialRegion = useResolvedRegion(trip?.region);
+
+  if (is404) return <NotFound />;
+  if (!trip || !initialRegion) {
+    return (
+      <div className="flex flex-col h-full">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Icon name="loading" className="text-2xl text-gray-400 animate-spin" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return <SettingsForm key={trip._id} trip={trip} initialRegion={initialRegion} isOwner={isOwner} />;
+}
+
+type SettingsFormProps = {
+  trip: Trip;
+  initialRegion: RegionFieldsValue;
+  isOwner: boolean;
+};
+
+function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-
-  React.useEffect(() => {
-    if (!trip) return;
-    setEndMonth({ value: trip.endMonth.toString(), label: months[trip.endMonth - 1] });
-    setStartMonth({ value: trip.startMonth.toString(), label: months[trip.startMonth - 1] });
-  }, [trip]);
+  const [startMonth, setStartMonth] = React.useState<Option>({
+    value: trip.startMonth.toString(),
+    label: months[trip.startMonth - 1],
+  });
+  const [endMonth, setEndMonth] = React.useState<Option>({
+    value: trip.endMonth.toString(),
+    label: months[trip.endMonth - 1],
+  });
+  const [region, setRegion] = React.useState<RegionFieldsValue>(initialRegion);
 
   const deleteTripMutation = useMutation({
-    url: `/trips/${trip?._id}`,
+    url: `/trips/${trip._id}`,
     method: "DELETE",
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
@@ -40,35 +71,35 @@ export default function TripSettings() {
   });
 
   const updateTripMutation = useMutation({
-    url: `/trips/${trip?._id}`,
+    url: `/trips/${trip._id}`,
     method: "PATCH",
     onSuccess: async () => {
       toast.success("Trip updated");
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
-      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
-      router.push(`/${trip?._id}`);
+      await queryClient.invalidateQueries({ queryKey: [`/trips/${trip._id}`] });
+      router.push(`/${trip._id}`);
     },
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const name = (form.name as any).value;
+    const form = e.currentTarget as HTMLFormElement;
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
     if (!name) return toast.error("Please enter a name");
-    if (!startMonth || !endMonth) return toast.error("Please select a timeframe");
-    if (!trip) return;
-    const start = Number(startMonth.value);
-    const end = Number(endMonth.value);
-    updateTripMutation.mutate({ name, startMonth: start, endMonth: end });
+    const regionError = validateRegionFields(region);
+    if (regionError) return toast.error(regionError);
+    updateTripMutation.mutate({
+      name,
+      region: getRegionCode(region)!,
+      startMonth: Number(startMonth.value),
+      endMonth: Number(endMonth.value),
+    });
   };
 
   const handleDelete = async () => {
-    if (!trip) return;
     if (!confirm("Are you sure you want to delete this trip?")) return;
     deleteTripMutation.mutate({});
   };
-
-  if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">
@@ -79,7 +110,7 @@ export default function TripSettings() {
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Link
-          href={`/${trip?._id}`}
+          href={`/${trip._id}`}
           className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
         >
           ← Back to trip
@@ -94,7 +125,7 @@ export default function TripSettings() {
                   name="name"
                   placeholder='E.g. "Galapagos Islands 2020"'
                   autoFocus
-                  defaultValue={trip?.name}
+                  defaultValue={trip.name}
                 />
               </Field>
               <div>
@@ -117,6 +148,7 @@ export default function TripSettings() {
                   />
                 </div>
               </div>
+              <RegionFields value={region} onChange={setRegion} />
               <div className="flex justify-between">
                 <Button href="/trips" color="gray">
                   Cancel

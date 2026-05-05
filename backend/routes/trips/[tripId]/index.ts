@@ -7,8 +7,10 @@ import {
   getMonthRange,
   computeFrequency,
   generateOpenBirdingCode,
+  getBounds,
 } from "lib/utils.js";
 import { connect, Trip, Invite, Profile, TripShareToken } from "lib/db.js";
+import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, Editor, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
@@ -66,12 +68,27 @@ trip.patch("/", async (c) => {
 
   const data = await c.req.json<TripUpdateInput>();
 
-  const hasChangedDates = data.startMonth !== trip.startMonth || data.endMonth !== trip.endMonth;
-  const newData = { name: data.name, startMonth: data.startMonth, endMonth: data.endMonth };
+  const newData: Record<string, any> = {
+    name: data.name,
+    region: data.region,
+    startMonth: data.startMonth,
+    endMonth: data.endMonth,
+  };
+
+  if (data.region !== trip.region) {
+    const bounds = await getBounds(data.region);
+    if (!bounds) {
+      throw new HTTPException(500, { message: "Failed to fetch region info" });
+    }
+    const mapboxImgUrl = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds.minX},${bounds.minY},${bounds.maxX},${bounds.maxY}]/300x185@2x?access_token=${process.env.MAPBOX_SERVER_KEY}&padding=30`;
+    const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
+    newData.bounds = bounds;
+    newData.imgUrl = imgUrl;
+  }
 
   await Trip.updateOne({ _id: tripId }, newData);
 
-  return c.json({ hasChangedDates });
+  return c.json({});
 });
 
 trip.delete("/", async (c) => {

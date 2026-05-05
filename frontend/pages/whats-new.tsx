@@ -15,6 +15,10 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>May 5, 2026</h2>
+          <ul>
+            <li>✨ Existing trips can now have their region updated from the trip settings page.</li>
+          </ul>
           <h2>May 4, 2026</h2>
           <ul>
             <li>✨ New target species pages with ranked hotspots, filters for recent activity and frequency, and monthly charts.</li>

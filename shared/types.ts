@@ -147,6 +147,7 @@ export type TripInput = {
 
 export type TripUpdateInput = {
   name: string;
+  region: string;
   startMonth: number;
   endMonth: number;
 };
