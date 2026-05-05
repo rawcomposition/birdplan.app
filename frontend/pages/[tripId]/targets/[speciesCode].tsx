@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useDebounceCallback } from "usehooks-ts";
 import Header from "components/Header";
 import TripNav from "components/TripNav";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -198,10 +199,36 @@ export default function SpeciesDetail() {
     return list;
   }, [hotspotItems, sort]);
 
+  const canMutate = canEdit && !!target;
+
+  const persistedNotes = trip?.targetNotes?.[speciesCode] || "";
   const [tempNotes, setTempNotes] = React.useState("");
+
   React.useEffect(() => {
-    setTempNotes(trip?.targetNotes?.[speciesCode] || "");
-  }, [trip?.targetNotes, speciesCode]);
+    setTempNotes(persistedNotes);
+  }, [persistedNotes, speciesCode]);
+
+  const saveNotes = React.useCallback(
+    (notes: string) => {
+      if (!canMutate || !speciesCode || notes === persistedNotes) return;
+      setNotesMutation.mutate({ code: speciesCode, notes });
+    },
+    [canMutate, persistedNotes, setNotesMutation, speciesCode]
+  );
+
+  const debouncedSaveNotes = useDebounceCallback(saveNotes, 1500);
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const nextNotes = e.target.value;
+    setTempNotes(nextNotes);
+    debouncedSaveNotes(nextNotes);
+  };
+
+  const handleNotesBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const nextNotes = e.target.value;
+    debouncedSaveNotes.cancel();
+    saveNotes(nextNotes);
+  };
 
   const monthly =
     target?.obs && regionData?.samples
@@ -210,9 +237,6 @@ export default function SpeciesDetail() {
           return s > 0 ? Math.round((o / s) * 1000) / 10 : 0;
         })
       : Array(12).fill(0);
-
-  const isValidTarget = !!target;
-  const canMutate = canEdit && isValidTarget;
 
   const handleToggleStar = () => {
     if (!canMutate) return;
@@ -320,11 +344,8 @@ export default function SpeciesDetail() {
                 id="species-notes"
                 placeholder="Add notes about this species..."
                 value={tempNotes}
-                onChange={(e) => setTempNotes(e.target.value)}
-                onBlur={(e) => {
-                  if (!canMutate) return;
-                  setNotesMutation.mutate({ code: speciesCode, notes: e.target.value });
-                }}
+                onChange={handleNotesChange}
+                onBlur={handleNotesBlur}
                 readOnly={!canMutate}
                 minRows={1}
                 maxRows={10}
