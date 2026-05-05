@@ -29,6 +29,7 @@ import useMutation from "hooks/useMutation";
 import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
 import { getMonthRange } from "lib/targets";
+import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
 import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
@@ -42,9 +43,8 @@ export default function SpeciesDetail() {
   const queryClient = useQueryClient();
 
   const [scope, setScope] = React.useState<Scope>("saved");
-  const [sort, setSort] = React.useState<SortKey>("best");
-  const [minObservations, setMinObservations] = React.useState(1);
-  const [recentDays, setRecentDays] = React.useState<number | null>(null);
+  const { sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
+    useSpeciesHotspotPreferences();
 
   const { data: regionData } = useDownloadTargets({
     region: trip?.region,
