@@ -243,9 +243,6 @@ export default function SpeciesDetail() {
     const hotspot = trip?.hotspots?.find((it) => it.id === id);
     const ranked = rankings?.items?.find((it) => it.id === id);
     if (!hotspot && !ranked) return;
-    if (speciesCode && speciesName) {
-      setSelectedSpecies({ code: speciesCode, name: speciesName });
-    }
     open("hotspot", { hotspot: hotspot || ranked });
   };
 
@@ -259,8 +256,8 @@ export default function SpeciesDetail() {
     if (!observation) return toast.error("Observation not found");
     open(observation.isPersonal ? "personalLocation" : "hotspot", {
       hotspot: observation,
-      speciesCode: selectedSpecies?.code,
-      speciesName: selectedSpecies?.name,
+      speciesCode,
+      speciesName,
     });
   };
 

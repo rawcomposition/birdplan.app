@@ -8,7 +8,7 @@ import Alert from "components/Alert";
 
 type Props = {
   locId: string;
-  onSpeciesClick: () => void;
+  onSpeciesClick: (species: { code: string; name: string }) => void;
 };
 
 const previewCount = 10;
@@ -16,7 +16,7 @@ const previewCount = 10;
 export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
   const { recentSpecies, isLoading, error, refetch } = useFetchRecentSpecies(locId);
   const [viewAll, setViewAll] = React.useState(false);
-  const { trip, setSelectedSpecies } = useTrip();
+  const { trip } = useTrip();
   const hotspot = trip?.hotspots.find((it) => it.id === locId);
   const favCodes = hotspot?.favs?.map((it) => it.code) || [];
   const regionCode = trip?.region.split(",")[0] || "";
@@ -45,10 +45,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
                   <button
                     type="button"
                     className="text-left hover:underline"
-                    onClick={() => {
-                      setSelectedSpecies({ code, name });
-                      onSpeciesClick();
-                    }}
+                    onClick={() => onSpeciesClick({ code, name })}
                     title="Click to view recent reports"
                   >
                     {name}

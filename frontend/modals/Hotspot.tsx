@@ -32,7 +32,8 @@ export default function Hotspot({ hotspot }: Props) {
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
-  const [tab, setTab] = React.useState(selectedSpecies ? "checklists" : "targets");
+  const [modalSpecies, setModalSpecies] = React.useState(selectedSpecies);
+  const [tab, setTab] = React.useState(modalSpecies ? "checklists" : "targets");
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -124,7 +125,7 @@ export default function Hotspot({ hotspot }: Props) {
     }
   };
 
-  const hasSpecies = !!selectedSpecies && router.pathname.includes("targets");
+  const hasSpecies = !!modalSpecies && router.pathname.includes("targets");
   React.useEffect(() => {
     if (hasSpecies) {
       setHalo({ lat, lng, color: "#ce0d02" });
@@ -249,16 +250,31 @@ export default function Hotspot({ hotspot }: Props) {
           </nav>
         </div>
         <div className="sm:-mx-1.5">
-          {tab === "needs" && <RecentSpeciesList locId={id} onSpeciesClick={() => setTab("checklists")} />}
+          {tab === "needs" && (
+            <RecentSpeciesList
+              locId={id}
+              onSpeciesClick={(species) => {
+                setModalSpecies(species);
+                setTab("checklists");
+              }}
+            />
+          )}
           {tab === "checklists" && (
             <RecentChecklistList
               hotspotId={id}
-              speciesCode={selectedSpecies?.code}
-              speciesName={selectedSpecies?.name}
+              speciesCode={modalSpecies?.code}
+              speciesName={modalSpecies?.name}
             />
           )}
           <div className={clsx(tab === "targets" ? "block" : "hidden")}>
-            <HotspotTargets hotspotId={id} onSpeciesClick={() => setTab("checklists")} onAddToTrip={handleSave} />
+            <HotspotTargets
+              hotspotId={id}
+              onSpeciesClick={(species) => {
+                setModalSpecies(species);
+                setTab("checklists");
+              }}
+              onAddToTrip={handleSave}
+            />
           </div>
         </div>
       </Body>
