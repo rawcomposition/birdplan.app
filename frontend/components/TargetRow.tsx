@@ -4,7 +4,7 @@ import Icon from "components/Icon";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
-import { Target } from "@birdplan/shared";
+import type { Target } from "@birdplan/shared";
 import { useSpeciesImages } from "providers/species-images";
 import useTripMutation from "hooks/useTripMutation";
 import { useRouter } from "next/router";
@@ -42,7 +42,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples }
   });
 
   const lastReport = recentSpecies?.find((species) => species.code === code);
-  const img = React.useMemo(() => getSpeciesImg(code), [code, getSpeciesImg]);
+  const img = getSpeciesImg(code);
 
   const monthly =
     obs && samples ? obs.map((o, i) => (samples[i] > 0 ? Math.round((o / samples[i]) * 1000) / 10 : 0)) : null;

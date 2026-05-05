@@ -15,8 +15,8 @@ import Alert from "components/Alert";
 import MapBox from "components/Mapbox";
 import SpeciesCard from "components/SpeciesCard";
 import SpeciesHero from "components/SpeciesHero";
-import SpeciesHotspotToolbar, { Scope, SortKey } from "components/SpeciesHotspotToolbar";
-import SpeciesHotspotList, { HotspotItem } from "components/SpeciesHotspotList";
+import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
+import SpeciesHotspotList, { type HotspotItem } from "components/SpeciesHotspotList";
 import { useTrip } from "providers/trip";
 import { useUser } from "providers/user";
 import { useProfile } from "providers/profile";
@@ -105,30 +105,28 @@ export default function SpeciesDetail() {
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: speciesCode });
   const regionCode = trip?.region.split(",")[0] || "";
 
-  const lastSeenByLocId = React.useMemo(() => {
-    const map: Record<string, string> = {};
-    obs.forEach((o) => {
-      if (!o.obsDt) return;
-      const existing = map[o.id];
-      if (!existing || o.obsDt > existing) map[o.id] = o.obsDt;
-    });
-    return map;
-  }, [obs]);
+  const lastSeenByLocId: Record<string, string> = {};
+  obs.forEach((o) => {
+    if (!o.obsDt) return;
+    const existing = lastSeenByLocId[o.id];
+    if (!existing || o.obsDt > existing) lastSeenByLocId[o.id] = o.obsDt;
+  });
 
-  const locationIds = trip?.hotspots?.map((it) => it.id) || [];
-  const hasSavedHotspots = !!trip?.hotspots?.length;
-  const savedIdSet = React.useMemo(() => new Set(locationIds), [locationIds]);
+  const savedHotspots = trip?.hotspots || [];
+  const locationIds = savedHotspots.map((it) => it.id);
+  const hasSavedHotspots = locationIds.length > 0;
+  const savedIdSet = new Set(locationIds);
 
   const apiSortBy: "best" | "frequency" = sort === "freq" ? "frequency" : "best";
   const months = trip ? getMonthRange(trip.startMonth, trip.endMonth) : undefined;
 
-  const recentLocIds = React.useMemo(() => {
-    if (recentDays == null) return null;
+  let recentLocIds: string[] | null = null;
+  if (recentDays != null) {
     const cutoff = new Date(Date.now() - recentDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const ids = new Set<string>();
     for (const o of obs) if (o.obsDt && o.obsDt >= cutoff) ids.add(o.id);
-    return [...ids];
-  }, [obs, recentDays]);
+    recentLocIds = [...ids];
+  }
 
   let scopedLocationIds: string[] | null = null;
   if (recentLocIds && scope === "saved") {
@@ -172,32 +170,23 @@ export default function SpeciesDetail() {
     placeholderData: (prev) => prev,
   });
 
-  const hotspotItems: HotspotItem[] = React.useMemo(() => {
-    const items = rankings?.items || [];
-    return items.map((it) => {
-      const obsDt = lastSeenByLocId[it.id];
-      return {
-        id: it.id,
-        name: trip?.hotspots?.find((h) => h.id === it.id)?.name || it.name,
-        region: it.region,
-        frequency: it.frequency,
-        samples: it.samples,
-        score: it.score,
-        saved: savedIdSet.has(it.id),
-        lastSeen: obsDt ? dateTimeToRelative(obsDt, regionCode, true) : "> 30 days ago",
-      };
-    });
-  }, [rankings, trip?.hotspots, lastSeenByLocId, regionCode, savedIdSet]);
-
-  const filtered = React.useMemo(() => {
-    const list = hotspotItems.slice();
-    const cmp: Record<SortKey, (a: HotspotItem, b: HotspotItem) => number> = {
-      best: (a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity),
-      freq: (a, b) => b.frequency - a.frequency,
+  const hotspotNameById = new Map(savedHotspots.map((h) => [h.id, h.name]));
+  const hotspotItems: HotspotItem[] = (rankings?.items || []).map((it) => {
+    const obsDt = lastSeenByLocId[it.id];
+    return {
+      ...it,
+      name: hotspotNameById.get(it.id) || it.name,
+      saved: savedIdSet.has(it.id),
+      lastSeen: obsDt ? dateTimeToRelative(obsDt, regionCode, true) : "> 30 days ago",
     };
-    list.sort(cmp[sort]);
-    return list;
-  }, [hotspotItems, sort]);
+  });
+
+  const filtered = hotspotItems.slice();
+  const cmp: Record<SortKey, (a: HotspotItem, b: HotspotItem) => number> = {
+    best: (a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity),
+    freq: (a, b) => b.frequency - a.frequency,
+  };
+  filtered.sort(cmp[sort]);
 
   const canMutate = canEdit && !!target;
 

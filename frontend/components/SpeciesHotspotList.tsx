@@ -1,14 +1,9 @@
 import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
+import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
 
-export type HotspotItem = {
-  id: string;
-  name: string;
-  region?: string;
-  frequency: number;
-  samples: number;
-  score?: number;
+export type HotspotItem = OpenBirdingHotspotRanking & {
   saved: boolean;
   lastSeen?: string;
 };

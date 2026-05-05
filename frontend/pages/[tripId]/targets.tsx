@@ -17,7 +17,7 @@ import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import { useQuery } from "@tanstack/react-query";
-import { Editor } from "@birdplan/shared";
+import type { Editor } from "@birdplan/shared";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
 import clsx from "clsx";
