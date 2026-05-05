@@ -8,13 +8,13 @@ export default function useFetchRecentSpecies(region?: string) {
   const { data, isLoading, error, refetch } = useQuery<RecentSpecies[]>({
     queryKey: [`/region/${region}/species`],
     enabled: !!region,
-    staleTime: 30 * 60 * 1000, // 30 minutes
-    gcTime: 60 * 60 * 1000, // 60 minutes
+    staleTime: 60 * 60 * 1000, // 1 hour
+    gcTime: 2 * 60 * 60 * 1000, // 2 hours
     refetchOnWindowFocus: false,
     retry: 2,
   });
 
   const filtered = data?.filter((it) => !lifelist.includes(it.code)) || [];
 
-  return { recentSpecies: filtered, isLoading, error, refetch };
+  return { recentSpecies: filtered, allSpecies: data, isLoading, error, refetch };
 }

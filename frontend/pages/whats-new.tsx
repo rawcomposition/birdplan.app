@@ -18,6 +18,7 @@ export default function WhatsNew() {
           <h2>May 5, 2026</h2>
           <ul>
             <li>✨ Existing trips can now have their region updated from the trip settings page.</li>
+            <li>🐞 Fixed an issue where recent species reports at hotspots could be missing.</li>
           </ul>
           <h2>May 4, 2026</h2>
           <ul>

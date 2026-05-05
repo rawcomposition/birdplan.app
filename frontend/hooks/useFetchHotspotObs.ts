@@ -5,8 +5,8 @@ export default function useFetchHotspotObs(tripId: string, hotspotId: string, sp
   const { data, isLoading, error, refetch } = useQuery<Observation[]>({
     queryKey: [`/trips/${tripId}/hotspots/${hotspotId}/obs`, { speciesCode }],
     enabled: !!tripId && !!hotspotId && !!speciesCode,
-    staleTime: 30 * 60 * 1000, // 30 minutes
-    gcTime: 60 * 60 * 1000, // 60 minutes
+    staleTime: 60 * 60 * 1000, // 1 hour
+    gcTime: 2 * 60 * 60 * 1000, // 2 hours
     refetchOnWindowFocus: false,
     retry: 2,
   });

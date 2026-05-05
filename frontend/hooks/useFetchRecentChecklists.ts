@@ -8,8 +8,8 @@ export default function useFetchRecentChecklists(region?: string) {
   const { data, isLoading, error, refetch } = useQuery<RecentChecklist[]>({
     queryKey: [`${EBIRD_BASE_URL}/product/lists/${region}`, { maxResults: 40 }],
     enabled: !!region,
-    staleTime: 30 * 60 * 1000, // 30 minutes
-    gcTime: 60 * 60 * 1000, // 60 minutes
+    staleTime: 60 * 60 * 1000, // 1 hour
+    gcTime: 2 * 60 * 60 * 1000, // 2 hours
     refetchOnWindowFocus: false,
     retry: 2,
   });
