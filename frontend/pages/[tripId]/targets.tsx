@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Editor } from "@birdplan/shared";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
+import clsx from "clsx";
 const PAGE_SIZE = 50;
 
 export default function TripTargets() {
@@ -110,11 +111,11 @@ export default function TripTargets() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="targets" />
-      <main className="flex h-[calc(100%-60px-55px)] relative">
+      <main className="flex h-[calc(100%-60px-55px)] relative bg-gray-50">
         <ErrorBoundary>
           <div className="h-full overflow-auto w-full">
             <div className="h-full grow flex sm:relative flex-col w-full">
-              <div className="h-full w-full mx-auto max-w-6xl">
+              <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
                 <ProfileSelect value={uid} onChange={setUid} editors={editors} />
                 {isLoadingTargets && (
                   <div className="flex items-center flex-col gap-2 my-8">
@@ -123,7 +124,7 @@ export default function TripTargets() {
                   </div>
                 )}
                 {targetsError && (
-                  <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-2">
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
                     <button className="text-sky-600 font-medium" onClick={() => refetchTargets()}>
                       Try Again
@@ -131,66 +132,93 @@ export default function TripTargets() {
                   </div>
                 )}
                 {!!targetSpecies?.length && (
-                  <div className="flex items-center gap-2 my-2 sm:my-4 px-2 sm:px-0">
-                    <Input
-                      type="search"
-                      value={search}
-                      onChange={(e: any) => setSearch(e.target.value)}
-                      placeholder="Search species"
-                      className="max-w-xs"
-                    />
-                    <label className="flex items-center gap-2 py-2 px-3 text-gray-600 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={showStarred}
-                        onChange={() => setShowStarred(!showStarred)}
-                        className="form-checkbox text-sky-600"
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 flex-wrap">
+                    <div className="relative flex-1 min-w-[180px] max-w-sm">
+                      <Icon
+                        name="search"
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
                       />
-                      <span className="text-gray-600 text-sm">Starred</span>
-                    </label>
+                      <input
+                        type="search"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search species"
+                        className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-sm outline-blue-500 outline-offset-0 focus:border-slate-400"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowStarred(!showStarred)}
+                      aria-pressed={showStarred}
+                      className={clsx(
+                        "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                        showStarred
+                          ? "border-yellow-300 bg-yellow-50 text-yellow-800"
+                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                      )}
+                    >
+                      <Icon
+                        name={showStarred ? "star" : "starOutline"}
+                        className={showStarred ? "text-yellow-500" : "text-gray-400"}
+                      />
+                      Starred
+                    </button>
+                    <div className="ml-auto text-xs text-gray-500 hidden sm:block tabular-nums">
+                      {filteredTargets?.length} species
+                    </div>
                   </div>
                 )}
                 {!!regionData?.items?.length && !truncatedTargets?.length && (
-                  <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4">
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4">
                     <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                     <p className="text-gray-500 text-sm">
-                      It looks like you have already seen all the species in this region.
+                      {showStarred || search
+                        ? "Try clearing your filters."
+                        : "It looks like you have already seen all the species in this region."}
                     </p>
                   </div>
                 )}
                 {!isLoadingTargets && !targetsError && !regionData?.items?.length && (
-                  <div className="sm:bg-white sm:rounded-lg sm:shadow p-4 text-center mt-4 space-y-2">
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">No target data available for this region</h3>
                   </div>
                 )}
                 {!!truncatedTargets?.length && (
-                  <table className="divide-y w-full">
-                    <thead className="hidden sm:table-header-group">
-                      <tr>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 px-4 w-0">#</th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-[4.3rem] lg:w-20">
-                          Image
-                        </th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Species</th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 w-[150px] md:w-[200px] lg:w-[300px] hidden md:table-cell">
-                          Notes
-                        </th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-20 lg:w-24">
-                          Frequency
-                        </th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1 md:w-32 lg:w-40 hidden md:table-cell">
-                          Chart
-                        </th>
-                        <th className="text-left text-gray-500 font-normal uppercase text-xs pb-1">Last seen</th>
-                        <th className="w-0" />
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {truncatedTargets?.map((it, index) => (
-                        <TargetRow key={it.code} {...it} index={index} samples={regionData?.samples} />
-                      ))}
-                    </tbody>
-                  </table>
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <table className="w-full">
+                      <thead className="hidden sm:table-header-group bg-gray-50 border-b border-gray-200">
+                        <tr>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5 px-4 w-0">
+                            #
+                          </th>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5 w-[4.3rem] lg:w-20">
+                            Image
+                          </th>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5">
+                            Species
+                          </th>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5 w-[150px] md:w-[200px] lg:w-[300px] hidden md:table-cell">
+                            Notes
+                          </th>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5 md:w-20 lg:w-24">
+                            Frequency
+                          </th>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5 md:w-32 lg:w-40 hidden md:table-cell">
+                            Chart
+                          </th>
+                          <th className="text-left text-gray-500 font-semibold uppercase tracking-wide text-[11px] py-2.5">
+                            Last seen
+                          </th>
+                          <th className="w-0" />
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 [&>tr:first-child>td]:pt-1 [&>tr:last-child>td]:pb-1">
+                        {truncatedTargets?.map((it, index) => (
+                          <TargetRow key={it.code} {...it} index={index} samples={regionData?.samples} />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
 
                 <div className="my-4 text-center pb-4">
