@@ -31,7 +31,7 @@ export default function Trip() {
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
   const savedHotspots = trip?.hotspots || [];
-  const { hotspots, hotspotLayer } = useFetchHotspots(showAllHotspots);
+  const { hotspots, hotspotLayer } = useFetchHotspots();
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,

@@ -73,6 +73,7 @@ export type Hotspot = {
   lat: number;
   lng: number;
   species?: number;
+  checklists?: number;
   notes?: string;
   favs?: HotspotFav[];
 };
@@ -164,6 +165,7 @@ export type eBirdHotspot = {
   lat: number;
   lng: number;
   species: number;
+  checklists: number;
 };
 
 export type SpeciesObservation = {
@@ -196,6 +198,7 @@ export type HotspotInput = {
   lat: number;
   lng: number;
   species: number;
+  checklists: number;
 };
 
 export type HotspotNotesInput = {

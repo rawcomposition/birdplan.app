@@ -14,7 +14,7 @@ export default function AddHotspot() {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const { open, close } = useModal();
   const { trip, showAllHotspots, setShowAllHotspots } = useTrip();
-  const { hotspots } = useFetchHotspots(true);
+  const { hotspots } = useFetchHotspots();
 
   const addHotspotMutation = useTripMutation<HotspotInput>({
     url: `/trips/${trip?._id}/hotspots`,
@@ -36,7 +36,7 @@ export default function AddHotspot() {
 
   const selectHotspot = (hotspot: eBirdHotspot, isSaved: boolean) => {
     if (!isSaved) {
-      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0 });
+      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0, checklists: hotspot.checklists || 0 });
     }
     open("hotspot", { hotspot });
   };

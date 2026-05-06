@@ -106,19 +106,43 @@ hotspots.post("/:hotspotId/add-species-fav", async (c) => {
   return c.json({});
 });
 
-hotspots.get("/:hotspotId/info", async (c) => {
+hotspots.patch("/sync", async (c) => {
+  const session = await authenticate(c);
+
   const tripId = c.req.param("tripId");
-  const hotspotId = c.req.param("hotspotId");
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
-  const response = await fetch(`https://ebird.org/mapServices/getHsInfo.do?fmt=json&hs=${hotspotId}&yr=all&m=`);
-  const json = await response.json();
+  const { updates } = await c.req.json<{
+    updates: { id: string; species: number; checklists: number; lat: number; lng: number; name?: string }[];
+  }>();
+  if (!Array.isArray(updates) || updates.length === 0) return c.json({});
 
-  const thirtyDays = 2592000;
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
+  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  c.header("Cache-Control", `public, max-age=${thirtyDays}, s-maxage=${thirtyDays}`);
+  const ops = updates.flatMap((u) => {
+    const $set: Record<string, unknown> = {};
+    if (Number.isFinite(u.species)) $set["hotspots.$.species"] = u.species;
+    if (Number.isFinite(u.checklists)) $set["hotspots.$.checklists"] = u.checklists;
+    if (Number.isFinite(u.lat)) $set["hotspots.$.lat"] = u.lat;
+    if (Number.isFinite(u.lng)) $set["hotspots.$.lng"] = u.lng;
+    if (typeof u.name === "string" && u.name.length > 0) $set["hotspots.$.name"] = u.name;
+    if (Object.keys($set).length === 0) return [];
+    return [
+      {
+        updateOne: {
+          filter: { _id: tripId, "hotspots.id": u.id },
+          update: { $set },
+        },
+      },
+    ];
+  });
+  if (ops.length === 0) return c.json({});
+  await Trip.bulkWrite(ops);
 
-  return c.json(json);
+  return c.json({});
 });
 
 hotspots.patch("/:hotspotId/notes", async (c) => {

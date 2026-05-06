@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import * as idbKeyval from "idb-keyval";
 
 let queryClient: QueryClient | undefined;
+const QUERY_CACHE_BUSTER = "birdplan-cache-v1";
 
 export function initQueryClient() {
   // Fix for nextjs hot reloading
@@ -85,7 +86,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         queryClient: queryClient!,
         persister: asyncPersister,
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        buster: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0",
+        buster: QUERY_CACHE_BUSTER,
       });
     }
   }, []);

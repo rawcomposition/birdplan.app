@@ -121,7 +121,7 @@ export default function Hotspot({ hotspot }: Props) {
         return;
       removeMutation.mutate({});
     } else {
-      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0 });
+      addHotspotMutation.mutate({ ...hotspot, species: hotspot.species || 0, checklists: hotspot.checklists || 0 });
     }
   };
 
@@ -215,7 +215,7 @@ export default function Hotspot({ hotspot }: Props) {
             </Menu.Items>
           </Menu>
         </div>
-        <HotspotStats id={id} speciesTotal={hotspot.species} />
+        <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
         <HotspotFavs hotspotId={id} />
 
         {canEdit && !isSaved && (

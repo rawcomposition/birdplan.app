@@ -13,6 +13,7 @@ type eBirdHotspotResult = {
   lng: number;
   latestObsDt: string;
   numSpeciesAllTime: number;
+  numChecklistsAllTime: number;
 };
 
 region.get("/:region/hotspots", async (c) => {
@@ -29,6 +30,7 @@ region.get("/:region/hotspots", async (c) => {
     lat: it.lat,
     lng: it.lng,
     species: it.numSpeciesAllTime,
+    checklists: it.numChecklistsAllTime,
   }));
 
   const sevenDays = 604800;
