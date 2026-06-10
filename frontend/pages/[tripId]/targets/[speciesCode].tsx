@@ -16,7 +16,7 @@ import MapBox from "components/Mapbox";
 import SpeciesCard from "components/SpeciesCard";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
-import SpeciesHotspotList, { type HotspotItem } from "components/SpeciesHotspotList";
+import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
 import { useTrip } from "providers/trip";
 import { useUser } from "providers/user";
 import { useProfile } from "providers/profile";
@@ -37,12 +37,13 @@ export default function SpeciesDetail() {
   const speciesCode = router.query.speciesCode?.toString() || "";
   const { user } = useUser();
   const { lifelist } = useProfile();
-  const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies } = useTrip();
+  const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { getSpeciesImg } = useSpeciesImages();
   const { open, close } = useModal();
   const queryClient = useQueryClient();
 
   const [scope, setScope] = React.useState<Scope>("saved");
+  const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
   const { sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();
 
@@ -139,7 +140,7 @@ export default function SpeciesDetail() {
 
   const queryBody = {
     sortBy: apiSortBy,
-    ...(months ? { months } : {}),
+    ...(monthMode === "trip" && months ? { months } : {}),
     ...(minObservations > 1 ? { minObservations } : {}),
     ...(scopedLocationIds ? { locationIds: scopedLocationIds } : { region: trip?.region, limit: 500 }),
   };
@@ -365,7 +366,13 @@ export default function SpeciesDetail() {
               )}
 
               {queryEnabled && !rankingsError && rankings && (
-                <SpeciesHotspotList hotspots={filtered} onSelect={handleHotspotClick} />
+                <SpeciesHotspotList
+                  hotspots={filtered}
+                  onSelect={handleHotspotClick}
+                  monthMode={monthMode}
+                  setMonthMode={setMonthMode}
+                  tripRangeLabel={dateRangeLabel}
+                />
               )}
 
               {rankings?.citation && (

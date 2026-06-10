@@ -15,6 +15,13 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 9, 2026</h2>
+          <ul>
+            <li>
+              ✨ The top hotspots on a target species page now show all-year data by default, with a dropdown to switch
+              between all year and your trip&apos;s month range.
+            </li>
+          </ul>
           <h2>May 5, 2026</h2>
           <ul>
             <li>✨ Existing trips can now have their region updated from the trip settings page.</li>

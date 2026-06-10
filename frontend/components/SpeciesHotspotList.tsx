@@ -8,22 +8,89 @@ export type HotspotItem = OpenBirdingHotspotRanking & {
   lastSeen?: string;
 };
 
+export type MonthMode = "trip" | "all";
+
 type Props = {
   hotspots: HotspotItem[];
   onSelect: (id: string) => void;
+  monthMode: MonthMode;
+  setMonthMode: (m: MonthMode) => void;
+  tripRangeLabel: string;
 };
 
-export default function SpeciesHotspotList({ hotspots, onSelect }: Props) {
+export default function SpeciesHotspotList({ hotspots, onSelect, monthMode, setMonthMode, tripRangeLabel }: Props) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-gray-200 flex items-baseline justify-between">
-        <div className="text-base font-bold text-gray-800">Top hotspots</div>
-        <div className="text-xs text-gray-500">Showing {hotspots.length} results</div>
+      <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="text-base font-bold text-gray-800">Top hotspots</div>
+          {tripRangeLabel && (
+            <MonthRangeDropdown mode={monthMode} onChange={setMonthMode} tripRangeLabel={tripRangeLabel} />
+          )}
+        </div>
+        <div className="hidden sm:block text-xs text-gray-500 whitespace-nowrap">Showing {hotspots.length} results</div>
       </div>
       {hotspots.length === 0 ? (
         <div className="px-6 py-16 text-center text-gray-500 text-sm">No hotspots match these filters.</div>
       ) : (
         hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
+      )}
+    </div>
+  );
+}
+
+function MonthRangeDropdown({
+  mode,
+  onChange,
+  tripRangeLabel,
+}: {
+  mode: MonthMode;
+  onChange: (m: MonthMode) => void;
+  tripRangeLabel: string;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const options: { value: MonthMode; label: string }[] = [
+    { value: "all", label: "All Year" },
+    { value: "trip", label: tripRangeLabel },
+  ];
+  const current = options.find((o) => o.value === mode) ?? options[0];
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap"
+      >
+        {current.label}
+        <Icon name="angleDown" className="text-[9px] text-gray-500" />
+      </button>
+      {open && (
+        <>
+          <div onClick={() => setOpen(false)} className="fixed inset-0 z-30" />
+          <div className="absolute top-full left-0 mt-1.5 z-40 min-w-[160px] bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+            {options.map((o) => {
+              const active = o.value === mode;
+              return (
+                <button
+                  key={o.value}
+                  type="button"
+                  onClick={() => {
+                    onChange(o.value);
+                    setOpen(false);
+                  }}
+                  className={clsx(
+                    "w-full px-3 py-2 text-left text-sm flex items-center justify-between",
+                    active ? "bg-sky-50 text-sky-700" : "text-gray-800 hover:bg-gray-50"
+                  )}
+                >
+                  <span>{o.label}</span>
+                  {active && <Icon name="check" className="text-xs" />}
+                </button>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );
