@@ -153,6 +153,7 @@ export default function SpeciesDetail() {
   const {
     data: rankings,
     isLoading: loadingRankings,
+    isFetching: fetchingRankings,
     isError: rankingsError,
   } = useQuery<OpenBirdingHotspotRankingResponse>({
     queryKey: ["openbirding-best-hotspots", speciesCode, scope, queryBody],
@@ -372,6 +373,7 @@ export default function SpeciesDetail() {
                   monthMode={monthMode}
                   setMonthMode={setMonthMode}
                   tripRangeLabel={dateRangeLabel}
+                  loading={fetchingRankings}
                 />
               )}
 

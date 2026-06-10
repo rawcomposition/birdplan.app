@@ -16,9 +16,17 @@ type Props = {
   monthMode: MonthMode;
   setMonthMode: (m: MonthMode) => void;
   tripRangeLabel: string;
+  loading?: boolean;
 };
 
-export default function SpeciesHotspotList({ hotspots, onSelect, monthMode, setMonthMode, tripRangeLabel }: Props) {
+export default function SpeciesHotspotList({
+  hotspots,
+  onSelect,
+  monthMode,
+  setMonthMode,
+  tripRangeLabel,
+  loading,
+}: Props) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3">
@@ -28,13 +36,24 @@ export default function SpeciesHotspotList({ hotspots, onSelect, monthMode, setM
             <MonthRangeDropdown mode={monthMode} onChange={setMonthMode} tripRangeLabel={tripRangeLabel} />
           )}
         </div>
-        <div className="hidden sm:block text-xs text-gray-500 whitespace-nowrap">Showing {hotspots.length} results</div>
+        {loading ? (
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 whitespace-nowrap">
+            <Icon name="loading" className="text-sm animate-spin" />
+            <span className="hidden sm:inline">Updating…</span>
+          </div>
+        ) : (
+          <div className="hidden sm:block text-xs text-gray-500 whitespace-nowrap">
+            Showing {hotspots.length} results
+          </div>
+        )}
       </div>
-      {hotspots.length === 0 ? (
-        <div className="px-6 py-16 text-center text-gray-500 text-sm">No hotspots match these filters.</div>
-      ) : (
-        hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
-      )}
+      <div className={clsx("transition-opacity duration-200", loading && "opacity-50")}>
+        {hotspots.length === 0 ? (
+          <div className="px-6 py-16 text-center text-gray-500 text-sm">No hotspots match these filters.</div>
+        ) : (
+          hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
+        )}
+      </div>
     </div>
   );
 }
