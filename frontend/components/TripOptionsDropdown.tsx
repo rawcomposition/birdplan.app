@@ -1,7 +1,6 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
@@ -12,7 +11,6 @@ type Props = {
 };
 
 export default function TripOptionsDropdown({ className }: Props) {
-  const { query } = useRouter();
   const { open } = useModal();
   const { lifelist, uid } = useProfile();
   const { trip, isOwner, canEdit } = useTrip();
@@ -44,7 +42,7 @@ export default function TripOptionsDropdown({ className }: Props) {
       name: "Send to OpenBirding",
       onClick: () => open("openBirding"),
       icon: "export",
-      hidden: !canEdit || !("openbirding" in query),
+      hidden: !canEdit,
     },
   ];
 

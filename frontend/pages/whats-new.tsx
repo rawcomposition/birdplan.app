@@ -15,6 +15,12 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 11, 2026</h2>
+          <ul>
+            <li>
+              ✨ You can now send a trip to the <a href="https://openbirding.org" target="_blank" rel="noreferrer">OpenBirding</a> app from the trip options menu.
+            </li>
+          </ul>
           <h2>June 9, 2026</h2>
           <ul>
             <li>
