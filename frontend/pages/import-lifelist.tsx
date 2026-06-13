@@ -16,11 +16,18 @@ import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
 import Alert from "components/Alert";
 
+const EBIRD_LIFELIST_URL = "https://ebird.org/lifelist?r=world&time=life&fmt=csv";
+
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
-  const { exceptions } = useProfile();
+  const { lifelist, lifelistUpdatedAt, exceptions } = useProfile();
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const { tripId } = router.query;
+  const redirectUrl = tripId ? `/${tripId}` : `/trips`;
+  const hasList = !!lifelist?.length;
 
   const exceptionsString = exceptions?.join(",");
 
@@ -32,9 +39,9 @@ export default function ImportLifelist() {
     },
   });
 
-  const setLifelistMutation = useMutation({
-    url: "/profile",
-    method: "PATCH",
+  const importMutation = useMutation({
+    url: `/profile/lifelist`,
+    method: "PUT",
     onMutate: () => {
       toast.loading("Importing life list...", { id: "import-lifelist" });
     },
@@ -76,11 +83,6 @@ export default function ImportLifelist() {
     callback(formattedOptions);
   };
 
-  const router = useRouter();
-  const { tripId } = router.query;
-  const showBack = router.query.back === "true" && tripId;
-  const redirectUrl = tripId ? `/${tripId}` : `/trips`;
-
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const file = e.target.files?.[0];
@@ -88,12 +90,11 @@ export default function ImportLifelist() {
       Papa.parse(file, {
         header: true,
         complete: async function (results: any) {
-          // Extract the scientific names
           const sciNames = results.data
             .filter((it: any) => it.Countable === "1" && it.Category === "species")
             .map((it: any) => it["Scientific Name"]);
           fileInputRef.current?.value && (fileInputRef.current.value = "");
-          setLifelistMutation.mutate({ lifelist: sciNames });
+          importMutation.mutate({ sciNames });
         },
       });
     } catch (error) {
@@ -106,27 +107,47 @@ export default function ImportLifelist() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Import Life List | BirdPlan.app</title>
+        <title>Your Life List | BirdPlan.app</title>
       </Head>
 
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
-        {showBack && (
-          <Link
-            href={`/${tripId}`}
-            className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
-          >
-            ← Back to trip
-          </Link>
-        )}
+        <Link
+          href={redirectUrl}
+          className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
+        >
+          ← Back to {tripId ? "trip" : "trips"}
+        </Link>
         <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <Icon name="feather" className="text-2xl text-lime-600" /> Import Life List
+          <h1 className="text-3xl font-bold text-gray-700 mb-2">
+            <Icon name="feather" className="text-2xl text-lime-600" /> Your Life List
           </h1>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">1. Download life list from eBird</h3>
+          <p className="text-gray-500 mb-8">
+            Your global life list. Trips compute targets by subtracting it, unless a trip uses its own custom list.
+          </p>
+
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>
+                <p className="text-3xl font-bold text-gray-800 tabular-nums">
+                  {hasList ? lifelist.length.toLocaleString() : "—"}
+                </p>
+              </div>
+              {lifelistUpdatedAt && (
+                <div className="text-right">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Last updated</p>
+                  <p className="text-sm text-gray-700">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+            <h3 className="text-lg font-medium mb-1 text-gray-700">1. Download from eBird</h3>
+            <p className="text-sm text-gray-600 mb-4">Export your life list as a CSV from eBird.</p>
             <Button
-              href={`https://ebird.org/lifelist?r=world&time=life&fmt=csv`}
+              href={EBIRD_LIFELIST_URL}
               target="_blank"
               color="primary"
               size="sm"
@@ -135,9 +156,21 @@ export default function ImportLifelist() {
               <Icon name="download" /> Download Life List
             </Button>
           </div>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">2. Exceptions (optional)</h3>
-            <p className="text-sm text-gray-600 mb-2">Species you want to see again</p>
+
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+            <h3 className="text-lg font-medium mb-1 text-gray-700">
+              2. {hasList ? "Re-import" : "Import"} your list
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">Upload the CSV file you downloaded above.</p>
+            <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+            <h3 className="text-lg font-medium mb-1 text-gray-700">Exceptions</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies to
+              all your trips.
+            </p>
             {isError && (
               <Alert style="error" className="-mx-1 my-1">
                 <Icon name="xMarkCircle" className="text-xl" />
@@ -170,14 +203,10 @@ export default function ImportLifelist() {
               />
             )}
           </div>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
-            <h3 className="text-lg font-medium mb-4 text-gray-700">3. Upload file</h3>
-            <p className="text-sm text-gray-600 mb-2">Upload the CSV file you downloaded in step 1</p>
-            <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
-          </div>
+
           <div className="flex">
             <Button href={redirectUrl} color="gray" className="inline-flex items-center ml-auto">
-              {tripId ? "Skip" : "Cancel"}
+              Done
             </Button>
           </div>
         </div>

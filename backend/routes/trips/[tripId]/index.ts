@@ -10,9 +10,16 @@ import {
   getBounds,
 } from "lib/utils.js";
 import { connect, Trip, Invite, Profile, TripShareToken } from "lib/db.js";
+import { sciNamesToCodes } from "lib/taxonomy.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
-import type { TripUpdateInput, Editor, OpenBirdingLocationResponse } from "@birdplan/shared";
+import type {
+  TripUpdateInput,
+  Editor,
+  OpenBirdingLocationResponse,
+  LifelistImportInput,
+  AddToLifelistInput,
+} from "@birdplan/shared";
 import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
@@ -140,12 +147,12 @@ trip.get("/editors", async (c) => {
     return c.json([]);
   }
 
-  const profiles = await Profile.find({ uid: { $in: trip.userIds } });
+  const profiles = await Profile.find({ uid: { $in: trip.userIds } }).lean();
 
   const editors: Editor[] = profiles.map((profile) => ({
     uid: profile.uid!,
     name: profile?.name || `User ${profile.uid}`,
-    lifelist: profile?.lifelist || [],
+    lifelist: profile.lifelist || [],
   }));
 
   return c.json(editors);
@@ -160,13 +167,14 @@ trip.get("/export", async (c) => {
   }
 
   await connect();
-  const [trip, profile] = await Promise.all([Trip.findById(tripId).lean(), Profile.findOne({ uid }).lean()]);
+  const trip = await Trip.findById(tripId).lean();
 
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
 
-  const lifelist = profile?.lifelist || [];
+  const profile = await Profile.findOne({ uid }).lean();
+  const lifelist = trip.customLifelist ?? profile?.lifelist ?? [];
   const months = getMonthRange(trip.startMonth, trip.endMonth);
 
   // Fetch targets from OpenBirding for each saved hotspot
@@ -210,6 +218,66 @@ trip.get("/export", async (c) => {
     "Content-Type": "application/vnd.google-earth.kml+xml",
     "Content-Disposition": `attachment; filename="${sanitizeFileName(trip.name)}.kml"`,
   });
+});
+
+// Import (replace) this trip's custom life list from a list of scientific names.
+trip.put("/lifelist", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  const { sciNames } = await c.req.json<LifelistImportInput>();
+  if (!Array.isArray(sciNames)) throw new HTTPException(400, { message: "Missing sciNames" });
+
+  const codes = await sciNamesToCodes(sciNames);
+
+  await Trip.updateOne(
+    { _id: tripId },
+    { $set: { customLifelist: codes, customLifelistUpdatedAt: new Date() } }
+  );
+
+  return c.json({});
+});
+
+// Revert this trip to the owner's global life list.
+trip.delete("/lifelist", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  await Trip.updateOne({ _id: tripId }, { $set: { customLifelist: null, customLifelistUpdatedAt: null } });
+
+  return c.json({});
+});
+
+// Add a single species to this trip's custom life list (marking it "seen").
+// Only meaningful when the trip already has a custom list.
+trip.post("/lifelist/add", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+
+  const { code } = await c.req.json<AddToLifelistInput>();
+  if (!code) throw new HTTPException(400, { message: "Missing code" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  await Trip.updateOne({ _id: tripId }, { $addToSet: { customLifelist: code } });
+
+  return c.json({});
 });
 
 trip.post("/share-code", async (c) => {

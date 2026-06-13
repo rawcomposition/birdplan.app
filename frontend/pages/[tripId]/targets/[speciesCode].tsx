@@ -19,7 +19,7 @@ import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/Spec
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
 import { useTrip } from "providers/trip";
 import { useUser } from "providers/user";
-import { useProfile } from "providers/profile";
+import useTripLifelist from "hooks/useTripLifelist";
 import { useSpeciesImages } from "providers/species-images";
 import { useModal } from "providers/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -36,8 +36,9 @@ export default function SpeciesDetail() {
   const router = useRouter();
   const speciesCode = router.query.speciesCode?.toString() || "";
   const { user } = useUser();
-  const { lifelist } = useProfile();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
+  const myLifelist = useTripLifelist(trip?.customLifelist);
+  const usesCustomList = trip?.customLifelist != null;
   const { getSpeciesImg } = useSpeciesImages();
   const { open, close } = useModal();
   const queryClient = useQueryClient();
@@ -58,7 +59,7 @@ export default function SpeciesDetail() {
   const speciesName = target?.name || "";
 
   const isStarred = !!trip?.targetStars?.includes(speciesCode);
-  const isSeen = lifelist.includes(speciesCode);
+  const isSeen = myLifelist.includes(speciesCode);
 
   const addStarMutation = useTripMutation<{ code: string }>({
     url: `/trips/${trip?._id}/targets/add-star`,
@@ -87,20 +88,36 @@ export default function SpeciesDetail() {
     }),
   });
 
-  const seenMutation = useMutation({
-    url: `/profile/add-to-lifelist`,
+  // Mark seen writes to whichever list this trip targets: its custom list (on the trip),
+  // or the user's global list. The global path also clears the global exceptions overlay.
+  const globalSeenMutation = useMutation({
+    url: `/profile/lifelist/add`,
     method: "POST",
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [`/profile`] }),
     onMutate: async (data: any) => {
       await queryClient.cancelQueries({ queryKey: ["/profile"] });
       const prevData = queryClient.getQueryData([`/profile`]);
-      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) => {
-        if (!old) return old;
-        return { ...old, lifelist: [...old.lifelist, data.code] };
-      });
+      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) =>
+        old
+          ? {
+              ...old,
+              lifelist: [...(old.lifelist || []), data.code],
+              exceptions: (old.exceptions || []).filter((it) => it !== data.code),
+            }
+          : old
+      );
       return { prevData };
     },
     onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData([`/profile`], ctx?.prevData),
+  });
+
+  const customSeenMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/lifelist/add`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      customLifelist: [...(old.customLifelist || []), input.code],
+    }),
   });
 
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: speciesCode });
@@ -237,8 +254,10 @@ export default function SpeciesDetail() {
 
   const handleMarkSeen = () => {
     if (!canMutate || isSeen) return;
-    if (!confirm(`Are you sure you want to add ${speciesName} to your life list?`)) return;
-    seenMutation.mutate({ code: speciesCode });
+    const listLabel = usesCustomList ? "this trip's custom life list" : "your life list";
+    if (!confirm(`Are you sure you want to add ${speciesName} to ${listLabel}?`)) return;
+    if (usesCustomList) customSeenMutation.mutate({ code: speciesCode });
+    else globalSeenMutation.mutate({ code: speciesCode });
   };
 
   const handleHotspotClick = (id: string) => {

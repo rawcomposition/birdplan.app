@@ -3,7 +3,7 @@ import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import FilterTabs from "components/FilterTabs";
-import { useProfile } from "providers/profile";
+import useTripLifelist from "hooks/useTripLifelist";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
@@ -16,9 +16,9 @@ type Props = {
 };
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
-  const { lifelist } = useProfile();
   const [view, setView] = React.useState<string>("all");
   const { trip, dateRangeLabel } = useTrip();
+  const lifelist = useTripLifelist(trip?.customLifelist);
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
 
   const isSaved = !!trip?.hotspots.find((it) => it.id === hotspotId);

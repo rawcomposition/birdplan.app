@@ -149,6 +149,22 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 </div>
               </div>
               <RegionFields value={region} onChange={setRegion} />
+              <div className="rounded-lg border border-gray-200 p-4 flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-medium text-sm text-gray-700">Life list</p>
+                  <p className="text-sm text-gray-500">
+                    {trip.customLifelist != null
+                      ? `Targeting against a custom list (${trip.customLifelist.length.toLocaleString()} species).`
+                      : "Targeting against your global life list."}
+                  </p>
+                </div>
+                <Link
+                  href={`/${trip._id}/lifelist`}
+                  className="text-sky-600 font-medium text-sm whitespace-nowrap"
+                >
+                  Manage
+                </Link>
+              </div>
               <div className="flex justify-between">
                 <Button href="/trips" color="gray">
                   Cancel

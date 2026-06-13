@@ -19,6 +19,8 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
+  customLifelist?: string[] | null; // per-trip override; null/absent ⇒ use the user's global list
+  customLifelistUpdatedAt?: string | null;
   targetStars?: string[];
   targetNotes?: {
     [key: string]: string;
@@ -83,12 +85,23 @@ export type Profile = {
   uid: string;
   name?: string;
   email?: string;
-  lifelist: string[];
+  lifelist: string[]; // the user's global life list (eBird species codes, deduped)
+  lifelistUpdatedAt?: Date | null; // when the global list was last imported
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
   resetToken?: string;
   resetTokenExpires?: Date;
+};
+
+// Importing a life list (global or per-trip) from an eBird CSV export.
+export type LifelistImportInput = {
+  sciNames: string[];
+};
+
+// Marking a single species seen (adds to a life list).
+export type AddToLifelistInput = {
+  code: string;
 };
 
 export type Target = {
