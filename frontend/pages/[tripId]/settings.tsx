@@ -2,6 +2,7 @@ import React from "react";
 import Header from "components/Header";
 import Head from "next/head";
 import { useTrip } from "providers/trip";
+import { useProfile } from "providers/profile";
 import toast from "react-hot-toast";
 import MonthSelect from "components/MonthSelect";
 import LoginModal from "components/LoginModal";
@@ -51,6 +52,7 @@ type SettingsFormProps = {
 function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { lifelist } = useProfile();
   const [startMonth, setStartMonth] = React.useState<Option>({
     value: trip.startMonth.toString(),
     label: months[trip.startMonth - 1],
@@ -149,17 +151,25 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 </div>
               </div>
               <RegionFields value={region} onChange={setRegion} />
-              <div className="rounded-lg border border-gray-200 p-4 flex items-center justify-between gap-3">
+              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex items-center justify-between gap-3">
                 <div>
-                  <p className="font-medium text-sm text-gray-700">Life list</p>
-                  <p className="text-sm text-gray-500">
-                    {trip.customLifelist != null
-                      ? `Targeting against a custom list (${trip.customLifelist.length.toLocaleString()} species).`
-                      : "Targeting against your World life list."}
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">
+                      {trip.customLifelist != null ? "Custom list" : "World life list"}
+                    </span>{" "}
+                    <span className="text-gray-500 tabular-nums">
+                      (
+                      {(trip.customLifelist != null
+                        ? trip.customLifelist.length
+                        : lifelist?.length || 0
+                      ).toLocaleString()}
+                      )
+                    </span>
                   </p>
+                  <p className="text-sm text-gray-500 mt-1.5">Targets for this trip are derived from this list.</p>
                 </div>
                 <Link
-                  href={`/${trip._id}/lifelist`}
+                  href={`/${trip._id}/lifelist?returnTo=${encodeURIComponent(`/${trip._id}/settings`)}`}
                   className="text-sky-600 font-medium text-sm whitespace-nowrap"
                 >
                   Manage

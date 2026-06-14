@@ -46,7 +46,7 @@ export default function LifelistUpload({ onImport, isPending, hint, buttonLabel,
         </a>
       </p>
       <label
-        className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed px-4 py-7 text-center transition-colors ${
+        className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors ${
           isPending
             ? "border-gray-200 bg-gray-50"
             : "border-gray-300 cursor-pointer hover:border-blue-400 hover:bg-blue-50/40"
@@ -60,14 +60,13 @@ export default function LifelistUpload({ onImport, isPending, hint, buttonLabel,
           className="sr-only"
           onChange={handleFileUpload}
         />
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+          <Icon name={isPending ? "loading" : "feather"} className={`text-lg ${isPending ? "animate-spin" : ""}`} />
+        </span>
         {isPending ? (
-          <>
-            <Icon name="loading" className="text-xl text-blue-500 animate-spin" />
-            <span className="text-sm font-medium text-gray-600">Importing…</span>
-          </>
+          <span className="text-sm font-medium text-gray-600">Importing…</span>
         ) : (
           <>
-            <Icon name="feather" className="text-xl text-gray-400" />
             <span className="text-sm font-medium text-gray-700">{buttonLabel}</span>
             <span className="text-xs text-gray-400">eBird .csv export</span>
           </>
