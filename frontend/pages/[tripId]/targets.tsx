@@ -18,7 +18,6 @@ import TargetRow from "components/TargetRow";
 import { useQuery } from "@tanstack/react-query";
 import type { Editor } from "@birdplan/shared";
 import useDownloadTargets from "hooks/useDownloadTargets";
-import Link from "next/link";
 import Icon from "components/Icon";
 import clsx from "clsx";
 const PAGE_SIZE = 50;
@@ -60,7 +59,6 @@ export default function TripTargets() {
   const myUid = user?.uid;
   const ownerId = trip?.ownerId;
   const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
-  const usesCustomList = trip?.customLifelist != null;
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -120,16 +118,6 @@ export default function TripTargets() {
               <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <ProfileSelect value={uid} onChange={setUid} editors={editors} />
-                  {uid === myUid && (
-                    <Link
-                      href={`/${trip?._id}/lifelist`}
-                      className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-gray-200 bg-white text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50"
-                      title="Choose which life list this trip targets against"
-                    >
-                      <Icon name="feather" className="text-gray-400" />
-                      {usesCustomList ? "Custom list" : "Your life list"}
-                    </Link>
-                  )}
                 </div>
                 {isLoadingTargets && (
                   <div className="flex items-center flex-col gap-2 my-8">

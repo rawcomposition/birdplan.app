@@ -17,7 +17,7 @@ export default function TripOptionsDropdown({ className }: Props) {
 
   const links = [
     {
-      name: trip?.customLifelist != null ? "Life List · Custom" : "Life List · Global",
+      name: "Life List",
       href: `/${trip?._id}/lifelist`,
       icon: "feather",
     },

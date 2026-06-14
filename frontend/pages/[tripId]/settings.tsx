@@ -155,7 +155,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                   <p className="text-sm text-gray-500">
                     {trip.customLifelist != null
                       ? `Targeting against a custom list (${trip.customLifelist.length.toLocaleString()} species).`
-                      : "Targeting against your global life list."}
+                      : "Targeting against your World life list."}
                   </p>
                 </div>
                 <Link

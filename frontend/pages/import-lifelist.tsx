@@ -1,5 +1,4 @@
 import React from "react";
-import Papa from "papaparse";
 import toast from "react-hot-toast";
 import { useProfile } from "providers/profile";
 import { useRouter } from "next/router";
@@ -9,6 +8,7 @@ import Button from "components/Button";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
+import LifelistUpload from "components/LifelistUpload";
 import Link from "next/link";
 import useMutation from "hooks/useMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,11 +22,17 @@ export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
   const { lifelist, lifelistUpdatedAt, exceptions } = useProfile();
   const queryClient = useQueryClient();
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const { tripId } = router.query;
-  const redirectUrl = tripId ? `/${tripId}` : `/trips`;
+  const { tripId, returnTo } = router.query;
+  const redirectUrl =
+    (typeof returnTo === "string" && returnTo) || (tripId ? `/${tripId}` : `/trips`);
+  const backLabel =
+    typeof returnTo === "string" && returnTo.endsWith("/lifelist")
+      ? "life list"
+      : returnTo || tripId
+      ? "trip"
+      : "trips";
   const hasList = !!lifelist?.length;
 
   const exceptionsString = exceptions?.join(",");
@@ -83,27 +89,6 @@ export default function ImportLifelist() {
     callback(formattedOptions);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      Papa.parse(file, {
-        header: true,
-        complete: async function (results: any) {
-          const sciNames = results.data
-            .filter((it: any) => it.Countable === "1" && it.Category === "species")
-            .map((it: any) => it["Scientific Name"]);
-          fileInputRef.current?.value && (fileInputRef.current.value = "");
-          importMutation.mutate({ sciNames });
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error("Error processing file");
-      fileInputRef.current?.value && (fileInputRef.current.value = "");
-    }
-  };
-
   return (
     <div className="flex flex-col h-full">
       <Head>
@@ -116,7 +101,7 @@ export default function ImportLifelist() {
           href={redirectUrl}
           className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
         >
-          ← Back to {tripId ? "trip" : "trips"}
+          ← Back to {backLabel}
         </Link>
         <div className="px-4 md:px-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-2">
@@ -144,25 +129,14 @@ export default function ImportLifelist() {
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
-            <h3 className="text-lg font-medium mb-1 text-gray-700">1. Download from eBird</h3>
-            <p className="text-sm text-gray-600 mb-4">Export your life list as a CSV from eBird.</p>
-            <Button
-              href={EBIRD_LIFELIST_URL}
-              target="_blank"
-              color="primary"
-              size="sm"
-              className="inline-flex items-center gap-2"
-            >
-              <Icon name="download" /> Download Life List
-            </Button>
-          </div>
-
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
-            <h3 className="text-lg font-medium mb-1 text-gray-700">
-              2. {hasList ? "Re-import" : "Import"} your list
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">Upload the CSV file you downloaded above.</p>
-            <input ref={fileInputRef} type="file" accept=".csv" className="text-xs" onChange={handleFileUpload} />
+            <h3 className="text-lg font-medium mb-3 text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
+            <LifelistUpload
+              onImport={(sciNames) => importMutation.mutate({ sciNames })}
+              isPending={importMutation.isPending}
+              ebirdUrl={EBIRD_LIFELIST_URL}
+              hint={hasList ? "Upload a new CSV to update your list." : "Upload your eBird life list export."}
+              buttonLabel={hasList ? "Choose a new CSV file" : "Choose a CSV file"}
+            />
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
