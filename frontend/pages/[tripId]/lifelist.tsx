@@ -129,7 +129,7 @@ export default function TripLifelist() {
               checked={customSelected}
               disabled={!canEdit}
               onSelect={selectCustom}
-              title="A custom list for this trip"
+              title="Custom list for this trip"
               description="Applies only to this trip — your World life list stays untouched."
             />
             {customSelected && (
