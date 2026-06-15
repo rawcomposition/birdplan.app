@@ -46,6 +46,15 @@ export default function ManageLifelist({ participantId }: Props) {
     },
   });
 
+  const clearMutation = useMutation({
+    url: `/trips/${trip?._id}/participants/${participantId}/list`,
+    method: "DELETE",
+    onSuccess: () => {
+      toast.success("List removed");
+      invalidate();
+    },
+  });
+
   const renameMutation = useMutation({
     url: `/trips/${trip?._id}/participants/${participantId}`,
     method: "PATCH",
@@ -58,6 +67,12 @@ export default function ManageLifelist({ participantId }: Props) {
   if (!p) return null;
 
   const handleImport = (sciNames: string[]) => listMutation.mutate({ sciNames });
+  const handleRemove = () => {
+    if (!confirm(`Remove ${p?.name || "this participant"}'s life list?`)) return;
+    clearMutation.mutate(undefined);
+  };
+
+  const isBusy = listMutation.isPending || clearMutation.isPending;
 
   const nameDirty = isNameOnly && !!nameDraft.trim() && nameDraft.trim() !== p?.name;
   const modeDirty = isSelf && lifelistMode.isDirty;
@@ -109,14 +124,42 @@ export default function ManageLifelist({ participantId }: Props) {
             </label>
             <div>
               <span className="mb-2 block text-sm font-medium text-gray-700">Life list</span>
-              <LifelistUpload variant="compact" onImport={handleImport} isPending={listMutation.isPending} hint={uploadHint} buttonLabel={uploadLabel} />
+              {p.hasList && (
+                <p className="mb-3 text-[13px] text-gray-500">
+                  <span className="tabular-nums">{p.count.toLocaleString()} species</span>
+                  {" - "}
+                  <button
+                    type="button"
+                    onClick={handleRemove}
+                    disabled={isBusy}
+                    className="text-red-500 hover:text-red-600 disabled:text-gray-400"
+                  >
+                    Remove
+                  </button>
+                </p>
+              )}
+              <LifelistUpload variant="compact" onImport={handleImport} isPending={isBusy} hint={uploadHint} buttonLabel={uploadLabel} />
             </div>
           </div>
         )}
 
         {isPending && isOwner && (
           <div className="space-y-3">
-            <LifelistUpload variant="compact" onImport={handleImport} isPending={listMutation.isPending} hint={uploadHint} buttonLabel={uploadLabel} />
+            {p.hasList && (
+              <p className="text-[13px] text-gray-500">
+                <span className="tabular-nums">{p.count.toLocaleString()} species</span>
+                {" - "}
+                <button
+                  type="button"
+                  onClick={handleRemove}
+                  disabled={isBusy}
+                  className="text-red-500 hover:text-red-600 disabled:text-gray-400"
+                >
+                  Remove
+                </button>
+              </p>
+            )}
+            <LifelistUpload variant="compact" onImport={handleImport} isPending={isBusy} hint={uploadHint} buttonLabel={uploadLabel} />
             <p className="text-xs text-gray-500">
               They can switch to their World list or replace this after they accept the invite.
             </p>

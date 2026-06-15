@@ -215,6 +215,32 @@ participants.put("/:id/list", async (c) => {
   return c.json({});
 });
 
+participants.delete("/:id/list", async (c) => {
+  const session = await authenticate(c);
+  const tripId = c.req.param("tripId");
+  const id = c.req.param("id");
+  if (!tripId || !id) throw new HTTPException(400, { message: "Trip ID and participant ID are required" });
+
+  await connect();
+  const [p, trip] = await Promise.all([
+    Participant.findOne({ _id: id, tripId }).lean(),
+    Trip.findById(tripId).lean(),
+  ]);
+  if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
+
+  const isSelf = !!p.uid && p.uid === session.uid;
+  const isNameOnly = !p.uid && p.status === "active";
+  const isPendingInvite = !p.uid && p.status === "pending";
+  const allowed =
+    isSelf ||
+    (isNameOnly && (await isTripEditor(tripId, session.uid))) ||
+    (isPendingInvite && trip.ownerId === session.uid);
+  if (!allowed) throw new HTTPException(403, { message: "Forbidden" });
+
+  await Participant.updateOne({ _id: id }, { $set: { lifelist: [], lifelistUpdatedAt: null } });
+  return c.json({});
+});
+
 participants.post("/:id/seen", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
