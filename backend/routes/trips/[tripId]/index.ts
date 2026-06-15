@@ -59,10 +59,10 @@ trip.get("/", async (c) => {
   const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
   return c.json({
     ...tripData,
-    customLifelist: resolved.groupCodes,
+    customLifelist: resolved.groupLifelist,
     customLifelistUpdatedAt: resolved.groupUpdatedAt,
     lifelistMode: resolved.mode,
-    viewerLifelist: resolved.viewerCodes,
+    viewerLifelist: resolved.viewerLifelist,
     viewer: resolved.viewer,
   });
 });
@@ -155,7 +155,7 @@ trip.get("/export", async (c) => {
 
   const profile = await Profile.findOne({ uid }).lean();
   const resolved = await resolveTrip(tripId, uid);
-  const lifelist = resolved.groupCodes ?? resolved.viewerCodes ?? profile?.lifelist ?? [];
+  const lifelist = resolved.groupLifelist ?? resolved.viewerLifelist ?? profile?.lifelist ?? [];
   const months = getMonthRange(trip.startMonth, trip.endMonth);
 
   // Fetch targets from OpenBirding for each saved hotspot

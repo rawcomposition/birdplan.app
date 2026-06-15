@@ -10,7 +10,7 @@ export async function isTripEditor(tripId: string, uid?: string | null): Promise
 export function computeIntersection(lists: string[][]): string[] {
   if (lists.length === 0) return [];
   const [first, ...rest] = lists;
-  const sets = rest.map((codes) => new Set(codes));
+  const sets = rest.map((list) => new Set(list));
   const seen = new Set<string>();
   const result: string[] = [];
   for (const code of first) {
@@ -35,9 +35,9 @@ export function participantEffectiveList(p: LeanParticipant, profilesByUid: Map<
 
 export type ResolvedTripLifelist = {
   mode: TripLifelistMode;
-  groupCodes: string[] | null;
+  groupLifelist: string[] | null;
   groupUpdatedAt: Date | null;
-  viewerCodes: string[] | null;
+  viewerLifelist: string[] | null;
   viewer: { participantId: string; listMode: ParticipantListMode } | null;
 };
 
@@ -48,31 +48,31 @@ export function resolveTripLifelist(
 ): ResolvedTripLifelist {
   const viewerP = viewerUid ? activeParticipants.find((p) => p.uid === viewerUid) : null;
   const viewer = viewerP ? { participantId: viewerP._id, listMode: viewerP.listMode } : null;
-  const viewerCodes = viewerP ? participantEffectiveList(viewerP, profilesByUid) : null;
+  const viewerLifelist = viewerP ? participantEffectiveList(viewerP, profilesByUid) : null;
 
   if (activeParticipants.length <= 1) {
     const only = activeParticipants[0];
     if (!only || (only.uid && only.listMode === "world")) {
-      return { mode: "world", groupCodes: null, groupUpdatedAt: null, viewerCodes, viewer };
+      return { mode: "world", groupLifelist: null, groupUpdatedAt: null, viewerLifelist, viewer };
     }
     return {
       mode: "customSingle",
-      groupCodes: participantEffectiveList(only, profilesByUid),
+      groupLifelist: participantEffectiveList(only, profilesByUid),
       groupUpdatedAt: only.lifelistUpdatedAt ?? null,
-      viewerCodes,
+      viewerLifelist,
       viewer,
     };
   }
 
   const lists = activeParticipants
     .map((p) => participantEffectiveList(p, profilesByUid))
-    .filter((codes) => codes.length > 0);
+    .filter((list) => list.length > 0);
 
   return {
     mode: "customShared",
-    groupCodes: computeIntersection(lists),
+    groupLifelist: computeIntersection(lists),
     groupUpdatedAt: null,
-    viewerCodes,
+    viewerLifelist,
     viewer,
   };
 }

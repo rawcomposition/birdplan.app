@@ -4,8 +4,8 @@ import { useProfile } from "providers/profile";
 export type { TripLifelistMode };
 
 export type TripLifelist = {
-  codes: string[];
-  myCodes: string[];
+  lifelist: string[];
+  myLifelist: string[];
   mode: TripLifelistMode;
   count: number;
 };
@@ -17,12 +17,12 @@ function filterExceptions(list: string[], exceptions?: string[]): string[] {
 }
 
 export default function useTripLifelist(trip?: Trip | null): TripLifelist {
-  const { lifelist, exceptions } = useProfile();
+  const { lifelist: globalLifelist, exceptions } = useProfile();
 
-  const globalFiltered = filterExceptions(lifelist || [], exceptions);
-  const codes = trip?.customLifelist ?? globalFiltered;
-  const myCodes = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? globalFiltered : globalFiltered;
+  const globalFiltered = filterExceptions(globalLifelist || [], exceptions);
+  const lifelist = trip?.customLifelist ?? globalFiltered;
+  const myLifelist = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? globalFiltered : globalFiltered;
   const mode = trip?.lifelistMode ?? "world";
 
-  return { codes, myCodes, mode, count: codes.length };
+  return { lifelist, myLifelist, mode, count: lifelist.length };
 }

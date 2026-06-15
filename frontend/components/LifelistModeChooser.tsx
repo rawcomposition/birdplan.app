@@ -15,12 +15,12 @@ type Props = {
 
 export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
   const { lifelist: globalList } = useProfile();
-  const { myCodes } = useTripLifelist(trip);
+  const { myLifelist } = useTripLifelist(trip);
 
   const { selectedMode, savedMode, selectWorld, selectCustom, handleCustomImport, listMutation } = mode;
 
   const hasCustom = savedMode === "custom";
-  const customCount = hasCustom ? myCodes.length : 0;
+  const customCount = hasCustom ? myLifelist.length : 0;
   const customUpdatedAt = hasCustom ? trip?.viewer && trip?.customLifelistUpdatedAt : null;
 
   return (

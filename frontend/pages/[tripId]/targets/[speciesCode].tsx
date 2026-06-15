@@ -37,7 +37,7 @@ export default function SpeciesDetail() {
   const speciesCode = router.query.speciesCode?.toString() || "";
   const { user } = useUser();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
-  const { myCodes: myLifelist } = useTripLifelist(trip);
+  const { myLifelist } = useTripLifelist(trip);
   const viewerListMode = trip?.viewer?.listMode ?? "world";
   const { getSpeciesImg } = useSpeciesImages();
   const { open, close } = useModal();

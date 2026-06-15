@@ -44,7 +44,7 @@ export default function TripTargets() {
     enabled: !!trip,
   });
 
-  const { codes: lifelist } = useTripLifelist(trip);
+  const { lifelist } = useTripLifelist(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
