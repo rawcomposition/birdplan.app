@@ -1,10 +1,5 @@
 import Papa from "papaparse";
 
-/**
- * Parse an eBird life list CSV export into a list of scientific names. Keeps only countable,
- * full-species rows (excludes subspecies, spuhs, slashes, etc.). Shared by every uploader so
- * the "what counts as a species" rule lives in one place.
- */
 export function parseLifelistCsv(file: File): Promise<string[]> {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {

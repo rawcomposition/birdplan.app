@@ -15,8 +15,6 @@ export default function Accept() {
   const acceptMutation = useMutation({
     url: `/participants/${inviteId}/accept`,
     method: "PATCH",
-    // Land on Participants with this person's row highlighted + expanded so they can pick their
-    // World/Custom list right away. `inviteId` is the participant id.
     onSuccess: (data: any) => {
       router.push(`/${data?.tripId}/participants?highlight=${inviteId}`);
     },

@@ -13,8 +13,6 @@ type Props = {
   mode: ReturnType<typeof useLifelistMode>;
 };
 
-// The viewer's own World/Custom chooser, shown inside the Change-life-list modal. Selection is
-// staged in the `mode` hook and persisted when the modal's Done button calls mode.save().
 export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
   const { lifelist: globalList } = useProfile();
   const { myCodes } = useTripLifelist(trip);
@@ -80,8 +78,6 @@ type OptionRowProps = {
   children?: React.ReactNode;
 };
 
-// An airy radio row: the whole row toggles; unselected rows dim. The expanded content (manage link
-// / upload) sits under the text, indented to align with the title.
 function OptionRow({ checked, disabled, onSelect, title, description, children }: OptionRowProps) {
   return (
     <div

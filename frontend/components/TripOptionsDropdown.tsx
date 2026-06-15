@@ -17,7 +17,6 @@ export default function TripOptionsDropdown({ className }: Props) {
   const { trip, canEdit, participants } = useTrip();
   const { count } = useTripLifelist(trip);
 
-  // Life lists now live on the Participants page. Singular for a solo trip, plural for a group.
   const isGroup = (participants?.length ?? 0) > 1;
 
   const links = [

@@ -97,7 +97,6 @@ trips.get("/", async (c) => {
   const session = await authenticate(c);
 
   await connect();
-  // Membership lives in the Participant collection now.
   const tripIds = await Participant.find({ uid: session.uid, status: "active" }).distinct("tripId");
   const trips = await Trip.find({ _id: { $in: tripIds } })
     .sort({ createdAt: -1 })
@@ -130,7 +129,6 @@ trips.post("/", async (c) => {
     markers: [],
   });
 
-  // The owner is always participant #1 (active, World mode) — the roster is the membership list.
   await Participant.create({
     tripId: trip._id,
     uid: session.uid,

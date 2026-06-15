@@ -161,7 +161,6 @@ type AttachProps = {
   note?: string;
 };
 
-// Optional life list, hidden behind a "+ Attach life list" link until requested.
 function AttachLifelist({ show, parsed, onReveal, onHide, onPick, note }: AttachProps) {
   if (!show) {
     return (

@@ -1,21 +1,5 @@
-/**
- * One-time migration: Invites + trip.userIds → the unified Participant collection.
- *
- * Per trip:
- *   1. Creates the owner's participant row (isOwner, active, World mode).
- *   2. Converts each Invite into a participant, reusing the invite's _id:
- *        - accepted (invite.uid set) → active participant, World mode (skipped if it's the owner)
- *        - pending                   → pending participant (no uid yet), World mode, empty list
- *   3. Verifies the resulting active-uid set equals the trip's old `userIds`, logging any diff.
- *
- * The custom/shared life-list feature (customLifelist / intersectionLists) is unlaunched, so
- * there is no production list data to migrate — only Invites.
- *
- * Idempotent: re-runnable (owner upserted by {tripId, uid}; invites upserted by their _id).
- * Does NOT delete invites or unset old Trip fields — that's a separate cleanup follow-up.
- *
- * Run manually: npx tsx backend/scripts/migrate-invites-to-participants.ts
- */
+// One-time migration: Invites + trip.userIds → Participant collection. Idempotent (safe to re-run);
+// does not delete invites or unset old Trip fields. Run: npx tsx backend/scripts/migrate-invites-to-participants.ts
 import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 import "dotenv/config";
@@ -49,7 +33,6 @@ async function migrate() {
     const now = new Date();
     const tripId = trip._id;
 
-    // 1. Owner participant (active, World). Keyed on {tripId, uid} so re-runs don't duplicate.
     await participants.updateOne(
       { tripId, uid: trip.ownerId },
       {
@@ -60,10 +43,9 @@ async function migrate() {
     );
     ownerCount++;
 
-    // 2. Each Invite → participant, reusing the invite's _id.
     const tripInvites = (await invites.find({ tripId }).toArray()) as any[];
     for (const invite of tripInvites) {
-      if (invite.uid && invite.uid === trip.ownerId) continue; // owner already represented
+      if (invite.uid && invite.uid === trip.ownerId) continue;
 
       const isAccepted = !!invite.uid;
       await participants.updateOne(
@@ -86,7 +68,6 @@ async function migrate() {
       inviteCount++;
     }
 
-    // 3. Verify membership parity with the old userIds array.
     const activeRows = (await participants.find({ tripId, status: "active" }).toArray()) as any[];
     const actual = activeRows.map((p) => p.uid).filter(Boolean).sort();
     const expected = [...(trip.userIds ?? [])].sort();

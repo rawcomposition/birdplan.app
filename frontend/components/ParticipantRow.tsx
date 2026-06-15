@@ -10,7 +10,6 @@ import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
 import Icon from "components/Icon";
 
-// Repeating palette for avatars — keyed by row position.
 const AVATAR_COLORS = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-cyan-600"];
 
 type Props = {
@@ -25,17 +24,11 @@ export default function ParticipantRow({ participant: p, index, autoExpand }: Pr
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  // Four mutually exclusive cases drive the row's affordances.
-  const isSelf = p.isMe; // registered, that's me
-  const isPending = p.status === "pending"; // an email invite, not yet accepted (no uid)
-  const isNameOnly = !p.uid && !isPending; // a free-text person the owner tracks
-  // (anything else is another registered editor — read-only to me)
-
-  // The inline "change" affordance is only for me — I'm the one picking which list this trip
-  // targets against. Everyone else's list is managed through the row's Edit menu flow.
+  const isSelf = p.isMe;
+  const isPending = p.status === "pending";
+  const isNameOnly = !p.uid && !isPending;
   const canChangeList = isSelf;
 
-  // Scroll a freshly-arrived (highlighted) row into view, once.
   const scrolledRef = React.useRef(false);
   const setRowRef = (node: HTMLDivElement | null) => {
     if (node && autoExpand && !scrolledRef.current) {
@@ -79,7 +72,6 @@ export default function ParticipantRow({ participant: p, index, autoExpand }: Pr
   const initial = (p.name || p.email || "?").trim().charAt(0).toUpperCase();
   const canRemove = !p.isOwner && (p.isMe || canEdit);
 
-  // Build the contextual 3-dot menu.
   const items: ParticipantMenuItem[] = [];
   if (isSelf) {
     items.push({ name: "Change life list", icon: "feather", onClick: manageList });

@@ -18,7 +18,6 @@ account.delete("/", async (c) => {
 
   await Promise.all([
     Profile.deleteOne({ uid }),
-    // Remove the deleted user's own participant rows everywhere, plus all rows on trips they owned.
     Participant.deleteMany({ uid }),
     Participant.deleteMany({ tripId: { $in: tripIds } }),
     Trip.deleteMany({ ownerId: uid }),

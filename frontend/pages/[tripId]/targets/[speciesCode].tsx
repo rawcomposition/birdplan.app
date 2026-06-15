@@ -88,8 +88,6 @@ export default function SpeciesDetail() {
     }),
   });
 
-  // Mark seen writes to whichever list this trip targets: its custom list (on the trip),
-  // or the user's global list. The global path also clears the global exceptions overlay.
   const globalSeenMutation = useMutation({
     url: `/profile/lifelist/add`,
     method: "POST",

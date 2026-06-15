@@ -12,8 +12,6 @@ type Props = {
   name?: string;
 };
 
-// Upgrade a name-only participant into a real editor invite, in place — they keep the life list
-// already added for them and pick their own name when they accept.
 export default function InviteAsEditor({ participantId, name }: Props) {
   const { close } = useModal();
   const { trip } = useTrip();

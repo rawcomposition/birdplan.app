@@ -44,7 +44,6 @@ export default function TripTargets() {
     enabled: !!trip,
   });
 
-  // Exclude species the group has already collectively seen (region minus the group intersection).
   const { codes: lifelist } = useTripLifelist(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 

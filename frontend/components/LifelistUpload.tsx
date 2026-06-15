@@ -38,7 +38,6 @@ export default function LifelistUpload({
     }
   };
 
-  // Compact: a single pill button + a muted "source" line. Used inside the airy center modals.
   if (variant === "compact") {
     return (
       <div className="flex flex-col items-start gap-2.5">

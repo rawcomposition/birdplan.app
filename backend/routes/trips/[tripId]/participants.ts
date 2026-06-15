@@ -16,8 +16,6 @@ import type {
 
 const participants = new Hono();
 
-// Roster for the trip. Anyone who can view the trip sees it; email addresses are included only
-// for editors/owner (a public viewer gets name/uid/count without the email).
 participants.get("/", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -45,16 +43,12 @@ participants.get("/", async (c) => {
     isOwner: p.isOwner,
     isMe: !!session?.uid && p.uid === session.uid,
     count: participantEffectiveList(p as any, profilesByUid as any).length,
-    // A registered World user always "has a list" (their live global one). Everyone else only
-    // has one once something's been uploaded (lifelistUpdatedAt set) — otherwise "No life list".
-    hasList: p.status === "active" && p.listMode === "world" ? true : !!p.lifelistUpdatedAt,
+    hasList: (p.status === "active" && p.listMode === "world") || !!p.lifelistUpdatedAt,
   }));
 
   return c.json(views);
 });
 
-// Add a participant: an email invite (registered user) or a named-only person with an uploaded
-// list. Editors only.
 participants.post("/", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -69,7 +63,6 @@ participants.post("/", async (c) => {
 
   if (body.type === "named") {
     if (!body.name?.trim()) throw new HTTPException(400, { message: "Name is required" });
-    // A life list is optional — without one the row shows "No life list" (lifelistUpdatedAt null).
     const codes = body.sciNames?.length ? await sciNamesToCodes(body.sciNames) : [];
     const participant = await Participant.create({
       tripId,
@@ -83,15 +76,12 @@ participants.post("/", async (c) => {
     return c.json({ id: participant._id });
   }
 
-  // Email invite
   const email = body.email?.trim().toLowerCase();
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
-  // No duplicate invites: reject if any participant on this trip already has this email.
   const dupEmail = await Participant.exists({ tripId, email });
   if (dupEmail) throw new HTTPException(400, { message: "That person has already been added to this trip" });
 
-  // Upgrade a named-only person into the real user, in place, keeping their uploaded list.
   if (body.upgradeId) {
     const named = await Participant.findOne({ _id: body.upgradeId, tripId }).lean();
     if (!named || named.uid) throw new HTTPException(400, { message: "Cannot upgrade this participant" });
@@ -105,8 +95,6 @@ participants.post("/", async (c) => {
     return c.json({ id: body.upgradeId });
   }
 
-  // The inviter may pre-attach a list; the invitee can switch to World or replace it after
-  // accepting. Without one the pending row stays "world"/empty and shows "No life list".
   const codes = body.sciNames?.length ? await sciNamesToCodes(body.sciNames) : [];
   const participant = await Participant.create({
     tripId,
@@ -128,8 +116,6 @@ participants.post("/", async (c) => {
   return c.json({ id: participant._id });
 });
 
-// Rename a name-only participant. Editors only; registered users keep their profile name, so a
-// row with a `uid` can't be renamed here.
 participants.patch("/:id", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -150,7 +136,6 @@ participants.patch("/:id", async (c) => {
   return c.json({});
 });
 
-// Resend a pending invite email. Editors only.
 participants.post("/:id/resend", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -175,8 +160,6 @@ participants.post("/:id/resend", async (c) => {
   return c.json({});
 });
 
-// Switch my own contribution between World and Custom. Self only — an admin can never change
-// another registered user's mode.
 participants.patch("/:id/mode", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -195,8 +178,6 @@ participants.patch("/:id/mode", async (c) => {
   return c.json({});
 });
 
-// Upload (replace) a participant's custom list. Either my own list, or — only for a named-only
-// person — the owner manages it. Uploading implies Custom mode.
 participants.put("/:id/list", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -210,8 +191,6 @@ participants.put("/:id/list", async (c) => {
   ]);
   if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
 
-  // Self manages their own; any editor manages a name-only person; only the owner may pre-fill a
-  // pending invite's list (the invitee re-chooses after accepting).
   const isSelf = !!p.uid && p.uid === session.uid;
   const isNameOnly = !p.uid && p.status === "active";
   const isPendingInvite = !p.uid && p.status === "pending";
@@ -232,9 +211,6 @@ participants.put("/:id/list", async (c) => {
   return c.json({});
 });
 
-// Mark a species seen, writing to *this participant's* list. Self for my own list; owner for a
-// named-only person. World users write through to their global Profile; everyone else to the
-// participant's own custom list.
 participants.post("/:id/seen", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -263,7 +239,6 @@ participants.post("/:id/seen", async (c) => {
   return c.json({});
 });
 
-// Remove a participant. Self (leave the trip) or any editor; the owner can't be removed.
 participants.delete("/:id", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");

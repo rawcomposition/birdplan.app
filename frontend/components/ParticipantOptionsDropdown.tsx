@@ -14,7 +14,6 @@ type Props = {
   items: ParticipantMenuItem[];
 };
 
-// Per-row actions (Resend / Edit / Remove, contextual). Mirrors TripOptionsDropdown's pattern.
 export default function ParticipantOptionsDropdown({ items }: Props) {
   if (!items.length) return null;
 

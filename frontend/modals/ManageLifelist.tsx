@@ -14,10 +14,6 @@ type Props = {
   participantId: string;
 };
 
-// Choose/replace the life list for one participant. Adapts to who it is:
-//  - me (registered) → World/Custom chooser
-//  - a name-only person → rename + upload (any editor)
-//  - a pending invite → upload only, owner only (the invitee re-chooses after accepting)
 export default function ManageLifelist({ participantId }: Props) {
   const { close } = useModal();
   const { trip, isOwner, canEdit, participants } = useTrip();
@@ -59,13 +55,10 @@ export default function ManageLifelist({ participantId }: Props) {
 
   const handleImport = (sciNames: string[]) => listMutation.mutate({ sciNames });
 
-  // Is there a pending change the footer button would commit? If not, it's just "Done".
   const nameDirty = isNameOnly && !!nameDraft.trim() && nameDraft.trim() !== p?.name;
   const modeDirty = isSelf && lifelistMode.isDirty;
   const hasPendingChange = nameDirty || modeDirty;
 
-  // One save button (the footer). Commit whatever the open flow can change, then close. The CSV
-  // upload saves itself on pick, so it isn't part of this.
   const handleDone = () => {
     if (modeDirty) lifelistMode.save();
     if (nameDirty) renameMutation.mutate({ name: nameDraft.trim() });

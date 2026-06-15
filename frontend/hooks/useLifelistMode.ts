@@ -4,9 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ParticipantListMode, Trip } from "@birdplan/shared";
 import useMutation from "hooks/useMutation";
 
-// Drives the viewer's own World/Custom chooser. The radio selection is *staged* (no network on
-// click); the mode is persisted when the caller invokes save() — e.g. from the modal's Done
-// button. Uploading a custom list is an explicit save of its own (PUT /list also sets mode).
 export default function useLifelistMode(trip: Trip | null | undefined) {
   const queryClient = useQueryClient();
 

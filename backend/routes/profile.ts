@@ -62,7 +62,6 @@ profile.patch("/", async (c) => {
   return c.json({});
 });
 
-// Import (replace) the user's global life list from a list of scientific names.
 profile.put("/lifelist", async (c) => {
   const session = await authenticate(c);
 
@@ -78,8 +77,6 @@ profile.put("/lifelist", async (c) => {
   return c.json({});
 });
 
-// Add a single species to the global life list (marking it "seen"). Also clears
-// it from the global exceptions overlay.
 profile.post("/lifelist/add", async (c) => {
   const session = await authenticate(c);
 

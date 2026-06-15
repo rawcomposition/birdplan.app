@@ -24,7 +24,6 @@ import tokml from "@maphubs/tokml";
 
 const trip = new Hono();
 
-// Resolve a trip's group + viewer life lists from its active roster, at read time.
 async function resolveTrip(tripId: string, viewerUid?: string | null) {
   const roster = await Participant.find({ tripId, status: "active" }).lean();
   const uids = roster.map((p) => p.uid).filter((u): u is string => !!u);

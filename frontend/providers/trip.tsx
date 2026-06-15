@@ -80,8 +80,6 @@ const TripProvider = ({ children }: Props) => {
   });
 
   const { user } = useUser();
-  // Membership lives in the Participant roster now: the server marks the viewer's own participant
-  // on the trip payload, so an active participant (editor) has a non-null `viewer`.
   const canEdit = !!trip?.viewer;
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 

@@ -18,12 +18,11 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
-  // The next block is COMPUTED at read time by the trip resolver — never persisted.
-  customLifelist?: string[] | null; // the GROUP's effective list (intersection of all participants); null ⇒ solo-World (fall back to the viewer's global list)
+  customLifelist?: string[] | null;
   customLifelistUpdatedAt?: string | null;
-  lifelistMode?: TripLifelistMode; // the GROUP's mode (distinct from the viewer's own listMode)
-  viewerLifelist?: string[] | null; // the requesting viewer's own effective list
-  viewer?: { participantId: string; listMode: ParticipantListMode } | null; // the viewer's own participant row; null if not a participant / view-only
+  lifelistMode?: TripLifelistMode;
+  viewerLifelist?: string[] | null;
+  viewer?: { participantId: string; listMode: ParticipantListMode } | null;
 
   targetStars?: string[];
   targetNotes?: {
@@ -89,8 +88,8 @@ export type Profile = {
   uid: string;
   name?: string;
   email?: string;
-  lifelist: string[]; // the user's global life list (eBird species codes, deduped)
-  lifelistUpdatedAt?: Date | null; // when the global list was last imported
+  lifelist: string[];
+  lifelistUpdatedAt?: Date | null;
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
@@ -98,15 +97,10 @@ export type Profile = {
   resetTokenExpires?: Date;
 };
 
-// Importing a life list (global or per-trip) from an eBird CSV export.
 export type LifelistImportInput = {
   sciNames: string[];
 };
 
-// ---- Participants ----------------------------------------------------------
-// One row per person on a trip. A registered user (has `uid`) contributes their live World
-// list or a per-trip Custom upload; a named-only person (no `uid`) is always custom and the
-// owner uploads their list. Replaces both the Invite collection and the old intersectionLists.
 export type ParticipantStatus = "pending" | "active";
 export type ParticipantListMode = "world" | "custom";
 export type TripLifelistMode = "world" | "customSingle" | "customShared";
@@ -114,42 +108,39 @@ export type TripLifelistMode = "world" | "customSingle" | "customShared";
 export type Participant = {
   _id: string;
   tripId: string;
-  status: ParticipantStatus; // pending = email invite not yet accepted
-  uid?: string; // registered user (owner + accepted invitees)
-  email?: string; // email invite; redacted from non-editors in responses
-  name?: string; // profile name, or free-text for named-only
-  listMode: ParticipantListMode; // named-only is always "custom"
-  lifelist: string[]; // this person's custom/trip list ([] for World and pending)
+  status: ParticipantStatus;
+  uid?: string;
+  email?: string;
+  name?: string;
+  listMode: ParticipantListMode;
+  lifelist: string[];
   lifelistUpdatedAt?: Date | null;
   isOwner: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
-// Roster metadata returned by GET /participants — no raw life lists.
 export type ParticipantView = {
   _id: string;
   uid?: string;
   name?: string;
-  email?: string; // present only when the requester is an editor/owner
+  email?: string;
   status: ParticipantStatus;
   listMode: ParticipantListMode;
   isOwner: boolean;
   isMe: boolean;
-  count: number; // effective species count
-  hasList: boolean; // false → "No life list" (custom/named with nothing uploaded yet)
+  count: number;
+  hasList: boolean;
 };
 
 export type AddParticipantInput =
   | { type: "invite"; email: string; upgradeId?: string; sciNames?: string[] }
   | { type: "named"; name: string; sciNames?: string[] };
 
-// Editing an existing participant (rename a name-only person).
 export type UpdateParticipantInput = {
   name: string;
 };
 
-// Marking a single species seen (adds to a life list).
 export type AddToLifelistInput = {
   code: string;
 };
