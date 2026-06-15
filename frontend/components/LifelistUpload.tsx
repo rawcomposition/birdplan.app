@@ -1,7 +1,7 @@
 import React from "react";
-import Papa from "papaparse";
 import toast from "react-hot-toast";
 import Icon from "components/Icon";
+import { parseLifelistCsv } from "lib/lifelistCsv";
 
 const DEFAULT_EBIRD_URL = "https://ebird.org/lifelist";
 
@@ -16,20 +16,13 @@ type Props = {
 export default function LifelistUpload({ onImport, isPending, hint, buttonLabel, ebirdUrl = DEFAULT_EBIRD_URL }: Props) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     try {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      Papa.parse(file, {
-        header: true,
-        complete: (results: any) => {
-          const sciNames = results.data
-            .filter((it: any) => it.Countable === "1" && it.Category === "species")
-            .map((it: any) => it["Scientific Name"]);
-          if (fileInputRef.current) fileInputRef.current.value = "";
-          onImport(sciNames);
-        },
-      });
+      const sciNames = await parseLifelistCsv(file);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      onImport(sciNames);
     } catch (error) {
       console.error(error);
       toast.error("Error processing file");
@@ -42,7 +35,7 @@ export default function LifelistUpload({ onImport, isPending, hint, buttonLabel,
       <p className="text-sm text-gray-600 mb-3">
         {hint}{" "}
         <a href={ebirdUrl} target="_blank" rel="noreferrer" className="font-medium text-sky-600 whitespace-nowrap">
-          Get your CSV from eBird <Icon name="external" className="text-xs" />
+          Download from eBird <Icon name="external" className="text-xs" />
         </a>
       </p>
       <label

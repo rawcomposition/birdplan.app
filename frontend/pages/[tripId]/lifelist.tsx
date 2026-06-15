@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
+import { IntersectionList } from "@birdplan/shared";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
@@ -13,6 +14,8 @@ import LoginModal from "components/LoginModal";
 import LifelistUpload from "components/LifelistUpload";
 import { useTrip } from "providers/trip";
 import { useProfile } from "providers/profile";
+import { useModal } from "providers/modals";
+import useTripLifelist, { TripLifelistMode } from "hooks/useTripLifelist";
 import useMutation from "hooks/useMutation";
 
 export default function TripLifelist() {
@@ -20,6 +23,8 @@ export default function TripLifelist() {
   const queryClient = useQueryClient();
   const { trip, is404, canEdit } = useTrip();
   const { lifelist: globalList } = useProfile();
+  const { open } = useModal();
+  const { mode, intersectionLists } = useTripLifelist(trip);
 
   // We land here straight after creating a trip; in that flow the action is "continue",
   // otherwise the user came from the trip to manage and the action is "back".
@@ -29,14 +34,12 @@ export default function TripLifelist() {
   const backHref = returnTo || `/${trip?._id}`;
   const backLabel = returnTo?.endsWith("/settings") ? "settings" : "trip";
 
-  const hasCustom = trip?.customLifelist != null;
-  const customCount = trip?.customLifelist?.length || 0;
-  const updatedAt = trip?.customLifelistUpdatedAt;
+  // The radio reflects the saved mode, but the user can preview a not-yet-committed option
+  // (e.g. reveal the upload area) before any list actually exists.
+  const [pendingMode, setPendingMode] = React.useState<TripLifelistMode | null>(null);
+  const selectedMode = pendingMode ?? mode;
 
-  // When the trip is on the global list, let the user reveal the upload area
-  // before any custom list actually exists.
-  const [pendingCustom, setPendingCustom] = React.useState(false);
-  const customSelected = hasCustom || pendingCustom;
+  const invalidateTrip = () => queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
 
   const importMutation = useMutation({
     url: `/trips/${trip?._id}/lifelist`,
@@ -45,7 +48,8 @@ export default function TripLifelist() {
     onSettled: () => toast.dismiss("trip-lifelist"),
     onSuccess: () => {
       toast.success("Custom list imported");
-      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+      setPendingMode(null);
+      invalidateTrip();
     },
   });
 
@@ -54,23 +58,30 @@ export default function TripLifelist() {
     method: "DELETE",
     onSuccess: () => {
       toast.success("Now using your World life list");
-      setPendingCustom(false);
-      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+      setPendingMode(null);
+      invalidateTrip();
     },
   });
 
-  const selectGlobal = () => {
-    if (hasCustom) {
-      if (!confirm("Use your World life list for this trip? The uploaded custom list will be deleted.")) return;
-      revertMutation.mutate({});
-    } else {
-      setPendingCustom(false);
-    }
+  const selectWorld = () => {
+    if (mode === "world") return setPendingMode(null);
+    setPendingMode("world"); // move the radio immediately; cleared once the refetch lands
+    revertMutation.mutate({});
   };
 
-  const selectCustom = () => {
-    if (!hasCustom) setPendingCustom(true);
+  const selectSingle = () => setPendingMode(mode === "customSingle" ? null : "customSingle");
+  const selectShared = () => setPendingMode(mode === "customShared" ? null : "customShared");
+
+  const handleSingleImport = (sciNames: string[]) => {
+    importMutation.mutate({ sciNames });
   };
+
+  const openAddListDialog = () => open("addSharedList");
+
+  const hasSingle = mode === "customSingle";
+  const singleCount = hasSingle ? trip?.customLifelist?.length || 0 : 0;
+  const singleUpdatedAt = hasSingle ? trip?.customLifelistUpdatedAt : null;
+  const sharedCount = trip?.customLifelist?.length || 0;
 
   if (is404) return <NotFound />;
 
@@ -105,13 +116,13 @@ export default function TripLifelist() {
           >
             <OptionCard
               name="trip-lifelist"
-              checked={!customSelected}
+              checked={selectedMode === "world"}
               disabled={!canEdit}
-              onSelect={selectGlobal}
+              onSelect={selectWorld}
               title="World life list"
               description={`${(globalList?.length || 0).toLocaleString()} species you've recorded worldwide`}
             />
-            {!customSelected && (
+            {selectedMode === "world" && (
               <AccordionPanel>
                 <Link
                   href={`/import-lifelist?returnTo=${encodeURIComponent(`/${trip?._id}/lifelist`)}`}
@@ -126,31 +137,79 @@ export default function TripLifelist() {
 
             <OptionCard
               name="trip-lifelist"
-              checked={customSelected}
+              checked={selectedMode === "customSingle"}
               disabled={!canEdit}
-              onSelect={selectCustom}
-              title="Custom list for this trip"
+              onSelect={selectSingle}
+              title="Custom"
               description="Applies only to this trip — your World life list stays untouched."
             />
-            {customSelected && (
+            {selectedMode === "customSingle" && (
               <AccordionPanel>
-                {hasCustom && (
+                {hasSingle && (
                   <p className="text-sm text-gray-600 mb-4">
                     <span className="font-semibold text-gray-800 tabular-nums">
-                      {customCount.toLocaleString()} species
+                      {singleCount.toLocaleString()} species
                     </span>
-                    {updatedAt ? ` · updated ${new Date(updatedAt).toLocaleDateString()}` : ""}
+                    {singleUpdatedAt ? ` · updated ${new Date(singleUpdatedAt).toLocaleDateString()}` : ""}
                   </p>
                 )}
                 {canEdit ? (
                   <LifelistUpload
-                    onImport={(sciNames) => importMutation.mutate({ sciNames })}
+                    onImport={handleSingleImport}
                     isPending={importMutation.isPending}
-                    hint={hasCustom ? "Uploading a new file replaces this list." : "Upload an eBird CSV export to use for this trip."}
-                    buttonLabel={hasCustom ? "Choose a new CSV file" : "Choose a CSV file"}
+                    hint={hasSingle ? "Uploading a new file replaces this list." : "Upload an eBird CSV export to use for this trip."}
+                    buttonLabel={hasSingle ? "Choose a new CSV file" : "Choose a CSV file"}
                   />
                 ) : (
-                  !hasCustom && <p className="text-sm text-gray-500">No custom list has been uploaded for this trip.</p>
+                  !hasSingle && <p className="text-sm text-gray-500">No custom list has been uploaded for this trip.</p>
+                )}
+              </AccordionPanel>
+            )}
+
+            <div className="h-px bg-gray-100" />
+
+            <OptionCard
+              name="trip-lifelist"
+              checked={selectedMode === "customShared"}
+              disabled={!canEdit}
+              onSelect={selectShared}
+              title="Shared"
+              description="Combine several birders' lists — a species stays a target until everyone has seen it."
+            />
+            {selectedMode === "customShared" && (
+              <AccordionPanel>
+                {intersectionLists.length > 0 && (
+                  <div className="mb-1">
+                    {intersectionLists.map((list, i) => (
+                      <MemberRow key={list._id} tripId={trip!._id} list={list} index={i} canEdit={canEdit} />
+                    ))}
+                  </div>
+                )}
+
+                {canEdit ? (
+                  <button
+                    type="button"
+                    onClick={openAddListDialog}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-3 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-50/50"
+                  >
+                    <Icon name="plus" className="text-xs" /> Add a list
+                  </button>
+                ) : (
+                  intersectionLists.length === 0 && (
+                    <p className="text-sm text-gray-500">No shared lists have been added for this trip.</p>
+                  )
+                )}
+
+                {intersectionLists.length > 0 && (
+                  <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3">
+                    <p className="text-sm text-gray-700">
+                      <span className="font-semibold tabular-nums">{sharedCount.toLocaleString()} species</span> seen by
+                      everyone
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Targets are the species at least one of you still needs.
+                    </p>
+                  </div>
                 )}
               </AccordionPanel>
             )}
@@ -210,4 +269,69 @@ function OptionCard({ name, checked, disabled, onSelect, title, description }: O
 
 function AccordionPanel({ children }: { children: React.ReactNode }) {
   return <div className="border-t border-gray-100 px-5 pt-4 pb-5">{children}</div>;
+}
+
+// Repeating palette for member avatars — keyed by row position, nothing fancy.
+const AVATAR_COLORS = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-violet-500",
+  "bg-amber-500",
+  "bg-rose-500",
+  "bg-cyan-600",
+];
+
+type MemberRowProps = {
+  tripId: string;
+  list: IntersectionList;
+  index: number;
+  canEdit: boolean;
+};
+
+function MemberRow({ tripId, list, index, canEdit }: MemberRowProps) {
+  const queryClient = useQueryClient();
+  const baseUrl = `/trips/${tripId}/lifelist/intersection/lists/${list._id}`;
+
+  const removeMutation = useMutation({
+    url: baseUrl,
+    method: "DELETE",
+    onSuccess: () => {
+      toast.success("List removed");
+      queryClient.invalidateQueries({ queryKey: [`/trips/${tripId}`] });
+    },
+  });
+
+  const handleRemove = () => {
+    if (!confirm(`Remove "${list.name}" from this trip's shared list?`)) return;
+    removeMutation.mutate({});
+  };
+
+  const initial = list.name.trim().charAt(0).toUpperCase() || "?";
+
+  return (
+    <div className="flex items-center gap-3.5 py-3 border-b border-gray-100 last:border-0">
+      <span
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${
+          AVATAR_COLORS[index % AVATAR_COLORS.length]
+        }`}
+      >
+        {initial}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-gray-800">{list.name}</p>
+        <p className="text-xs text-gray-500 tabular-nums">{list.codes.length.toLocaleString()} species</p>
+      </div>
+      {canEdit && (
+        <button
+          type="button"
+          onClick={handleRemove}
+          disabled={removeMutation.isPending}
+          title="Remove"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
+        >
+          <Icon name="xMark" className="text-sm" />
+        </button>
+      )}
+    </div>
+  );
 }

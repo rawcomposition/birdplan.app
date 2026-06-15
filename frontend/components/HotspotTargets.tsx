@@ -18,7 +18,7 @@ type Props = {
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const [view, setView] = React.useState<string>("all");
   const { trip, dateRangeLabel } = useTrip();
-  const lifelist = useTripLifelist(trip?.customLifelist);
+  const { codes: lifelist } = useTripLifelist(trip);
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
 
   const isSaved = !!trip?.hotspots.find((it) => it.id === hotspotId);

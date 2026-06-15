@@ -50,7 +50,7 @@ export default function TripTargets() {
 
   // Exclude non-lifers. My targets subtract this trip's effective list (custom or global);
   // other editors subtract their own global list (from /editors).
-  const myLifelist = useTripLifelist(trip?.customLifelist);
+  const { codes: myLifelist } = useTripLifelist(trip);
   const { data: editors } = useQuery<Editor[]>({
     queryKey: [`/trips/${trip?._id}/editors`],
     enabled: !!trip?._id,

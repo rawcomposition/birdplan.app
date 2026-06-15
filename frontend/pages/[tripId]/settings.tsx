@@ -2,7 +2,7 @@ import React from "react";
 import Header from "components/Header";
 import Head from "next/head";
 import { useTrip } from "providers/trip";
-import { useProfile } from "providers/profile";
+import useTripLifelist from "hooks/useTripLifelist";
 import toast from "react-hot-toast";
 import MonthSelect from "components/MonthSelect";
 import LoginModal from "components/LoginModal";
@@ -52,7 +52,9 @@ type SettingsFormProps = {
 function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { lifelist } = useProfile();
+  const { mode: lifelistMode, count: lifelistCount } = useTripLifelist(trip);
+  const lifelistLabel =
+    lifelistMode === "customShared" ? "Shared" : lifelistMode === "customSingle" ? "Custom" : "World life list";
   const [startMonth, setStartMonth] = React.useState<Option>({
     value: trip.startMonth.toString(),
     label: months[trip.startMonth - 1],
@@ -154,17 +156,8 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
               <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm text-gray-700">
-                    <span className="font-medium">
-                      {trip.customLifelist != null ? "Custom list" : "World life list"}
-                    </span>{" "}
-                    <span className="text-gray-500 tabular-nums">
-                      (
-                      {(trip.customLifelist != null
-                        ? trip.customLifelist.length
-                        : lifelist?.length || 0
-                      ).toLocaleString()}
-                      )
-                    </span>
+                    <span className="font-medium">{lifelistLabel}</span>{" "}
+                    <span className="text-gray-500 tabular-nums">({lifelistCount.toLocaleString()})</span>
                   </p>
                   <p className="text-sm text-gray-500 mt-1.5">Targets for this trip are derived from this list.</p>
                 </div>

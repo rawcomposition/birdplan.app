@@ -19,8 +19,10 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
-  customLifelist?: string[] | null; // per-trip override; null/absent ⇒ use the user's global list
+  customLifelist?: string[] | null; // the trip's effective list; null/absent ⇒ use the user's global list. In "shared" mode this holds the computed intersection of `intersectionLists`.
   customLifelistUpdatedAt?: string | null;
+  intersectionLists?: IntersectionList[]; // when non-empty, the trip is in "shared" mode and customLifelist is their intersection
+
   targetStars?: string[];
   targetNotes?: {
     [key: string]: string;
@@ -94,9 +96,35 @@ export type Profile = {
   resetTokenExpires?: Date;
 };
 
+// A named source list contributing to a trip's intersection ("shared") life list.
+// A species is "seen" by the group only if it appears in every list, so the trip's
+// effective customLifelist is the intersection of all of these lists' codes.
+export type IntersectionList = {
+  _id: string;
+  name: string;
+  codes: string[];
+  updatedAt: string;
+};
+
 // Importing a life list (global or per-trip) from an eBird CSV export.
 export type LifelistImportInput = {
   sciNames: string[];
+};
+
+// Adding a named source list to a trip's intersection ("shared") life list.
+export type AddIntersectionListInput = {
+  name: string;
+  sciNames: string[];
+};
+
+// Replacing one intersection source list's species (a re-upload).
+export type UpdateIntersectionListInput = {
+  sciNames: string[];
+};
+
+// Renaming one intersection source list.
+export type RenameIntersectionListInput = {
+  name: string;
 };
 
 // Marking a single species seen (adds to a life list).

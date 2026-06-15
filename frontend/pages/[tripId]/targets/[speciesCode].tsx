@@ -37,8 +37,8 @@ export default function SpeciesDetail() {
   const speciesCode = router.query.speciesCode?.toString() || "";
   const { user } = useUser();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
-  const myLifelist = useTripLifelist(trip?.customLifelist);
-  const usesCustomList = trip?.customLifelist != null;
+  const { codes: myLifelist, mode: lifelistMode } = useTripLifelist(trip);
+  const usesCustomList = lifelistMode !== "world";
   const { getSpeciesImg } = useSpeciesImages();
   const { open, close } = useModal();
   const queryClient = useQueryClient();
@@ -254,7 +254,12 @@ export default function SpeciesDetail() {
 
   const handleMarkSeen = () => {
     if (!canMutate || isSeen) return;
-    const listLabel = usesCustomList ? "this trip's custom life list" : "your life list";
+    const listLabel =
+      lifelistMode === "customShared"
+        ? "this trip's shared life list (everyone's)"
+        : lifelistMode === "customSingle"
+          ? "this trip's custom life list"
+          : "your life list";
     if (!confirm(`Are you sure you want to add ${speciesName} to ${listLabel}?`)) return;
     if (usesCustomList) customSeenMutation.mutate({ code: speciesCode });
     else globalSeenMutation.mutate({ code: speciesCode });

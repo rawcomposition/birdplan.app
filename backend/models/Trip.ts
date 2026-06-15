@@ -78,8 +78,16 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   startMonth: { type: Number, required: true },
   endMonth: { type: Number, required: true },
   imgUrl: { type: String, default: null },
-  customLifelist: { type: [String], default: null }, // null ⇒ use the owner's global list
+  customLifelist: { type: [String], default: null }, // null ⇒ use the owner's global list. In "shared" mode this holds the intersection of intersectionLists.
   customLifelistUpdatedAt: { type: Date, default: null },
+  intersectionLists: [
+    {
+      // _id is intentionally left on (unlike hotspots/markers) so each list can be addressed individually.
+      name: { type: String, required: true },
+      codes: { type: [String], default: [] },
+      updatedAt: { type: Date, default: Date.now },
+    },
+  ],
   targetStars: [{ type: String, default: [] }],
   targetNotes: { type: Map, of: String, default: {} },
   shareCode: { type: String, unique: true, sparse: true },

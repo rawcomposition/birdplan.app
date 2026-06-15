@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
+import useTripLifelist from "hooks/useTripLifelist";
 import Icon from "components/Icon";
 
 type Props = {
@@ -12,10 +13,9 @@ type Props = {
 
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
-  const { uid, lifelist } = useProfile();
+  const { uid } = useProfile();
   const { trip, isOwner, canEdit } = useTrip();
-
-  const lifelistCount = trip?.customLifelist != null ? trip.customLifelist.length : lifelist?.length || 0;
+  const { count: lifelistCount } = useTripLifelist(trip);
 
   const links = [
     {

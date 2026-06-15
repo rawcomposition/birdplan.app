@@ -19,6 +19,10 @@ import type {
   OpenBirdingLocationResponse,
   LifelistImportInput,
   AddToLifelistInput,
+  AddIntersectionListInput,
+  UpdateIntersectionListInput,
+  RenameIntersectionListInput,
+  IntersectionList,
 } from "@birdplan/shared";
 import targetStars from "./targets.js";
 import markers from "./markers.js";
@@ -28,6 +32,19 @@ import itinerary from "./itinerary.js";
 import tokml from "@maphubs/tokml";
 
 const trip = new Hono();
+
+// The intersection of every source list's codes: a species counts as "seen" by the
+// group only when it appears in all of them. Empty input ⇒ empty list.
+function computeIntersection(lists: { codes: string[] }[]): string[] {
+  if (lists.length === 0) return [];
+  const [first, ...rest] = lists;
+  let result = first.codes.filter((code, i) => first.codes.indexOf(code) === i);
+  for (const list of rest) {
+    const set = new Set(list.codes);
+    result = result.filter((code) => set.has(code));
+  }
+  return result;
+}
 
 trip.route("/targets", targetStars);
 trip.route("/markers", markers);
@@ -236,15 +253,16 @@ trip.put("/lifelist", async (c) => {
 
   const codes = await sciNamesToCodes(sciNames);
 
+  // Setting a single custom list puts the trip in single-custom mode, clearing any shared lists.
   await Trip.updateOne(
     { _id: tripId },
-    { $set: { customLifelist: codes, customLifelistUpdatedAt: new Date() } }
+    { $set: { customLifelist: codes, customLifelistUpdatedAt: new Date(), intersectionLists: [] } }
   );
 
   return c.json({});
 });
 
-// Revert this trip to the owner's global life list.
+// Revert this trip to the owner's global life list (clears both single-custom and shared state).
 trip.delete("/lifelist", async (c) => {
   const session = await authenticate(c);
   const tripId: string | undefined = c.req.param("tripId");
@@ -255,7 +273,134 @@ trip.delete("/lifelist", async (c) => {
   if (!existing) throw new HTTPException(404, { message: "Trip not found" });
   if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Trip.updateOne({ _id: tripId }, { $set: { customLifelist: null, customLifelistUpdatedAt: null } });
+  await Trip.updateOne(
+    { _id: tripId },
+    { $set: { customLifelist: null, customLifelistUpdatedAt: null, intersectionLists: [] } }
+  );
+
+  return c.json({});
+});
+
+// Add a named source list to this trip's intersection ("shared") life list. Switches the
+// trip into shared mode, discarding any single-custom list (customLifelist is recomputed).
+trip.post("/lifelist/intersection/lists", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  const { name, sciNames } = await c.req.json<AddIntersectionListInput>();
+  if (!Array.isArray(sciNames)) throw new HTTPException(400, { message: "Missing sciNames" });
+
+  const codes = await sciNamesToCodes(sciNames);
+  const now = new Date();
+  const newList = { name: name?.trim() || "Untitled list", codes, updatedAt: now };
+  const lists = [...(existing.intersectionLists || []), newList];
+
+  await Trip.updateOne(
+    { _id: tripId },
+    {
+      $push: { intersectionLists: newList },
+      $set: { customLifelist: computeIntersection(lists), customLifelistUpdatedAt: now },
+    }
+  );
+
+  return c.json({});
+});
+
+// Replace one source list's species (a re-upload), then recompute the intersection.
+trip.put("/lifelist/intersection/lists/:listId", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  const listId: string | undefined = c.req.param("listId");
+  if (!tripId || !listId) throw new HTTPException(400, { message: "Trip ID and list ID are required" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  const { sciNames } = await c.req.json<UpdateIntersectionListInput>();
+  if (!Array.isArray(sciNames)) throw new HTTPException(400, { message: "Missing sciNames" });
+
+  const codes = await sciNamesToCodes(sciNames);
+  const now = new Date();
+  const lists = (existing.intersectionLists || []).map((l: IntersectionList) =>
+    String(l._id) === listId ? { ...l, codes, updatedAt: now } : l
+  );
+
+  await Trip.updateOne(
+    { _id: tripId, "intersectionLists._id": listId },
+    {
+      $set: {
+        "intersectionLists.$.codes": codes,
+        "intersectionLists.$.updatedAt": now,
+        customLifelist: computeIntersection(lists),
+        customLifelistUpdatedAt: now,
+      },
+    }
+  );
+
+  return c.json({});
+});
+
+// Rename one source list.
+trip.patch("/lifelist/intersection/lists/:listId", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  const listId: string | undefined = c.req.param("listId");
+  if (!tripId || !listId) throw new HTTPException(400, { message: "Trip ID and list ID are required" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  const { name } = await c.req.json<RenameIntersectionListInput>();
+  if (!name?.trim()) throw new HTTPException(400, { message: "Missing name" });
+
+  await Trip.updateOne(
+    { _id: tripId, "intersectionLists._id": listId },
+    { $set: { "intersectionLists.$.name": name.trim() } }
+  );
+
+  return c.json({});
+});
+
+// Remove one source list; recompute the intersection, or fall back to the global list
+// when the last source list is removed.
+trip.delete("/lifelist/intersection/lists/:listId", async (c) => {
+  const session = await authenticate(c);
+  const tripId: string | undefined = c.req.param("tripId");
+  const listId: string | undefined = c.req.param("listId");
+  if (!tripId || !listId) throw new HTTPException(400, { message: "Trip ID and list ID are required" });
+
+  await connect();
+  const existing = await Trip.findById(tripId).lean();
+  if (!existing) throw new HTTPException(404, { message: "Trip not found" });
+  if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+
+  const remaining = (existing.intersectionLists || []).filter((l: IntersectionList) => String(l._id) !== listId);
+  const now = new Date();
+
+  if (remaining.length === 0) {
+    await Trip.updateOne(
+      { _id: tripId },
+      { $set: { intersectionLists: [], customLifelist: null, customLifelistUpdatedAt: null } }
+    );
+  } else {
+    await Trip.updateOne(
+      { _id: tripId },
+      {
+        $pull: { intersectionLists: { _id: listId } },
+        $set: { customLifelist: computeIntersection(remaining), customLifelistUpdatedAt: now },
+      }
+    );
+  }
 
   return c.json({});
 });
@@ -275,7 +420,16 @@ trip.post("/lifelist/add", async (c) => {
   if (!existing) throw new HTTPException(404, { message: "Trip not found" });
   if (!existing.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Trip.updateOne({ _id: tripId }, { $addToSet: { customLifelist: code } });
+  if (existing.intersectionLists?.length) {
+    // Shared mode: mark the species seen for the whole group by adding it to every source
+    // list, so it survives the next recompute and drops out of the intersection's targets.
+    await Trip.updateOne(
+      { _id: tripId },
+      { $addToSet: { "intersectionLists.$[].codes": code, customLifelist: code } }
+    );
+  } else {
+    await Trip.updateOne({ _id: tripId }, { $addToSet: { customLifelist: code } });
+  }
 
   return c.json({});
 });
