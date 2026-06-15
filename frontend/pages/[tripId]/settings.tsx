@@ -12,7 +12,7 @@ import Field from "components/Field";
 import Input from "components/Input";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { months } from "lib/helpers";
+import { months, withReturnTo } from "lib/helpers";
 import Button from "components/Button";
 import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
@@ -162,7 +162,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                   <p className="text-sm text-gray-500 mt-1.5">Targets for this trip are derived from this list.</p>
                 </div>
                 <Link
-                  href={`/${trip._id}/participants?returnTo=${encodeURIComponent(router.asPath)}`}
+                  href={withReturnTo(`/${trip._id}/participants`, router.asPath)}
                   className="text-sky-600 font-medium text-sm whitespace-nowrap"
                 >
                   Manage

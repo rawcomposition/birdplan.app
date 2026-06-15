@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Profile } from "@birdplan/shared";
 import useMutation from "hooks/useMutation";
+import { withReturnTo } from "lib/helpers";
 
 export default function Accept() {
   const { user } = useUser();
@@ -30,7 +31,7 @@ export default function Accept() {
       if (profile?.lifelist?.length) {
         router.push(dest);
       } else {
-        router.push(`/import-lifelist?returnTo=${encodeURIComponent(dest)}`);
+        router.push(withReturnTo("/import-lifelist", dest));
       }
     },
   });

@@ -9,6 +9,7 @@ import useEmailSignup from "hooks/useEmailSignup";
 import useGoogleLogin from "hooks/useGoogleLogin";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { getForwardReturnTo, getPostAuthDest, withReturnTo } from "lib/helpers";
 
 export default function Signup() {
   const router = useRouter();
@@ -16,7 +17,9 @@ export default function Signup() {
   const { signup: emailSignup, loading: emailSignupLoading } = useEmailSignup();
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
 
-  if (user?.uid && !userLoading) router.push("/trips");
+  if (user?.uid && !userLoading) router.push(getPostAuthDest(router));
+
+  const loginHref = withReturnTo("/login", getForwardReturnTo(router));
 
   const isLoading = userLoading || emailSignupLoading || googleLoading;
 
@@ -77,7 +80,7 @@ export default function Signup() {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href={loginHref} className="font-medium text-blue-600 hover:text-blue-500">
             Sign in
           </Link>
         </p>

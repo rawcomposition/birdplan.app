@@ -3,10 +3,11 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Trip } from "@birdplan/shared";
-import LifelistUpload from "components/LifelistUpload";
+import LifelistField from "components/LifelistField";
 import { useProfile } from "providers/profile";
 import useTripLifelist from "hooks/useTripLifelist";
 import useLifelistMode from "hooks/useLifelistMode";
+import { withReturnTo } from "lib/helpers";
 
 type Props = {
   trip: Trip;
@@ -39,7 +40,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
         description={`${(globalList?.length || 0).toLocaleString()} species`}
       >
         <Link
-          href={`/import-lifelist?returnTo=${encodeURIComponent(asPath)}`}
+          href={withReturnTo("/import-lifelist", asPath)}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
         >
           Manage your World life list →
@@ -53,22 +54,20 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
         title="Custom"
         description="Applies only to this trip — your World life list stays untouched."
       >
-        {hasCustom && (
-          <p className="mb-3 text-[13px] text-gray-500">
+        {canEdit ? (
+          <LifelistField
+            hasList={hasCustom}
+            count={customCount}
+            onImport={handleCustomImport}
+            disabled={listMutation.isPending}
+          />
+        ) : hasCustom ? (
+          <p className="text-[13px] text-gray-500">
             <span className="font-semibold text-gray-700 tabular-nums">{customCount.toLocaleString()} species</span>
             {customUpdatedAt ? ` · updated ${new Date(customUpdatedAt).toLocaleDateString()}` : ""}
           </p>
-        )}
-        {canEdit ? (
-          <LifelistUpload
-            variant="compact"
-            onImport={handleCustomImport}
-            isPending={listMutation.isPending}
-            hint={null}
-            buttonLabel={hasCustom ? "Choose a new CSV file" : "Choose a CSV file"}
-          />
         ) : (
-          !hasCustom && <p className="text-sm text-gray-500">No custom list has been uploaded for this trip.</p>
+          <p className="text-sm text-gray-500">No custom list has been uploaded for this trip.</p>
         )}
       </OptionRow>
     </div>

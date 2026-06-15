@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import clsx from "clsx";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
 import { useProfile } from "providers/profile";
+import { withReturnTo } from "lib/helpers";
 
 type Props = {
   className?: string;
@@ -72,7 +73,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
             <Menu.Item>
               <Link
                 className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                href={`/import-lifelist?returnTo=${encodeURIComponent(asPath)}`}
+                href={withReturnTo("/import-lifelist", asPath)}
               >
                 <Icon name="feather" />
                 {lifelistCount > 0 ? (

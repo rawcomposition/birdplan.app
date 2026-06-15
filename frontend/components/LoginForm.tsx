@@ -6,16 +6,21 @@ import Input from "components/Input";
 import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { getForwardReturnTo, withReturnTo } from "lib/helpers";
 
 type Props = {
   message?: string;
 };
 
 export default function LoginForm({ message }: Props) {
+  const router = useRouter();
   const [emailLoginLoading, setEmailLoginLoading] = React.useState(false);
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
   const { login: emailLogin } = useEmailLogin();
   const { loading: userLoading } = useUser();
+
+  const signupHref = withReturnTo("/signup", getForwardReturnTo(router));
 
   const isLoading = userLoading || googleLoading || emailLoginLoading;
 
@@ -77,7 +82,7 @@ export default function LoginForm({ message }: Props) {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href={signupHref} className="font-medium text-blue-600 hover:text-blue-500">
             Sign up
           </Link>
         </p>

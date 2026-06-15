@@ -5,10 +5,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Header, Body, Footer, useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import useMutation from "hooks/useMutation";
-import { parseLifelistCsv } from "lib/lifelistCsv";
 import Button from "components/Button";
 import Input from "components/Input";
-import Icon from "components/Icon";
+import LifelistField from "components/LifelistField";
 
 type Tab = "invite" | "named";
 
@@ -16,7 +15,6 @@ export default function AddParticipant() {
   const { close } = useModal();
   const { trip } = useTrip();
   const queryClient = useQueryClient();
-  const fileRef = React.useRef<HTMLInputElement>(null);
 
   const [tab, setTab] = React.useState<Tab>("named");
   const [email, setEmail] = React.useState("");
@@ -38,21 +36,6 @@ export default function AddParticipant() {
       invalidateAndClose();
     },
   });
-
-  const pickFile = () => fileRef.current?.click();
-
-  const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (fileRef.current) fileRef.current.value = "";
-    if (!file) return;
-    try {
-      const sciNames = await parseLifelistCsv(file);
-      setParsed({ fileName: file.name, sciNames });
-    } catch (error) {
-      console.error(error);
-      toast.error("Error processing file");
-    }
-  };
 
   const canSubmit = tab === "invite" ? !!email.trim() : !!name.trim();
 
@@ -120,19 +103,27 @@ export default function AddParticipant() {
           </div>
         )}
 
-        <input ref={fileRef} type="file" accept=".csv" className="sr-only" onChange={handlePick} />
-
-        <AttachLifelist
-          show={showAttach || !!parsed}
-          parsed={parsed}
-          onReveal={() => setShowAttach(true)}
-          onHide={() => {
-            setShowAttach(false);
-            setParsed(null);
-          }}
-          onPick={pickFile}
-          note={tab === "invite" ? "They can change this once they accept the invite." : undefined}
-        />
+        {showAttach || parsed ? (
+          <LifelistField
+            hasList={!!parsed}
+            count={parsed?.sciNames.length ?? 0}
+            cardLabel={parsed?.fileName ?? ""}
+            onImport={(sciNames, fileName) => setParsed({ fileName, sciNames })}
+            onRemove={() => {
+              setShowAttach(false);
+              setParsed(null);
+            }}
+            footer={tab === "invite" ? "They can change this once they accept the invite." : undefined}
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowAttach(true)}
+            className="mt-1 text-sm font-medium text-sky-600"
+          >
+            + Attach life list
+          </button>
+        )}
       </Body>
       <Footer>
         <div className="flex justify-end gap-2 w-full">
@@ -145,62 +136,5 @@ export default function AddParticipant() {
         </div>
       </Footer>
     </>
-  );
-}
-
-type AttachProps = {
-  show: boolean;
-  parsed: { fileName: string; sciNames: string[] } | null;
-  onReveal: () => void;
-  onHide: () => void;
-  onPick: () => void;
-  note?: string;
-};
-
-function AttachLifelist({ show, parsed, onReveal, onHide, onPick, note }: AttachProps) {
-  if (!show) {
-    return (
-      <button type="button" onClick={onReveal} className="mt-1 text-sm font-medium text-sky-600">
-        + Attach life list
-      </button>
-    );
-  }
-
-  return (
-    <div className="pt-1">
-      <div className="mb-1.5 flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">Life list</span>
-        <button type="button" onClick={onHide} className="text-xs font-medium text-gray-400 hover:text-gray-600">
-          Remove
-        </button>
-      </div>
-      {parsed ? (
-        <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white">
-            <Icon name="check" className="text-sm" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-gray-800">{parsed.fileName}</p>
-            <p className="text-xs text-gray-500 tabular-nums">{parsed.sciNames.length.toLocaleString()} species</p>
-          </div>
-          <button type="button" onClick={onPick} className="shrink-0 text-sm font-medium text-sky-600">
-            Replace
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={onPick}
-          className="flex w-full flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-gray-300 px-4 py-6 text-center transition-colors hover:border-blue-400 hover:bg-blue-50/40"
-        >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
-            <Icon name="feather" className="text-lg" />
-          </span>
-          <span className="text-sm font-medium text-gray-700">Choose a CSV file</span>
-          <span className="text-xs text-gray-400">eBird .csv export</span>
-        </button>
-      )}
-      {note && <p className="mt-2 text-xs text-gray-500">{note}</p>}
-    </div>
   );
 }

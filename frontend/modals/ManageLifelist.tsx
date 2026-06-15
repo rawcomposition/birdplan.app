@@ -6,11 +6,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Header, Body, Footer, useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import useMutation from "hooks/useMutation";
-import LifelistUpload from "components/LifelistUpload";
 import LifelistEditor from "components/LifelistEditor";
+import LifelistField from "components/LifelistField";
 import useLifelistMode from "hooks/useLifelistMode";
 import Button from "components/Button";
 import Input from "components/Input";
+import { withReturnTo } from "lib/helpers";
 
 type Props = {
   participantId: string;
@@ -88,13 +89,17 @@ export default function ManageLifelist({ participantId }: Props) {
     ? "Change your life list"
     : isNameOnly
     ? `Edit ${p.name || "participant"}`
-    : p.hasList
-    ? "Replace life list"
     : "Attach a life list";
-  const uploadHint = p.hasList
-    ? "Uploading a new file replaces this list."
-    : "Upload an eBird CSV export to use for this trip.";
-  const uploadLabel = p.hasList ? "Choose a new CSV file" : "Choose a CSV file";
+
+  const listSection = (
+    <LifelistField
+      hasList={p.hasList}
+      count={p.count}
+      onImport={handleImport}
+      onRemove={handleRemove}
+      disabled={isBusy}
+    />
+  );
 
   return (
     <>
@@ -104,7 +109,7 @@ export default function ManageLifelist({ participantId }: Props) {
 
         {isSelf && isGroup && (
           <Link
-            href={`/${trip?._id}/participants?returnTo=${encodeURIComponent(asPath)}`}
+            href={withReturnTo(`/${trip?._id}/participants`, asPath)}
             onClick={close}
             className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
           >
@@ -122,44 +127,13 @@ export default function ManageLifelist({ participantId }: Props) {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameDraft(e.target.value)}
               />
             </label>
-            <div>
-              <span className="mb-2 block text-sm font-medium text-gray-700">Life list</span>
-              {p.hasList && (
-                <p className="mb-3 text-[13px] text-gray-500">
-                  <span className="tabular-nums">{p.count.toLocaleString()} species</span>
-                  {" - "}
-                  <button
-                    type="button"
-                    onClick={handleRemove}
-                    disabled={isBusy}
-                    className="text-red-500 hover:text-red-600 disabled:text-gray-400"
-                  >
-                    Remove
-                  </button>
-                </p>
-              )}
-              <LifelistUpload variant="compact" onImport={handleImport} isPending={isBusy} hint={uploadHint} buttonLabel={uploadLabel} />
-            </div>
+            {listSection}
           </div>
         )}
 
         {isPending && isOwner && (
           <div className="space-y-3">
-            {p.hasList && (
-              <p className="text-[13px] text-gray-500">
-                <span className="tabular-nums">{p.count.toLocaleString()} species</span>
-                {" - "}
-                <button
-                  type="button"
-                  onClick={handleRemove}
-                  disabled={isBusy}
-                  className="text-red-500 hover:text-red-600 disabled:text-gray-400"
-                >
-                  Remove
-                </button>
-              </p>
-            )}
-            <LifelistUpload variant="compact" onImport={handleImport} isPending={isBusy} hint={uploadHint} buttonLabel={uploadLabel} />
+            {listSection}
             <p className="text-xs text-gray-500">
               They can switch to their World list or replace this after they accept the invite.
             </p>

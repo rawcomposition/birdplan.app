@@ -9,6 +9,7 @@ import Footer from "components/Footer";
 import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
 import LifelistUpload from "components/LifelistUpload";
+import EbirdDownloadLink from "components/EbirdDownloadLink";
 import Link from "next/link";
 import useMutation from "hooks/useMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,8 +17,6 @@ import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
 import { getReturnLabel } from "lib/helpers";
 import Alert from "components/Alert";
-
-const EBIRD_LIFELIST_URL = "https://ebird.org/lifelist?r=world&time=life&fmt=csv";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
@@ -115,14 +114,13 @@ export default function ImportLifelist() {
           )}
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
-            <h3 className="text-lg font-medium mb-3 text-gray-700">
-              {hasList ? "Update your list" : "Import your list"}
-            </h3>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-lg font-medium text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
+              <EbirdDownloadLink className="shrink-0" />
+            </div>
             <LifelistUpload
               onImport={(sciNames) => importMutation.mutate({ sciNames })}
               isPending={importMutation.isPending}
-              ebirdUrl={EBIRD_LIFELIST_URL}
-              hint={hasList ? "Upload a new CSV to update your list." : "Upload your eBird life list export."}
               buttonLabel={hasList ? "Choose a new CSV file" : "Choose a CSV file"}
             />
           </div>

@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { getPostAuthDest } from "lib/helpers";
 
 export default function useEmailSignup() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function useEmailSignup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       toast.success("Account created successfully!", { id: toastId });
-      router.push("/trips");
+      router.push(getPostAuthDest(router));
     } catch (error: any) {
       console.error("Signup error:", error);
       if (error.code === "auth/email-already-in-use") {

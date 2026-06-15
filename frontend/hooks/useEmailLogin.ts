@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { getPostAuthDest } from "lib/helpers";
 
 export default function useEmailLogin() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function useEmailLogin() {
     try {
       if (!auth) throw new Error("Firebase auth not initialized");
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/trips");
+      router.push(getPostAuthDest(router));
       toast.dismiss(toastId);
     } catch (error: any) {
       if (error.code === "auth/wrong-password") {
