@@ -13,6 +13,7 @@ import ParticipantRow from "components/ParticipantRow";
 import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import useTripLifelist from "hooks/useTripLifelist";
+import { getReturnLabel } from "lib/helpers";
 
 export default function TripParticipants() {
   const router = useRouter();
@@ -22,10 +23,9 @@ export default function TripParticipants() {
   const linkRef = React.useRef<HTMLInputElement>(null);
 
   const returnTo = typeof router.query.returnTo === "string" ? router.query.returnTo : null;
-  const highlightId = typeof router.query.highlight === "string" ? router.query.highlight : null;
   const isNew = router.query.new === "1";
   const backHref = returnTo || `/${trip?._id}`;
-  const backLabel = returnTo?.endsWith("/settings") ? "settings" : "trip";
+  const backLabel = returnTo ? getReturnLabel(returnTo) : "trip";
   const shareLink = `${process.env.NEXT_PUBLIC_URL}/${trip?._id}`;
   const handleLinkFocus = () => linkRef.current?.select();
 
@@ -39,12 +39,14 @@ export default function TripParticipants() {
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />
       <main className="max-w-2xl w-full mx-auto pb-12">
-        <Link
-          href={backHref}
-          className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
-        >
-          ← Back to {backLabel}
-        </Link>
+        {(returnTo || !isNew) && (
+          <Link
+            href={backHref}
+            className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
+          >
+            ← Back to {backLabel}
+          </Link>
+        )}
         <div className="px-4 md:px-0 mt-8">
           <h1 className="text-3xl font-bold text-gray-700 mb-2">
             <Icon name="user" className="text-2xl text-lime-600" /> Participants
@@ -62,12 +64,7 @@ export default function TripParticipants() {
               <p className="py-6 text-sm text-gray-500">No participants yet.</p>
             ) : (
               participants.map((p, i) => (
-                <ParticipantRow
-                  key={p._id}
-                  participant={p}
-                  index={i}
-                  autoExpand={p._id === highlightId || (isNew && p.isMe)}
-                />
+                <ParticipantRow key={p._id} participant={p} index={i} />
               ))
             )}
           </div>

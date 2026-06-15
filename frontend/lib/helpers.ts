@@ -184,3 +184,17 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
     ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 }
+
+export function getReturnLabel(returnTo?: string | null): string {
+  if (!returnTo) return "trips";
+  const path = returnTo.split("?")[0].replace(/\/+$/, "");
+  if (path === "" || path === "/trips") return "trips";
+  if (path === "/account") return "account";
+  if (path.endsWith("/participants")) return "participants";
+  if (path.endsWith("/settings")) return "settings";
+  if (path.endsWith("/lifelist")) return "life list";
+  if (path.endsWith("/targets")) return "targets";
+  if (path.endsWith("/itinerary")) return "itinerary";
+  if (/^\/[^/]+$/.test(path)) return "trip";
+  return "back";
+}

@@ -10,7 +10,8 @@ export default function useLifelistMode(trip: Trip | null | undefined) {
   const viewerId = trip?.viewer?.participantId;
   const savedMode: ParticipantListMode = trip?.viewer?.listMode ?? "world";
 
-  const [selectedMode, setSelectedMode] = React.useState<ParticipantListMode>(savedMode);
+  const [selectedMode, setSelectedMode] = React.useState<ParticipantListMode | null>(null);
+  const effectiveMode = selectedMode ?? savedMode;
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
@@ -38,13 +39,13 @@ export default function useLifelistMode(trip: Trip | null | undefined) {
 
   const handleCustomImport = (sciNames: string[]) => listMutation.mutate({ sciNames });
 
-  const isDirty = selectedMode !== savedMode;
-  const save = () => {
-    if (isDirty) modeMutation.mutate({ listMode: selectedMode });
+  const isDirty = effectiveMode !== savedMode;
+  const save = async () => {
+    if (isDirty) await modeMutation.mutateAsync({ listMode: effectiveMode });
   };
 
   return {
-    selectedMode,
+    selectedMode: effectiveMode,
     savedMode,
     selectWorld,
     selectCustom,

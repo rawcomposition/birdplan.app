@@ -89,7 +89,7 @@ export default function AddParticipant() {
         {tab === "invite" ? (
           <div className="pb-2">
             <label className="block mb-2">
-              <span className="block text-sm font-medium text-gray-700 mb-1.5">Their email</span>
+              <span className="block text-sm font-medium text-gray-700 mb-1.5">Email</span>
               <Input
                 type="email"
                 value={email}
@@ -104,9 +104,7 @@ export default function AddParticipant() {
                 autoFocus
               />
             </label>
-            <p className="text-xs text-gray-500">
-              They&apos;ll get an email to join. Once they accept, they manage their own life list.
-            </p>
+            <p className="text-xs text-gray-500">After they accept, they can manage their own life list.</p>
           </div>
         ) : (
           <div className="pb-2">
@@ -133,9 +131,7 @@ export default function AddParticipant() {
             setParsed(null);
           }}
           onPick={pickFile}
-          note={
-            tab === "invite" ? "They can change this once they accept the invite." : undefined
-          }
+          note={tab === "invite" ? "They can change this once they accept the invite." : undefined}
         />
       </Body>
       <Footer>

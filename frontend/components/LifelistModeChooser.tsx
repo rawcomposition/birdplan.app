@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Trip } from "@birdplan/shared";
 import LifelistUpload from "components/LifelistUpload";
 import { useProfile } from "providers/profile";
@@ -16,6 +17,7 @@ type Props = {
 export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
   const { lifelist: globalList } = useProfile();
   const { myLifelist } = useTripLifelist(trip);
+  const { asPath } = useRouter();
 
   const { selectedMode, savedMode, selectWorld, selectCustom, handleCustomImport, listMutation } = mode;
 
@@ -24,16 +26,20 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
   const customUpdatedAt = hasCustom ? trip?.viewer && trip?.customLifelistUpdatedAt : null;
 
   return (
-    <div role="radiogroup" aria-label="Which list should this trip target against for you?" className="flex flex-col gap-6">
+    <div
+      role="radiogroup"
+      aria-label="Which list should this trip target against for you?"
+      className="flex flex-col gap-6"
+    >
       <OptionRow
         checked={selectedMode === "world"}
         disabled={!canEdit}
         onSelect={selectWorld}
         title="World life list"
-        description={`${(globalList?.length || 0).toLocaleString()} species you've recorded worldwide`}
+        description={`${(globalList?.length || 0).toLocaleString()} species`}
       >
         <Link
-          href={`/import-lifelist?returnTo=${encodeURIComponent(`/${trip?._id}/participants`)}`}
+          href={`/import-lifelist?returnTo=${encodeURIComponent(asPath)}`}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
         >
           Manage your World life list →

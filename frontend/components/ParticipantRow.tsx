@@ -15,10 +15,9 @@ const AVATAR_COLORS = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amb
 type Props = {
   participant: ParticipantView;
   index: number;
-  autoExpand?: boolean;
 };
 
-export default function ParticipantRow({ participant: p, index, autoExpand }: Props) {
+export default function ParticipantRow({ participant: p, index }: Props) {
   const { trip, isOwner, canEdit } = useTrip();
   const { open } = useModal();
   const queryClient = useQueryClient();
@@ -28,14 +27,6 @@ export default function ParticipantRow({ participant: p, index, autoExpand }: Pr
   const isPending = p.status === "pending";
   const isNameOnly = !p.uid && !isPending;
   const canChangeList = isSelf;
-
-  const scrolledRef = React.useRef(false);
-  const setRowRef = (node: HTMLDivElement | null) => {
-    if (node && autoExpand && !scrolledRef.current) {
-      scrolledRef.current = true;
-      node.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/participants`] });
@@ -96,13 +87,7 @@ export default function ParticipantRow({ participant: p, index, autoExpand }: Pr
     : `${p.listMode === "world" ? "World list" : "Custom list"} · ${p.count.toLocaleString()} species`;
 
   return (
-    <div
-      ref={setRowRef}
-      className={clsx(
-        "border-b border-gray-100 last:border-0 transition-colors",
-        autoExpand && "-mx-2 rounded-lg bg-blue-50/50 px-2 ring-1 ring-blue-200"
-      )}
-    >
+    <div className="border-b border-gray-100 last:border-0 transition-colors">
       <div className="flex items-center gap-3.5 py-3">
         <span
           className={clsx(

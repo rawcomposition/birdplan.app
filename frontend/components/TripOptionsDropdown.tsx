@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
-import useTripLifelist from "hooks/useTripLifelist";
 import Icon from "components/Icon";
 
 type Props = {
@@ -15,14 +14,15 @@ export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
   const { uid } = useProfile();
   const { trip, canEdit, participants } = useTrip();
-  const { count } = useTripLifelist(trip);
 
-  const isGroup = (participants?.length ?? 0) > 1;
+  const viewer = trip?.viewer;
+  const viewerMode = viewer?.listMode === "custom" ? "Custom" : "World";
 
   const links = [
     {
-      name: `${isGroup ? "Life Lists" : "Life List"}${count ? ` (${count.toLocaleString()})` : ""}`,
-      href: `/${trip?._id}/participants`,
+      name: `Life List (${viewerMode})`,
+      onClick: viewer ? () => open("manageLifelist", { participantId: viewer.participantId }) : undefined,
+      href: viewer ? undefined : `/${trip?._id}/participants`,
       icon: "feather",
     },
     {
@@ -89,7 +89,7 @@ export default function TripOptionsDropdown({ className }: Props) {
                   ) : (
                     <Link
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
-                      href={href}
+                      href={href ?? "#"}
                     >
                       <Icon name={icon as any} />
                       <span>{name}</span>

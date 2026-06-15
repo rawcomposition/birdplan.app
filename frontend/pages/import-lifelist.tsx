@@ -14,6 +14,7 @@ import useMutation from "hooks/useMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
+import { getReturnLabel } from "lib/helpers";
 import Alert from "components/Alert";
 
 const EBIRD_LIFELIST_URL = "https://ebird.org/lifelist?r=world&time=life&fmt=csv";
@@ -25,14 +26,9 @@ export default function ImportLifelist() {
   const router = useRouter();
 
   const { tripId, returnTo } = router.query;
-  const redirectUrl =
-    (typeof returnTo === "string" && returnTo) || (tripId ? `/${tripId}` : `/trips`);
-  const backLabel =
-    typeof returnTo === "string" && returnTo.endsWith("/participants")
-      ? "participants"
-      : returnTo || tripId
-      ? "trip"
-      : "trips";
+  const returnToStr = typeof returnTo === "string" ? returnTo : tripId ? `/${tripId}` : null;
+  const redirectUrl = returnToStr || `/trips`;
+  const backLabel = getReturnLabel(returnToStr);
   const hasList = !!lifelist?.length;
 
   const exceptionsString = exceptions?.join(",");
@@ -51,7 +47,6 @@ export default function ImportLifelist() {
     onSuccess: () => {
       toast.success("Life list imported");
       queryClient.invalidateQueries({ queryKey: [`/profile`] });
-      router.push(redirectUrl);
     },
   });
 
@@ -86,7 +81,7 @@ export default function ImportLifelist() {
   return (
     <div className="flex flex-col h-full">
       <Head>
-        <title>Your Life List | BirdPlan.app</title>
+        <title>World Life List | BirdPlan.app</title>
       </Head>
 
       <Header />
@@ -98,32 +93,31 @@ export default function ImportLifelist() {
           ← Back to {backLabel}
         </Link>
         <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-2">
-            <Icon name="feather" className="text-2xl text-lime-600" /> Your Life List
+          <h1 className="text-3xl font-bold text-gray-700 mb-8">
+            <Icon name="feather" className="text-2xl text-lime-600" /> World Life List
           </h1>
-          <p className="text-gray-500 mb-8">
-            Your global life list. Trips compute targets by subtracting it, unless a trip uses its own custom list.
-          </p>
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>
-                <p className="text-3xl font-bold text-gray-800 tabular-nums">
-                  {hasList ? lifelist.length.toLocaleString() : "—"}
-                </p>
-              </div>
-              {lifelistUpdatedAt && (
-                <div className="text-right">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Last updated</p>
-                  <p className="text-sm text-gray-700">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
+          {hasList && (
+            <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>
+                  <p className="text-3xl font-bold text-gray-800 tabular-nums">{lifelist.length.toLocaleString()}</p>
                 </div>
-              )}
+                {lifelistUpdatedAt && (
+                  <div className="text-right">
+                    <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Last updated</p>
+                    <p className="text-sm text-gray-700">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
-            <h3 className="text-lg font-medium mb-3 text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
+            <h3 className="text-lg font-medium mb-3 text-gray-700">
+              {hasList ? "Update your list" : "Import your list"}
+            </h3>
             <LifelistUpload
               onImport={(sciNames) => importMutation.mutate({ sciNames })}
               isPending={importMutation.isPending}
@@ -136,8 +130,8 @@ export default function ImportLifelist() {
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
             <h3 className="text-lg font-medium mb-1 text-gray-700">Exceptions</h3>
             <p className="text-sm text-gray-600 mb-3">
-              Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies to
-              all your trips.
+              Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies
+              to all your trips.
             </p>
             {isError && (
               <Alert style="error" className="-mx-1 my-1">

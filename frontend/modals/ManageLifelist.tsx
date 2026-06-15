@@ -1,11 +1,13 @@
 import React from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Header, Body, Footer, useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
 import useMutation from "hooks/useMutation";
 import LifelistUpload from "components/LifelistUpload";
-import LifelistModeChooser from "components/LifelistModeChooser";
+import LifelistEditor from "components/LifelistEditor";
 import useLifelistMode from "hooks/useLifelistMode";
 import Button from "components/Button";
 import Input from "components/Input";
@@ -17,6 +19,7 @@ type Props = {
 export default function ManageLifelist({ participantId }: Props) {
   const { close } = useModal();
   const { trip, isOwner, canEdit, participants } = useTrip();
+  const { asPath } = useRouter();
   const queryClient = useQueryClient();
 
   const p = participants?.find((x) => x._id === participantId);
@@ -24,6 +27,7 @@ export default function ManageLifelist({ participantId }: Props) {
   const isSelf = !!p?.isMe;
   const isPending = p?.status === "pending";
   const isNameOnly = !!p && !p.uid && !isPending;
+  const isGroup = (participants?.length ?? 0) > 1;
 
   const [nameDraft, setNameDraft] = React.useState(p?.name || "");
   const lifelistMode = useLifelistMode(trip);
@@ -81,14 +85,17 @@ export default function ManageLifelist({ participantId }: Props) {
     <>
       <Header>{title}</Header>
       <Body className="min-h-0 pb-5">
-        {isSelf && trip ? (
-          <p className="mb-6 text-sm leading-relaxed text-gray-500">
-            Pick the list this trip checks <span className="font-semibold text-gray-700">your</span> targets against —
-            any species you haven&apos;t recorded becomes a target.
-          </p>
-        ) : null}
+        {isSelf && trip && <LifelistEditor trip={trip} mode={lifelistMode} />}
 
-        {isSelf && trip && <LifelistModeChooser trip={trip} canEdit mode={lifelistMode} />}
+        {isSelf && isGroup && (
+          <Link
+            href={`/${trip?._id}/participants?returnTo=${encodeURIComponent(asPath)}`}
+            onClick={close}
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
+          >
+            Manage other participants&apos; life lists →
+          </Link>
+        )}
 
         {isNameOnly && canEdit && (
           <div className="space-y-5">

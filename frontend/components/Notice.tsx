@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import CloseButton from "components/CloseButton";
 import { useProfile } from "providers/profile";
 import useMutation from "hooks/useMutation";
@@ -10,6 +11,7 @@ const noticeId = "";
 export default function Notice() {
   const { _id, dismissedNoticeId } = useProfile();
   const queryClient = useQueryClient();
+  const { asPath } = useRouter();
 
   const dismissMutation = useMutation({
     url: "/profile",
@@ -41,7 +43,7 @@ export default function Notice() {
           <span className="font-bold">Heads up!</span> The eBird taxonomy was recently updated.
           <br />
           Be sure to{" "}
-          <Link href="/import-lifelist" className="text-blue-600 font-bold">
+          <Link href={`/import-lifelist?returnTo=${encodeURIComponent(asPath)}`} className="text-blue-600 font-bold">
             re-import your life list
           </Link>{" "}
           and targets for any upcoming trips.

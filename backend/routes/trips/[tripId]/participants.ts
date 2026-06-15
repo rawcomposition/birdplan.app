@@ -174,7 +174,11 @@ participants.patch("/:id/mode", async (c) => {
   const { listMode } = await c.req.json<{ listMode: ParticipantListMode }>();
   if (listMode !== "world" && listMode !== "custom") throw new HTTPException(400, { message: "Invalid list mode" });
 
-  await Participant.updateOne({ _id: id }, { $set: { listMode } });
+  const update =
+    listMode === "world"
+      ? { $set: { listMode, lifelist: [], lifelistUpdatedAt: null } }
+      : { $set: { listMode } };
+  await Participant.updateOne({ _id: id }, update);
   return c.json({});
 });
 
