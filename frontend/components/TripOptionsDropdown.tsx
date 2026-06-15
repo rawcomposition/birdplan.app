@@ -15,12 +15,15 @@ export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
   const { uid } = useProfile();
   const { trip, canEdit, participants } = useTrip();
-  const { count: lifelistCount } = useTripLifelist(trip);
+  const { count } = useTripLifelist(trip);
+
+  // Life lists now live on the Participants page. Singular for a solo trip, plural for a group.
+  const isGroup = (participants?.length ?? 0) > 1;
 
   const links = [
     {
-      name: `Life List (${lifelistCount.toLocaleString()})`,
-      href: `/${trip?._id}/lifelist`,
+      name: `${isGroup ? "Life Lists" : "Life List"}${count ? ` (${count.toLocaleString()})` : ""}`,
+      href: `/${trip?._id}/participants`,
       icon: "feather",
     },
     {

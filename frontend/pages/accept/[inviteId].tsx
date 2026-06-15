@@ -4,23 +4,21 @@ import Head from "next/head";
 import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
 import { useRouter } from "next/router";
-import { useProfile } from "providers/profile";
 import useMutation from "hooks/useMutation";
 
 export default function Accept() {
   const { user } = useUser();
-  const { lifelist } = useProfile();
   const router = useRouter();
   const { inviteId } = router.query;
   const uid = user?.uid;
-  const hasLifelistRef = React.useRef(!!lifelist?.length);
-  hasLifelistRef.current = !!lifelist?.length;
 
   const acceptMutation = useMutation({
     url: `/participants/${inviteId}/accept`,
     method: "PATCH",
+    // Land on Participants with this person's row highlighted + expanded so they can pick their
+    // World/Custom list right away. `inviteId` is the participant id.
     onSuccess: (data: any) => {
-      router.push(hasLifelistRef.current ? `/${data?.tripId}` : `/import-lifelist?tripId=${data.tripId}`);
+      router.push(`/${data?.tripId}/participants?highlight=${inviteId}`);
     },
   });
 

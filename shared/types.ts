@@ -137,11 +137,17 @@ export type ParticipantView = {
   isOwner: boolean;
   isMe: boolean;
   count: number; // effective species count
+  hasList: boolean; // false → "No life list" (custom/named with nothing uploaded yet)
 };
 
 export type AddParticipantInput =
-  | { type: "invite"; email: string; upgradeId?: string }
-  | { type: "named"; name: string; sciNames: string[] };
+  | { type: "invite"; email: string; upgradeId?: string; sciNames?: string[] }
+  | { type: "named"; name: string; sciNames?: string[] };
+
+// Editing an existing participant (rename a name-only person).
+export type UpdateParticipantInput = {
+  name: string;
+};
 
 // Marking a single species seen (adds to a life list).
 export type AddToLifelistInput = {

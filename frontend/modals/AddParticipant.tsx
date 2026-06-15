@@ -21,6 +21,7 @@ export default function AddParticipant() {
   const [tab, setTab] = React.useState<Tab>("named");
   const [email, setEmail] = React.useState("");
   const [name, setName] = React.useState("");
+  const [showAttach, setShowAttach] = React.useState(false);
   const [parsed, setParsed] = React.useState<{ fileName: string; sciNames: string[] } | null>(null);
 
   const invalidateAndClose = () => {
@@ -53,21 +54,22 @@ export default function AddParticipant() {
     }
   };
 
-  const canSubmit = tab === "invite" ? !!email.trim() : !!name.trim() && !!parsed;
+  const canSubmit = tab === "invite" ? !!email.trim() : !!name.trim();
 
   const handleSubmit = () => {
     if (!canSubmit) return;
+    const sciNames = parsed?.sciNames;
     if (tab === "invite") {
-      addMutation.mutate({ type: "invite", email: email.trim() });
+      addMutation.mutate({ type: "invite", email: email.trim(), sciNames });
     } else {
-      addMutation.mutate({ type: "named", name: name.trim(), sciNames: parsed!.sciNames });
+      addMutation.mutate({ type: "named", name: name.trim(), sciNames: sciNames ?? [] });
     }
   };
 
   return (
     <>
       <Header>Add a participant</Header>
-      <Body className="min-h-0">
+      <Body className="min-h-0 pb-5">
         <div className="mb-5 inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 text-sm">
           {(["named", "invite"] as const).map((t) => (
             <button
@@ -79,7 +81,7 @@ export default function AddParticipant() {
                 tab === t ? "bg-white text-gray-800 shadow-sm" : "text-gray-500 hover:text-gray-700"
               )}
             >
-              {t === "named" ? "Basic" : "Editor"}
+              {t === "named" ? "Name Only" : "Editor"}
             </button>
           ))}
         </div>
@@ -108,7 +110,7 @@ export default function AddParticipant() {
           </div>
         ) : (
           <div className="pb-2">
-            <label className="block mb-5">
+            <label className="block mb-2">
               <span className="block text-sm font-medium text-gray-700 mb-1.5">Name</span>
               <Input
                 type="text"
@@ -117,41 +119,24 @@ export default function AddParticipant() {
                 autoFocus
               />
             </label>
-
-            <span className="block text-sm font-medium text-gray-700 mb-1.5">Life List</span>
-
-            <input ref={fileRef} type="file" accept=".csv" className="sr-only" onChange={handlePick} />
-
-            {parsed ? (
-              <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white">
-                  <Icon name="check" className="text-sm" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-gray-800">{parsed.fileName}</p>
-                  <p className="text-xs text-gray-500 tabular-nums">
-                    {parsed.sciNames.length.toLocaleString()} species
-                  </p>
-                </div>
-                <button type="button" onClick={pickFile} className="shrink-0 text-sm font-medium text-sky-600">
-                  Replace
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={pickFile}
-                className="flex w-full flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-gray-300 px-4 py-6 text-center transition-colors hover:border-blue-400 hover:bg-blue-50/40"
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
-                  <Icon name="feather" className="text-lg" />
-                </span>
-                <span className="text-sm font-medium text-gray-700">Choose a CSV file</span>
-                <span className="text-xs text-gray-400">eBird .csv export</span>
-              </button>
-            )}
           </div>
         )}
+
+        <input ref={fileRef} type="file" accept=".csv" className="sr-only" onChange={handlePick} />
+
+        <AttachLifelist
+          show={showAttach || !!parsed}
+          parsed={parsed}
+          onReveal={() => setShowAttach(true)}
+          onHide={() => {
+            setShowAttach(false);
+            setParsed(null);
+          }}
+          onPick={pickFile}
+          note={
+            tab === "invite" ? "They can change this once they accept the invite." : undefined
+          }
+        />
       </Body>
       <Footer>
         <div className="flex justify-end gap-2 w-full">
@@ -164,5 +149,63 @@ export default function AddParticipant() {
         </div>
       </Footer>
     </>
+  );
+}
+
+type AttachProps = {
+  show: boolean;
+  parsed: { fileName: string; sciNames: string[] } | null;
+  onReveal: () => void;
+  onHide: () => void;
+  onPick: () => void;
+  note?: string;
+};
+
+// Optional life list, hidden behind a "+ Attach life list" link until requested.
+function AttachLifelist({ show, parsed, onReveal, onHide, onPick, note }: AttachProps) {
+  if (!show) {
+    return (
+      <button type="button" onClick={onReveal} className="mt-1 text-sm font-medium text-sky-600">
+        + Attach life list
+      </button>
+    );
+  }
+
+  return (
+    <div className="pt-1">
+      <div className="mb-1.5 flex items-center justify-between">
+        <span className="text-sm font-medium text-gray-700">Life list</span>
+        <button type="button" onClick={onHide} className="text-xs font-medium text-gray-400 hover:text-gray-600">
+          Remove
+        </button>
+      </div>
+      {parsed ? (
+        <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white">
+            <Icon name="check" className="text-sm" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-gray-800">{parsed.fileName}</p>
+            <p className="text-xs text-gray-500 tabular-nums">{parsed.sciNames.length.toLocaleString()} species</p>
+          </div>
+          <button type="button" onClick={onPick} className="shrink-0 text-sm font-medium text-sky-600">
+            Replace
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onPick}
+          className="flex w-full flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-gray-300 px-4 py-6 text-center transition-colors hover:border-blue-400 hover:bg-blue-50/40"
+        >
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+            <Icon name="feather" className="text-lg" />
+          </span>
+          <span className="text-sm font-medium text-gray-700">Choose a CSV file</span>
+          <span className="text-xs text-gray-400">eBird .csv export</span>
+        </button>
+      )}
+      {note && <p className="mt-2 text-xs text-gray-500">{note}</p>}
+    </div>
   );
 }

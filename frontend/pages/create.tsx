@@ -40,7 +40,7 @@ export default function CreateTrip() {
     url: "/trips",
     method: "POST",
     onSuccess: ({ id }) => {
-      router.push(`/${id}/lifelist?new=1`);
+      router.push(`/${id}/participants?new=1`);
       close();
     },
   });

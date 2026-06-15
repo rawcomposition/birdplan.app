@@ -11,9 +11,17 @@ type Props = {
   hint: React.ReactNode;
   buttonLabel: string;
   ebirdUrl?: string;
+  variant?: "dropzone" | "compact";
 };
 
-export default function LifelistUpload({ onImport, isPending, hint, buttonLabel, ebirdUrl = DEFAULT_EBIRD_URL }: Props) {
+export default function LifelistUpload({
+  onImport,
+  isPending,
+  hint,
+  buttonLabel,
+  ebirdUrl = DEFAULT_EBIRD_URL,
+  variant = "dropzone",
+}: Props) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +37,36 @@ export default function LifelistUpload({ onImport, isPending, hint, buttonLabel,
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+
+  // Compact: a single pill button + a muted "source" line. Used inside the airy center modals.
+  if (variant === "compact") {
+    return (
+      <div className="flex flex-col items-start gap-2.5">
+        <label
+          className={`inline-flex items-center gap-2 rounded-[10px] px-4 py-2.5 text-sm font-semibold transition-colors ${
+            isPending ? "bg-gray-100 text-gray-400" : "cursor-pointer bg-sky-50 text-sky-600 hover:bg-sky-100"
+          }`}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            disabled={isPending}
+            className="sr-only"
+            onChange={handleFileUpload}
+          />
+          <Icon name={isPending ? "loading" : "feather"} className={isPending ? "animate-spin" : ""} />
+          {isPending ? "Importing…" : buttonLabel}
+        </label>
+        <p className="text-[12.5px] leading-relaxed text-gray-400">
+          eBird .csv export ·{" "}
+          <a href={ebirdUrl} target="_blank" rel="noreferrer" className="font-semibold text-sky-600 whitespace-nowrap">
+            Download from eBird <Icon name="external" className="text-[10px]" />
+          </a>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>

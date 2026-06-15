@@ -11,6 +11,7 @@ import type {
   ParticipantListMode,
   ParticipantView,
   AddToLifelistInput,
+  UpdateParticipantInput,
 } from "@birdplan/shared";
 
 const participants = new Hono();
@@ -43,7 +44,10 @@ participants.get("/", async (c) => {
     listMode: p.listMode,
     isOwner: p.isOwner,
     isMe: !!session?.uid && p.uid === session.uid,
-    count: p.status === "active" ? participantEffectiveList(p as any, profilesByUid as any).length : 0,
+    count: participantEffectiveList(p as any, profilesByUid as any).length,
+    // A registered World user always "has a list" (their live global one). Everyone else only
+    // has one once something's been uploaded (lifelistUpdatedAt set) — otherwise "No life list".
+    hasList: p.status === "active" && p.listMode === "world" ? true : !!p.lifelistUpdatedAt,
   }));
 
   return c.json(views);
@@ -65,14 +69,15 @@ participants.post("/", async (c) => {
 
   if (body.type === "named") {
     if (!body.name?.trim()) throw new HTTPException(400, { message: "Name is required" });
-    const codes = await sciNamesToCodes(body.sciNames || []);
+    // A life list is optional — without one the row shows "No life list" (lifelistUpdatedAt null).
+    const codes = body.sciNames?.length ? await sciNamesToCodes(body.sciNames) : [];
     const participant = await Participant.create({
       tripId,
       name: body.name.trim(),
       status: "active",
       listMode: "custom",
       lifelist: codes,
-      lifelistUpdatedAt: new Date(),
+      lifelistUpdatedAt: codes.length ? new Date() : null,
       isOwner: false,
     });
     return c.json({ id: participant._id });
@@ -100,12 +105,16 @@ participants.post("/", async (c) => {
     return c.json({ id: body.upgradeId });
   }
 
+  // The inviter may pre-attach a list; the invitee can switch to World or replace it after
+  // accepting. Without one the pending row stays "world"/empty and shows "No life list".
+  const codes = body.sciNames?.length ? await sciNamesToCodes(body.sciNames) : [];
   const participant = await Participant.create({
     tripId,
     email,
     status: "pending",
-    listMode: "world",
-    lifelist: [],
+    listMode: codes.length ? "custom" : "world",
+    lifelist: codes,
+    lifelistUpdatedAt: codes.length ? new Date() : null,
     isOwner: false,
   });
 
@@ -117,6 +126,53 @@ participants.post("/", async (c) => {
   });
 
   return c.json({ id: participant._id });
+});
+
+// Rename a name-only participant. Editors only; registered users keep their profile name, so a
+// row with a `uid` can't be renamed here.
+participants.patch("/:id", async (c) => {
+  const session = await authenticate(c);
+  const tripId = c.req.param("tripId");
+  const id = c.req.param("id");
+  if (!tripId || !id) throw new HTTPException(400, { message: "Trip ID and participant ID are required" });
+
+  await connect();
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+
+  const p = await Participant.findOne({ _id: id, tripId }).lean();
+  if (!p) throw new HTTPException(404, { message: "Participant not found" });
+  if (p.uid) throw new HTTPException(400, { message: "Can't rename a registered user" });
+
+  const { name } = await c.req.json<UpdateParticipantInput>();
+  if (!name?.trim()) throw new HTTPException(400, { message: "Name is required" });
+
+  await Participant.updateOne({ _id: id }, { $set: { name: name.trim() } });
+  return c.json({});
+});
+
+// Resend a pending invite email. Editors only.
+participants.post("/:id/resend", async (c) => {
+  const session = await authenticate(c);
+  const tripId = c.req.param("tripId");
+  const id = c.req.param("id");
+  if (!tripId || !id) throw new HTTPException(400, { message: "Trip ID and participant ID are required" });
+
+  await connect();
+  const [p, trip] = await Promise.all([
+    Participant.findOne({ _id: id, tripId }).lean(),
+    Trip.findById(tripId).lean(),
+  ]);
+  if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (p.status !== "pending" || !p.email) throw new HTTPException(400, { message: "No pending invite to resend" });
+
+  await sendInviteEmail({
+    tripName: trip.name,
+    fromName: session.name || "",
+    email: p.email,
+    url: `${process.env.FRONTEND_URL}/accept/${p._id}`,
+  });
+  return c.json({});
 });
 
 // Switch my own contribution between World and Custom. Self only — an admin can never change
@@ -154,9 +210,16 @@ participants.put("/:id/list", async (c) => {
   ]);
   if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
 
+  // Self manages their own; any editor manages a name-only person; only the owner may pre-fill a
+  // pending invite's list (the invitee re-chooses after accepting).
   const isSelf = !!p.uid && p.uid === session.uid;
-  const isOwnerManagingNamed = !p.uid && trip.ownerId === session.uid;
-  if (!isSelf && !isOwnerManagingNamed) throw new HTTPException(403, { message: "Forbidden" });
+  const isNameOnly = !p.uid && p.status === "active";
+  const isPendingInvite = !p.uid && p.status === "pending";
+  const allowed =
+    isSelf ||
+    (isNameOnly && (await isTripEditor(tripId, session.uid))) ||
+    (isPendingInvite && trip.ownerId === session.uid);
+  if (!allowed) throw new HTTPException(403, { message: "Forbidden" });
 
   const { sciNames } = await c.req.json<LifelistImportInput>();
   if (!Array.isArray(sciNames)) throw new HTTPException(400, { message: "Missing sciNames" });

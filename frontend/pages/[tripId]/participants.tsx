@@ -22,6 +22,8 @@ export default function TripParticipants() {
   const linkRef = React.useRef<HTMLInputElement>(null);
 
   const returnTo = typeof router.query.returnTo === "string" ? router.query.returnTo : null;
+  const highlightId = typeof router.query.highlight === "string" ? router.query.highlight : null;
+  const isNew = router.query.new === "1";
   const backHref = returnTo || `/${trip?._id}`;
   const backLabel = returnTo?.endsWith("/settings") ? "settings" : "trip";
   const shareLink = `${process.env.NEXT_PUBLIC_URL}/${trip?._id}`;
@@ -44,9 +46,12 @@ export default function TripParticipants() {
           ← Back to {backLabel}
         </Link>
         <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-8">
+          <h1 className="text-3xl font-bold text-gray-700 mb-2">
             <Icon name="user" className="text-2xl text-lime-600" /> Participants
           </h1>
+          <p className="text-gray-500 mb-8">
+            Manage trip participants and life lists.
+          </p>
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm px-4 sm:px-5 mb-4">
             {participants == null ? (
@@ -56,7 +61,14 @@ export default function TripParticipants() {
             ) : participants.length === 0 ? (
               <p className="py-6 text-sm text-gray-500">No participants yet.</p>
             ) : (
-              participants.map((p, i) => <ParticipantRow key={p._id} participant={p} index={i} />)
+              participants.map((p, i) => (
+                <ParticipantRow
+                  key={p._id}
+                  participant={p}
+                  index={i}
+                  autoExpand={p._id === highlightId || (isNew && p.isMe)}
+                />
+              ))
             )}
           </div>
 
@@ -82,7 +94,6 @@ export default function TripParticipants() {
           <div className="mt-8">
             <h3 className="text-lg font-medium mb-2 text-gray-700">View-only link</h3>
             <Input type="text" name="link" value={shareLink} readOnly ref={linkRef} onFocus={handleLinkFocus} />
-            <p className="text-sm text-gray-500 mt-2">Anyone with this link can view the trip without editing.</p>
           </div>
 
           <div className="flex mt-8">

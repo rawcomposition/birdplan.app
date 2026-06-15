@@ -28,8 +28,8 @@ export default function ImportLifelist() {
   const redirectUrl =
     (typeof returnTo === "string" && returnTo) || (tripId ? `/${tripId}` : `/trips`);
   const backLabel =
-    typeof returnTo === "string" && returnTo.endsWith("/lifelist")
-      ? "life list"
+    typeof returnTo === "string" && returnTo.endsWith("/participants")
+      ? "participants"
       : returnTo || tripId
       ? "trip"
       : "trips";
@@ -48,12 +48,6 @@ export default function ImportLifelist() {
   const importMutation = useMutation({
     url: `/profile/lifelist`,
     method: "PUT",
-    onMutate: () => {
-      toast.loading("Importing life list...", { id: "import-lifelist" });
-    },
-    onSettled: () => {
-      toast.dismiss("import-lifelist");
-    },
     onSuccess: () => {
       toast.success("Life list imported");
       queryClient.invalidateQueries({ queryKey: [`/profile`] });

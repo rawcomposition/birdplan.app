@@ -162,7 +162,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                   <p className="text-sm text-gray-500 mt-1.5">Targets for this trip are derived from this list.</p>
                 </div>
                 <Link
-                  href={`/${trip._id}/lifelist?returnTo=${encodeURIComponent(`/${trip._id}/settings`)}`}
+                  href={`/${trip._id}/participants?returnTo=${encodeURIComponent(`/${trip._id}/settings`)}`}
                   className="text-sky-600 font-medium text-sm whitespace-nowrap"
                 >
                   Manage

@@ -5,8 +5,9 @@ import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
 import { ParticipantView } from "@birdplan/shared";
 import { useTrip } from "providers/trip";
+import { useModal } from "providers/modals";
 import useMutation from "hooks/useMutation";
-import LifelistUpload from "components/LifelistUpload";
+import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
 import Icon from "components/Icon";
 
 // Repeating palette for avatars — keyed by row position.
@@ -15,30 +16,43 @@ const AVATAR_COLORS = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amb
 type Props = {
   participant: ParticipantView;
   index: number;
+  autoExpand?: boolean;
 };
 
-export default function ParticipantRow({ participant: p, index }: Props) {
+export default function ParticipantRow({ participant: p, index, autoExpand }: Props) {
   const { trip, isOwner, canEdit } = useTrip();
+  const { open } = useModal();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [showReplace, setShowReplace] = React.useState(false);
 
-  const isNamedOnly = !p.uid;
-  const isPending = p.status === "pending";
+  // Four mutually exclusive cases drive the row's affordances.
+  const isSelf = p.isMe; // registered, that's me
+  const isPending = p.status === "pending"; // an email invite, not yet accepted (no uid)
+  const isNameOnly = !p.uid && !isPending; // a free-text person the owner tracks
+  // (anything else is another registered editor — read-only to me)
+
+  // The inline "change" affordance is only for me — I'm the one picking which list this trip
+  // targets against. Everyone else's list is managed through the row's Edit menu flow.
+  const canChangeList = isSelf;
+
+  // Scroll a freshly-arrived (highlighted) row into view, once.
+  const scrolledRef = React.useRef(false);
+  const setRowRef = (node: HTMLDivElement | null) => {
+    if (node && autoExpand && !scrolledRef.current) {
+      scrolledRef.current = true;
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}/participants`] });
     queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
   };
 
-  const listMutation = useMutation({
-    url: `/trips/${trip?._id}/participants/${p._id}/list`,
-    method: "PUT",
-    onSuccess: () => {
-      toast.success("List updated");
-      setShowReplace(false);
-      invalidate();
-    },
+  const resendMutation = useMutation({
+    url: `/trips/${trip?._id}/participants/${p._id}/resend`,
+    method: "POST",
+    onSuccess: () => toast.success("Invite resent"),
   });
 
   const deleteMutation = useMutation({
@@ -53,7 +67,7 @@ export default function ParticipantRow({ participant: p, index }: Props) {
     },
   });
 
-  const handleImport = (sciNames: string[]) => listMutation.mutate({ sciNames });
+  const manageList = () => open("manageLifelist", { participantId: p._id });
 
   const handleRemove = () => {
     if (!confirm(p.isMe ? "Remove yourself from this trip?" : `Remove ${p.name || p.email || "this participant"}?`))
@@ -64,11 +78,39 @@ export default function ParticipantRow({ participant: p, index }: Props) {
   const label = p.name || p.email || "Unknown";
   const initial = (p.name || p.email || "?").trim().charAt(0).toUpperCase();
   const canRemove = !p.isOwner && (p.isMe || canEdit);
-  // Only the owner replaces a named-only person's list; registered users manage their own on /lifelist.
-  const showUpload = isNamedOnly && isOwner && showReplace;
+
+  // Build the contextual 3-dot menu.
+  const items: ParticipantMenuItem[] = [];
+  if (isSelf) {
+    items.push({ name: "Change life list", icon: "feather", onClick: manageList });
+  } else if (isNameOnly && canEdit) {
+    items.push({ name: "Edit", icon: "pencil", onClick: manageList });
+    items.push({
+      name: "Invite as editor",
+      icon: "envelope",
+      onClick: () => open("inviteAsEditor", { participantId: p._id, name: p.name }),
+    });
+  } else if (isPending) {
+    if (canEdit) items.push({ name: "Resend invite", icon: "envelope", onClick: () => resendMutation.mutate({}) });
+    if (isOwner)
+      items.push({ name: p.hasList ? "Replace life list" : "Attach life list", icon: "feather", onClick: manageList });
+  }
+  if (canRemove) {
+    items.push({ name: p.isMe ? "Leave trip" : "Remove", icon: "trash", danger: true, onClick: handleRemove });
+  }
+
+  const secondary = !p.hasList
+    ? "No life list"
+    : `${p.listMode === "world" ? "World list" : "Custom list"} · ${p.count.toLocaleString()} species`;
 
   return (
-    <div className="border-b border-gray-100 last:border-0">
+    <div
+      ref={setRowRef}
+      className={clsx(
+        "border-b border-gray-100 last:border-0 transition-colors",
+        autoExpand && "-mx-2 rounded-lg bg-blue-50/50 px-2 ring-1 ring-blue-200"
+      )}
+    >
       <div className="flex items-center gap-3.5 py-3">
         <span
           className={clsx(
@@ -87,53 +129,27 @@ export default function ParticipantRow({ participant: p, index }: Props) {
                 Owner
               </span>
             )}
+            {isPending && (
+              <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                <Icon name="envelope" className="text-[10px]" /> Pending
+              </span>
+            )}
           </p>
           <p className="text-xs text-gray-500 tabular-nums">
-            {isPending ? (
-              <span className="inline-flex items-center gap-1">
-                <Icon name="envelope" className="text-[10px]" /> Invite pending
-              </span>
-            ) : (
-              `${p.listMode === "world" ? "World list" : "Custom list"} · ${p.count.toLocaleString()} species`
+            {secondary}
+            {canChangeList && (
+              <>
+                <span className="mx-1.5">–</span>
+                <button type="button" onClick={manageList} className="font-medium text-sky-600 hover:underline">
+                  change
+                </button>
+              </>
             )}
           </p>
         </div>
 
-        {/* Named-only management (owner only): replace the uploaded list. To rename, remove and re-add. */}
-        {isNamedOnly && isOwner && !isPending && (
-          <button
-            type="button"
-            onClick={() => setShowReplace((s) => !s)}
-            title="Replace list"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-          >
-            <Icon name="feather" className="text-sm" />
-          </button>
-        )}
-
-        {canRemove && (
-          <button
-            type="button"
-            onClick={handleRemove}
-            disabled={deleteMutation.isPending}
-            title="Remove"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
-          >
-            <Icon name="xMark" className="text-sm" />
-          </button>
-        )}
+        <ParticipantOptionsDropdown items={items} />
       </div>
-
-      {showUpload && (
-        <div className="pb-4 pl-12">
-          <LifelistUpload
-            onImport={handleImport}
-            isPending={listMutation.isPending}
-            hint={p.count ? "Uploading a new file replaces this list." : "Upload an eBird CSV export to use for this trip."}
-            buttonLabel={p.count ? "Choose a new CSV file" : "Choose a CSV file"}
-          />
-        </div>
-      )}
     </div>
   );
 }
