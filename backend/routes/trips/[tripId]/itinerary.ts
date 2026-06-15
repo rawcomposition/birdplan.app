@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
+import { isTripEditor } from "lib/participants.js";
 import { updateDayTravelTimes, moveLocation } from "lib/itinerary.js";
 import type {
   ItineraryDayInput,
@@ -24,7 +25,7 @@ itinerary.post("/", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   if (trip.itinerary?.find((it) => it.id === data.id)) return c.json({});
 
@@ -43,7 +44,7 @@ itinerary.delete("/:dayId", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $pull: { itinerary: { id: dayId } } });
 
@@ -63,7 +64,7 @@ itinerary.patch("/:dayId/move-location", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -100,7 +101,7 @@ itinerary.patch("/:dayId/notes", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId, "itinerary.id": dayId }, { $set: { "itinerary.$.notes": data.notes } });
 
@@ -120,7 +121,7 @@ itinerary.patch("/:dayId/remove-location", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -158,7 +159,7 @@ itinerary.patch("/:dayId/remove-travel-time", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -191,7 +192,7 @@ itinerary.patch("/:dayId/set-notes", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId, "itinerary.id": dayId }, { $set: { "itinerary.$.notes": data.notes } });
 
@@ -211,7 +212,7 @@ itinerary.post("/:dayId/add-location", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -249,7 +250,7 @@ itinerary.patch("/:dayId/calc-travel-time", async (c) => {
   await connect();
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });

@@ -1,45 +1,41 @@
-import React from "react";
-import { Trip, IntersectionList } from "@birdplan/shared";
+import { Trip, TripLifelistMode } from "@birdplan/shared";
 import { useProfile } from "providers/profile";
 
-export type TripLifelistMode = "world" | "customSingle" | "customShared";
+export type { TripLifelistMode };
 
 export type TripLifelist = {
-  /** The effective life list this trip targets against (global exceptions removed). */
+  /** The GROUP's effective list — what targets render against (exceptions already removed). */
   codes: string[];
-  /** Which kind of list is in effect. All "which list?" logic lives here, not in consumers. */
+  /** The viewer's OWN effective list — what `isSeen` / mark-seen key off. */
+  myCodes: string[];
+  /** The group's mode. */
   mode: TripLifelistMode;
-  /** Number of species on the effective list. */
+  /** Number of species on the group list. */
   count: number;
-  /** The named source lists backing "shared" mode; empty otherwise. */
-  intersectionLists: IntersectionList[];
 };
 
+function filterExceptions(list: string[], exceptions?: string[]): string[] {
+  if (!exceptions?.length) return list;
+  const ex = new Set(exceptions);
+  return list.filter((code) => !ex.has(code));
+}
+
 /**
- * Single source of truth for a trip's effective life list and which mode it's in.
+ * Single source of truth for a trip's effective life lists. The server resolves both the group
+ * intersection (`trip.customLifelist`) and the viewer's own list (`trip.viewerLifelist`); we only
+ * fall back to — and exception-filter — the live global list when the trip hasn't supplied one.
  *
- * - world: the user's global list (already exception-filtered by the profile provider)
- * - customSingle: a single uploaded list for this trip
- * - customShared: the intersection of several named lists (stored in customLifelist)
- *
- * Both custom modes read from `trip.customLifelist`; the intersection is precomputed
- * server-side, so resolution is identical. Adding a future list type only touches this hook.
+ * - `codes` (group) drives the targets/hotspot lists.
+ * - `myCodes` (viewer) drives `isSeen`. A World viewer reads the live global list so optimistic
+ *   mark-seen updates show immediately; a Custom viewer reads their server-resolved trip list.
  */
 export default function useTripLifelist(trip?: Trip | null): TripLifelist {
   const { lifelist, exceptions } = useProfile();
 
-  const intersectionLists = trip?.intersectionLists ?? [];
-  const customLifelist = trip?.customLifelist ?? null;
-  const mode: TripLifelistMode =
-    intersectionLists.length > 0 ? "customShared" : customLifelist != null ? "customSingle" : "world";
+  const globalFiltered = filterExceptions(lifelist || [], exceptions);
+  const codes = trip?.customLifelist ?? globalFiltered;
+  const myCodes = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? globalFiltered : globalFiltered;
+  const mode = trip?.lifelistMode ?? "world";
 
-  // The custom path filters once, memoized, to avoid an O(n) pass over thousands of codes
-  // on every render. The global path is already exception-filtered upstream.
-  const codes = React.useMemo(() => {
-    if (!customLifelist) return lifelist;
-    const ex = new Set(exceptions || []);
-    return customLifelist.filter((code) => !ex.has(code));
-  }, [customLifelist, lifelist, exceptions]);
-
-  return { codes, mode, count: codes.length, intersectionLists };
+  return { codes, myCodes, mode, count: codes.length };
 }

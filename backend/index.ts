@@ -8,7 +8,7 @@ import support from "routes/support.js";
 import taxonomy from "routes/taxonomy.js";
 import region from "routes/region.js";
 import ebirdProxy from "routes/ebird-proxy.js";
-import invites from "routes/invites.js";
+import participants from "routes/participants.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
@@ -28,7 +28,7 @@ app.route("/v1/support", support);
 app.route("/v1/taxonomy", taxonomy);
 app.route("/v1/region", region);
 app.route("/v1/ebird-proxy", ebirdProxy);
-app.route("/v1/invites", invites);
+app.route("/v1/participants", participants);
 
 app.notFound((c) => {
   return c.json({ message: "Not Found" }, 404);

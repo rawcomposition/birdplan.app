@@ -11,13 +11,12 @@ import clsx from "clsx";
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import Marker from "modals/Marker";
-import Share from "modals/Share";
 import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
 import DeleteAccount from "modals/DeleteAccount";
 import OpenBirding from "modals/OpenBirding";
-import AddSharedList from "modals/AddSharedList";
+import AddParticipant from "modals/AddParticipant";
 
 export type ModalPosition = "right" | "center";
 
@@ -63,11 +62,6 @@ const modals: ModalConfig[] = [
     position: "right",
   },
   {
-    id: "share",
-    Component: Share,
-    position: "right",
-  },
-  {
     id: "addItineraryLocation",
     Component: AddItineraryLocation,
     small: true,
@@ -85,8 +79,8 @@ const modals: ModalConfig[] = [
     position: "center",
   },
   {
-    id: "addSharedList",
-    Component: AddSharedList,
+    id: "addParticipant",
+    Component: AddParticipant,
     position: "center",
   },
 ];
@@ -97,12 +91,11 @@ type ModalId =
   | "addMarker"
   | "addHotspot"
   | "viewMarker"
-  | "share"
   | "addItineraryLocation"
   | "addPlace"
   | "deleteAccount"
   | "openBirding"
-  | "addSharedList";
+  | "addParticipant";
 
 type Context = {
   open: (id: ModalId, props?: KeyValue) => void;

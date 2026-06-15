@@ -1,5 +1,5 @@
 import React from "react";
-import { Trip, Invite } from "@birdplan/shared";
+import { Trip, ParticipantView } from "@birdplan/shared";
 import { auth } from "lib/firebase";
 import { useRouter } from "next/router";
 import { useUser } from "providers/user";
@@ -20,7 +20,7 @@ type HaloT = {
 type ContextT = {
   trip: Trip | null;
   isFetching: boolean;
-  invites: Invite[] | null;
+  participants: ParticipantView[] | null;
   selectedSpecies?: SelectedSpecies;
   canEdit: boolean;
   isOwner: boolean;
@@ -41,7 +41,7 @@ type ContextT = {
 const initialState = {
   trip: null,
   isFetching: false,
-  invites: null,
+  participants: null,
   canEdit: false,
   isOwner: false,
   is404: false,
@@ -80,12 +80,14 @@ const TripProvider = ({ children }: Props) => {
   });
 
   const { user } = useUser();
-  const canEdit = !!(user?.uid && trip?.userIds?.includes(user.uid));
+  // Membership lives in the Participant roster now: the server marks the viewer's own participant
+  // on the trip payload, so an active participant (editor) has a non-null `viewer`.
+  const canEdit = !!trip?.viewer;
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
-  const { data: invites } = useQuery<Invite[]>({
-    queryKey: [`/trips/${id}/invites`],
-    enabled: !!id && !!auth?.currentUser && !!canEdit,
+  const { data: participants } = useQuery<ParticipantView[]>({
+    queryKey: [`/trips/${id}/participants`],
+    enabled: !!id && !!auth?.currentUser && !!trip,
     refetchOnWindowFocus: false,
   });
 
@@ -116,7 +118,7 @@ const TripProvider = ({ children }: Props) => {
         setShowAllHotspots,
         setShowSatellite,
         refetch,
-        invites: invites || null,
+        participants: participants || null,
         canEdit,
         isOwner,
         is404,

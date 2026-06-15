@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authenticate } from "lib/utils.js";
-import { connect, Profile, Trip, Invite } from "lib/db.js";
+import { connect, Profile, Trip, Participant } from "lib/db.js";
 import { auth as firebaseAuth } from "lib/firebaseAdmin.js";
 import { HTTPException } from "hono/http-exception";
 
@@ -18,10 +18,10 @@ account.delete("/", async (c) => {
 
   await Promise.all([
     Profile.deleteOne({ uid }),
-    Invite.deleteMany({ tripId: { $in: tripIds } }),
-    Invite.deleteMany({ uid }),
+    // Remove the deleted user's own participant rows everywhere, plus all rows on trips they owned.
+    Participant.deleteMany({ uid }),
+    Participant.deleteMany({ tripId: { $in: tripIds } }),
     Trip.deleteMany({ ownerId: uid }),
-    Trip.updateMany({ userIds: uid, ownerId: { $ne: uid } }, { $pull: { userIds: uid } }),
   ]);
 
   await firebaseAuth?.deleteUser(uid);

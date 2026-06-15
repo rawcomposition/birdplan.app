@@ -14,7 +14,7 @@ type Props = {
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
   const { uid } = useProfile();
-  const { trip, isOwner, canEdit } = useTrip();
+  const { trip, canEdit, participants } = useTrip();
   const { count: lifelistCount } = useTripLifelist(trip);
 
   const links = [
@@ -24,10 +24,9 @@ export default function TripOptionsDropdown({ className }: Props) {
       icon: "feather",
     },
     {
-      name: "Share Trip",
-      onClick: () => open("share"),
-      icon: "share",
-      hidden: !isOwner,
+      name: `Participants${participants ? ` (${participants.length})` : ""}`,
+      href: `/${trip?._id}/participants`,
+      icon: "user",
     },
     {
       name: "Trip Settings",

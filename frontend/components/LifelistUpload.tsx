@@ -32,12 +32,17 @@ export default function LifelistUpload({ onImport, isPending, hint, buttonLabel,
 
   return (
     <div>
-      <p className="text-sm text-gray-600 mb-3">
-        {hint}{" "}
-        <a href={ebirdUrl} target="_blank" rel="noreferrer" className="font-medium text-sky-600 whitespace-nowrap">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <p className="text-sm text-gray-600">{hint}</p>
+        <a
+          href={ebirdUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 font-medium text-sky-600 whitespace-nowrap text-sm"
+        >
           Download from eBird <Icon name="external" className="text-xs" />
         </a>
-      </p>
+      </div>
       <label
         className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors ${
           isPending

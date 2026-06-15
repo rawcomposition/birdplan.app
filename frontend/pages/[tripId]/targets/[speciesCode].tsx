@@ -37,8 +37,8 @@ export default function SpeciesDetail() {
   const speciesCode = router.query.speciesCode?.toString() || "";
   const { user } = useUser();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
-  const { codes: myLifelist, mode: lifelistMode } = useTripLifelist(trip);
-  const usesCustomList = lifelistMode !== "world";
+  const { myCodes: myLifelist } = useTripLifelist(trip);
+  const viewerListMode = trip?.viewer?.listMode ?? "world";
   const { getSpeciesImg } = useSpeciesImages();
   const { open, close } = useModal();
   const queryClient = useQueryClient();
@@ -93,7 +93,10 @@ export default function SpeciesDetail() {
   const globalSeenMutation = useMutation({
     url: `/profile/lifelist/add`,
     method: "POST",
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [`/profile`] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+    },
     onMutate: async (data: any) => {
       await queryClient.cancelQueries({ queryKey: ["/profile"] });
       const prevData = queryClient.getQueryData([`/profile`]);
@@ -112,11 +115,11 @@ export default function SpeciesDetail() {
   });
 
   const customSeenMutation = useTripMutation<{ code: string }>({
-    url: `/trips/${trip?._id}/lifelist/add`,
+    url: `/trips/${trip?._id}/participants/${trip?.viewer?.participantId}/seen`,
     method: "POST",
     updateCache: (old, input) => ({
       ...old,
-      customLifelist: [...(old.customLifelist || []), input.code],
+      viewerLifelist: [...(old.viewerLifelist || []), input.code],
     }),
   });
 
@@ -254,14 +257,9 @@ export default function SpeciesDetail() {
 
   const handleMarkSeen = () => {
     if (!canMutate || isSeen) return;
-    const listLabel =
-      lifelistMode === "customShared"
-        ? "this trip's shared life list (everyone's)"
-        : lifelistMode === "customSingle"
-          ? "this trip's custom life list"
-          : "your life list";
+    const listLabel = viewerListMode === "custom" ? "your custom list for this trip" : "your life list";
     if (!confirm(`Are you sure you want to add ${speciesName} to ${listLabel}?`)) return;
-    if (usesCustomList) customSeenMutation.mutate({ code: speciesCode });
+    if (viewerListMode === "custom") customSeenMutation.mutate({ code: speciesCode });
     else globalSeenMutation.mutate({ code: speciesCode });
   };
 

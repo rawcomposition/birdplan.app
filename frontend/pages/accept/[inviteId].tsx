@@ -17,7 +17,7 @@ export default function Accept() {
   hasLifelistRef.current = !!lifelist?.length;
 
   const acceptMutation = useMutation({
-    url: `/invites/${inviteId}/accept`,
+    url: `/participants/${inviteId}/accept`,
     method: "PATCH",
     onSuccess: (data: any) => {
       router.push(hasLifelistRef.current ? `/${data?.tripId}` : `/import-lifelist?tripId=${data.tripId}`);

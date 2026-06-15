@@ -2,9 +2,14 @@ import type { Trip } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 
-const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
+const fields: Record<
+  keyof Omit<
+    Trip,
+    "createdAt" | "updatedAt" | "customLifelist" | "customLifelistUpdatedAt" | "lifelistMode" | "viewerLifelist" | "viewer"
+  >,
+  any
+> = {
   _id: { type: String, default: () => nanoId() },
-  userIds: [{ type: String, required: true }], // Array of uids
   ownerId: { type: String, required: true },
   ownerName: String,
   isPublic: { type: Boolean, default: true },
@@ -78,16 +83,8 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
   startMonth: { type: Number, required: true },
   endMonth: { type: Number, required: true },
   imgUrl: { type: String, default: null },
-  customLifelist: { type: [String], default: null }, // null ⇒ use the owner's global list. In "shared" mode this holds the intersection of intersectionLists.
-  customLifelistUpdatedAt: { type: Date, default: null },
-  intersectionLists: [
-    {
-      // _id is intentionally left on (unlike hotspots/markers) so each list can be addressed individually.
-      name: { type: String, required: true },
-      codes: { type: [String], default: [] },
-      updatedAt: { type: Date, default: Date.now },
-    },
-  ],
+  // customLifelist / customLifelistUpdatedAt / lifelistMode / viewerLifelist / viewer are
+  // computed at read time by the trip resolver — intentionally NOT persisted here.
   targetStars: [{ type: String, default: [] }],
   targetNotes: { type: Map, of: String, default: {} },
   shareCode: { type: String, unique: true, sparse: true },
@@ -97,8 +94,6 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
 const TripSchema = new Schema(fields, {
   timestamps: true,
 });
-
-TripSchema.index({ userIds: 1, createdAt: -1 });
 
 const TripModel = (mongoose.models.Trip as Model<Trip>) || model<Trip>("Trip", TripSchema);
 

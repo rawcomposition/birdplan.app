@@ -12,11 +12,8 @@ import { useUser } from "providers/user";
 import Input from "components/Input";
 import ErrorBoundary from "components/ErrorBoundary";
 import useTripLifelist from "hooks/useTripLifelist";
-import ProfileSelect from "components/ProfileSelect";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
-import { useQuery } from "@tanstack/react-query";
-import type { Editor } from "@birdplan/shared";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
 import clsx from "clsx";
@@ -31,7 +28,6 @@ export default function TripTargets() {
   // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
-  const [uid, setUid] = React.useState<string | undefined>();
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
 
@@ -48,17 +44,8 @@ export default function TripTargets() {
     enabled: !!trip,
   });
 
-  // Exclude non-lifers. My targets subtract this trip's effective list (custom or global);
-  // other editors subtract their own global list (from /editors).
-  const { codes: myLifelist } = useTripLifelist(trip);
-  const { data: editors } = useQuery<Editor[]>({
-    queryKey: [`/trips/${trip?._id}/editors`],
-    enabled: !!trip?._id,
-    refetchOnWindowFocus: false,
-  });
-  const myUid = user?.uid;
-  const ownerId = trip?.ownerId;
-  const lifelist = uid === myUid ? myLifelist : editors?.find((it) => it.uid === uid)?.lifelist || [];
+  // Exclude species the group has already collectively seen (region minus the group intersection).
+  const { codes: lifelist } = useTripLifelist(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -81,11 +68,6 @@ export default function TripTargets() {
         })
       : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
   };
-
-  React.useEffect(() => {
-    if (!myUid && !ownerId) return;
-    setUid(myUid || ownerId);
-  }, [myUid, ownerId]);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
@@ -116,9 +98,6 @@ export default function TripTargets() {
           <div className="h-full overflow-auto w-full">
             <div className="h-full grow flex sm:relative flex-col w-full">
               <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <ProfileSelect value={uid} onChange={setUid} editors={editors} />
-                </div>
                 {isLoadingTargets && (
                   <div className="flex items-center flex-col gap-2 my-8">
                     <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
