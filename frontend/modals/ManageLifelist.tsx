@@ -107,7 +107,7 @@ export default function ManageLifelist({ participantId }: Props) {
       <Body className="min-h-0 pb-5">
         {isSelf && trip && <LifelistEditor trip={trip} mode={lifelistMode} />}
 
-        {isSelf && isGroup && (
+        {isSelf && isGroup && !asPath.startsWith(`/${trip?._id}/participants`) && (
           <Link
             href={withReturnTo(`/${trip?._id}/participants`, asPath)}
             onClick={close}
@@ -135,7 +135,7 @@ export default function ManageLifelist({ participantId }: Props) {
           <div className="space-y-3">
             {listSection}
             <p className="text-xs text-gray-500">
-              They can switch to their World list or replace this after they accept the invite.
+              They can change this once they accept the invite.
             </p>
           </div>
         )}

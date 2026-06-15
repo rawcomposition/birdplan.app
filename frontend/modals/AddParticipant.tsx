@@ -87,7 +87,6 @@ export default function AddParticipant() {
                 autoFocus
               />
             </label>
-            <p className="text-xs text-gray-500">After they accept, they can manage their own life list.</p>
           </div>
         ) : (
           <div className="pb-2">
@@ -116,11 +115,7 @@ export default function AddParticipant() {
             footer={tab === "invite" ? "They can change this once they accept the invite." : undefined}
           />
         ) : (
-          <button
-            type="button"
-            onClick={() => setShowAttach(true)}
-            className="mt-1 text-sm font-medium text-sky-600"
-          >
+          <button type="button" onClick={() => setShowAttach(true)} className="mt-1 text-sm font-medium text-sky-600">
             + Attach life list
           </button>
         )}

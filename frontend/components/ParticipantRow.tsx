@@ -8,7 +8,7 @@ import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
-import Icon from "components/Icon";
+import Badge from "components/Badge";
 
 const AVATAR_COLORS = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-cyan-600"];
 
@@ -101,15 +101,11 @@ export default function ParticipantRow({ participant: p, index }: Props) {
           <p className="truncate text-sm font-semibold text-gray-800">
             {label}
             {p.isMe && <span className="ml-1.5 text-xs font-normal text-gray-400">(you)</span>}
-            {p.isOwner && (
-              <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500">
-                Owner
-              </span>
-            )}
+            {p.isOwner && <Badge>Owner</Badge>}
             {isPending && (
-              <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
-                <Icon name="envelope" className="text-[10px]" /> Pending
-              </span>
+              <Badge color="amber" icon="envelope">
+                Pending
+              </Badge>
             )}
           </p>
           <p className="text-xs text-gray-500 tabular-nums">

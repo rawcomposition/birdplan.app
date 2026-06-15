@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Trip } from "@birdplan/shared";
 import LifelistField from "components/LifelistField";
 import { useProfile } from "providers/profile";
+import { useModal } from "providers/modals";
 import useTripLifelist from "hooks/useTripLifelist";
 import useLifelistMode from "hooks/useLifelistMode";
 import { withReturnTo } from "lib/helpers";
@@ -19,6 +20,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
   const { lifelist: globalList } = useProfile();
   const { myLifelist } = useTripLifelist(trip);
   const { asPath } = useRouter();
+  const { close } = useModal();
 
   const { selectedMode, savedMode, selectWorld, selectCustom, handleCustomImport, listMutation } = mode;
 
@@ -41,6 +43,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
       >
         <Link
           href={withReturnTo("/import-lifelist", asPath)}
+          onClick={close}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
         >
           Manage your World life list →
