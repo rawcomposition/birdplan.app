@@ -14,3 +14,22 @@ export function parseLifelistCsv(file: File): Promise<string[]> {
     });
   });
 }
+
+export type LifelistCsvSpecies = { comName: string; sciName: string };
+
+export function lifelistToCsv(species: LifelistCsvSpecies[]): string {
+  const rows = species.map((it, i) => ({
+    "Row #": i + 1,
+    Category: "species",
+    "Common Name": it.comName,
+    "Scientific Name": it.sciName,
+    Count: 1,
+    Location: "",
+    "S/P": "",
+    Date: "",
+    LocID: "",
+    SubID: "",
+    Countable: 1,
+  }));
+  return Papa.unparse(rows);
+}

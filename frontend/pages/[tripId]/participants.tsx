@@ -2,6 +2,8 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
@@ -14,13 +16,39 @@ import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import useTripLifelist from "hooks/useTripLifelist";
 import { getReturnLabel } from "lib/helpers";
+import { lifelistToCsv } from "lib/lifelistCsv";
 
 export default function TripParticipants() {
   const router = useRouter();
   const { trip, is404, canEdit, participants } = useTrip();
   const { open } = useModal();
-  const { isGroup, count } = useTripLifelist(trip);
+  const { isGroup, count, lifelist } = useTripLifelist(trip);
   const linkRef = React.useRef<HTMLInputElement>(null);
+
+  const { data: taxonomy } = useQuery<{ name: string; sciName: string; code: string }[]>({
+    queryKey: ["/taxonomy?sciName=1"],
+    enabled: isGroup,
+  });
+
+  const handleDownload = () => {
+    if (!taxonomy) {
+      toast.error("Taxonomy is still loading, please try again");
+      return;
+    }
+    const byCode = new Map(taxonomy.map((it) => [it.code, it]));
+    const species = lifelist
+      .map((code) => byCode.get(code))
+      .filter((it): it is NonNullable<typeof it> => !!it)
+      .map((it) => ({ comName: it.name, sciName: it.sciName }));
+    const csv = lifelistToCsv(species);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${trip?.name ? `${trip.name}-` : ""}group-life-list.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   const returnTo = typeof router.query.returnTo === "string" ? router.query.returnTo : null;
   const isNew = router.query.new === "1";
@@ -77,13 +105,25 @@ export default function TripParticipants() {
 
           {isGroup && (
             <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3">
-              <p className="text-sm text-gray-700">
-                <span className="font-semibold tabular-nums">Group Life List</span>
-              </p>
-              <p className="mt-1 text-sm text-gray-600">
-                There are <span className="font-semibold tabular-nums">{count.toLocaleString()}</span> species that all
-                participants have seen.
-              </p>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm text-gray-700">
+                    <span className="font-semibold tabular-nums">Group Life List</span>
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    There are <span className="font-semibold tabular-nums">{count.toLocaleString()}</span> species that
+                    all participants have seen.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownload}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-100/70"
+                  title="Download as eBird CSV"
+                >
+                  <Icon name="download" /> Download
+                </button>
+              </div>
             </div>
           )}
 
