@@ -1,5 +1,5 @@
 import { connect, Participant, Profile as ProfileModel } from "lib/db.js";
-import type { Participant as ParticipantT, Profile, ParticipantListMode, TripLifelistMode } from "@birdplan/shared";
+import type { Participant as ParticipantT, Profile, ParticipantListMode } from "@birdplan/shared";
 
 export async function isTripEditor(tripId: string, uid?: string | null): Promise<boolean> {
   if (!uid) return false;
@@ -50,7 +50,7 @@ export function participantEffectiveList(p: LeanParticipant, profilesByUid: Map<
 }
 
 export type ResolvedTripLifelist = {
-  mode: TripLifelistMode;
+  isGroup: boolean;
   groupLifelist: string[] | null;
   groupUpdatedAt: Date | null;
   viewerLifelist: string[] | null;
@@ -69,10 +69,10 @@ export function resolveTripLifelist(
   if (activeParticipants.length <= 1) {
     const only = activeParticipants[0];
     if (!only || (only.uid && only.listMode === "world")) {
-      return { mode: "world", groupLifelist: null, groupUpdatedAt: null, viewerLifelist, viewer };
+      return { isGroup: false, groupLifelist: null, groupUpdatedAt: null, viewerLifelist, viewer };
     }
     return {
-      mode: "customSingle",
+      isGroup: false,
       groupLifelist: participantEffectiveList(only, profilesByUid),
       groupUpdatedAt: only.lifelistUpdatedAt ?? null,
       viewerLifelist,
@@ -85,7 +85,7 @@ export function resolveTripLifelist(
     .filter((list) => list.length > 0);
 
   return {
-    mode: "customShared",
+    isGroup: true,
     groupLifelist: computeIntersection(lists),
     groupUpdatedAt: null,
     viewerLifelist,

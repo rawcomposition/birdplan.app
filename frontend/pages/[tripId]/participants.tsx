@@ -19,7 +19,7 @@ export default function TripParticipants() {
   const router = useRouter();
   const { trip, is404, canEdit, participants } = useTrip();
   const { open } = useModal();
-  const { mode, count } = useTripLifelist(trip);
+  const { isGroup, count } = useTripLifelist(trip);
   const linkRef = React.useRef<HTMLInputElement>(null);
 
   const returnTo = typeof router.query.returnTo === "string" ? router.query.returnTo : null;
@@ -51,9 +51,7 @@ export default function TripParticipants() {
           <h1 className="text-3xl font-bold text-gray-700 mb-2">
             <Icon name="user" className="text-2xl text-lime-600" /> Participants
           </h1>
-          <p className="text-gray-500 mb-8">
-            Manage trip participants and life lists.
-          </p>
+          <p className="text-gray-500 mb-8">Manage trip participants and life lists.</p>
 
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm px-4 sm:px-5 mb-4">
             {participants == null ? (
@@ -63,9 +61,7 @@ export default function TripParticipants() {
             ) : participants.length === 0 ? (
               <p className="py-6 text-sm text-gray-500">No participants yet.</p>
             ) : (
-              participants.map((p, i) => (
-                <ParticipantRow key={p._id} participant={p} index={i} />
-              ))
+              participants.map((p, i) => <ParticipantRow key={p._id} participant={p} index={i} />)
             )}
           </div>
 
@@ -79,12 +75,15 @@ export default function TripParticipants() {
             </button>
           )}
 
-          {mode === "customShared" && (
+          {isGroup && (
             <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3">
               <p className="text-sm text-gray-700">
-                <span className="font-semibold tabular-nums">{count.toLocaleString()} species</span> seen by everyone
+                <span className="font-semibold tabular-nums">Combined Life List</span>
               </p>
-              <p className="mt-1 text-sm text-gray-500">Targets are the species at least one of you still needs.</p>
+              <p className="mt-1 text-sm text-gray-500">
+                There are <span className="font-semibold tabular-nums">{count.toLocaleString()}</span> species that all
+                participants have seen.
+              </p>
             </div>
           )}
 

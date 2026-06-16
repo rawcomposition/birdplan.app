@@ -85,7 +85,10 @@ profile.post("/lifelist/add", async (c) => {
   const { code } = await c.req.json<AddToLifelistInput>();
   if (!code) throw new HTTPException(400, { message: "Missing code" });
 
-  await Profile.updateOne({ uid: session.uid }, { $addToSet: { lifelist: code }, $pull: { exceptions: code } });
+  await Profile.updateOne(
+    { uid: session.uid },
+    { $addToSet: { lifelist: code }, $pull: { exceptions: code }, $set: { lifelistUpdatedAt: new Date() } },
+  );
 
   return c.json({});
 });

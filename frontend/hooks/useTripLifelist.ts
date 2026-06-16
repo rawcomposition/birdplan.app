@@ -1,12 +1,10 @@
-import { Trip, TripLifelistMode } from "@birdplan/shared";
+import { Trip } from "@birdplan/shared";
 import { useProfile } from "providers/profile";
-
-export type { TripLifelistMode };
 
 export type TripLifelist = {
   lifelist: string[];
   myLifelist: string[];
-  mode: TripLifelistMode;
+  isGroup: boolean;
   count: number;
 };
 
@@ -17,12 +15,12 @@ function filterExceptions(list: string[], exceptions?: string[]): string[] {
 }
 
 export default function useTripLifelist(trip?: Trip | null): TripLifelist {
-  const { lifelist: globalLifelist, exceptions } = useProfile();
+  const { lifelist: worldLifelist, exceptions } = useProfile();
 
-  const globalFiltered = filterExceptions(globalLifelist || [], exceptions);
-  const lifelist = trip?.customLifelist ?? globalFiltered;
-  const myLifelist = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? globalFiltered : globalFiltered;
-  const mode = trip?.lifelistMode ?? "world";
+  const worldFiltered = filterExceptions(worldLifelist || [], exceptions);
+  const lifelist = trip?.groupLifelist ?? worldFiltered;
+  const myLifelist = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? worldFiltered : worldFiltered;
+  const isGroup = trip?.isGroupTrip ?? false;
 
-  return { lifelist, myLifelist, mode, count: lifelist.length };
+  return { lifelist, myLifelist, isGroup, count: lifelist.length };
 }

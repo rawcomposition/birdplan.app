@@ -88,7 +88,7 @@ export default function SpeciesDetail() {
     }),
   });
 
-  const globalSeenMutation = useMutation({
+  const worldSeenMutation = useMutation({
     url: `/profile/lifelist/add`,
     method: "POST",
     onSuccess: () => {
@@ -258,7 +258,7 @@ export default function SpeciesDetail() {
     const listLabel = viewerListMode === "custom" ? "your custom list for this trip" : "your life list";
     if (!confirm(`Are you sure you want to add ${speciesName} to ${listLabel}?`)) return;
     if (viewerListMode === "custom") customSeenMutation.mutate({ code: speciesCode });
-    else globalSeenMutation.mutate({ code: speciesCode });
+    else worldSeenMutation.mutate({ code: speciesCode });
   };
 
   const handleHotspotClick = (id: string) => {

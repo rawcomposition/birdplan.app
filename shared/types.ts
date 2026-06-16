@@ -18,9 +18,9 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
-  customLifelist?: string[] | null;
-  customLifelistUpdatedAt?: string | null;
-  lifelistMode?: TripLifelistMode;
+  groupLifelist?: string[] | null;
+  groupLifelistUpdatedAt?: string | null;
+  isGroupTrip?: boolean;
   viewerLifelist?: string[] | null;
   viewer?: { participantId: string; listMode: ParticipantListMode } | null;
 
@@ -103,7 +103,6 @@ export type LifelistImportInput = {
 
 export type ParticipantStatus = "pending" | "active";
 export type ParticipantListMode = "world" | "custom";
-export type TripLifelistMode = "world" | "customSingle" | "customShared";
 
 export type Participant = {
   _id: string;

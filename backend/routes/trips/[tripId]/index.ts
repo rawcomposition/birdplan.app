@@ -60,9 +60,9 @@ trip.get("/", async (c) => {
   const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
   return c.json({
     ...tripData,
-    customLifelist: resolved.groupLifelist,
-    customLifelistUpdatedAt: resolved.groupUpdatedAt,
-    lifelistMode: resolved.mode,
+    groupLifelist: resolved.groupLifelist,
+    groupLifelistUpdatedAt: resolved.groupUpdatedAt,
+    isGroupTrip: resolved.isGroup,
     viewerLifelist: resolved.viewerLifelist,
     viewer: resolved.viewer,
   });

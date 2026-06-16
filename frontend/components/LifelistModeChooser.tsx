@@ -17,7 +17,7 @@ type Props = {
 };
 
 export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
-  const { lifelist: globalList } = useProfile();
+  const { lifelist: worldList } = useProfile();
   const { myLifelist } = useTripLifelist(trip);
   const { asPath } = useRouter();
   const { close } = useModal();
@@ -26,7 +26,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
 
   const hasCustom = savedMode === "custom";
   const customCount = hasCustom ? myLifelist.length : 0;
-  const customUpdatedAt = hasCustom ? trip?.viewer && trip?.customLifelistUpdatedAt : null;
+  const customUpdatedAt = hasCustom ? trip?.viewer && trip?.groupLifelistUpdatedAt : null;
 
   return (
     <div
@@ -39,7 +39,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
         disabled={!canEdit}
         onSelect={selectWorld}
         title="World life list"
-        description={`${(globalList?.length || 0).toLocaleString()} species`}
+        description={`${(worldList?.length || 0).toLocaleString()} species`}
       >
         <Link
           href={withReturnTo("/import-lifelist", asPath)}

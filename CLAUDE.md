@@ -55,9 +55,9 @@ Monorepo with four npm workspaces:
 
 Life lists are the central domain concept. The model:
 
-- **Global**: `Profile.lifelist` (a user's world life list, array of species codes) plus `Profile.exceptions` (codes to subtract).
+- **World**: `Profile.lifelist` (a user's world life list, array of species codes) plus `Profile.exceptions` (codes to subtract).
 - **Per-trip**: a `Participant` roster (`models/Participant.ts`). Each participant has a `listMode` (`world` | `custom`) and an optional per-trip `lifelist`. This replaced the older Invites + intersection-list model.
-- **Resolution**: the trip's effective list is computed server-side in `backend/lib/participants.ts` (`resolveTripLifelist`) — modes are `world`, `customSingle`, or `customShared` (intersection of multiple participants' effective lists). `participantEffectiveList` applies a participant's `listMode` and the profile's `exceptions`. The frontend mirror is `hooks/useTripLifelist.ts`.
+- **Resolution**: computed server-side in `backend/lib/participants.ts` (`resolveTripLifelist`), which returns an `isGroup` boolean plus a `groupLifelist` (for a group trip, the intersection of all participants' effective lists; for a solo trip, that single participant's list) and the viewer's own `viewerLifelist`. These are serialized onto the trip as `isGroupTrip`, `groupLifelist`, and `viewerLifelist`. `participantEffectiveList` applies a participant's `listMode` and the profile's `exceptions`. The frontend mirror is `hooks/useTripLifelist.ts`.
 - **UI**: `components/LifelistEditor.tsx` is the reusable World/Custom editor, embedded on `/[tripId]/lifelist` (create-wizard + invite-accept flows) and in the `ManageLifelist` modal (trip menu + `/participants`).
 
 ## Deployment
