@@ -18,7 +18,7 @@ export default function TripLifelist() {
 
   const from = typeof router.query.from === "string" ? router.query.from : null;
   const doneHref = from === "create" ? `/${trip?._id}/participants?new=1` : `/${trip?._id}`;
-  const doneLabel = from === "create" ? "Continue" : "Done";
+  const doneLabel = from === "create" || from === "accept" ? "Continue" : "Done";
 
   const handleDone = async () => {
     await lifelistMode.save();
