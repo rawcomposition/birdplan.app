@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import {
   authenticate,
+  authenticateOptional,
   tripToGeoJson,
   sanitizeFileName,
   getMonthRange,
@@ -31,7 +32,7 @@ trip.route("/itinerary", itinerary);
 trip.route("/participants", participants);
 
 trip.get("/", async (c) => {
-  const session = await authenticate(c);
+  const session = await authenticateOptional(c);
   const tripId: string | undefined = c.req.param("tripId");
 
   if (!tripId) {

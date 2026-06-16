@@ -24,11 +24,13 @@ export default function TripOptionsDropdown({ className }: Props) {
       onClick: viewer ? () => open("manageLifelist", { participantId: viewer.participantId }) : undefined,
       href: viewer ? undefined : `/${trip?._id}/participants`,
       icon: "feather",
+      hidden: !canEdit,
     },
     {
       name: `Participants${participants ? ` (${participants.length})` : ""}`,
       href: `/${trip?._id}/participants`,
       icon: "user",
+      hidden: !canEdit,
     },
     {
       name: "Trip Settings",
