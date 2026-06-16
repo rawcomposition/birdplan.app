@@ -31,7 +31,7 @@ export default function Accept() {
       if (profile?.lifelist?.length) {
         router.push(dest);
       } else {
-        router.push(withReturnTo("/import-lifelist", dest));
+        router.push(`${withReturnTo("/import-lifelist", dest)}&onboarding=1`);
       }
     },
   });
