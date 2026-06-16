@@ -14,7 +14,7 @@ participants.patch("/:id/accept", async (c) => {
 
   await connect();
   const pending = await Participant.findById(id).lean();
-  if (!pending) throw new HTTPException(404, { message: "Invite not found" });
+  if (!pending) throw new HTTPException(404, { message: "This invite no longer exists." });
 
   const existing = await Participant.findOne({ tripId: pending.tripId, uid: session.uid, status: "active" }).lean();
   if (existing) {

@@ -36,7 +36,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   if (!res.ok) {
     if (res.status === 401) throw new Error("Unauthorized");
     if (res.status === 403) throw new Error("Forbidden");
-    if (res.status === 404) throw new Error("Route not found");
+    if (res.status === 404) throw new Error(json.message && json.message !== "Not Found" ? json.message : "Route not found");
     if (res.status === 405) throw new Error("Method not allowed");
     if (res.status === 504) throw new Error("Operation timed out. Please try again.");
     throw new Error(json.message || "An error occurred");
@@ -64,7 +64,8 @@ export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: s
   if (!res.ok) {
     if (res.status === 401) throw new Error("Unauthorized");
     if (res.status === 403) throw new Error("Forbidden");
-    if (res.status === 404) throw new Error("Route not found");
+    if (res.status === 404)
+      throw new Error(json?.message && json.message !== "Not Found" ? json.message : "Route not found");
     if (res.status === 405) throw new Error("Method not allowed");
     if (res.status === 504) throw new Error("Operation timed out. Please try again.");
     throw new Error((json as any)?.message || (json as any)?.error || "An error occurred");
