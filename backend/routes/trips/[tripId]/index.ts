@@ -58,7 +58,7 @@ trip.get("/", async (c) => {
     ...(resolved.viewer
       ? {
           viewer: resolved.viewer,
-          viewerLifelist: resolved.viewerLifelist,
+          ...(resolved.viewer.listMode === "custom" ? { viewerLifelist: resolved.viewerLifelist } : {}),
           ...(resolved.isGroup ? { groupLifelist: resolved.groupLifelist } : {}),
         }
       : { tripLifelist: resolved.tripLifelist }),
