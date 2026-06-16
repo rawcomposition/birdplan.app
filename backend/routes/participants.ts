@@ -22,13 +22,20 @@ participants.patch("/:id/accept", async (c) => {
     return c.json({ tripId: pending.tripId });
   }
 
+  if (pending.uid && pending.uid !== session.uid) {
+    throw new HTTPException(409, { message: "This invite has already been accepted." });
+  }
+
   const profile = await Profile.findOne({ uid: session.uid }).lean();
   const name = profile?.name || session.name || (await auth?.getUser(session.uid))?.displayName || pending.name;
 
-  await Participant.updateOne(
-    { _id: id },
+  const result = await Participant.updateOne(
+    { _id: id, status: "pending", uid: { $exists: false } },
     { $set: { status: "active", uid: session.uid, name } }
   );
+  if (result.matchedCount === 0) {
+    throw new HTTPException(409, { message: "This invite has already been accepted." });
+  }
 
   return c.json({ tripId: pending.tripId });
 });

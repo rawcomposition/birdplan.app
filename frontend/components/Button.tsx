@@ -46,7 +46,7 @@ export default function Button({
     default: "bg-gray-300 text-gray-700",
     gray: "text-gray-600 bg-gray-100",
     red: "bg-red-600 hover:bg-red-700 text-white",
-    grayOutline: "border border-gray-300 hover:bg-gray-100 transition-colors",
+    grayOutline: "border border-gray-300 hover:bg-gray-100 transition-colors text-gray-600",
     primary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors",
     pillPrimary: "bg-blue-500 text-white hover:bg-blue-600 transition-colors rounded-full",
     pillOutlineGray:
