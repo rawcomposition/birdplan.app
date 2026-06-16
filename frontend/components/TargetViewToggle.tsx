@@ -23,7 +23,7 @@ export default function TargetViewToggle({ trip, compact, align, className }: Pr
       onChange={setView}
       options={[
         { value: "group", label: "Group targets" },
-        { value: "mine", label: "My targets" },
+        { value: "personal", label: "Personal targets" },
       ]}
     />
   );

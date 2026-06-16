@@ -136,7 +136,7 @@ trip.delete("/", async (c) => {
 trip.get("/export", async (c) => {
   const tripId: string | undefined = c.req.param("tripId");
   const uid: string | undefined = c.req.query("uid");
-  const view: string | undefined = c.req.query("view");
+  const targets: string | undefined = c.req.query("targets");
 
   if (!tripId) {
     throw new HTTPException(400, { message: "Trip ID is required" });
@@ -152,7 +152,7 @@ trip.get("/export", async (c) => {
   const profilesByUid = await loadProfilesByUid(roster);
   const resolved = resolveTripLifelist(roster, profilesByUid, uid);
   const lifelist =
-    (view === "mine" ? resolved.viewerLifelist : null) ??
+    (targets === "personal" ? resolved.viewerLifelist : null) ??
     resolved.groupLifelist ??
     resolved.viewerLifelist ??
     (uid ? (await Profile.findOne({ uid }).lean())?.lifelist : null) ??

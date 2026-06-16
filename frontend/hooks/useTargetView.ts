@@ -18,7 +18,7 @@ export default function useTargetView(trip?: Trip | null): UseTargetView {
   const canChoose = isGroup && !!trip?.viewer;
   const view: TargetView = canChoose ? stored ?? "group" : "group";
   const setView = (next: TargetView) => tripId && setStored(tripId, next);
-  const lifelist = view === "mine" ? myLifelist : groupLifelist;
+  const lifelist = view === "personal" ? myLifelist : groupLifelist;
 
   return { view, setView, canChoose, lifelist };
 }

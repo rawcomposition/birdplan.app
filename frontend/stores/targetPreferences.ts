@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export type TargetView = "group" | "mine";
+export type TargetView = "group" | "personal";
 
 type TargetPreferencesState = {
   viewByTrip: Record<string, TargetView>;
