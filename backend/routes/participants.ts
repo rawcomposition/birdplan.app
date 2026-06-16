@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { connect, Participant } from "lib/db.js";
+import { connect, Participant, Profile } from "lib/db.js";
+import { auth } from "lib/firebaseAdmin.js";
 import { authenticate } from "../lib/utils.js";
 
 const participants = new Hono();
@@ -21,9 +22,12 @@ participants.patch("/:id/accept", async (c) => {
     return c.json({ tripId: pending.tripId });
   }
 
+  const profile = await Profile.findOne({ uid: session.uid }).lean();
+  const name = profile?.name || session.name || (await auth?.getUser(session.uid))?.displayName || pending.name;
+
   await Participant.updateOne(
     { _id: id },
-    { $set: { status: "active", uid: session.uid, name: session.name } }
+    { $set: { status: "active", uid: session.uid, name } }
   );
 
   return c.json({ tripId: pending.tripId });
