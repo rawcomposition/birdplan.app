@@ -1,5 +1,5 @@
 import { toast } from "react-hot-toast";
-import { auth } from "lib/firebase";
+import { auth, authReady } from "lib/firebase";
 
 type Params = {
   [key: string]: string | number | boolean;
@@ -19,6 +19,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   }
 
   if (showLoading) toast.loading("Loading...", { id: url });
+  await authReady;
   const token = await auth?.currentUser?.getIdToken();
   const res = await fetch(urlWithParams, {
     method: "GET",
@@ -45,6 +46,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 };
 
 export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
+  await authReady;
   const token = await auth?.currentUser?.getIdToken();
   const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
   const res = await fetch(fullUrl, {

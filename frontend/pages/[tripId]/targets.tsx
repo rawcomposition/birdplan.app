@@ -11,7 +11,8 @@ import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import Input from "components/Input";
 import ErrorBoundary from "components/ErrorBoundary";
-import useTripLifelist from "hooks/useTripLifelist";
+import useTargetView from "hooks/useTargetView";
+import TargetViewToggle from "components/TargetViewToggle";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -44,7 +45,7 @@ export default function TripTargets() {
     enabled: !!trip,
   });
 
-  const { lifelist } = useTripLifelist(trip);
+  const { lifelist } = useTargetView(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -112,8 +113,8 @@ export default function TripTargets() {
                   </div>
                 )}
                 {!!targetSpecies?.length && (
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 flex-wrap">
-                    <div className="relative flex-1 min-w-[180px] max-w-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="relative w-full sm:flex-1 sm:max-w-sm">
                       <Icon
                         name="search"
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
@@ -126,23 +127,26 @@ export default function TripTargets() {
                         className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-sm outline-blue-500 outline-offset-0 focus:border-slate-400"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowStarred(!showStarred)}
-                      aria-pressed={showStarred}
-                      className={clsx(
-                        "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
-                        showStarred
-                          ? "border-yellow-300 bg-yellow-50 text-yellow-800"
-                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                      )}
-                    >
-                      <Icon
-                        name={showStarred ? "star" : "starOutline"}
-                        className={showStarred ? "text-yellow-500" : "text-gray-400"}
-                      />
-                      Starred
-                    </button>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowStarred(!showStarred)}
+                        aria-pressed={showStarred}
+                        className={clsx(
+                          "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                          showStarred
+                            ? "border-yellow-300 bg-yellow-50 text-yellow-800"
+                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        )}
+                      >
+                        <Icon
+                          name={showStarred ? "star" : "starOutline"}
+                          className={showStarred ? "text-yellow-500" : "text-gray-400"}
+                        />
+                        Starred
+                      </button>
+                      <TargetViewToggle trip={trip} align="left" />
+                    </div>
                     <div className="ml-auto text-xs text-gray-500 hidden sm:block tabular-nums">
                       {filteredTargets?.length} species
                     </div>

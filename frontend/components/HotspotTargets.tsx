@@ -2,8 +2,9 @@ import React from "react";
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
 import HotspotTargetRow from "components/HotspotTargetRow";
-import FilterTabs from "components/FilterTabs";
-import useTripLifelist from "hooks/useTripLifelist";
+import SelectDropdown from "components/SelectDropdown";
+import useTargetView from "hooks/useTargetView";
+import TargetViewToggle from "components/TargetViewToggle";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
@@ -18,7 +19,7 @@ type Props = {
 export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
   const [view, setView] = React.useState<string>("all");
   const { trip, dateRangeLabel } = useTrip();
-  const { lifelist } = useTripLifelist(trip);
+  const { lifelist } = useTargetView(trip);
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
 
   const isSaved = !!trip?.hotspots.find((it) => it.id === hotspotId);
@@ -63,15 +64,19 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
   return (
     <>
       {!!data?.items?.length && (
-        <FilterTabs
-          className="my-4"
-          value={view}
-          onChange={setView}
-          options={[
-            { label: "All Year", value: "all" },
-            { label: dateRangeLabel, value: "obs" },
-          ]}
-        />
+        <div className="my-4 flex items-center gap-2">
+          <SelectDropdown
+            compact
+            align="left"
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "all", label: "All Year" },
+              { value: "obs", label: dateRangeLabel },
+            ]}
+          />
+          <TargetViewToggle trip={trip} compact align="left" />
+        </div>
       )}
       {!sortedItems?.length && (
         <Alert style="info" className="-mx-1 my-1">

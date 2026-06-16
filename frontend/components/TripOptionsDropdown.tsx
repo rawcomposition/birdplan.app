@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
+import useTargetView from "hooks/useTargetView";
 import Icon from "components/Icon";
 
 type Props = {
@@ -14,6 +15,7 @@ export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
   const { uid } = useProfile();
   const { trip, canEdit, participants } = useTrip();
+  const { view } = useTargetView(trip);
 
   const viewer = trip?.viewer;
   const viewerMode = viewer?.listMode === "custom" ? "Custom" : "World";
@@ -40,7 +42,7 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Export KML",
-      href: `${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/export?uid=${uid}`,
+      href: `${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/export?uid=${uid}&view=${view}`,
       icon: "export",
     },
     {

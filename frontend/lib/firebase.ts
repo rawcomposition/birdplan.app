@@ -1,5 +1,5 @@
 import { initializeApp, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
+import { getAuth, onAuthStateChanged, Auth } from "firebase/auth";
 
 const hasFirebaseConfig = !!(
   process.env.NEXT_PUBLIC_FIREBASE_KEY &&
@@ -9,6 +9,7 @@ const hasFirebaseConfig = !!(
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let authReady: Promise<void> = Promise.resolve();
 
 if (hasFirebaseConfig) {
   const firebaseConfig = {
@@ -22,6 +23,12 @@ if (hasFirebaseConfig) {
 
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  authReady = new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth!, () => {
+      unsubscribe();
+      resolve();
+    });
+  });
 }
 
-export { auth };
+export { auth, authReady };
