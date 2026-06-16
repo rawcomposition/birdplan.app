@@ -1,10 +1,26 @@
-import { connect, Participant } from "lib/db.js";
+import { connect, Participant, Profile as ProfileModel } from "lib/db.js";
 import type { Participant as ParticipantT, Profile, ParticipantListMode, TripLifelistMode } from "@birdplan/shared";
 
 export async function isTripEditor(tripId: string, uid?: string | null): Promise<boolean> {
   if (!uid) return false;
   await connect();
   return !!(await Participant.exists({ tripId, uid, status: "active" }));
+}
+
+export function isEditorInRoster(roster: Pick<ParticipantT, "uid" | "status">[], uid?: string | null): boolean {
+  if (!uid) return false;
+  return roster.some((p) => p.uid === uid && p.status === "active");
+}
+
+export async function loadActiveRoster(tripId: string): Promise<ParticipantT[]> {
+  await connect();
+  return (await Participant.find({ tripId, status: "active" }).lean()) as unknown as ParticipantT[];
+}
+
+export async function loadProfilesByUid(roster: Pick<ParticipantT, "uid">[]): Promise<Map<string, Profile>> {
+  const uids = roster.map((p) => p.uid).filter((u): u is string => !!u);
+  const profiles = uids.length ? await ProfileModel.find({ uid: { $in: uids } }).lean() : [];
+  return new Map(profiles.map((p) => [p.uid, p as unknown as Profile] as const));
 }
 
 export function computeIntersection(lists: string[][]): string[] {

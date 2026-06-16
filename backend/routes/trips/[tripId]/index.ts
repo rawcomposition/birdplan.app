@@ -10,7 +10,7 @@ import {
   getBounds,
 } from "lib/utils.js";
 import { connect, Trip, Invite, Participant, Profile, TripShareToken } from "lib/db.js";
-import { isTripEditor, resolveTripLifelist } from "lib/participants.js";
+import { isTripEditor, isEditorInRoster, loadActiveRoster, loadProfilesByUid, resolveTripLifelist } from "lib/participants.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, OpenBirdingLocationResponse } from "@birdplan/shared";
@@ -25,11 +25,9 @@ import tokml from "@maphubs/tokml";
 const trip = new Hono();
 
 async function resolveTrip(tripId: string, viewerUid?: string | null) {
-  const roster = await Participant.find({ tripId, status: "active" }).lean();
-  const uids = roster.map((p) => p.uid).filter((u): u is string => !!u);
-  const profiles = uids.length ? await Profile.find({ uid: { $in: uids } }).lean() : [];
-  const profilesByUid = new Map(profiles.map((p) => [p.uid, p]));
-  return resolveTripLifelist(roster as any, profilesByUid as any, viewerUid);
+  const roster = await loadActiveRoster(tripId);
+  const profilesByUid = await loadProfilesByUid(roster);
+  return resolveTripLifelist(roster, profilesByUid, viewerUid);
 }
 
 trip.route("/targets", targetStars);
@@ -51,11 +49,14 @@ trip.get("/", async (c) => {
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
-  if (!trip.isPublic && !(await isTripEditor(tripId, session?.uid))) {
+
+  const roster = await loadActiveRoster(tripId);
+  if (!trip.isPublic && !isEditorInRoster(roster, session?.uid)) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
-  const resolved = await resolveTrip(tripId, session?.uid);
+  const profilesByUid = await loadProfilesByUid(roster);
+  const resolved = resolveTripLifelist(roster, profilesByUid, session?.uid);
   const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
   return c.json({
     ...tripData,

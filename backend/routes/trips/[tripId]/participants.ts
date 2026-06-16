@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip, Participant, Profile } from "lib/db.js";
-import { isTripEditor, participantEffectiveList } from "lib/participants.js";
+import { isTripEditor, isEditorInRoster, participantEffectiveList } from "lib/participants.js";
 import { sciNamesToCodes } from "lib/taxonomy.js";
 import { sendInviteEmail } from "lib/email.js";
 import type {
@@ -25,10 +25,10 @@ participants.get("/", async (c) => {
   const trip = await Trip.findById(tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
 
-  const isEditor = await isTripEditor(tripId, session?.uid);
+  const roster = await Participant.find({ tripId }).sort({ createdAt: 1 }).lean();
+  const isEditor = isEditorInRoster(roster, session?.uid);
   if (!trip.isPublic && !isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
-  const roster = await Participant.find({ tripId }).sort({ createdAt: 1 }).lean();
   const uids = roster.map((p) => p.uid).filter((u): u is string => !!u);
   const profiles = uids.length ? await Profile.find({ uid: { $in: uids } }).lean() : [];
   const profilesByUid = new Map(profiles.map((p) => [p.uid, p]));
