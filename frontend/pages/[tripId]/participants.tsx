@@ -78,9 +78,9 @@ export default function TripParticipants() {
           {isGroup && (
             <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3">
               <p className="text-sm text-gray-700">
-                <span className="font-semibold tabular-nums">Combined Life List</span>
+                <span className="font-semibold tabular-nums">Group Life List</span>
               </p>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-600">
                 There are <span className="font-semibold tabular-nums">{count.toLocaleString()}</span> species that all
                 participants have seen.
               </p>

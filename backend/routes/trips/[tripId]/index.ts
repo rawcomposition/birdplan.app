@@ -24,12 +24,6 @@ import tokml from "@maphubs/tokml";
 
 const trip = new Hono();
 
-async function resolveTrip(tripId: string, viewerUid?: string | null) {
-  const roster = await loadActiveRoster(tripId);
-  const profilesByUid = await loadProfilesByUid(roster);
-  return resolveTripLifelist(roster, profilesByUid, viewerUid);
-}
-
 trip.route("/targets", targetStars);
 trip.route("/markers", markers);
 trip.route("/hotspots", hotspots);
@@ -45,12 +39,11 @@ trip.get("/", async (c) => {
   }
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, roster] = await Promise.all([Trip.findById(tripId).lean(), loadActiveRoster(tripId)]);
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
 
-  const roster = await loadActiveRoster(tripId);
   if (!trip.isPublic && !isEditorInRoster(roster, session?.uid)) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
@@ -148,15 +141,19 @@ trip.get("/export", async (c) => {
   }
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, roster] = await Promise.all([Trip.findById(tripId).lean(), loadActiveRoster(tripId)]);
 
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
 
-  const profile = await Profile.findOne({ uid }).lean();
-  const resolved = await resolveTrip(tripId, uid);
-  const lifelist = resolved.groupLifelist ?? resolved.viewerLifelist ?? profile?.lifelist ?? [];
+  const profilesByUid = await loadProfilesByUid(roster);
+  const resolved = resolveTripLifelist(roster, profilesByUid, uid);
+  const lifelist =
+    resolved.groupLifelist ??
+    resolved.viewerLifelist ??
+    (uid ? (await Profile.findOne({ uid }).lean())?.lifelist : null) ??
+    [];
   const months = getMonthRange(trip.startMonth, trip.endMonth);
 
   // Fetch targets from OpenBirding for each saved hotspot
