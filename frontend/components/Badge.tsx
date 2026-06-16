@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
+import { IconNameT } from "lib/icons";
 
 const COLORS = {
   gray: "bg-gray-100 text-gray-500",
@@ -9,7 +10,7 @@ const COLORS = {
 
 type Props = {
   color?: keyof typeof COLORS;
-  icon?: string;
+  icon?: IconNameT;
   children: React.ReactNode;
 };
 
