@@ -26,7 +26,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
 
   const hasCustom = savedMode === "custom";
   const customCount = hasCustom ? myLifelist.length : 0;
-  const customUpdatedAt = hasCustom ? trip?.viewer && trip?.groupLifelistUpdatedAt : null;
+  const customUpdatedAt = hasCustom ? trip?.viewer?.listUpdatedAt : null;
 
   return (
     <div

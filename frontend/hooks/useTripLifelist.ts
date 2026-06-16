@@ -18,7 +18,7 @@ export default function useTripLifelist(trip?: Trip | null): TripLifelist {
   const { lifelist: worldLifelist, exceptions } = useProfile();
 
   const worldFiltered = filterExceptions(worldLifelist || [], exceptions);
-  const lifelist = trip?.groupLifelist ?? worldFiltered;
+  const lifelist = trip?.groupLifelist ?? trip?.tripLifelist ?? trip?.viewerLifelist ?? worldFiltered;
   const myLifelist = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? worldFiltered : worldFiltered;
   const isGroup = trip?.isGroupTrip ?? false;
 

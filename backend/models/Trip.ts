@@ -5,7 +5,7 @@ import { nanoId } from "lib/utils.js";
 const fields: Record<
   keyof Omit<
     Trip,
-    "createdAt" | "updatedAt" | "groupLifelist" | "groupLifelistUpdatedAt" | "isGroupTrip" | "viewerLifelist" | "viewer"
+    "createdAt" | "updatedAt" | "groupLifelist" | "tripLifelist" | "isGroupTrip" | "viewerLifelist" | "viewer"
   >,
   any
 > = {

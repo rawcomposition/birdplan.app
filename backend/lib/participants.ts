@@ -52,9 +52,9 @@ export function participantEffectiveList(p: LeanParticipant, profilesByUid: Map<
 export type ResolvedTripLifelist = {
   isGroup: boolean;
   groupLifelist: string[] | null;
-  groupUpdatedAt: Date | null;
+  tripLifelist: string[] | null;
   viewerLifelist: string[] | null;
-  viewer: { participantId: string; listMode: ParticipantListMode } | null;
+  viewer: { participantId: string; listMode: ParticipantListMode; listUpdatedAt: Date | null } | null;
 };
 
 export function resolveTripLifelist(
@@ -63,31 +63,27 @@ export function resolveTripLifelist(
   viewerUid?: string | null
 ): ResolvedTripLifelist {
   const viewerP = viewerUid ? activeParticipants.find((p) => p.uid === viewerUid) : null;
-  const viewer = viewerP ? { participantId: viewerP._id, listMode: viewerP.listMode } : null;
+  const viewer = viewerP
+    ? { participantId: viewerP._id, listMode: viewerP.listMode, listUpdatedAt: viewerP.lifelistUpdatedAt ?? null }
+    : null;
   const viewerLifelist = viewerP ? participantEffectiveList(viewerP, profilesByUid) : null;
+  const isPublicViewer = !viewerP;
 
   if (activeParticipants.length <= 1) {
-    const only = activeParticipants[0];
-    if (!only || (only.uid && only.listMode === "world")) {
-      return { isGroup: false, groupLifelist: null, groupUpdatedAt: null, viewerLifelist, viewer };
-    }
-    return {
-      isGroup: false,
-      groupLifelist: participantEffectiveList(only, profilesByUid),
-      groupUpdatedAt: only.lifelistUpdatedAt ?? null,
-      viewerLifelist,
-      viewer,
-    };
+    const owner = activeParticipants[0];
+    const tripLifelist = isPublicViewer && owner ? participantEffectiveList(owner, profilesByUid) : null;
+    return { isGroup: false, groupLifelist: null, tripLifelist, viewerLifelist, viewer };
   }
 
   const lists = activeParticipants
     .map((p) => participantEffectiveList(p, profilesByUid))
     .filter((list) => list.length > 0);
+  const groupLifelist = computeIntersection(lists);
 
   return {
     isGroup: true,
-    groupLifelist: computeIntersection(lists),
-    groupUpdatedAt: null,
+    groupLifelist,
+    tripLifelist: isPublicViewer ? groupLifelist : null,
     viewerLifelist,
     viewer,
   };

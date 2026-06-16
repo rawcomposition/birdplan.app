@@ -53,7 +53,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { isGroup, count: lifelistCount } = useTripLifelist(trip);
-  const lifelistLabel = isGroup ? "Shared" : trip?.groupLifelist ? "Custom" : "World life list";
+  const lifelistLabel = isGroup ? "Shared" : trip?.viewer?.listMode === "custom" ? "Custom" : "World life list";
   const [startMonth, setStartMonth] = React.useState<Option>({
     value: trip.startMonth.toString(),
     label: months[trip.startMonth - 1],

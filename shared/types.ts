@@ -19,10 +19,10 @@ export type Trip = {
   endMonth: number;
   imgUrl: string | null;
   groupLifelist?: string[] | null;
-  groupLifelistUpdatedAt?: string | null;
+  tripLifelist?: string[] | null;
   isGroupTrip?: boolean;
   viewerLifelist?: string[] | null;
-  viewer?: { participantId: string; listMode: ParticipantListMode } | null;
+  viewer?: { participantId: string; listMode: ParticipantListMode; listUpdatedAt?: string | null } | null;
 
   targetStars?: string[];
   targetNotes?: {

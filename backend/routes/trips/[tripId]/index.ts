@@ -54,11 +54,14 @@ trip.get("/", async (c) => {
   const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
   return c.json({
     ...tripData,
-    groupLifelist: resolved.groupLifelist,
-    groupLifelistUpdatedAt: resolved.groupUpdatedAt,
     isGroupTrip: resolved.isGroup,
-    viewerLifelist: resolved.viewerLifelist,
-    viewer: resolved.viewer,
+    ...(resolved.viewer
+      ? {
+          viewer: resolved.viewer,
+          viewerLifelist: resolved.viewerLifelist,
+          ...(resolved.isGroup ? { groupLifelist: resolved.groupLifelist } : {}),
+        }
+      : { tripLifelist: resolved.tripLifelist }),
   });
 });
 
@@ -154,6 +157,7 @@ trip.get("/export", async (c) => {
   const lifelist =
     (targets === "personal" ? resolved.viewerLifelist : null) ??
     resolved.groupLifelist ??
+    resolved.tripLifelist ??
     resolved.viewerLifelist ??
     (uid ? (await Profile.findOne({ uid }).lean())?.lifelist : null) ??
     [];
