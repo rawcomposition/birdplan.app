@@ -119,7 +119,7 @@ export default function ImportLifelist() {
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-lg font-medium text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
-              <EbirdDownloadLink className="shrink-0" />
+              <EbirdDownloadLink className="shrink-0" world />
             </div>
             <LifelistUpload
               onImport={(sciNames) => importMutation.mutate({ sciNames })}
