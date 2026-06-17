@@ -17,10 +17,7 @@ type Props = {
 export default function Badge({ color = "gray", icon, children }: Props) {
   return (
     <span
-      className={clsx(
-        "ml-2 inline-flex items-center gap-1 rounded-full px-2 py-px text-[11px] font-medium",
-        COLORS[color]
-      )}
+      className={clsx("ml-2 inline-flex items-center gap-1 rounded-full px-2 text-[11px] font-medium", COLORS[color])}
     >
       {icon && <Icon name={icon} className="text-[10px]" />}
       {children}
