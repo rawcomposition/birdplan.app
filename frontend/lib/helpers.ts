@@ -190,6 +190,13 @@ export function withReturnTo(path: string, returnTo?: string): string {
   return returnTo ? `${path}?returnTo=${encodeURIComponent(returnTo)}` : path;
 }
 
+export function withQueryParams(path: string, params: Record<string, string | undefined>): string {
+  const pairs = Object.entries(params).filter(([, value]) => value);
+  if (!pairs.length) return path;
+  const query = pairs.map(([key, value]) => `${key}=${encodeURIComponent(value as string)}`).join("&");
+  return `${path}${path.includes("?") ? "&" : "?"}${query}`;
+}
+
 export function getForwardReturnTo(router: NextRouter): string | undefined {
   const { returnTo } = router.query;
   if (typeof returnTo === "string" && returnTo.startsWith("/") && !returnTo.startsWith("//")) {

@@ -1,18 +1,19 @@
 import React from "react";
-import Header from "components/Header";
-import Head from "next/head";
-import LoginModal from "components/LoginModal";
-import Alert from "components/Alert";
+import UtilityPage from "components/UtilityPage";
+import LoginForm from "components/LoginForm";
+import SignupForm from "components/SignupForm";
+import AcceptError from "components/AcceptError";
 import Button from "components/Button";
+import Icon from "components/Icon";
 import { useUser } from "providers/user";
 import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Profile } from "@birdplan/shared";
+import { Profile, InviteInfo } from "@birdplan/shared";
 import useMutation from "hooks/useMutation";
 import { withReturnTo } from "lib/helpers";
 
 export default function Accept() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { inviteId } = router.query;
@@ -22,6 +23,18 @@ export default function Accept() {
   const { isSuccess: profileLoaded } = useQuery<Profile>({
     queryKey: ["/profile"],
     enabled: !!uid,
+  });
+
+  const {
+    data: invite,
+    isError: inviteIsError,
+    error: inviteError,
+    refetch: refetchInvite,
+    isFetching: inviteFetching,
+  } = useQuery<InviteInfo>({
+    queryKey: [`/participants/${inviteId}/invite`],
+    enabled: !!inviteId && !uid,
+    retry: false,
   });
 
   const acceptMutation = useMutation({
@@ -47,34 +60,65 @@ export default function Accept() {
 
   const retry = () => acceptMutation.mutate({});
 
-  return (
-    <div className="flex flex-col h-full">
-      <Head>
-        <title>Accept Invite | BirdPlan.app</title>
-      </Head>
+  const method = invite?.method;
+  const inviteLoading = !invite && !inviteIsError;
 
-      <Header />
-      <main className="flex items-center justify-center h-full p-4">
-        {uid && acceptMutation.isError ? (
-          <div className="flex flex-col items-center gap-6 max-w-xs w-full">
-            <h2 className="text-xl font-bold text-gray-700">Error accepting invite</h2>
-            <Alert style="error" className="w-full justify-center text-center">
-              {acceptMutation.error?.message || "We couldn't accept this invite."}
-            </Alert>
-            <div className="flex items-center gap-2">
-              <Button color="grayOutline" onClick={retry} disabled={acceptMutation.isPending}>
-                {acceptMutation.isPending ? "Trying again..." : "Try again"}
-              </Button>
-              <Button color="primary" href="/trips">
-                Go to my trips
-              </Button>
-            </div>
-          </div>
+  const heading = invite ? (
+    <>
+      <p className="text-base font-normal text-gray-500">
+        {invite.inviterName ? `${invite.inviterName} invited you to join` : "You've been invited to join"}
+      </p>
+      <h2 className="mt-1 text-2xl font-extrabold text-gray-900">{invite.tripName}</h2>
+    </>
+  ) : (
+    "Accept Invite"
+  );
+
+  return (
+    <UtilityPage heading={heading} title="Accept Invite">
+      {loading || (!uid && inviteLoading) ? (
+        <div className="text-center">
+          <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+        </div>
+      ) : !uid && inviteIsError ? (
+        <AcceptError
+          title="Error accepting invite"
+          message={inviteError?.message || "This invite is no longer valid."}
+          onRetry={() => refetchInvite()}
+          retrying={inviteFetching}
+        >
+          <Button color="primary" href="/">
+            Go to homepage
+          </Button>
+        </AcceptError>
+      ) : !uid && invite && invite.status !== "pending" ? (
+        <AcceptError title="Error accepting invite" message="This invite has already been accepted.">
+          <Button color="primary" href="/">
+            Go to homepage
+          </Button>
+        </AcceptError>
+      ) : !uid ? (
+        method === "login" ? (
+          <LoginForm email={invite?.email} />
         ) : (
-          uid && <span className="text-2xl text-gray-600">One moment...</span>
-        )}
-      </main>
-      <LoginModal />
-    </div>
+          <SignupForm email={invite?.email} />
+        )
+      ) : acceptMutation.isError ? (
+        <AcceptError
+          title="Error accepting invite"
+          message={acceptMutation.error?.message || "We couldn't accept this invite."}
+          onRetry={retry}
+          retrying={acceptMutation.isPending}
+        >
+          <Button color="primary" href="/trips">
+            Go to my trips
+          </Button>
+        </AcceptError>
+      ) : (
+        <div className="flex items-center justify-center gap-2 py-6 text-gray-600">
+          <Icon name="loading" className="animate-spin" /> One moment...
+        </div>
+      )}
+    </UtilityPage>
   );
 }

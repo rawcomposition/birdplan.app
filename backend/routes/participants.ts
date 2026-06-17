@@ -1,10 +1,35 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { connect, Participant, Profile } from "lib/db.js";
+import { connect, Participant, Profile, Trip } from "lib/db.js";
 import { auth } from "lib/firebaseAdmin.js";
 import { authenticate } from "../lib/utils.js";
+import type { InviteInfo } from "@birdplan/shared";
 
 const participants = new Hono();
+
+participants.get("/:id/invite", async (c) => {
+  const id: string = c.req.param("id");
+
+  await connect();
+  const invite = await Participant.findById(id).lean();
+  if (!invite) throw new HTTPException(404, { message: "This invite no longer exists." });
+
+  const trip = await Trip.findById(invite.tripId).lean();
+  if (!trip) throw new HTTPException(404, { message: "This invite no longer exists." });
+
+  const accountExists = invite.email ? await Profile.exists({ email: invite.email }) : false;
+
+  const info: InviteInfo = {
+    tripId: invite.tripId,
+    tripName: trip.name,
+    inviterName: trip.ownerName,
+    email: invite.status === "pending" ? invite.email : undefined,
+    method: accountExists ? "login" : "signup",
+    status: invite.status,
+  };
+
+  return c.json(info);
+});
 
 participants.patch("/:id/accept", async (c) => {
   const session = await authenticate(c);

@@ -30,7 +30,8 @@ account.delete("/", async (c) => {
 
 account.post("/update-email", async (c) => {
   const session = await authenticate(c);
-  const { email } = await c.req.json<{ email: string }>();
+  const { email: rawEmail } = await c.req.json<{ email: string }>();
+  const email = rawEmail?.trim().toLowerCase();
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
   const user = await firebaseAuth?.getUser(session.uid);

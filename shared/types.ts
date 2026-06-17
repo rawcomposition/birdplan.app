@@ -132,6 +132,15 @@ export type ParticipantView = {
   hasList: boolean;
 };
 
+export type InviteInfo = {
+  tripId: string;
+  tripName: string;
+  inviterName?: string;
+  email?: string;
+  method: "login" | "signup";
+  status: ParticipantStatus;
+};
+
 export type AddParticipantInput =
   | { type: "invite"; email: string; upgradeId?: string; sciNames?: string[] }
   | { type: "named"; name: string; sciNames?: string[] };

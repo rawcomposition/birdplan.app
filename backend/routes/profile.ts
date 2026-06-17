@@ -22,7 +22,11 @@ profile.get("/", async (c) => {
     if (!user) {
       throw new HTTPException(400, { message: "User not found" });
     }
-    const newProfile = await Profile.create({ uid: session.uid, name: user.displayName, email: user.email });
+    const newProfile = await Profile.create({
+      uid: session.uid,
+      name: user.displayName,
+      email: user.email?.toLowerCase(),
+    });
     profile = newProfile.toObject();
   }
 

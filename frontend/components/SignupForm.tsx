@@ -1,12 +1,13 @@
 import React from "react";
 import { useUser } from "providers/user";
 import useGoogleLogin from "hooks/useGoogleLogin";
-import useEmailLogin from "hooks/useEmailLogin";
+import useEmailSignup from "hooks/useEmailSignup";
 import Input from "components/Input";
 import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 import { getForwardReturnTo, withQueryParams, withReturnTo } from "lib/helpers";
 
 type Props = {
@@ -14,51 +15,53 @@ type Props = {
   email?: string;
 };
 
-export default function LoginForm({ message, email }: Props) {
+export default function SignupForm({ message, email }: Props) {
   const router = useRouter();
-  const [emailLoginLoading, setEmailLoginLoading] = React.useState(false);
+  const { signup: emailSignup, loading: emailSignupLoading } = useEmailSignup();
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
-  const { login: emailLogin } = useEmailLogin();
   const { loading: userLoading } = useUser();
 
-  const signupHref = withQueryParams(withReturnTo("/signup", getForwardReturnTo(router)), { email });
+  const loginHref = withQueryParams(withReturnTo("/login", getForwardReturnTo(router)), { email });
 
-  const isLoading = userLoading || googleLoading || emailLoginLoading;
+  const isLoading = userLoading || emailSignupLoading || googleLoading;
 
-  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setEmailLoginLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
     const emailValue = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
-    await emailLogin(emailValue, password);
-    setEmailLoginLoading(false);
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    await emailSignup(name, emailValue, password);
   };
 
   return (
     <>
-      <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Welcome back</h2>
+      <h2 className="text-lg text-center font-bold text-gray-600 mb-1">Let&apos;s get started</h2>
       {message ? (
         <p className="text-sm text-gray-500 text-center mb-6">{message}</p>
       ) : (
-        <p className="text-sm text-gray-500 text-center mb-6">Sign in to your account to continue</p>
+        <p className="text-sm text-gray-500 text-center mb-6">Create an account to start planning</p>
       )}
-      <form onSubmit={handleEmailLogin} className="space-y-4">
+      <form onSubmit={handleFormSubmit} className="space-y-4">
         <div>
-          <Input key={email} type="email" name="email" placeholder="Email" required autoFocus={!email} defaultValue={email} />
+          <Input type="text" name="name" placeholder="Name" required autoFocus />
         </div>
         <div>
-          <Input type="password" name="password" placeholder="Password" required autoFocus={!!email} />
-          <div className="text-right mt-1">
-            <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
-              Forgot password?
-            </Link>
-          </div>
+          <Input key={email} type="email" name="email" placeholder="Email" required defaultValue={email} />
+        </div>
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <Input type="password" name="password" placeholder="Password" required />
+          <Input type="password" name="confirmPassword" placeholder="Confirm Password" required />
         </div>
         <Button type="submit" color="primary" className="w-full" disabled={isLoading}>
-          Sign In
+          Sign Up
         </Button>
       </form>
       <div className="relative my-6">
@@ -77,14 +80,14 @@ export default function LoginForm({ message, email }: Props) {
           disabled={isLoading}
         >
           <GoogleIcon className="text-lg" />
-          Sign In with Google
+          {googleLoading ? "Processing..." : "Sign Up with Google"}
         </Button>
       </div>
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
-          Don&apos;t have an account?{" "}
-          <Link href={signupHref} className="font-medium text-blue-600 hover:text-blue-500">
-            Sign up
+          Already have an account?{" "}
+          <Link href={loginHref} className="font-medium text-blue-600 hover:text-blue-500">
+            Sign in
           </Link>
         </p>
       </div>
