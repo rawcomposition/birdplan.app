@@ -14,6 +14,7 @@ import Icon from "components/Icon";
 import Alert from "components/Alert";
 import MapBox from "components/Mapbox";
 import SpeciesCard from "components/SpeciesCard";
+import Card from "components/Card";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
@@ -344,7 +345,7 @@ export default function SpeciesDetail() {
               onShowMap={handleShowMap}
             />
 
-            <div className="mt-4 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm focus-within:outline focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
+            <Card className="mt-4 px-4 py-3 focus-within:outline focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
               <label
                 htmlFor="species-notes"
                 className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500"
@@ -362,7 +363,7 @@ export default function SpeciesDetail() {
                 maxRows={10}
                 className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-none"
               />
-            </div>
+            </Card>
 
             <div className="mt-8 flex flex-col gap-4">
               <SpeciesHotspotToolbar

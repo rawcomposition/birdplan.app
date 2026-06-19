@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Header from "components/Header";
 import Head from "next/head";
 import Button from "components/Button";
+import Card from "components/Card";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
@@ -100,7 +101,7 @@ export default function ImportLifelist() {
           </h1>
 
           {hasList && (
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+            <Card className="p-5 mb-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>
@@ -113,10 +114,10 @@ export default function ImportLifelist() {
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
           )}
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+          <Card className="p-5 mb-6">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-lg font-medium text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
               <EbirdDownloadLink className="shrink-0" world />
@@ -126,9 +127,9 @@ export default function ImportLifelist() {
               isPending={importMutation.isPending}
               buttonLabel={hasList ? "Choose a new CSV file" : "Choose a CSV file"}
             />
-          </div>
+          </Card>
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+          <Card className="p-5 mb-6">
             <h3 className="text-lg font-medium mb-1 text-gray-700">Exceptions</h3>
             <p className="text-sm text-gray-600 mb-3">
               Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies
@@ -165,7 +166,7 @@ export default function ImportLifelist() {
                 }}
               />
             )}
-          </div>
+          </Card>
 
           <div className="flex">
             <Button

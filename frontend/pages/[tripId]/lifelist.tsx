@@ -5,6 +5,7 @@ import Header from "components/Header";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import Button from "components/Button";
+import Card from "components/Card";
 import NotFound from "components/NotFound";
 import LoginModal from "components/LoginModal";
 import LifelistEditor from "components/LifelistEditor";
@@ -41,7 +42,7 @@ export default function TripLifelist() {
           </h1>
           <p className="text-gray-500 mb-8">Choose which life list to use for determining your trip targets.</p>
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 mb-6">
+          <Card className="p-5 mb-6">
             {trip ? (
               <LifelistEditor trip={trip} mode={lifelistMode} embedded />
             ) : (
@@ -49,7 +50,7 @@ export default function TripLifelist() {
                 <Icon name="loading" className="animate-spin" /> Loading...
               </div>
             )}
-          </div>
+          </Card>
 
           <div className="flex">
             <Button onClick={handleDone} color="primary" className="inline-flex items-center ml-auto">

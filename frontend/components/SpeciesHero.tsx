@@ -2,6 +2,7 @@ import React from "react";
 import clsx from "clsx";
 import { Menu, Transition } from "@headlessui/react";
 import Icon from "components/Icon";
+import Card from "components/Card";
 import MutualBadge from "components/MutualBadge";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 
@@ -41,7 +42,7 @@ export default function SpeciesHero({
   onShowMap,
 }: Props) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col sm:flex-row">
+    <Card className="overflow-hidden flex flex-col sm:flex-row">
       <div
         className="bg-gray-100 sm:w-[360px] sm:flex-shrink-0 aspect-[4/3] sm:self-start bg-cover bg-center"
         style={photoUrl ? { backgroundImage: `url(${photoUrl})` } : undefined}
@@ -172,6 +173,6 @@ export default function SpeciesHero({
           className="mt-10 sm:mt-auto"
         />
       </div>
-    </div>
+    </Card>
   );
 }

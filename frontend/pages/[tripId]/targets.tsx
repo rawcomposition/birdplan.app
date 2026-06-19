@@ -7,6 +7,7 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
+import Card from "components/Card";
 import Button from "components/Button";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
@@ -110,12 +111,12 @@ export default function TripTargets() {
                   </div>
                 )}
                 {targetsError && (
-                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-center mt-4 space-y-2">
+                  <Card className="p-4 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
                     <Button color="link" onClick={() => refetchTargets()}>
                       Try Again
                     </Button>
-                  </div>
+                  </Card>
                 )}
                 {!!targetSpecies?.length && (
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
@@ -178,22 +179,22 @@ export default function TripTargets() {
                   </div>
                 )}
                 {!!regionData?.items?.length && !truncatedTargets?.length && (
-                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4">
+                  <Card className="p-6 text-center mt-4">
                     <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                     <p className="text-gray-500 text-sm">
                       {showStarred || (showMutual && isGroup) || search
                         ? "Try clearing your filters."
                         : "It looks like you have already seen all the species in this region."}
                     </p>
-                  </div>
+                  </Card>
                 )}
                 {!isLoadingTargets && !targetsError && !regionData?.items?.length && (
-                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4 space-y-2">
+                  <Card className="p-6 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">No target data available for this region</h3>
-                  </div>
+                  </Card>
                 )}
                 {!!truncatedTargets?.length && (
-                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                  <Card className="overflow-hidden">
                     <table className="w-full">
                       <thead className="hidden sm:table-header-group bg-gray-50 border-b border-gray-200">
                         <tr>
@@ -233,7 +234,7 @@ export default function TripTargets() {
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </Card>
                 )}
 
                 <div className="my-4 text-center pb-4">
