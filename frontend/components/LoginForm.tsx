@@ -6,16 +6,22 @@ import Input from "components/Input";
 import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { getForwardReturnTo, withQueryParams, withReturnTo } from "lib/helpers";
 
 type Props = {
   message?: string;
+  email?: string;
 };
 
-export default function LoginForm({ message }: Props) {
+export default function LoginForm({ message, email }: Props) {
+  const router = useRouter();
   const [emailLoginLoading, setEmailLoginLoading] = React.useState(false);
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
   const { login: emailLogin } = useEmailLogin();
   const { loading: userLoading } = useUser();
+
+  const signupHref = withQueryParams(withReturnTo("/signup", getForwardReturnTo(router)), { email });
 
   const isLoading = userLoading || googleLoading || emailLoginLoading;
 
@@ -24,10 +30,10 @@ export default function LoginForm({ message }: Props) {
     setEmailLoginLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
+    const emailValue = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    await emailLogin(email, password);
+    await emailLogin(emailValue, password);
     setEmailLoginLoading(false);
   };
 
@@ -41,10 +47,10 @@ export default function LoginForm({ message }: Props) {
       )}
       <form onSubmit={handleEmailLogin} className="space-y-4">
         <div>
-          <Input type="email" name="email" placeholder="Email" required autoFocus />
+          <Input key={email} type="email" name="email" placeholder="Email" required autoFocus={!email} defaultValue={email} />
         </div>
         <div>
-          <Input type="password" name="password" placeholder="Password" required />
+          <Input type="password" name="password" placeholder="Password" required autoFocus={!!email} />
           <div className="text-right mt-1">
             <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
               Forgot password?
@@ -77,7 +83,7 @@ export default function LoginForm({ message }: Props) {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href={signupHref} className="font-medium text-blue-600 hover:text-blue-500">
             Sign up
           </Link>
         </p>

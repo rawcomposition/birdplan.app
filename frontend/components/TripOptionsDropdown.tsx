@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
+import useTargetView from "hooks/useTargetView";
 import Icon from "components/Icon";
 
 type Props = {
@@ -12,20 +13,26 @@ type Props = {
 
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
-  const { lifelist, uid } = useProfile();
-  const { trip, isOwner, canEdit } = useTrip();
+  const { uid } = useProfile();
+  const { trip, canEdit, participants } = useTrip();
+  const { view } = useTargetView(trip);
+
+  const viewer = trip?.viewer;
+  const viewerMode = viewer?.listMode === "custom" ? "Custom" : "World";
 
   const links = [
     {
-      name: !!lifelist?.length ? `Update Life List (${lifelist?.length?.toLocaleString()})` : "Import Life List",
-      href: `/import-lifelist?tripId=${trip?._id}&back=true`,
+      name: `Life List (${viewerMode})`,
+      onClick: viewer ? () => open("manageLifelist", { participantId: viewer.participantId }) : undefined,
+      href: viewer ? undefined : `/${trip?._id}/participants`,
       icon: "feather",
+      hidden: !canEdit,
     },
     {
-      name: "Share Trip",
-      onClick: () => open("share"),
-      icon: "share",
-      hidden: !isOwner,
+      name: `Participants${participants ? ` (${participants.length})` : ""}`,
+      href: `/${trip?._id}/participants`,
+      icon: "user",
+      hidden: !canEdit,
     },
     {
       name: "Trip Settings",
@@ -35,7 +42,7 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Export KML",
-      href: `${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/export?uid=${uid}`,
+      href: `${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/export?uid=${uid}&targets=${view}`,
       icon: "export",
     },
     {
@@ -86,7 +93,7 @@ export default function TripOptionsDropdown({ className }: Props) {
                   ) : (
                     <Link
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
-                      href={href}
+                      href={href ?? "#"}
                     >
                       <Icon name={icon as any} />
                       <span>{name}</span>

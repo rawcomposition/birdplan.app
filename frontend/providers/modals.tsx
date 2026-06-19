@@ -11,12 +11,14 @@ import clsx from "clsx";
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import Marker from "modals/Marker";
-import Share from "modals/Share";
 import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
 import DeleteAccount from "modals/DeleteAccount";
 import OpenBirding from "modals/OpenBirding";
+import AddParticipant from "modals/AddParticipant";
+import InviteAsEditor from "modals/InviteAsEditor";
+import ManageLifelist from "modals/ManageLifelist";
 
 export type ModalPosition = "right" | "center";
 
@@ -62,11 +64,6 @@ const modals: ModalConfig[] = [
     position: "right",
   },
   {
-    id: "share",
-    Component: Share,
-    position: "right",
-  },
-  {
     id: "addItineraryLocation",
     Component: AddItineraryLocation,
     small: true,
@@ -83,6 +80,21 @@ const modals: ModalConfig[] = [
     Component: OpenBirding,
     position: "center",
   },
+  {
+    id: "addParticipant",
+    Component: AddParticipant,
+    position: "center",
+  },
+  {
+    id: "inviteAsEditor",
+    Component: InviteAsEditor,
+    position: "center",
+  },
+  {
+    id: "manageLifelist",
+    Component: ManageLifelist,
+    position: "center",
+  },
 ];
 
 type ModalId =
@@ -91,22 +103,26 @@ type ModalId =
   | "addMarker"
   | "addHotspot"
   | "viewMarker"
-  | "share"
   | "addItineraryLocation"
   | "addPlace"
   | "deleteAccount"
-  | "openBirding";
+  | "openBirding"
+  | "addParticipant"
+  | "inviteAsEditor"
+  | "manageLifelist";
 
 type Context = {
   open: (id: ModalId, props?: KeyValue) => void;
   close: () => void;
   modalId: ModalId | null;
+  position: ModalPosition | null;
 };
 
 export const FieldContext = React.createContext<Context>({
   open: (id, props) => {},
   close: () => {},
   modalId: null,
+  position: null,
 });
 
 type Props = {
@@ -139,7 +155,7 @@ const ModalProvider = ({ children }: Props) => {
   };
 
   return (
-    <FieldContext.Provider value={{ open, close, modalId }}>
+    <FieldContext.Provider value={{ open, close, modalId, position: modal?.position ?? null }}>
       {children}
       <ModalWrapper
         position={modal?.position}
@@ -159,13 +175,28 @@ const useModal = () => {
   return { ...state };
 };
 
-const Footer = ({ children }: { children: React.ReactNode }) => (
-  <footer className="p-4 border-t flex items-center bg-gray-50">{children}</footer>
-);
+const Footer = ({ children }: { children: React.ReactNode }) => {
+  const { position } = React.useContext(FieldContext);
+  return (
+    <footer
+      className={clsx(
+        "flex items-center",
+        position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-gray-50"
+      )}
+    >
+      {children}
+    </footer>
+  );
+};
 
-const Header = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
-);
+const Header = ({ children }: { children: React.ReactNode }) => {
+  const { position } = React.useContext(FieldContext);
+  return position === "center" ? (
+    <h3 className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</h3>
+  ) : (
+    <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
+  );
+};
 
 const Body = ({
   children,
@@ -175,6 +206,10 @@ const Body = ({
   children: React.ReactNode;
   className?: string;
   noPadding?: boolean;
-}) => <div className={clsx(!noPadding && "px-4 sm:px-6 pt-4", className, "overflow-auto flex-grow")}>{children}</div>;
+}) => {
+  const { position } = React.useContext(FieldContext);
+  const padding = position === "center" ? "px-6 sm:px-7 pt-4" : "px-4 sm:px-6 pt-4";
+  return <div className={clsx(!noPadding && padding, className, "overflow-auto flex-grow")}>{children}</div>;
+};
 
 export { ModalProvider, useModal, Footer, Header, Body };

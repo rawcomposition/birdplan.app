@@ -1,6 +1,5 @@
 export type Trip = {
   _id: string;
-  userIds: string[];
   ownerId: string;
   ownerName: string;
   isPublic: boolean;
@@ -19,6 +18,13 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
+  groupLifelist?: string[] | null;
+  unionLifelist?: string[] | null;
+  tripLifelist?: string[] | null;
+  isGroupTrip?: boolean;
+  viewerLifelist?: string[] | null;
+  viewer?: { participantId: string; listMode: ParticipantListMode; listUpdatedAt?: string | null } | null;
+
   targetStars?: string[];
   targetNotes?: {
     [key: string]: string;
@@ -84,11 +90,68 @@ export type Profile = {
   name?: string;
   email?: string;
   lifelist: string[];
+  lifelistUpdatedAt?: Date | null;
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
   resetToken?: string;
   resetTokenExpires?: Date;
+};
+
+export type LifelistImportInput = {
+  sciNames: string[];
+};
+
+export type ParticipantStatus = "pending" | "active";
+export type ParticipantListMode = "world" | "custom";
+
+export type Participant = {
+  _id: string;
+  tripId: string;
+  status: ParticipantStatus;
+  uid?: string;
+  email?: string;
+  name?: string;
+  listMode: ParticipantListMode;
+  lifelist: string[];
+  lifelistUpdatedAt?: Date | null;
+  isOwner: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ParticipantView = {
+  _id: string;
+  uid?: string;
+  name?: string;
+  email?: string;
+  status: ParticipantStatus;
+  listMode: ParticipantListMode;
+  isOwner: boolean;
+  isMe: boolean;
+  count: number;
+  hasList: boolean;
+};
+
+export type InviteInfo = {
+  tripId: string;
+  tripName: string;
+  inviterName?: string;
+  email?: string;
+  method: "login" | "signup";
+  status: ParticipantStatus;
+};
+
+export type AddParticipantInput =
+  | { type: "invite"; email: string; upgradeId?: string; sciNames?: string[] }
+  | { type: "named"; name: string; sciNames?: string[] };
+
+export type UpdateParticipantInput = {
+  name: string;
+};
+
+export type AddToLifelistInput = {
+  code: string;
 };
 
 export type Target = {
@@ -151,12 +214,6 @@ export type TripUpdateInput = {
   region: string;
   startMonth: number;
   endMonth: number;
-};
-
-export type Editor = {
-  uid: string;
-  name: string;
-  lifelist: string[];
 };
 
 export type eBirdHotspot = {

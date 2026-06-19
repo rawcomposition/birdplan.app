@@ -8,6 +8,7 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   name: String,
   email: String,
   lifelist: { type: [String], default: [] },
+  lifelistUpdatedAt: { type: Date, default: null },
   exceptions: { type: [String], default: [] },
   dismissedNoticeId: String,
   lastActiveAt: { type: Date, default: new Date() },

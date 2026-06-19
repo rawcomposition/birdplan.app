@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
+import { isTripEditor } from "lib/participants.js";
 import type { TargetStarInput, TargetNotesInput } from "@birdplan/shared";
 
 const targets = new Hono();
@@ -15,9 +16,12 @@ targets.patch("/add-star", async (c) => {
   const data = await c.req.json<TargetStarInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $addToSet: { targetStars: data.code } });
 
@@ -33,9 +37,12 @@ targets.patch("/remove-star", async (c) => {
   const data = await c.req.json<TargetStarInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $pull: { targetStars: data.code } });
 
@@ -51,9 +58,12 @@ targets.patch("/set-notes", async (c) => {
   const data = await c.req.json<TargetNotesInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $set: { [`targetNotes.${data.code}`]: data.notes } });
 

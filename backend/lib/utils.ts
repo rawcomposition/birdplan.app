@@ -29,6 +29,21 @@ export async function authenticate(c: Context) {
   }
 }
 
+export async function authenticateOptional(c: Context) {
+  const authHeader = c.req.header("authorization");
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.split("Bearer ")[1] : "";
+
+  if (!auth || !token) {
+    return null;
+  }
+
+  try {
+    return await auth.verifyIdToken(token);
+  } catch {
+    return null;
+  }
+}
+
 export const getBounds = async (regionString: string) => {
   const regions = regionString.split(",");
   const boundsPromises = regions.map((region) =>

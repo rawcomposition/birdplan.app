@@ -17,9 +17,12 @@ taxonomy.get("/", async (c) => {
 
   const data: eBirdTaxonomy[] = await response.json();
 
+  const withSciName = c.req.query("sciName") === "1";
+
   const simplifiedData = data.map((item) => ({
     name: item.comName,
     code: item.speciesCode,
+    ...(withSciName && { sciName: item.sciName }),
   }));
 
   return c.json(simplifiedData);

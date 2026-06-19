@@ -10,7 +10,7 @@ import useLocationTargets from "hooks/useLocationTargets";
 import { RecentChecklist } from "lib/types";
 import Icon from "components/Icon";
 import ObsList from "components/ObsList";
-import FilterTabs from "components/FilterTabs";
+import SelectDropdown from "components/SelectDropdown";
 import Alert from "components/Alert";
 
 type Props = {
@@ -52,8 +52,8 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
           {isLoadingTargets && <Icon name="loading" className="text-xl animate-spin" />}
           {!isLoadingTargets && successRate !== null && (
             <>
-              <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of{" "}
-              {totalSamples.toLocaleString()} checklists
+              <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of {totalSamples.toLocaleString()}{" "}
+              checklists
               {datasetAsOf && (
                 <span className="relative inline-block ml-1.5">
                   <button
@@ -87,13 +87,15 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
         </div>
       )}
       {speciesCode && (
-        <FilterTabs
+        <SelectDropdown
           className="my-4"
+          compact
+          align="left"
           value={view}
           onChange={setView}
           options={[
-            { label: "All", value: "all" },
-            { label: `${speciesName} Reports`, value: "obs" },
+            { value: "all", label: "All Checklists" },
+            { value: "obs", label: `${speciesName} Reports` },
           ]}
         />
       )}
@@ -235,8 +237,7 @@ function mergeSupplementalChecklists(
   // returns nothing, fall back to a minimal loc derived from the trip region
   // so we still surface the supplemental rows (and dateTimeToRelative gets a
   // valid region code for timezone resolution).
-  const refLoc =
-    groups[0]?.[0]?.loc ?? (fallbackRegion ? buildFallbackLoc(fallbackRegion) : undefined);
+  const refLoc = groups[0]?.[0]?.loc ?? (fallbackRegion ? buildFallbackLoc(fallbackRegion) : undefined);
   if (!refLoc) return merged;
 
   const seen = new Set<string>();

@@ -2,9 +2,21 @@ import type { Trip } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 
-const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
+const fields: Record<
+  keyof Omit<
+    Trip,
+    | "createdAt"
+    | "updatedAt"
+    | "groupLifelist"
+    | "unionLifelist"
+    | "tripLifelist"
+    | "isGroupTrip"
+    | "viewerLifelist"
+    | "viewer"
+  >,
+  any
+> = {
   _id: { type: String, default: () => nanoId() },
-  userIds: [{ type: String, required: true }], // Array of uids
   ownerId: { type: String, required: true },
   ownerName: String,
   isPublic: { type: Boolean, default: true },
@@ -87,8 +99,6 @@ const fields: Record<keyof Omit<Trip, "createdAt" | "updatedAt">, any> = {
 const TripSchema = new Schema(fields, {
   timestamps: true,
 });
-
-TripSchema.index({ userIds: 1, createdAt: -1 });
 
 const TripModel = (mongoose.models.Trip as Model<Trip>) || model<Trip>("Trip", TripSchema);
 

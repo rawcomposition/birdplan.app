@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
+import { isTripEditor } from "lib/participants.js";
 import type { CustomMarker, MarkerUpdateInput } from "@birdplan/shared";
 
 const markers = new Hono();
@@ -14,9 +15,12 @@ markers.post("/", async (c) => {
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   if (trip.markers.find((it) => it.id === data.id)) return c.json({});
 
@@ -33,9 +37,12 @@ markers.delete("/:markerId", async (c) => {
   if (!markerId) throw new HTTPException(400, { message: "Marker ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $pull: { markers: { id: markerId } } });
 
@@ -53,9 +60,12 @@ markers.patch("/:markerId/notes", async (c) => {
   const data = await c.req.json<{ notes: string }>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId, "markers.id": markerId }, { $set: { "markers.$.notes": data.notes } });
 
@@ -73,9 +83,12 @@ markers.patch("/:markerId", async (c) => {
   const data = await c.req.json<MarkerUpdateInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne(
     { _id: tripId, "markers.id": markerId },

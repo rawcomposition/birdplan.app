@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authenticate } from "lib/utils.js";
-import { connect, Profile, Trip, Invite } from "lib/db.js";
+import { connect, Profile, Trip, Participant } from "lib/db.js";
 import { auth as firebaseAuth } from "lib/firebaseAdmin.js";
 import { HTTPException } from "hono/http-exception";
 
@@ -13,15 +13,13 @@ account.delete("/", async (c) => {
 
   await connect();
 
-  const trips = await Trip.find({ ownerId: uid }).lean();
-  const tripIds = trips.map((trip) => trip._id);
+  const tripIds = await Trip.distinct("_id", { ownerId: uid });
 
   await Promise.all([
     Profile.deleteOne({ uid }),
-    Invite.deleteMany({ tripId: { $in: tripIds } }),
-    Invite.deleteMany({ uid }),
+    Participant.deleteMany({ uid }),
+    Participant.deleteMany({ tripId: { $in: tripIds } }),
     Trip.deleteMany({ ownerId: uid }),
-    Trip.updateMany({ userIds: uid, ownerId: { $ne: uid } }, { $pull: { userIds: uid } }),
   ]);
 
   await firebaseAuth?.deleteUser(uid);
@@ -31,7 +29,8 @@ account.delete("/", async (c) => {
 
 account.post("/update-email", async (c) => {
   const session = await authenticate(c);
-  const { email } = await c.req.json<{ email: string }>();
+  const { email: rawEmail } = await c.req.json<{ email: string }>();
+  const email = rawEmail?.trim().toLowerCase();
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
   const user = await firebaseAuth?.getUser(session.uid);

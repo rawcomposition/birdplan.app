@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
+import SelectDropdown from "components/SelectDropdown";
 
 export type Scope = "saved" | "all";
 export type SortKey = "best" | "freq";
@@ -66,7 +67,7 @@ function ScopeToggle({ scope, setScope }: { scope: Scope; setScope: (s: Scope) =
     { value: "all", label: "All hotspots" },
   ];
   return (
-    <div className="inline-flex bg-gray-100 p-0.5 rounded-lg border border-gray-200">
+    <div className="inline-flex h-9 items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">
       {options.map((opt) => {
         const active = scope === opt.value;
         return (
@@ -75,7 +76,7 @@ function ScopeToggle({ scope, setScope }: { scope: Scope; setScope: (s: Scope) =
             type="button"
             onClick={() => setScope(opt.value)}
             className={clsx(
-              "px-3 py-1 text-xs font-medium rounded-md inline-flex items-center gap-1.5 whitespace-nowrap",
+              "px-3 h-full text-xs font-medium rounded-md inline-flex items-center gap-1.5 whitespace-nowrap",
               active ? "bg-white text-gray-800 shadow-sm" : "text-gray-600 hover:text-gray-800"
             )}
           >
@@ -89,49 +90,7 @@ function ScopeToggle({ scope, setScope }: { scope: Scope; setScope: (s: Scope) =
 }
 
 function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortKey) => void }) {
-  const [open, setOpen] = React.useState(false);
-  const current = SORT_OPTIONS.find((o) => o.value === value) ?? SORT_OPTIONS[0];
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap"
-      >
-        <span className="text-gray-500">Sort</span>
-        <span className="font-semibold text-gray-800">{current.label}</span>
-        <Icon name="angleDown" className="text-[10px] text-gray-500" />
-      </button>
-      {open && (
-        <>
-          <div onClick={() => setOpen(false)} className="fixed inset-0 z-30" />
-          <div className="absolute top-full right-0 mt-1.5 z-40 min-w-[220px] bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-            {SORT_OPTIONS.map((o) => {
-              const active = o.value === value;
-              return (
-                <button
-                  key={o.value}
-                  type="button"
-                  onClick={() => {
-                    onChange(o.value);
-                    setOpen(false);
-                  }}
-                  className={clsx(
-                    "w-full px-3 py-2 text-left text-sm flex items-center justify-between",
-                    active ? "bg-sky-50 text-sky-700" : "text-gray-800 hover:bg-gray-50"
-                  )}
-                >
-                  <span>{o.label}</span>
-                  {active && <Icon name="check" className="text-xs" />}
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
-    </div>
-  );
+  return <SelectDropdown value={value} onChange={onChange} options={SORT_OPTIONS} label="Sort" />;
 }
 
 function MoreFiltersMenu({
@@ -154,7 +113,7 @@ function MoreFiltersMenu({
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={clsx(
-          "inline-flex items-center gap-1.5 h-8 px-3 rounded-full border text-sm whitespace-nowrap",
+          "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm whitespace-nowrap",
           activeCount > 0
             ? "border-sky-300 bg-sky-50 text-sky-700"
             : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"

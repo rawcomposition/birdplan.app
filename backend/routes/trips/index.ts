@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { rateLimiter } from "hono-rate-limiter";
 import trip from "./[tripId]/index.js";
 import { authenticate, getBounds } from "lib/utils.js";
-import { connect, Trip, TripShareToken } from "lib/db.js";
+import { connect, Trip, Participant, TripShareToken } from "lib/db.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripInput } from "@birdplan/shared";
@@ -97,7 +97,10 @@ trips.get("/", async (c) => {
   const session = await authenticate(c);
 
   await connect();
-  const trips = await Trip.find({ userIds: session.uid }).sort({ createdAt: -1 }).lean();
+  const tripIds = await Participant.find({ uid: session.uid, status: "active" }).distinct("tripId");
+  const trips = await Trip.find({ _id: { $in: tripIds } })
+    .sort({ createdAt: -1 })
+    .lean();
   return c.json(trips);
 });
 
@@ -117,7 +120,6 @@ trips.post("/", async (c) => {
   await connect();
   const trip = await Trip.create({
     ...data,
-    userIds: [session.uid],
     ownerId: session.uid,
     ownerName: session.name,
     bounds,
@@ -125,6 +127,15 @@ trips.post("/", async (c) => {
     itinerary: [],
     hotspots: [],
     markers: [],
+  });
+
+  await Participant.create({
+    tripId: trip._id,
+    uid: session.uid,
+    name: session.name,
+    status: "active",
+    listMode: "world",
+    isOwner: true,
   });
 
   return c.json({ id: trip._id });

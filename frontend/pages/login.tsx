@@ -7,6 +7,7 @@ export default function Login() {
   const router = useRouter();
 
   const event = router.query.event as string | undefined;
+  const email = typeof router.query.email === "string" ? router.query.email : undefined;
 
   const message =
     event === "emailUpdated"
@@ -17,7 +18,7 @@ export default function Login() {
 
   return (
     <UtilityPage heading="Sign in">
-      <LoginForm message={message} />
+      <LoginForm message={message} email={email} />
     </UtilityPage>
   );
 }

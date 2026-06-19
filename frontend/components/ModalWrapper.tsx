@@ -96,19 +96,22 @@ export default function ModalWrapper({
         <div
           className={clsx(
             "items-center justify-center text-center",
-            position === "center" ? "max-w-md w-full mx-auto relative" : "h-full"
+            position === "center" ? "max-w-[460px] w-full mx-auto relative" : "h-full"
           )}
           onClick={position === "center" ? (e) => e.stopPropagation() : undefined}
         >
           <CloseButton
-            className="absolute z-40 top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
+            className={clsx(
+              "absolute z-40",
+              position === "center" ? "top-6 right-5 p-0" : "top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
+            )}
             onClick={onClose}
           />
           <div
             className={clsx(
               "relative transform bg-white text-left flex flex-col overflow-hidden",
               position === "center"
-                ? "rounded-lg sm:shadow-xl"
+                ? "rounded-[18px] sm:shadow-[0_24px_60px_-12px_rgba(20,30,48,0.26),0_2px_6px_rgba(20,30,48,0.05)]"
                 : "rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none sm:shadow-left h-full"
             )}
             style={{

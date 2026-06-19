@@ -7,14 +7,16 @@ import { dateTimeToRelative } from "lib/helpers";
 import type { Target } from "@birdplan/shared";
 import { useSpeciesImages } from "providers/species-images";
 import useTripMutation from "hooks/useTripMutation";
+import MutualBadge from "components/MutualBadge";
 import { useRouter } from "next/router";
 
 type PropsT = Target & {
   index: number;
   samples?: number[];
+  isMutual?: boolean;
 };
 
-export default function TargetRow({ index, code, name, frequency, obs, samples }: PropsT) {
+export default function TargetRow({ index, code, name, frequency, obs, samples, isMutual }: PropsT) {
   const { trip, canEdit } = useTrip();
   const router = useRouter();
   const { getSpeciesImg } = useSpeciesImages();
@@ -79,8 +81,9 @@ export default function TargetRow({ index, code, name, frequency, obs, samples }
         )}
       </td>
       <td>
-        <div className="flex flex-col gap-1 w-full mt-1">
-          <h3 className="text-sm lg:text-base font-bold pl-2 sm:pl-0 text-gray-800">{name}</h3>
+        <div className="flex items-center gap-1.5 w-full mt-1 pl-2 sm:pl-0">
+          <h3 className="text-sm lg:text-base font-bold text-gray-800">{name}</h3>
+          {isMutual && <MutualBadge />}
         </div>
       </td>
       <td className="hidden md:table-cell">

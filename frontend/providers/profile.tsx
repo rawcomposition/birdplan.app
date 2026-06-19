@@ -40,6 +40,7 @@ const ProfileProvider = ({ children }: Props) => {
         _id: profile?._id || "",
         uid: profile?.uid || "",
         lifelist,
+        lifelistUpdatedAt: profile?.lifelistUpdatedAt || null,
         exceptions: profile?.exceptions || [],
         dismissedNoticeId: profile?.dismissedNoticeId,
         lastActiveAt: profile?.lastActiveAt || new Date(),

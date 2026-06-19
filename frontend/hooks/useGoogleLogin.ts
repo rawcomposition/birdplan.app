@@ -3,6 +3,7 @@ import { auth } from "lib/firebase";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
+import { getPostAuthDest } from "lib/helpers";
 
 export default function useGoogleLogin() {
   const [loading, setLoading] = React.useState(false);
@@ -14,7 +15,7 @@ export default function useGoogleLogin() {
       if (!auth) throw new Error("Firebase auth not initialized");
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      router.push("/trips");
+      router.push(getPostAuthDest(router));
     } catch (error) {
       toast.error("Login failed");
       console.error(error);

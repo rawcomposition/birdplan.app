@@ -1,4 +1,5 @@
 import { Trip } from "@birdplan/shared";
+import type { NextRouter } from "next/router";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -183,4 +184,42 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
   return placeId
     ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+}
+
+export function withReturnTo(path: string, returnTo?: string): string {
+  return returnTo ? `${path}?returnTo=${encodeURIComponent(returnTo)}` : path;
+}
+
+export function withQueryParams(path: string, params: Record<string, string | undefined>): string {
+  const pairs = Object.entries(params).filter(([, value]) => value);
+  if (!pairs.length) return path;
+  const query = pairs.map(([key, value]) => `${key}=${encodeURIComponent(value as string)}`).join("&");
+  return `${path}${path.includes("?") ? "&" : "?"}${query}`;
+}
+
+export function getForwardReturnTo(router: NextRouter): string | undefined {
+  const { returnTo } = router.query;
+  if (typeof returnTo === "string" && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
+    return returnTo;
+  }
+  if (router.pathname === "/login" || router.pathname === "/signup") return undefined;
+  return router.asPath;
+}
+
+export function getPostAuthDest(router: NextRouter): string {
+  return getForwardReturnTo(router) || "/trips";
+}
+
+export function getReturnLabel(returnTo?: string | null): string {
+  if (!returnTo) return "trips";
+  const path = returnTo.split("?")[0].replace(/\/+$/, "");
+  if (path === "" || path === "/trips") return "trips";
+  if (path === "/account") return "account";
+  if (path.endsWith("/participants")) return "participants";
+  if (path.endsWith("/settings")) return "settings";
+  if (path.endsWith("/lifelist")) return "life list";
+  if (path.endsWith("/targets")) return "targets";
+  if (path.endsWith("/itinerary")) return "itinerary";
+  if (/^\/[^/]+$/.test(path)) return "trip";
+  return "back";
 }

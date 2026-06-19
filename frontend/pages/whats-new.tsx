@@ -15,6 +15,28 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 19, 2026</h2>
+          <ul>
+            <li>
+              🎉 <strong>Group trips got a major overhaul.</strong> Everyone on a trip now has their own life list, and
+              BirdPlan tracks targets for the whole group.
+            </li>
+            <li>
+              ✨ <strong>Mutual targets</strong> highlight the species that <em>everyone</em> in your group still needs,
+              flagged with a badge across your targets and species pages, so you can prioritize the stops that get the
+              whole group a lifer.
+            </li>
+            <li>
+              ✨ Switch between <strong>Group and Personal targets</strong> at any time to see what the whole group
+              needs versus just your own.
+            </li>
+            <li>
+              ✨ Use a <strong>custom life list</strong> for a single trip instead of your world life list, handy when
+              your trip needs differ from your overall list.
+            </li>
+            <li>✨ A smoother trip creation, invite, and onboarding flow throughout.</li>
+            <li>🐞 Improved the frequency bar chart on target species pages.</li>
+          </ul>
           <h2>June 11, 2026</h2>
           <ul>
             <li>

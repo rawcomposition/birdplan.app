@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
+import { isTripEditor } from "lib/participants.js";
 import type { HotspotInput, HotspotNotesInput, HotspotFav, SpeciesFavInput, TranslateNameResponse } from "@birdplan/shared";
 import * as deepl from "deepl-node";
 import axios from "axios";
@@ -17,9 +18,12 @@ hotspots.post("/", async (c) => {
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   if (trip.hotspots.find((it) => it.id === data.id)) return c.json({});
 
@@ -36,9 +40,12 @@ hotspots.delete("/:hotspotId", async (c) => {
   if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $pull: { hotspots: { id: hotspotId } } });
   return c.json({});
@@ -53,9 +60,12 @@ hotspots.patch("/:hotspotId/translate-name", async (c) => {
   if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const hotspot = trip.hotspots.find((it) => it.id === hotspotId);
   if (!hotspot) throw new HTTPException(404, { message: "Hotspot not found" });
@@ -92,9 +102,12 @@ hotspots.post("/:hotspotId/add-species-fav", async (c) => {
   const data = await c.req.json<HotspotFav>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const hotspot = trip.hotspots.find((it) => it.id === hotspotId);
   if (!hotspot) throw new HTTPException(404, { message: "Hotspot not found" });
@@ -118,9 +131,12 @@ hotspots.patch("/sync", async (c) => {
   if (!Array.isArray(updates) || updates.length === 0) return c.json({});
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const ops = updates.flatMap((u) => {
     const $set: Record<string, unknown> = {};
@@ -156,9 +172,12 @@ hotspots.patch("/:hotspotId/notes", async (c) => {
   const data = await c.req.json<HotspotNotesInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId, "hotspots.id": hotspotId }, { $set: { "hotspots.$.notes": data.notes } });
 
@@ -209,9 +228,12 @@ hotspots.patch("/:hotspotId/remove-species-fav", async (c) => {
   if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const hotspot = trip.hotspots.find((it) => it.id === hotspotId);
   if (!hotspot) throw new HTTPException(404, { message: "Hotspot not found" });
@@ -233,9 +255,12 @@ hotspots.patch("/:hotspotId/reset-name", async (c) => {
   if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!trip.userIds.includes(session.uid)) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const hotspot = trip.hotspots.find((it) => it.id === hotspotId);
   if (!hotspot) throw new HTTPException(404, { message: "Hotspot not found" });

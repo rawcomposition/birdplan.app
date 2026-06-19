@@ -22,8 +22,8 @@ type Props = {
 
 export default function Header({ title, parent, border }: Props) {
   const { isOnline } = useRealtimeStatus();
-  const { canEdit } = useTrip();
-  const { open, close } = useModal();
+  const { trip, canEdit } = useTrip();
+  const { close } = useModal();
   const { user } = useUser();
   const shareRef = React.useRef<HTMLButtonElement>(null);
 
@@ -32,7 +32,7 @@ export default function Header({ title, parent, border }: Props) {
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    open("share");
+    if (trip?._id) router.push(`/${trip._id}/participants`);
   };
 
   return (
