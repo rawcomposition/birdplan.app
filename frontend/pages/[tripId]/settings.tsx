@@ -2,7 +2,6 @@ import React from "react";
 import Header from "components/Header";
 import Head from "next/head";
 import { useTrip } from "providers/trip";
-import useTripLifelist from "hooks/useTripLifelist";
 import toast from "react-hot-toast";
 import MonthSelect from "components/MonthSelect";
 import LoginModal from "components/LoginModal";
@@ -12,7 +11,7 @@ import Field from "components/Field";
 import Input from "components/Input";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { months, withReturnTo } from "lib/helpers";
+import { months } from "lib/helpers";
 import Button from "components/Button";
 import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
@@ -52,8 +51,6 @@ type SettingsFormProps = {
 function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { isGroup, count: lifelistCount } = useTripLifelist(trip);
-  const lifelistLabel = isGroup ? "Shared" : trip?.viewer?.listMode === "custom" ? "Custom" : "World life list";
   const [startMonth, setStartMonth] = React.useState<Option>({
     value: trip.startMonth.toString(),
     label: months[trip.startMonth - 1],
@@ -152,21 +149,6 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 </div>
               </div>
               <RegionFields value={region} onChange={setRegion} />
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    <span className="font-medium">{lifelistLabel}</span>{" "}
-                    <span className="text-gray-500 tabular-nums">({lifelistCount.toLocaleString()})</span>
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1.5">Targets for this trip are derived from this list.</p>
-                </div>
-                <Link
-                  href={withReturnTo(`/${trip._id}/participants`, router.asPath)}
-                  className="text-sky-600 font-medium text-sm whitespace-nowrap"
-                >
-                  Manage
-                </Link>
-              </div>
               <div className="flex justify-between">
                 <Button href="/trips" color="gray">
                   Cancel
