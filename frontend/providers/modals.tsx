@@ -5,6 +5,7 @@ import { KeyValue } from "lib/types";
 
 // components
 import ModalWrapper from "components/ModalWrapper";
+import { DialogTitle } from "components/ui/dialog";
 import clsx from "clsx";
 
 // modals
@@ -192,7 +193,7 @@ const Footer = ({ children }: { children: React.ReactNode }) => {
 const Header = ({ children }: { children: React.ReactNode }) => {
   const { position } = React.useContext(FieldContext);
   return position === "center" ? (
-    <h3 className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</h3>
+    <DialogTitle className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</DialogTitle>
   ) : (
     <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
   );
