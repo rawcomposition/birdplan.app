@@ -10,6 +10,7 @@ type Props = {
   small?: boolean;
   position?: ModalPosition;
   maxHeight?: number | string;
+  dismissable?: boolean;
   onClose: () => void;
   children: React.ReactNode;
 };
@@ -20,11 +21,12 @@ export default function ModalWrapper({
   small,
   position = "right",
   maxHeight = "auto",
+  dismissable = true,
   children,
 }: Props) {
   React.useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && dismissable) {
         onClose();
       }
     };
@@ -38,7 +40,7 @@ export default function ModalWrapper({
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onClose();
+    if (dismissable) onClose();
   };
 
   return (
@@ -100,13 +102,15 @@ export default function ModalWrapper({
           )}
           onClick={position === "center" ? (e) => e.stopPropagation() : undefined}
         >
-          <CloseButton
-            className={clsx(
-              "absolute z-40",
-              position === "center" ? "top-6 right-5 p-0" : "top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
-            )}
-            onClick={onClose}
-          />
+          {dismissable && (
+            <CloseButton
+              className={clsx(
+                "absolute z-40",
+                position === "center" ? "top-6 right-5 p-0" : "top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
+              )}
+              onClick={onClose}
+            />
+          )}
           <div
             className={clsx(
               "relative transform bg-white text-left flex flex-col overflow-hidden",
