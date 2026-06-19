@@ -12,13 +12,14 @@ import { useUser } from "providers/user";
 import Input from "components/Input";
 import ErrorBoundary from "components/ErrorBoundary";
 import useTargetView from "hooks/useTargetView";
+import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
 import clsx from "clsx";
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 100;
 
 export default function TripTargets() {
   const { open, close } = useModal();
@@ -29,6 +30,7 @@ export default function TripTargets() {
   // Filter options
   const [search, setSearch] = React.useState("");
   const [showStarred, setShowStarred] = React.useState(false);
+  const [showMutual, setShowMutual] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
 
@@ -46,13 +48,15 @@ export default function TripTargets() {
   });
 
   const { lifelist } = useTargetView(trip);
+  const { isGroup, isMutual } = useMutualTargets(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
   const filteredTargets = targetSpecies?.filter(
     (it) =>
       it.name.toLowerCase().includes(search.toLowerCase()) &&
-      (showStarred ? trip?.targetStars?.includes(it.code) : true)
+      (showStarred ? trip?.targetStars?.includes(it.code) : true) &&
+      (showMutual && isGroup ? isMutual(it.code) : true)
   );
 
   const truncatedTargets = filteredTargets?.slice(0, showCount);
@@ -145,6 +149,26 @@ export default function TripTargets() {
                         />
                         Starred
                       </button>
+                      {isGroup && (
+                        <button
+                          type="button"
+                          onClick={() => setShowMutual(!showMutual)}
+                          aria-pressed={showMutual}
+                          title="Show only targets that everyone in your group still needs"
+                          className={clsx(
+                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                            showMutual
+                              ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                              : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                          )}
+                        >
+                          <Icon
+                            name={showMutual ? "userFriends" : "userFriendsOutline"}
+                            className={showMutual ? "text-emerald-600" : "text-gray-400"}
+                          />
+                          Mutual
+                        </button>
+                      )}
                       <TargetViewToggle trip={trip} align="left" />
                     </div>
                     <div className="ml-auto text-xs text-gray-500 hidden sm:block tabular-nums">
@@ -156,7 +180,7 @@ export default function TripTargets() {
                   <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4">
                     <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                     <p className="text-gray-500 text-sm">
-                      {showStarred || search
+                      {showStarred || (showMutual && isGroup) || search
                         ? "Try clearing your filters."
                         : "It looks like you have already seen all the species in this region."}
                     </p>
@@ -198,7 +222,13 @@ export default function TripTargets() {
                       </thead>
                       <tbody className="divide-y divide-gray-100 [&>tr:first-child>td]:pt-1 [&>tr:last-child>td]:pb-1">
                         {truncatedTargets?.map((it, index) => (
-                          <TargetRow key={it.code} {...it} index={index} samples={regionData?.samples} />
+                          <TargetRow
+                            key={it.code}
+                            {...it}
+                            index={index}
+                            samples={regionData?.samples}
+                            isMutual={isMutual(it.code)}
+                          />
                         ))}
                       </tbody>
                     </table>
@@ -208,7 +238,7 @@ export default function TripTargets() {
                 <div className="my-4 text-center pb-4">
                   {filteredTargets?.length > showCount && (
                     <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => setPage(page + 1)}>
-                      Show {Math.min(filteredTargets.length - showCount, 50)} more
+                      Show {Math.min(filteredTargets.length - showCount, PAGE_SIZE)} more
                     </button>
                   )}
                 </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import FavButton from "components/FavButton";
+import MutualBadge from "components/MutualBadge";
 import { useSpeciesImages } from "providers/species-images";
 
 type Props = {
@@ -10,10 +11,21 @@ type Props = {
   hotspotId: string;
   range: string;
   isSaved: boolean;
+  isMutual?: boolean;
   onClick: () => void;
 };
 
-export default function HotspotTargetRow({ code, name, frequency, index, hotspotId, range, isSaved, onClick }: Props) {
+export default function HotspotTargetRow({
+  code,
+  name,
+  frequency,
+  index,
+  hotspotId,
+  range,
+  isSaved,
+  isMutual,
+  onClick,
+}: Props) {
   const { getSpeciesImg } = useSpeciesImages();
   const img = React.useMemo(() => getSpeciesImg(code), [code, getSpeciesImg]);
 
@@ -40,6 +52,7 @@ export default function HotspotTargetRow({ code, name, frequency, index, hotspot
           >
             {name}
           </button>
+          {isMutual && <MutualBadge />}
           {isSaved && (
             <span className="[&_button]:!text-xs flex items-center">
               <FavButton hotspotId={hotspotId} code={code} name={name} range={range} percent={frequency} />

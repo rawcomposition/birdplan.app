@@ -55,6 +55,7 @@ trip.get("/", async (c) => {
   return c.json({
     ...tripData,
     isGroupTrip: resolved.isGroup,
+    ...(resolved.isGroup ? { unionLifelist: resolved.unionLifelist } : {}),
     ...(resolved.viewer
       ? {
           viewer: resolved.viewer,

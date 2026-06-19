@@ -8,7 +8,9 @@ export default function useLifelistMode(trip: Trip | null | undefined) {
   const queryClient = useQueryClient();
 
   const viewerId = trip?.viewer?.participantId;
-  const savedMode: ParticipantListMode = trip?.viewer?.listMode ?? "world";
+  const storedMode: ParticipantListMode = trip?.viewer?.listMode ?? "world";
+  const hasCustomList = !!trip?.viewer?.listUpdatedAt;
+  const savedMode: ParticipantListMode = storedMode === "custom" && !hasCustomList ? "world" : storedMode;
 
   const [selectedMode, setSelectedMode] = React.useState<ParticipantListMode | null>(null);
   const effectiveMode = selectedMode ?? savedMode;

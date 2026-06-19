@@ -54,9 +54,11 @@ participants.patch("/:id/accept", async (c) => {
   const profile = await Profile.findOne({ uid: session.uid }).lean();
   const name = profile?.name || session.name || (await auth?.getUser(session.uid))?.displayName || pending.name;
 
+  const hasCuratedList = !!pending.lifelist?.length;
+
   const result = await Participant.updateOne(
     { _id: id, status: "pending", uid: { $exists: false } },
-    { $set: { status: "active", uid: session.uid, name } }
+    { $set: { status: "active", uid: session.uid, name, ...(hasCuratedList ? {} : { listMode: "world" }) } }
   );
   if (result.matchedCount === 0) {
     throw new HTTPException(409, { message: "This invite has already been accepted." });

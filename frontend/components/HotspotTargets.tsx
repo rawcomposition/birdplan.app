@@ -4,6 +4,7 @@ import Icon from "components/Icon";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
+import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
 import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
@@ -20,6 +21,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
   const [view, setView] = React.useState<string>("all");
   const { trip, dateRangeLabel } = useTrip();
   const { lifelist } = useTargetView(trip);
+  const { isMutual } = useMutualTargets(trip);
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
 
   const isSaved = !!trip?.hotspots.find((it) => it.id === hotspotId);
@@ -93,6 +95,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
           hotspotId={hotspotId}
           range={view === "all" ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
+          isMutual={isMutual(it.code)}
           onClick={() => {
             onSpeciesClick({ code: it.code, name: it.name });
           }}

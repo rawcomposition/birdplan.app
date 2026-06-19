@@ -19,6 +19,7 @@ export type Trip = {
   endMonth: number;
   imgUrl: string | null;
   groupLifelist?: string[] | null;
+  unionLifelist?: string[] | null;
   tripLifelist?: string[] | null;
   isGroupTrip?: boolean;
   viewerLifelist?: string[] | null;

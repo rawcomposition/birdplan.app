@@ -20,6 +20,7 @@ import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components
 import { useTrip } from "providers/trip";
 import { useUser } from "providers/user";
 import useTripLifelist from "hooks/useTripLifelist";
+import useMutualTargets from "hooks/useMutualTargets";
 import { useSpeciesImages } from "providers/species-images";
 import { useModal } from "providers/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -38,6 +39,7 @@ export default function SpeciesDetail() {
   const { user } = useUser();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { myLifelist } = useTripLifelist(trip);
+  const { isMutual } = useMutualTargets(trip);
   const viewerListMode = trip?.viewer?.listMode ?? "world";
   const { getSpeciesImg } = useSpeciesImages();
   const { open, close } = useModal();
@@ -331,6 +333,7 @@ export default function SpeciesDetail() {
               photoBy={getSpeciesImg(speciesCode)?.by}
               ebirdUrl={`https://ebird.org/species/${speciesCode}`}
               starred={isStarred}
+              mutual={isMutual(speciesCode)}
               seen={isSeen}
               canEdit={canMutate}
               monthly={monthly}

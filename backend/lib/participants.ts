@@ -37,6 +37,19 @@ export function computeIntersection(lists: string[][]): string[] {
   return result;
 }
 
+export function computeUnion(lists: string[][]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const list of lists) {
+    for (const code of list) {
+      if (seen.has(code)) continue;
+      seen.add(code);
+      result.push(code);
+    }
+  }
+  return result;
+}
+
 type LeanParticipant = Pick<ParticipantT, "_id" | "uid" | "listMode" | "lifelist" | "lifelistUpdatedAt">;
 
 export function participantEffectiveList(p: LeanParticipant, profilesByUid: Map<string, Profile>): string[] {
@@ -52,6 +65,7 @@ export function participantEffectiveList(p: LeanParticipant, profilesByUid: Map<
 export type ResolvedTripLifelist = {
   isGroup: boolean;
   groupLifelist: string[] | null;
+  unionLifelist: string[] | null;
   tripLifelist: string[] | null;
   viewerLifelist: string[] | null;
   viewer: { participantId: string; listMode: ParticipantListMode; listUpdatedAt: Date | null } | null;
@@ -72,17 +86,19 @@ export function resolveTripLifelist(
   if (activeParticipants.length <= 1) {
     const owner = activeParticipants[0];
     const tripLifelist = isPublicViewer && owner ? participantEffectiveList(owner, profilesByUid) : null;
-    return { isGroup: false, groupLifelist: null, tripLifelist, viewerLifelist, viewer };
+    return { isGroup: false, groupLifelist: null, unionLifelist: null, tripLifelist, viewerLifelist, viewer };
   }
 
   const lists = activeParticipants
     .map((p) => participantEffectiveList(p, profilesByUid))
     .filter((list) => list.length > 0);
   const groupLifelist = computeIntersection(lists);
+  const unionLifelist = computeUnion(lists);
 
   return {
     isGroup: true,
     groupLifelist,
+    unionLifelist,
     tripLifelist: isPublicViewer ? groupLifelist : null,
     viewerLifelist,
     viewer,

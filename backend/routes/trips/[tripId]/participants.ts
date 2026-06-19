@@ -85,7 +85,10 @@ participants.post("/", async (c) => {
   if (body.upgradeId) {
     const named = await Participant.findOne({ _id: body.upgradeId, tripId }).lean();
     if (!named || named.uid) throw new HTTPException(400, { message: "Cannot upgrade this participant" });
-    await Participant.updateOne({ _id: body.upgradeId }, { $set: { email, status: "pending" } });
+    await Participant.updateOne(
+      { _id: body.upgradeId },
+      { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world" } }
+    );
     await sendInviteEmail({
       tripName: trip.name,
       fromName: session.name || "",
@@ -237,7 +240,10 @@ participants.delete("/:id/list", async (c) => {
     (isPendingInvite && trip.ownerId === session.uid);
   if (!allowed) throw new HTTPException(403, { message: "Forbidden" });
 
-  await Participant.updateOne({ _id: id }, { $set: { lifelist: [], lifelistUpdatedAt: null } });
+  await Participant.updateOne(
+    { _id: id },
+    { $set: { lifelist: [], lifelistUpdatedAt: null, ...(p.uid ? { listMode: "world" } : {}) } }
+  );
   return c.json({});
 });
 
