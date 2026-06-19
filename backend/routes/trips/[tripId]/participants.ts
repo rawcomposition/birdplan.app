@@ -16,6 +16,8 @@ import type {
 
 const participants = new Hono();
 
+const alreadyAddedMessage = "That person has already been added to this trip";
+
 participants.get("/", async (c) => {
   const session = await authenticate(c);
   const tripId = c.req.param("tripId");
@@ -42,7 +44,7 @@ participants.get("/", async (c) => {
     listMode: p.listMode,
     isOwner: p.isOwner,
     isMe: !!session?.uid && p.uid === session.uid,
-    count: participantEffectiveList(p as any, profilesByUid as any).length,
+    count: participantEffectiveList(p, profilesByUid).length,
     hasList: (p.status === "active" && p.listMode === "world") || !!p.lifelistUpdatedAt,
   }));
 
@@ -55,9 +57,12 @@ participants.post("/", async (c) => {
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const body = await c.req.json<AddParticipantInput>();
 
@@ -80,15 +85,20 @@ participants.post("/", async (c) => {
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
   const dupEmail = await Participant.exists({ tripId, email });
-  if (dupEmail) throw new HTTPException(400, { message: "That person has already been added to this trip" });
+  if (dupEmail) throw new HTTPException(400, { message: alreadyAddedMessage });
 
   if (body.upgradeId) {
     const named = await Participant.findOne({ _id: body.upgradeId, tripId }).lean();
     if (!named || named.uid) throw new HTTPException(400, { message: "Cannot upgrade this participant" });
-    await Participant.updateOne(
-      { _id: body.upgradeId },
-      { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world" } }
-    );
+    try {
+      await Participant.updateOne(
+        { _id: body.upgradeId },
+        { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world" } }
+      );
+    } catch (err) {
+      if ((err as { code?: number })?.code === 11000) throw new HTTPException(400, { message: alreadyAddedMessage });
+      throw err;
+    }
     await sendInviteEmail({
       tripName: trip.name,
       fromName: session.name || "",
@@ -99,15 +109,21 @@ participants.post("/", async (c) => {
   }
 
   const codes = body.sciNames?.length ? await sciNamesToCodes(body.sciNames) : [];
-  const participant = await Participant.create({
-    tripId,
-    email,
-    status: "pending",
-    listMode: codes.length ? "custom" : "world",
-    lifelist: codes,
-    lifelistUpdatedAt: codes.length ? new Date() : null,
-    isOwner: false,
-  });
+  let participant;
+  try {
+    participant = await Participant.create({
+      tripId,
+      email,
+      status: "pending",
+      listMode: codes.length ? "custom" : "world",
+      lifelist: codes,
+      lifelistUpdatedAt: codes.length ? new Date() : null,
+      isOwner: false,
+    });
+  } catch (err) {
+    if ((err as { code?: number })?.code === 11000) throw new HTTPException(400, { message: alreadyAddedMessage });
+    throw err;
+  }
 
   await sendInviteEmail({
     tripName: trip.name,

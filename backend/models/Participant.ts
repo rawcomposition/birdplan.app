@@ -22,6 +22,7 @@ const ParticipantSchema = new Schema(fields, {
 ParticipantSchema.index({ tripId: 1, createdAt: 1 });
 ParticipantSchema.index({ uid: 1 });
 ParticipantSchema.index({ tripId: 1, uid: 1 }, { unique: true, partialFilterExpression: { uid: { $exists: true } } });
+ParticipantSchema.index({ tripId: 1, email: 1 }, { unique: true, partialFilterExpression: { email: { $exists: true } } });
 
 const ParticipantModel =
   (mongoose.models.Participant as Model<Participant>) || model<Participant>("Participant", ParticipantSchema);

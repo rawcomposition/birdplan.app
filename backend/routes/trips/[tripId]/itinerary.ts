@@ -23,9 +23,12 @@ itinerary.post("/", async (c) => {
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   if (trip.itinerary?.find((it) => it.id === data.id)) return c.json({});
 
@@ -42,9 +45,12 @@ itinerary.delete("/:dayId", async (c) => {
   if (!dayId) throw new HTTPException(400, { message: "Day ID is required" });
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId }, { $pull: { itinerary: { id: dayId } } });
 
@@ -62,9 +68,12 @@ itinerary.patch("/:dayId/move-location", async (c) => {
   const data = await c.req.json<MoveLocationInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -99,9 +108,12 @@ itinerary.patch("/:dayId/notes", async (c) => {
   const data = await c.req.json<ItineraryNotesInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId, "itinerary.id": dayId }, { $set: { "itinerary.$.notes": data.notes } });
 
@@ -119,9 +131,12 @@ itinerary.patch("/:dayId/remove-location", async (c) => {
   const data = await c.req.json<RemoveLocationInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -157,9 +172,12 @@ itinerary.patch("/:dayId/remove-travel-time", async (c) => {
   const data = await c.req.json<RemoveLocationInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -190,9 +208,12 @@ itinerary.patch("/:dayId/set-notes", async (c) => {
   const data = await c.req.json<ItineraryNotesInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Trip.updateOne({ _id: tripId, "itinerary.id": dayId }, { $set: { "itinerary.$.notes": data.notes } });
 
@@ -210,9 +231,12 @@ itinerary.post("/:dayId/add-location", async (c) => {
   const data = await c.req.json<AddLocationInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });
@@ -248,9 +272,12 @@ itinerary.patch("/:dayId/calc-travel-time", async (c) => {
   const data = await c.req.json<CalcTravelTimeInput>();
 
   await connect();
-  const trip = await Trip.findById(tripId).lean();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.uid),
+  ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   const day = trip.itinerary?.find((it) => it.id === dayId);
   if (!day) throw new HTTPException(404, { message: "Day not found" });

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { connect, Participant, Profile, Trip } from "lib/db.js";
 import { auth } from "lib/firebaseAdmin.js";
-import { authenticate } from "../lib/utils.js";
+import { authenticate } from "lib/utils.js";
 import type { InviteInfo } from "@birdplan/shared";
 
 const participants = new Hono();
@@ -56,10 +56,19 @@ participants.patch("/:id/accept", async (c) => {
 
   const hasCuratedList = !!pending.lifelist?.length;
 
-  const result = await Participant.updateOne(
-    { _id: id, status: "pending", uid: { $exists: false } },
-    { $set: { status: "active", uid: session.uid, name, ...(hasCuratedList ? {} : { listMode: "world" }) } }
-  );
+  let result;
+  try {
+    result = await Participant.updateOne(
+      { _id: id, status: "pending", uid: { $exists: false } },
+      { $set: { status: "active", uid: session.uid, name, ...(hasCuratedList ? {} : { listMode: "world" }) } }
+    );
+  } catch (err) {
+    if ((err as { code?: number })?.code === 11000) {
+      await Participant.deleteOne({ _id: id, status: "pending" });
+      return c.json({ tripId: pending.tripId });
+    }
+    throw err;
+  }
   if (result.matchedCount === 0) {
     throw new HTTPException(409, { message: "This invite has already been accepted." });
   }

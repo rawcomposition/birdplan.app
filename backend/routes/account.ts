@@ -13,8 +13,7 @@ account.delete("/", async (c) => {
 
   await connect();
 
-  const trips = await Trip.find({ ownerId: uid }).lean();
-  const tripIds = trips.map((trip) => trip._id);
+  const tripIds = await Trip.distinct("_id", { ownerId: uid });
 
   await Promise.all([
     Profile.deleteOne({ uid }),
