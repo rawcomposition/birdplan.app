@@ -40,6 +40,7 @@
     "@types/mapbox__mapbox-sdk": "^0.13.4",
     "@types/mapbox-gl": "^2.7.10",
     "@types/papaparse": "^5.3.7",
+    "@types/react-dom": "^19.2.3",
     "@types/uuid": "^9.0.2",
     "autoprefixer": "^10.4.2",
     "eslint": "^8.36.0",

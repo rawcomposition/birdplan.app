@@ -52,7 +52,7 @@ export default function HotspotTargetRow({
           >
             {name}
           </button>
-          {isMutual && <MutualBadge />}
+          {isMutual && <MutualBadge variant="icon" />}
           {isSaved && (
             <span className="[&_button]:!text-xs flex items-center">
               <FavButton hotspotId={hotspotId} code={code} name={name} range={range} percent={frequency} />

@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   content: React.ReactNode;
@@ -20,15 +21,17 @@ export default function Tooltip({ content, children, className }: Props) {
   return (
     <span ref={triggerRef} className={className} onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
       {children}
-      {coords && (
-        <span
-          role="tooltip"
-          style={{ top: coords.top, left: coords.left }}
-          className="pointer-events-none fixed z-50 -mt-2 max-w-[16rem] -translate-x-1/2 -translate-y-full rounded-lg bg-gray-900 px-2.5 py-1.5 text-center text-xs font-medium leading-snug text-white shadow-lg"
-        >
-          {content}
-        </span>
-      )}
+      {coords &&
+        createPortal(
+          <span
+            role="tooltip"
+            style={{ top: coords.top, left: coords.left }}
+            className="pointer-events-none fixed z-50 -mt-2 max-w-[16rem] -translate-x-1/2 -translate-y-full rounded-lg bg-gray-900 px-2.5 py-1.5 text-center text-xs font-medium leading-snug text-white shadow-lg"
+          >
+            {content}
+          </span>,
+          document.body
+        )}
     </span>
   );
 }
