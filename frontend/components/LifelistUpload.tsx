@@ -29,7 +29,7 @@ export default function LifelistUpload({ onImport, isPending, buttonLabel, varia
     return (
       <label
         className={`inline-flex items-center gap-2 rounded-[10px] px-4 py-2.5 text-sm font-semibold transition-colors ${
-          isPending ? "bg-gray-100 text-gray-400" : "cursor-pointer bg-sky-50 text-sky-600 hover:bg-sky-100"
+          isPending ? "bg-gray-100 text-gray-400" : "cursor-pointer bg-sky-50 text-link hover:bg-sky-100"
         }`}
       >
         <input

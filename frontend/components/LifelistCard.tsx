@@ -49,7 +49,7 @@ export default function LifelistCard({ label, count, onImport, onRemove, disable
           type="button"
           onClick={() => fileRef.current?.click()}
           disabled={disabled}
-          className="text-sm font-medium text-sky-600 disabled:text-gray-400"
+          className="text-sm font-medium text-link disabled:text-gray-400"
         >
           Replace
         </button>

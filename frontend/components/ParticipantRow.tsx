@@ -113,7 +113,7 @@ export default function ParticipantRow({ participant: p, index }: Props) {
             {canChangeList && (
               <>
                 <span className="mx-1.5">–</span>
-                <button type="button" onClick={manageList} className="font-medium text-sky-600 hover:underline">
+                <button type="button" onClick={manageList} className="font-medium text-link hover:underline">
                   change
                 </button>
               </>

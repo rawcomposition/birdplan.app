@@ -43,7 +43,7 @@ export default function Trips() {
           {!isLoading && data?.length === 0 && (
             <p className="text-gray-500 text-lg">
               You don&apos;t have any trips yet.{" "}
-              <Link className="text-blue-600 font-bold" href="/create">
+              <Link className="text-link font-bold" href="/create">
                 Create one!
               </Link>
             </p>

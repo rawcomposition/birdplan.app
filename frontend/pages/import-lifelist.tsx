@@ -138,7 +138,7 @@ export default function ImportLifelist() {
               <Alert style="error" className="-mx-1 my-1">
                 <Icon name="xMarkCircle" className="text-xl" />
                 Failed to load eBird taxonomy
-                <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+                <button className="text-link font-medium" onClick={() => refetch()}>
                   Retry
                 </button>
               </Alert>

@@ -162,7 +162,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 </div>
                 <Link
                   href={withReturnTo(`/${trip._id}/participants`, router.asPath)}
-                  className="text-sky-600 font-medium text-sm whitespace-nowrap"
+                  className="text-link font-medium text-sm whitespace-nowrap"
                 >
                   Manage
                 </Link>

@@ -142,7 +142,7 @@ function MoreFiltersMenu({
                   setOpen(false);
                 }}
                 className={clsx(
-                  "text-[11px] font-semibold text-sky-600 hover:text-sky-700",
+                  "text-[11px] font-semibold text-link hover:text-sky-700",
                   activeCount === 0 && "invisible"
                 )}
               >

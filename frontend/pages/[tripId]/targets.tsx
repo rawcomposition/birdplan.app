@@ -111,7 +111,7 @@ export default function TripTargets() {
                 {targetsError && (
                   <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
-                    <button className="text-sky-600 font-medium" onClick={() => refetchTargets()}>
+                    <button className="text-link font-medium" onClick={() => refetchTargets()}>
                       Try Again
                     </button>
                   </div>
@@ -237,7 +237,7 @@ export default function TripTargets() {
 
                 <div className="my-4 text-center pb-4">
                   {filteredTargets?.length > showCount && (
-                    <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => setPage(page + 1)}>
+                    <button type="button" className="text-link font-bold text-sm" onClick={() => setPage(page + 1)}>
                       Show {Math.min(filteredTargets.length - showCount, PAGE_SIZE)} more
                     </button>
                   )}

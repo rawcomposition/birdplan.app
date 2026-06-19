@@ -86,7 +86,7 @@ export default function SignupForm({ message, email }: Props) {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Already have an account?{" "}
-          <Link href={loginHref} className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href={loginHref} className="font-medium text-link">
             Sign in
           </Link>
         </p>

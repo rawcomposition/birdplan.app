@@ -31,7 +31,7 @@ export default function HotspotFavs({ hotspotId }: Props) {
                 </span>{" "}
               </div>
               <div className="w-full bg-gray-200">
-                <div className="h-2 bg-[#1c6900]" style={{ width: `${percent}%` }} />
+                <div className="h-2 bg-success" style={{ width: `${percent}%` }} />
               </div>
             </div>
           </div>

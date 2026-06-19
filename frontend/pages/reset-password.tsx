@@ -74,7 +74,7 @@ export default function ResetPassword() {
       <UtilityPage heading="Reset Password">
         <p className="text-center text-lg text-gray-700">Invalid or expired reset link.</p>
         <div className="text-center mt-4">
-          <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/forgot-password" className="font-medium text-link">
             Request a new reset link
           </Link>
         </div>

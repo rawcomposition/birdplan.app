@@ -47,7 +47,7 @@ export default function InputNotesSimple({ value, onBlur, className, canEdit, sh
                 notsRef.current?.focus();
               }, 0);
             }}
-            className="text-sky-600 text-[12px] font-bold px-3 py-1"
+            className="text-link text-[12px] font-bold px-3 py-1"
           >
             {notes ? "Edit" : "Add notes"}
           </button>
@@ -56,7 +56,7 @@ export default function InputNotesSimple({ value, onBlur, className, canEdit, sh
           <button
             type="button"
             onClick={() => setShowInput(false)}
-            className="text-sky-600 text-[12px] font-bold px-3 py-1"
+            className="text-link text-[12px] font-bold px-3 py-1"
           >
             Done
           </button>

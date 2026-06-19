@@ -41,7 +41,7 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
                   href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sky-600"
+                  className="text-link"
                 >
                   View on Google Maps
                 </a>

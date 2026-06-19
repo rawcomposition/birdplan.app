@@ -38,7 +38,7 @@ export default function ForgotPassword() {
           <Alert style="info" className="mb-6">
             If an account exists with this email, you will receive password reset instructions shortly.
           </Alert>
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/login" className="font-medium text-link">
             ← Return to login
           </Link>
         </div>
@@ -57,7 +57,7 @@ export default function ForgotPassword() {
             </Button>
           </form>
           <div className="text-center mt-6">
-            <Link href="/login" className="font-medium text-sm text-blue-600 hover:text-blue-500">
+            <Link href="/login" className="font-medium text-sm text-link">
               ← Back to login
             </Link>
           </div>

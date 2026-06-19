@@ -55,7 +55,7 @@ export default function OpenBirding() {
             href="https://apps.apple.com/us/app/openbirding/id6755897167"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 font-medium hover:underline"
+            className="text-link font-medium hover:underline"
           >
             OpenBirding
           </a>{" "}
@@ -77,7 +77,7 @@ export default function OpenBirding() {
             <button
               type="button"
               onClick={() => generateCode.mutate(undefined)}
-              className="text-sm text-blue-600 font-medium hover:underline"
+              className="text-sm text-link font-medium hover:underline"
             >
               Code expired. Generate a new one?
             </button>

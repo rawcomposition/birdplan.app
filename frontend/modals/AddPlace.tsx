@@ -92,7 +92,7 @@ export default function AddPlace() {
                         onClick={() => setIcon(it as MarkerIconT)}
                         className={clsx(
                           "border-2 p-1",
-                          icon === it ? "border-blue-500 rounded-md" : "border-transparent"
+                          icon === it ? "border-primary rounded-md" : "border-transparent"
                         )}
                       >
                         <MarkerWithIcon icon={it as MarkerIconT} className="scale-125" />

@@ -91,7 +91,7 @@ export default function AddHotspot() {
               <p className="text-[12px] text-gray-700 -mt-3">
                 <button
                   type="button"
-                  className="text-sky-600 font-bold"
+                  className="text-link font-bold"
                   onClick={() => {
                     setShowAllHotspots(true);
                     close();

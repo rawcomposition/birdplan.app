@@ -150,7 +150,7 @@ export default function Hotspot({ hotspot }: Props) {
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
             {!originalName && !translateMutation.isPending && (
-              <button type="button" className="block text-sky-600" onClick={() => translateMutation.mutate({})}>
+              <button type="button" className="block text-link" onClick={() => translateMutation.mutate({})}>
                 Translate
               </button>
             )}
@@ -158,7 +158,7 @@ export default function Hotspot({ hotspot }: Props) {
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <button type="button" className="text-sky-600" onClick={() => resetMutation.mutate({})}>
+                <button type="button" className="text-link" onClick={() => resetMutation.mutate({})}>
                   Reset
                 </button>
               </div>
@@ -174,7 +174,7 @@ export default function Hotspot({ hotspot }: Props) {
             color="gray"
             size="sm"
           >
-            <Icon name="feather" className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
+            <Icon name="feather" className="mr-1 -mt-[3px] text-success" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
@@ -222,9 +222,9 @@ export default function Hotspot({ hotspot }: Props) {
           <button
             type="button"
             onClick={handleSave}
-            className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-sky-600 mt-4 flex items-center gap-2"
+            className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-link mt-4 flex items-center gap-2"
           >
-            <Icon name="plus" className="text-lg text-sky-600" /> Add to trip
+            <Icon name="plus" className="text-lg text-link" /> Add to trip
           </button>
         )}
 

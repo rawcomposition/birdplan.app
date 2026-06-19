@@ -56,7 +56,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
       <Alert style="error" className="-mx-1 my-1">
         <Icon name="xMarkCircle" className="text-xl" />
         Failed to load targets
-        <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+        <button className="text-link font-medium" onClick={() => refetch()}>
           Retry
         </button>
       </Alert>
@@ -110,7 +110,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
           }
           target="_blank"
           rel="noreferrer"
-          className="text-sky-600 text-[12px] font-bold pr-3 py-1"
+          className="text-link text-[12px] font-bold pr-3 py-1"
         >
           View on eBird
         </a>
