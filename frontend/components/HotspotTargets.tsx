@@ -1,6 +1,7 @@
 import React from "react";
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
+import Button from "components/Button";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
@@ -56,9 +57,9 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip 
       <Alert style="error" className="-mx-1 my-1">
         <Icon name="xMarkCircle" className="text-xl" />
         Failed to load targets
-        <button className="text-link font-medium" onClick={() => refetch()}>
+        <Button color="link" onClick={() => refetch()}>
           Retry
-        </button>
+        </Button>
       </Alert>
     );
   }

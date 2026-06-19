@@ -7,6 +7,7 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
+import Button from "components/Button";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import Input from "components/Input";
@@ -111,9 +112,9 @@ export default function TripTargets() {
                 {targetsError && (
                   <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
-                    <button className="text-link font-medium" onClick={() => refetchTargets()}>
+                    <Button color="link" onClick={() => refetchTargets()}>
                       Try Again
-                    </button>
+                    </Button>
                   </div>
                 )}
                 {!!targetSpecies?.length && (

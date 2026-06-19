@@ -51,14 +51,14 @@ export default function OpenBirding() {
       <Body className="min-h-0">
         <p className="text-gray-600 text-[15px] mb-4">
           Import this trip into the{" "}
-          <a
+          <Button
             href="https://apps.apple.com/us/app/openbirding/id6755897167"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-link font-medium hover:underline"
+            color="link"
           >
             OpenBirding
-          </a>{" "}
+          </Button>{" "}
           app by entering this code in the app's BirdPlan.app settings.
         </p>
         <div className="flex flex-col items-center my-4 gap-3">
@@ -74,13 +74,9 @@ export default function OpenBirding() {
             )}
           </div>
           {isExpired ? (
-            <button
-              type="button"
-              onClick={() => generateCode.mutate(undefined)}
-              className="text-sm text-link font-medium hover:underline"
-            >
+            <Button color="link" onClick={() => generateCode.mutate(undefined)} className="text-sm">
               Code expired. Generate a new one?
-            </button>
+            </Button>
           ) : timeLeft !== null && !generateCode.isPending ? (
             <p className="text-sm text-gray-500">
               Expires in {minutes}:{seconds.toString().padStart(2, "0")}

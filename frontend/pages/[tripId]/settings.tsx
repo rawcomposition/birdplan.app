@@ -160,12 +160,13 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                   </p>
                   <p className="text-sm text-gray-500 mt-1.5">Targets for this trip are derived from this list.</p>
                 </div>
-                <Link
+                <Button
                   href={withReturnTo(`/${trip._id}/participants`, router.asPath)}
-                  className="text-link font-medium text-sm whitespace-nowrap"
+                  color="link"
+                  className="text-sm whitespace-nowrap"
                 >
                   Manage
-                </Link>
+                </Button>
               </div>
               <div className="flex justify-between">
                 <Button href="/trips" color="gray">

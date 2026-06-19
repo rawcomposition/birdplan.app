@@ -15,6 +15,7 @@ const buttonVariants = cva("font-semibold rounded", {
       pillOutlineGray:
         "bg-transparent text-secondary-foreground border border-input hover:bg-gray-50 transition-colors rounded-full",
       pillWhite: "bg-white text-secondary-foreground hover:bg-gray-50 transition-colors rounded-full shadow-md",
+      link: "text-link font-medium hover:underline",
     },
     size: {
       lg: "text-lg py-[0.625rem] px-[1.125rem]",
@@ -23,6 +24,7 @@ const buttonVariants = cva("font-semibold rounded", {
       sm: "text-[14px] py-1.5 px-2.5",
       xs: "text-[12px] py-0.5 px-1.5",
       xsPill: "text-[12px] py-1.5 px-3",
+      none: "",
     },
   },
   defaultVariants: {
@@ -50,7 +52,11 @@ export default function Button({
   children,
   ...props
 }: Props) {
-  const classes = cn(buttonVariants({ color, size }), disabled && "opacity-60", className);
+  const classes = cn(
+    buttonVariants({ color, size: color === "link" ? "none" : size }),
+    disabled && "opacity-60",
+    className
+  );
 
   return href ? (
     <Link href={href} className={classes} {...props}>
