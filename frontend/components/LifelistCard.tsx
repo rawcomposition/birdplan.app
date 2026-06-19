@@ -1,5 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
+import Button from "components/Button";
 import Icon from "components/Icon";
 import { parseLifelistCsv } from "lib/lifelistCsv";
 
@@ -45,14 +46,16 @@ export default function LifelistCard({ label, count, onImport, onRemove, disable
         <p className="text-xs text-gray-500 tabular-nums">{count.toLocaleString()} species</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <button
+        <Button
           type="button"
+          color="link"
+          size="none"
           onClick={() => fileRef.current?.click()}
           disabled={disabled}
-          className="text-sm font-medium text-link disabled:text-gray-400"
+          className="text-sm"
         >
           Replace
-        </button>
+        </Button>
         {onRemove && (
           <button
             type="button"

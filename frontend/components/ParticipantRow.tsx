@@ -9,6 +9,7 @@ import { useModal } from "providers/modals";
 import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
 import Badge from "components/Badge";
+import Button from "components/Button";
 
 const AVATAR_COLORS = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-cyan-600"];
 
@@ -113,9 +114,9 @@ export default function ParticipantRow({ participant: p, index }: Props) {
             {canChangeList && (
               <>
                 <span className="mx-1.5">–</span>
-                <button type="button" onClick={manageList} className="font-medium text-link hover:underline">
+                <Button type="button" onClick={manageList} color="link" size="none">
                   change
-                </button>
+                </Button>
               </>
             )}
           </p>

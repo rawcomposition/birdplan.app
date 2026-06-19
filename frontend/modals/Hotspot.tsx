@@ -150,17 +150,17 @@ export default function Hotspot({ hotspot }: Props) {
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
             {!originalName && !translateMutation.isPending && (
-              <button type="button" className="block text-link" onClick={() => translateMutation.mutate({})}>
+              <Button type="button" color="link" size="none" className="block" onClick={() => translateMutation.mutate({})}>
                 Translate
-              </button>
+              </Button>
             )}
             {translateMutation.isPending && <div className="text-gray-400">Translating...</div>}
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <button type="button" className="text-link" onClick={() => resetMutation.mutate({})}>
+                <Button type="button" color="link" size="none" onClick={() => resetMutation.mutate({})}>
                   Reset
-                </button>
+                </Button>
               </div>
             )}
           </div>

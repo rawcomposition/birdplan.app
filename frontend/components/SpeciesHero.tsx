@@ -68,14 +68,6 @@ export default function SpeciesHero({
             {scientificName && <div className="italic text-gray-600 text-sm mt-1">{scientificName}</div>}
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              type="button"
-              onClick={onShowMap}
-              className="hidden lg:inline-flex h-9 px-4 rounded-lg bg-gray-800 text-white hover:bg-gray-900 text-sm font-semibold items-center gap-1.5"
-            >
-              <Icon name="map" className="text-sm" />
-              View Map
-            </button>
             <Menu as="div" className="relative">
               <Menu.Button
                 className="h-9 w-9 rounded-lg border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 grid place-items-center"
@@ -98,7 +90,7 @@ export default function SpeciesHero({
                         type="button"
                         onClick={onShowMap}
                         className={clsx(
-                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left lg:hidden",
+                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left",
                           active ? "bg-gray-50 text-gray-900" : "text-gray-800"
                         )}
                       >

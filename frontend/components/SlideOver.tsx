@@ -8,7 +8,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function ColModal({ open, onClose, children }: Props) {
+export default function SlideOver({ open, onClose, children }: Props) {
   return (
     <Transition.Root show={open} as={React.Fragment}>
       <div className="absolute inset-0 z-10 overflow-hidden">

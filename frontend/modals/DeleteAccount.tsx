@@ -67,13 +67,15 @@ export default function DeleteAccount() {
           <Button onClick={close} disabled={isDeleting} color="grayOutline">
             Cancel
           </Button>
-          <button
+          <Button
             onClick={handleDeleteAccount}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:bg-red-300 disabled:cursor-not-allowed"
+            color="red"
+            size="md"
+            className="disabled:bg-red-300 disabled:cursor-not-allowed"
             disabled={!isConfirmed || isDeleting}
           >
             {isDeleting ? "Deleting..." : "Delete Account Permanently"}
-          </button>
+          </Button>
         </div>
       </Footer>
     </>

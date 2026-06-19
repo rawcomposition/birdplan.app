@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Icon from "components/Icon";
+import Button from "components/Button";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import clsx from "clsx";
 import { useRouter } from "next/router";
@@ -25,7 +26,6 @@ export default function Header({ title, parent, border }: Props) {
   const { trip, canEdit } = useTrip();
   const { close } = useModal();
   const { user } = useUser();
-  const shareRef = React.useRef<HTMLButtonElement>(null);
 
   const router = useRouter();
   const isSubPage = router.pathname !== "/trips";
@@ -73,14 +73,14 @@ export default function Header({ title, parent, border }: Props) {
         )}
       </div>
       {canEdit && (
-        <button
+        <Button
           type="button"
-          className="rounded-full border text-amber-600 border-amber-600 py-1 px-4 hidden lg:inline-block ml-auto mr-8 hover:bg-amber-500/5"
+          color="pillOutlineAmber"
+          className="py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
           onClick={handleShare}
-          ref={shareRef}
         >
           Share
-        </button>
+        </Button>
       )}
       <AccountDropdown className="ml-auto md:ml-0 sm:mr-8 mr-6 block" />
     </header>

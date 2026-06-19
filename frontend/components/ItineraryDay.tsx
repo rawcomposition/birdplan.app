@@ -195,9 +195,9 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
           <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
             + Add Location
           </Button>
-          <button type="button" onClick={handleRemoveDay} className="text-[12px] py-0.5 px-1.5 text-red-700">
+          <Button type="button" color="linkDanger" size="xs" onClick={handleRemoveDay}>
             Remove day
-          </button>
+          </Button>
         </div>
       )}
     </div>

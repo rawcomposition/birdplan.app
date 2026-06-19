@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "target": "ES2017",
     "paths": {
-      "@birdplan/shared": ["../shared/index.ts"]
+      "@birdplan/shared": ["../shared/index.ts"],
+      "@/*": ["./*"]
     },
     "plugins": [
       {
