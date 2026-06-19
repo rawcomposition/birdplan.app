@@ -22,7 +22,7 @@ const buttonVariants = cva("font-semibold rounded", {
         "bg-transparent text-amber-600 border border-amber-600 hover:bg-amber-500/5 transition-colors rounded-full",
     },
     size: {
-      lg: "text-lg py-[0.625rem] px-[1.125rem]",
+      lg: "text-lg py-2.5 px-4.5",
       md: "text-md py-2 px-5",
       smPill: "text-[14px] py-1.5 px-4",
       sm: "text-[14px] py-1.5 px-2.5",

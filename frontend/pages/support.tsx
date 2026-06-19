@@ -65,7 +65,7 @@ export default function Support() {
           <h1 className="text-4xl text-gray-800 leading-normal font-bold mb-8">Support</h1>
 
           {submitted ? (
-            <div className="bg-white p-8 rounded-lg shadow">
+            <div className="bg-white p-8 rounded-lg shadow-sm">
               <h2 className="text-2xl font-bold text-gray-700 mb-4">Thank you for your message!</h2>
               <p className="text-gray-600 mb-4">
                 We&apos;ve received your request and will get back to you as soon as possible.
@@ -78,7 +78,7 @@ export default function Support() {
               </Link>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow">
+            <div className="bg-white p-8 rounded-lg shadow-sm">
               <p className="text-gray-600 mb-4">
                 Do you have any questions, feedback, or bug reports? We would love to hear from you!
               </p>

@@ -83,7 +83,7 @@ export default function Account() {
             </nav>
           </div>
 
-          <div className="flex-1 p-4 md:p-8 bg-white shadow rounded-lg sm:min-h-[400px] mb-4">
+          <div className="flex-1 p-4 md:p-8 bg-white shadow-sm rounded-lg sm:min-h-[400px] mb-4">
             {activeTab === "profile" && (
               <div>
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Account</h2>

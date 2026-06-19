@@ -55,7 +55,7 @@ export default function DeleteAccount() {
               type="text"
               value={confirmInput}
               onChange={(e) => setConfirmInput(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-red-500"
               placeholder={`Type ${CONFIRM_TEXT} to confirm`}
               disabled={isDeleting}
             />

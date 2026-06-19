@@ -124,9 +124,9 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                     <TravelTime isLoading={isLoading} isEditing={isEditing} dayId={day.id} id={id} />
                   </li>
                 )}
-                <li className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow">
+                <li className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow-sm">
                   <button
-                    className="flex gap-2 text-left -my-[9px] py-3 -ml-4 pl-4 grow"
+                    className="flex gap-2 text-left my-[-9px] py-3 -ml-4 pl-4 grow"
                     onClick={
                       location
                         ? () =>
@@ -141,7 +141,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                       <MarkerWithIcon
                         showStroke={false}
                         icon={(location as any)?.icon || "hotspot"}
-                        className="inline-block scale-[.85] flex-shrink-0 print:hidden"
+                        className="inline-block scale-[.85] shrink-0 print:hidden"
                       />
                     ) : (
                       <Icon name="warning" className="text-red-500 text-[22px]" />

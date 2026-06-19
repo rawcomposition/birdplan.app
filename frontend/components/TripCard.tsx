@@ -20,7 +20,7 @@ export default function TripCard({ trip }: Props) {
 
   return (
     <Link href={`/${_id}`}>
-      <div className="bg-white rounded-lg shadow relative p-4">
+      <div className="bg-white rounded-lg shadow-sm relative p-4">
         {trip?.imgUrl && (
           <img
             src={trip?.imgUrl}

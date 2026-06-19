@@ -37,9 +37,9 @@ export default function ReactSelectAsyncStyled(props: SelectProps) {
         }),
         control: (base, state) => ({
           ...base,
-          borderColor: state.isFocused ? "hsl(var(--ring))" : "hsl(var(--input))",
+          borderColor: state.isFocused ? "var(--ring)" : "var(--input)",
           "&:hover": {
-            borderColor: state.isFocused ? "hsl(var(--ring))" : "#9ca3af",
+            borderColor: state.isFocused ? "var(--ring)" : "#9ca3af",
           },
         }),
         menu: (base) => ({ ...base, fontSize: "0.875rem" }),

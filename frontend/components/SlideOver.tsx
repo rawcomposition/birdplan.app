@@ -29,7 +29,7 @@ export default function SlideOver({ open, onClose, children }: Props) {
             >
               <Icon name="angleLeft" /> Back
             </button>
-            <div className="px-6 py-4 flex-grow overflow-y-auto">{children}</div>
+            <div className="px-6 py-4 grow overflow-y-auto">{children}</div>
           </div>
         </Transition.Child>
       </div>

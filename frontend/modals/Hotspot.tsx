@@ -174,7 +174,7 @@ export default function Hotspot({ hotspot }: Props) {
             color="gray"
             size="sm"
           >
-            <Icon name="feather" className="mr-1 -mt-[3px] text-success" /> Targets
+            <Icon name="feather" className="mr-1 mt-[-3px] text-success" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
@@ -190,7 +190,7 @@ export default function Hotspot({ hotspot }: Props) {
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <Icon name="verticalDots" />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm right-0 top-10 rounded bg-white shadow-lg py-1.5 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
+            <Menu.Items className="absolute text-sm right-0 top-10 rounded bg-white shadow-lg py-1.5 w-[170px] ring-1 ring-black/5 flex flex-col z-10">
               <Menu.Item>
                 <a
                   href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}

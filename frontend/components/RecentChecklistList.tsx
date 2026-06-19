@@ -109,7 +109,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                 <tr>
                   <th className="text-left pl-1.5">Time ago</th>
                   {speciesCode && <th className="text-center">{speciesName}</th>}
-                  {!speciesCode && <th className="text-center min-w-[2rem]">Species Count</th>}
+                  {!speciesCode && <th className="text-center min-w-8">Species Count</th>}
                   <th className="text-right"></th>
                 </tr>
               </thead>

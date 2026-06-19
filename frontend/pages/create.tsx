@@ -88,7 +88,7 @@ export default function CreateTrip() {
                     onChange={setStartMonth}
                     value={startMonth}
                     instanceId="startMonth"
-                    className="flex-grow"
+                    className="grow"
                     menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                   <span className="text-gray-500 px-2">to</span>
@@ -96,7 +96,7 @@ export default function CreateTrip() {
                     onChange={setEndMonth}
                     value={endMonth}
                     instanceId="endMonth"
-                    className="flex-grow"
+                    className="grow"
                     menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                 </div>

@@ -77,7 +77,7 @@ function ScopeToggle({ scope, setScope }: { scope: Scope; setScope: (s: Scope) =
             onClick={() => setScope(opt.value)}
             className={clsx(
               "px-3 h-full text-xs font-medium rounded-md inline-flex items-center gap-1.5 whitespace-nowrap",
-              active ? "bg-white text-gray-800 shadow-sm" : "text-gray-600 hover:text-gray-800"
+              active ? "bg-white text-gray-800 shadow-xs" : "text-gray-600 hover:text-gray-800"
             )}
           >
             {opt.icon}
@@ -165,7 +165,7 @@ function MoreFiltersMenu({
                     onClick={() => setRecentDays(opt.value)}
                     className={clsx(
                       "px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap",
-                      active ? "bg-white text-gray-800 shadow-sm" : "text-gray-600 hover:text-gray-800"
+                      active ? "bg-white text-gray-800 shadow-xs" : "text-gray-600 hover:text-gray-800"
                     )}
                   >
                     {opt.label}

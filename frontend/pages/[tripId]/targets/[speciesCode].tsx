@@ -345,7 +345,7 @@ export default function SpeciesDetail() {
               onShowMap={handleShowMap}
             />
 
-            <Card className="mt-4 px-4 py-3 focus-within:outline focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
+            <Card className="mt-4 px-4 py-3 focus-within:outline-solid focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
               <label
                 htmlFor="species-notes"
                 className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500"
@@ -361,7 +361,7 @@ export default function SpeciesDetail() {
                 readOnly={!canMutate}
                 minRows={1}
                 maxRows={10}
-                className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-none"
+                className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-hidden"
               />
             </Card>
 
@@ -410,7 +410,7 @@ export default function SpeciesDetail() {
           {selectedSpecies && (
             <div className="absolute inset-0 z-10 flex flex-col">
               <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />
-              <div className="w-full flex-grow relative">
+              <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox key={trip._id} onHotspotClick={obsClick} obsLayer={obsLayer} bounds={trip.bounds} />
                 )}

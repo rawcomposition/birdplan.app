@@ -45,7 +45,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                   <MarkerWithIcon
                     showStroke={false}
                     icon={marker.icon as MarkerIconT}
-                    className="inline-block scale-75 flex-shrink-0"
+                    className="inline-block scale-75 shrink-0"
                   />
                   <span className="truncate">{marker.name}</span>
                 </button>
@@ -60,7 +60,7 @@ export default function AddItineraryLocation({ dayId }: Props) {
                     close();
                   }}
                 >
-                  <MarkerWithIcon showStroke={false} icon="hotspot" className="inline-block scale-75 flex-shrink-0" />
+                  <MarkerWithIcon showStroke={false} icon="hotspot" className="inline-block scale-75 shrink-0" />
                   <span className="truncate">{hotspot.name}</span>
                 </button>
               </li>

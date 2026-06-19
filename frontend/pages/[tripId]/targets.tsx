@@ -130,7 +130,7 @@ export default function TripTargets() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search species"
-                        className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-sm outline-blue-500 outline-offset-0 focus:border-slate-400"
+                        className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-xs outline-blue-500 outline-offset-0 focus:border-slate-400"
                       />
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3">
@@ -139,7 +139,7 @@ export default function TripTargets() {
                         onClick={() => setShowStarred(!showStarred)}
                         aria-pressed={showStarred}
                         className={clsx(
-                          "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                          "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
                           showStarred
                             ? "border-yellow-300 bg-yellow-50 text-yellow-800"
                             : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
@@ -158,7 +158,7 @@ export default function TripTargets() {
                           aria-pressed={showMutual}
                           title="Show only targets that everyone in your group still needs"
                           className={clsx(
-                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
                             showMutual
                               ? "border-emerald-300 bg-emerald-50 text-emerald-800"
                               : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
@@ -253,7 +253,7 @@ export default function TripTargets() {
           {selectedSpecies && (
             <div className="absolute inset-0 z-10 flex flex-col">
               {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
-              <div className="w-full flex-grow relative">
+              <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox
                     key={trip._id}

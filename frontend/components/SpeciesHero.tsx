@@ -44,7 +44,7 @@ export default function SpeciesHero({
   return (
     <Card className="overflow-hidden flex flex-col sm:flex-row">
       <div
-        className="bg-gray-100 sm:w-[360px] sm:flex-shrink-0 aspect-[4/3] sm:self-start bg-cover bg-center"
+        className="bg-gray-100 sm:w-[360px] sm:shrink-0 aspect-4/3 sm:self-start bg-cover bg-center"
         style={photoUrl ? { backgroundImage: `url(${photoUrl})` } : undefined}
         title={photoBy ? `Photo by ${photoBy}` : undefined}
       >
@@ -67,7 +67,7 @@ export default function SpeciesHero({
             </div>
             {scientificName && <div className="italic text-gray-600 text-sm mt-1">{scientificName}</div>}
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <Menu as="div" className="relative">
               <Menu.Button
                 className="h-9 w-9 rounded-lg border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 grid place-items-center"

@@ -35,12 +35,12 @@ export default function HotspotTargetRow({
         <img
           src={img.url}
           alt={name}
-          className="w-16 aspect-[4/3] rounded object-cover flex-shrink-0"
+          className="w-16 aspect-4/3 rounded object-cover shrink-0"
           loading="lazy"
           title={img.by ? `Photo by ${img.by}` : ""}
         />
       ) : (
-        <div className="w-16 aspect-[4/3] rounded bg-gray-200 flex-shrink-0" />
+        <div className="w-16 aspect-4/3 rounded bg-gray-200 shrink-0" />
       )}
       <div className="flex-1 min-w-0 flex flex-col justify-center gap-2.5">
         <div className="flex items-center gap-1.5">
@@ -54,11 +54,11 @@ export default function HotspotTargetRow({
           </button>
           {isMutual && <MutualBadge variant="icon" />}
           {isSaved && (
-            <span className="[&_button]:!text-xs flex items-center">
+            <span className="[&_button]:text-xs! flex items-center">
               <FavButton hotspotId={hotspotId} code={code} name={name} range={range} percent={frequency} />
             </span>
           )}
-          <span className="text-gray-600 text-[13px] font-medium ml-auto flex-shrink-0">
+          <span className="text-gray-600 text-[13px] font-medium ml-auto shrink-0">
             {frequency > 1 ? Math.round(frequency) : frequency}%
           </span>
         </div>

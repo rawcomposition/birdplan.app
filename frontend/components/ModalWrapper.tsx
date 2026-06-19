@@ -68,7 +68,7 @@ export default function ModalWrapper({
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
-          className="fixed inset-0 z-20 w-full bg-white bg-opacity-70 hidden sm:block"
+          className="fixed inset-0 z-20 w-full bg-white/70 hidden sm:block"
           onClick={handleBackdropClick}
         />
       )}

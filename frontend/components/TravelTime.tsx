@@ -103,7 +103,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
                 !travelData?.isDeleted && TravelInfo
               )}
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-6 rounded bg-white shadow-lg py-1 w-[130px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
+            <Menu.Items className="absolute text-sm -right-2 top-6 rounded bg-white shadow-lg py-1 w-[130px] ring-1 ring-black/5 flex flex-col z-10">
               <Menu.Item>
                 <button
                   type="button"

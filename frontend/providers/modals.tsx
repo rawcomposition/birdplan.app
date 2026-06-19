@@ -209,7 +209,7 @@ const Body = ({
 }) => {
   const { position } = React.useContext(FieldContext);
   const padding = position === "center" ? "px-6 sm:px-7 pt-4" : "px-4 sm:px-6 pt-4";
-  return <div className={clsx(!noPadding && padding, className, "overflow-auto flex-grow")}>{children}</div>;
+  return <div className={clsx(!noPadding && padding, className, "overflow-auto grow")}>{children}</div>;
 };
 
 export { ModalProvider, useModal, Footer, Header, Body };

@@ -74,7 +74,7 @@ export default function BirdPlan() {
               height="1557"
             />
             <div className="relative" aria-hidden="true">
-              <div className="absolute -inset-x-20 bottom-0 bg-gradient-to-t from-[#fbfbfd] pt-[7%]"></div>
+              <div className="absolute -inset-x-20 bottom-0 bg-linear-to-t from-[#fbfbfd] pt-[7%]"></div>
             </div>
           </div>
         </div>

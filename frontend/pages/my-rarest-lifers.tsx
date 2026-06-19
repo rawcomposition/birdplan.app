@@ -17,7 +17,7 @@ export default function ImportLifelist() {
           <h1 className="text-3xl font-bold text-gray-700 mb-8">
             <Icon name="feather" className="text-2xl text-lime-600" /> My Rarest Lifers
           </h1>
-          <div className="pt-4 p-5 bg-white rounded-lg shadow mb-8">
+          <div className="pt-4 p-5 bg-white rounded-lg shadow-sm mb-8">
             This feature is no longer available. eBird has not published an updated version of the Macaulay Library
             stats since the 2023 taxonomy update.
           </div>
