@@ -18,8 +18,7 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "paths": {
-      "@birdplan/shared": ["../shared/index.ts"],
-      "@/*": ["./*"]
+      "@birdplan/shared": ["../shared/index.ts"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "vite-env.d.ts"],
