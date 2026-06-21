@@ -74,16 +74,18 @@ export default function TripTargets() {
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
     if (!observation) return toast.error("Observation not found");
-    observation.isPersonal
-      ? open(observation.isPersonal ? "personalLocation" : "hotspot", {
-          hotspot: observation,
-          speciesCode: selectedSpecies?.code,
-          speciesName: selectedSpecies?.name,
-        })
-      : open("hotspot", {
-          hotspot: observation,
-          speciesName: selectedSpecies?.name,
-        });
+    if (observation.isPersonal) {
+      open("personalLocation", {
+        hotspot: observation,
+        speciesCode: selectedSpecies?.code,
+        speciesName: selectedSpecies?.name,
+      });
+    } else {
+      open("hotspot", {
+        hotspot: observation,
+        speciesName: selectedSpecies?.name,
+      });
+    }
   };
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {

@@ -45,6 +45,7 @@ export default function SpeciesDetail() {
 
   const [scope, setScope] = React.useState<Scope>("saved");
   const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
+  const [nowMs] = React.useState(() => Date.now());
   const { sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();
 
@@ -141,7 +142,7 @@ export default function SpeciesDetail() {
 
   let recentLocIds: string[] | null = null;
   if (recentDays != null) {
-    const cutoff = new Date(Date.now() - recentDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const cutoff = new Date(nowMs - recentDays * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const ids = new Set<string>();
     for (const o of obs) if (o.obsDt && o.obsDt >= cutoff) ids.add(o.id);
     recentLocIds = [...ids];
@@ -211,11 +212,14 @@ export default function SpeciesDetail() {
   const canMutate = canEdit && !!target;
 
   const persistedNotes = trip?.targetNotes?.[speciesCode] || "";
-  const [tempNotes, setTempNotes] = React.useState("");
+  const notesKey = `${trip?._id}|${speciesCode}`;
+  const [tempNotes, setTempNotes] = React.useState(persistedNotes);
+  const [seededKey, setSeededKey] = React.useState(notesKey);
 
-  React.useEffect(() => {
+  if (notesKey !== seededKey) {
+    setSeededKey(notesKey);
     setTempNotes(persistedNotes);
-  }, [persistedNotes, speciesCode]);
+  }
 
   const saveNotes = React.useCallback(
     (notes: string) => {

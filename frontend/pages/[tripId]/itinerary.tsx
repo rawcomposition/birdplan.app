@@ -22,11 +22,13 @@ export default function Itinerary() {
   const [editingStartDate, setEditingStartDate] = React.useState(false);
   const shouldDefaultEdit = !!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length);
   const [editing, setEditing] = React.useState(shouldDefaultEdit);
+  const [prevShouldDefaultEdit, setPrevShouldDefaultEdit] = React.useState(shouldDefaultEdit);
   const isEditing = canEdit && editing;
 
-  React.useEffect(() => {
+  if (shouldDefaultEdit !== prevShouldDefaultEdit) {
+    setPrevShouldDefaultEdit(shouldDefaultEdit);
     if (shouldDefaultEdit) setEditing(true);
-  }, [shouldDefaultEdit]);
+  }
 
   const setStartDateMutation = useTripMutation<{ startDate: string }>({
     url: `/trips/${trip?._id}/set-start-date`,
@@ -64,7 +66,7 @@ export default function Itinerary() {
     if (!modalId) return;
     const isButton = (e.target as HTMLElement).closest("button");
     if (isButton) return;
-    modalId && close();
+    if (modalId) close();
   };
 
   if (is404) return <NotFound />;

@@ -6,11 +6,9 @@ type PropsT = {
 };
 
 export const useWindowActive = ({ onFocus, onBlur }: PropsT = {}) => {
-  const [windowIsFocused, setWindowIsFocused] = React.useState(true);
+  const [windowIsFocused, setWindowIsFocused] = React.useState(() => document?.visibilityState === "visible");
 
   React.useEffect(() => {
-    setWindowIsFocused(document?.visibilityState === "visible");
-
     const handleVisibilityChange = () => {
       setWindowIsFocused(document.visibilityState === "visible");
       if (document.visibilityState === "visible" && onFocus) onFocus();

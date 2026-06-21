@@ -1,4 +1,4 @@
-import { initializeApp, FirebaseApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, Auth } from "firebase/auth";
 
 const hasFirebaseConfig = !!(
@@ -7,7 +7,6 @@ const hasFirebaseConfig = !!(
   import.meta.env.VITE_FIREBASE_APP_ID
 );
 
-let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let authReady: Promise<void> = Promise.resolve();
 
@@ -21,7 +20,7 @@ if (hasFirebaseConfig) {
     storageBucket: "bird-planner.appspot.com",
   };
 
-  app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   authReady = new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth!, () => {

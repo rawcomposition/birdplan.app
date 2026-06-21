@@ -141,7 +141,7 @@ export default function Mapbox({
             close();
           }
         }}
-        // @ts-ignore
+        // @ts-expect-error react-map-gl bounds prop typing mismatch
         bounds={[
           [bounds.minX, bounds.minY],
           [bounds.maxX, bounds.maxY],
@@ -189,13 +189,13 @@ export default function Mapbox({
         ))}
         {hotspotLayer && (
           <Source id="hotspot-layer" type="geojson" data={hotspotLayer}>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...hsLayerStyle} />
           </Source>
         )}
         {obsLayer && (
           <Source id="obs-layer" type="geojson" data={obsLayer}>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...obsLayerStyle} />
           </Source>
         )}

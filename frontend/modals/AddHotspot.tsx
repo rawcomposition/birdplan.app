@@ -41,43 +41,27 @@ export default function AddHotspot() {
     open("hotspot", { hotspot });
   };
 
-  const resultsRef = React.useRef(slicedResults);
-  const tripHotspotsRef = React.useRef(trip?.hotspots);
-  const selectedIndexRef = React.useRef(selectedIndex);
-  resultsRef.current = slicedResults;
-  tripHotspotsRef.current = trip?.hotspots;
-  selectedIndexRef.current = selectedIndex;
-
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown") {
-        setSelectedIndex((prev) => {
-          if (prev < resultsRef.current.length - 1) return prev + 1;
-          return prev;
-        });
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < slicedResults.length - 1 ? prev + 1 : prev));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selected = slicedResults[selectedIndex];
+      if (selected) {
+        selectHotspot(selected, !!trip?.hotspots?.find((it) => it.id === selected.id));
       }
-      if (e.key === "ArrowUp") {
-        setSelectedIndex((prev) => {
-          if (prev > 0) return prev - 1;
-          return prev;
-        });
-      }
-      if (e.key === "Enter") {
-        const selected = resultsRef.current[selectedIndexRef.current];
-        if (selected) {
-          selectHotspot(selected, !!tripHotspotsRef.current?.find((it) => it.id === selected.id));
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    }
+  };
 
   return (
     <>
       <Header>Add eBird Hotspot</Header>
       <Body>
-        <div className="flex gap-2 mb-2">
+        <div className="flex gap-2 mb-2" onKeyDown={handleKeyDown}>
           <div className="flex flex-col gap-5 w-full">
             <Input
               type="search"

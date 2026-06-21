@@ -20,6 +20,7 @@ import Alert from "components/Alert";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
+  const [seededKey, setSeededKey] = React.useState<string | null>(null);
   const { lifelist, lifelistUpdatedAt, exceptions } = useProfile();
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
@@ -61,18 +62,19 @@ export default function ImportLifelist() {
     queryKey: ["/taxonomy"],
   });
 
-  React.useEffect(() => {
-    if (!exceptionsString) return;
-    const codes = exceptionsString.split(",");
-    const value = codes.map((code) => {
-      const taxon = taxonomy?.find((it) => it.code === code);
-      return {
-        label: taxon?.name || `Unknown (${code})`,
-        value: taxon?.code!,
-      };
-    });
-    setExceptionsValue(value);
-  }, [exceptionsString, taxonomy]);
+  const seedKey = `${exceptionsString || ""}|${taxonomy ? "1" : "0"}`;
+  if (exceptionsString && seedKey !== seededKey) {
+    setSeededKey(seedKey);
+    setExceptionsValue(
+      exceptionsString.split(",").map((code) => {
+        const taxon = taxonomy?.find((it) => it.code === code);
+        return {
+          label: taxon?.name || `Unknown (${code})`,
+          value: taxon?.code ?? code,
+        };
+      })
+    );
+  }
 
   const taxonomySearch = (input: string, callback: (options: Option[]) => void) => {
     const options = taxonomy?.filter((it) => it.name.toLowerCase().includes(input.toLowerCase()))?.slice(0, 25) || [];
