@@ -16,6 +16,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
+import TargetsOptionsDropdown from "components/TargetsOptionsDropdown";
 import NotFound from "components/NotFound";
 import TargetRow from "components/TargetRow";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -27,7 +28,10 @@ export default function TripTargets() {
   const { open, close } = useModal();
   const { user } = useUser();
   const { is404, trip, selectedSpecies } = useTrip();
-  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
+  const { obs, obsLayer } = useFetchSpeciesObs({
+    region: trip?.region,
+    code: selectedSpecies?.code,
+  });
 
   // Filter options
   const [search, setSearch] = React.useState("");
@@ -51,17 +55,22 @@ export default function TripTargets() {
 
   const { lifelist } = useTargetView(trip);
   const { isGroup, isMutual } = useMutualTargets(trip);
-  const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
+  const targetSpecies =
+    regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
   const filteredTargets = targetSpecies?.filter(
     (it) =>
       it.name.toLowerCase().includes(search.toLowerCase()) &&
       (showStarred ? trip?.targetStars?.includes(it.code) : true) &&
-      (showMutual && isGroup ? isMutual(it.code) : true)
+      (showMutual && isGroup ? isMutual(it.code) : true),
   );
 
   const truncatedTargets = filteredTargets?.slice(0, showCount);
+
+  const minPercent = regionData?.items?.length
+    ? Math.min(...regionData.items.map((it) => it.frequency))
+    : 0;
 
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
@@ -72,7 +81,10 @@ export default function TripTargets() {
           speciesCode: selectedSpecies?.code,
           speciesName: selectedSpecies?.name,
         })
-      : open("hotspot", { hotspot: observation, speciesName: selectedSpecies?.name });
+      : open("hotspot", {
+          hotspot: observation,
+          speciesName: selectedSpecies?.name,
+        });
   };
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -97,7 +109,10 @@ export default function TripTargets() {
         </Head>
       )}
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <Header
+        title={trip?.name || ""}
+        parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }}
+      />
       <TripNav active="targets" />
       <main className="flex h-[calc(100%-60px-55px)] relative bg-gray-50">
         <ErrorBoundary>
@@ -106,81 +121,112 @@ export default function TripTargets() {
               <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
                 {isLoadingTargets && (
                   <div className="flex items-center flex-col gap-2 my-8">
-                    <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
+                    <Icon
+                      name="loading"
+                      className="animate-spin text-4xl text-blue-500"
+                    />
                     <p className="text-sm text-slate-600">Loading targets...</p>
                   </div>
                 )}
+                {!isLoadingTargets && !!trip && (
+                  <>
+                    {!!regionData?.items?.length && (
+                      <p className="mb-2 sm:mb-3 text-sm text-gray-600">
+                        Found{" "}
+                        <span className="font-semibold text-gray-900 tabular-nums">
+                          {filteredTargets?.length}
+                        </span>{" "}
+                        species above{" "}
+                        <span className="font-semibold text-gray-900 tabular-nums">
+                          {minPercent}%
+                        </span>
+                      </p>
+                    )}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                      <div className="relative w-full sm:flex-1 sm:max-w-sm">
+                        <Icon
+                          name="search"
+                          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+                        />
+                        <input
+                          type="search"
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          placeholder="Search species"
+                          className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-xs outline-blue-500 outline-offset-0 focus:border-slate-400"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2 sm:gap-3 sm:ml-auto">
+                        <button
+                          type="button"
+                          onClick={() => setShowStarred(!showStarred)}
+                          aria-pressed={showStarred}
+                          className={clsx(
+                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
+                            showStarred
+                              ? "border-yellow-300 bg-yellow-50 text-yellow-800"
+                              : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
+                          )}
+                        >
+                          <Icon
+                            name={showStarred ? "star" : "starOutline"}
+                            className={
+                              showStarred ? "text-yellow-500" : "text-gray-400"
+                            }
+                          />
+                          Starred
+                        </button>
+                        {isGroup && (
+                          <button
+                            type="button"
+                            onClick={() => setShowMutual(!showMutual)}
+                            aria-pressed={showMutual}
+                            title="Show only targets that everyone in your group still needs"
+                            className={clsx(
+                              "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
+                              showMutual
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
+                            )}
+                          >
+                            <Icon
+                              name={
+                                showMutual
+                                  ? "userFriends"
+                                  : "userFriendsOutline"
+                              }
+                              className={
+                                showMutual
+                                  ? "text-emerald-600"
+                                  : "text-gray-400"
+                              }
+                            />
+                            Mutual
+                          </button>
+                        )}
+                        <TargetViewToggle trip={trip} align="left" />
+                        <div className="ml-auto sm:ml-0">
+                          <TargetsOptionsDropdown trip={trip} />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 {targetsError && (
                   <Card className="p-4 text-center mt-4 space-y-2">
-                    <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
+                    <h3 className="text-lg font-medium text-gray-700">
+                      Error loading targets
+                    </h3>
                     <Button color="link" onClick={() => refetchTargets()}>
                       Try Again
                     </Button>
                   </Card>
                 )}
-                {!!targetSpecies?.length && (
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <div className="relative w-full sm:flex-1 sm:max-w-sm">
-                      <Icon
-                        name="search"
-                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
-                      />
-                      <input
-                        type="search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search species"
-                        className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-xs outline-blue-500 outline-offset-0 focus:border-slate-400"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setShowStarred(!showStarred)}
-                        aria-pressed={showStarred}
-                        className={clsx(
-                          "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
-                          showStarred
-                            ? "border-yellow-300 bg-yellow-50 text-yellow-800"
-                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                        )}
-                      >
-                        <Icon
-                          name={showStarred ? "star" : "starOutline"}
-                          className={showStarred ? "text-yellow-500" : "text-gray-400"}
-                        />
-                        Starred
-                      </button>
-                      {isGroup && (
-                        <button
-                          type="button"
-                          onClick={() => setShowMutual(!showMutual)}
-                          aria-pressed={showMutual}
-                          title="Show only targets that everyone in your group still needs"
-                          className={clsx(
-                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
-                            showMutual
-                              ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                              : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                          )}
-                        >
-                          <Icon
-                            name={showMutual ? "userFriends" : "userFriendsOutline"}
-                            className={showMutual ? "text-emerald-600" : "text-gray-400"}
-                          />
-                          Mutual
-                        </button>
-                      )}
-                      <TargetViewToggle trip={trip} align="left" />
-                    </div>
-                    <div className="ml-auto text-xs text-gray-500 hidden sm:block tabular-nums">
-                      {filteredTargets?.length} species
-                    </div>
-                  </div>
-                )}
                 {!!regionData?.items?.length && !truncatedTargets?.length && (
                   <Card className="p-6 text-center mt-4">
-                    <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
+                    <h3 className="text-lg font-medium mb-2 text-gray-700">
+                      No targets found
+                    </h3>
                     <p className="text-gray-500 text-sm">
                       {showStarred || (showMutual && isGroup) || search
                         ? "Try clearing your filters."
@@ -188,11 +234,15 @@ export default function TripTargets() {
                     </p>
                   </Card>
                 )}
-                {!isLoadingTargets && !targetsError && !regionData?.items?.length && (
-                  <Card className="p-6 text-center mt-4 space-y-2">
-                    <h3 className="text-lg font-medium text-gray-700">No target data available for this region</h3>
-                  </Card>
-                )}
+                {!isLoadingTargets &&
+                  !targetsError &&
+                  !regionData?.items?.length && (
+                    <Card className="p-6 text-center mt-4 space-y-2">
+                      <h3 className="text-lg font-medium text-gray-700">
+                        No target data available for this region
+                      </h3>
+                    </Card>
+                  )}
                 {!!truncatedTargets?.length && (
                   <Card className="overflow-hidden">
                     <table className="w-full">
@@ -239,20 +289,33 @@ export default function TripTargets() {
 
                 <div className="my-4 text-center pb-4">
                   {filteredTargets?.length > showCount && (
-                    <button type="button" className="text-link font-bold text-sm" onClick={() => setPage(page + 1)}>
-                      Show {Math.min(filteredTargets.length - showCount, PAGE_SIZE)} more
+                    <button
+                      type="button"
+                      className="text-link font-bold text-sm"
+                      onClick={() => setPage(page + 1)}
+                    >
+                      Show{" "}
+                      {Math.min(filteredTargets.length - showCount, PAGE_SIZE)}{" "}
+                      more
                     </button>
                   )}
                 </div>
                 {regionData?.citation && (
-                  <p className="text-gray-400 text-xs text-center pb-6 px-4">{regionData.citation}</p>
+                  <p className="text-gray-400 text-xs text-center pb-6 px-4">
+                    {regionData.citation}
+                  </p>
                 )}
               </div>
             </div>
           </div>
           {selectedSpecies && (
             <div className="absolute inset-0 z-10 flex flex-col">
-              {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
+              {selectedSpecies && (
+                <SpeciesCard
+                  name={selectedSpecies.name}
+                  code={selectedSpecies.code}
+                />
+              )}
               <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox
