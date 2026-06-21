@@ -120,6 +120,11 @@
     @apply text-blue-900;
   }
 
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
   svg.icon {
     width: 1em;
     height: 1em;

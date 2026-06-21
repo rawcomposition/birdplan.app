@@ -182,7 +182,7 @@ const Footer = ({ children }: { children: React.ReactNode }) => {
     <footer
       className={clsx(
         "flex items-center",
-        position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-gray-50"
+        position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-white"
       )}
     >
       {children}
@@ -195,7 +195,9 @@ const Header = ({ children }: { children: React.ReactNode }) => {
   return position === "center" ? (
     <DialogTitle className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</DialogTitle>
   ) : (
-    <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
+    <DialogTitle className="pl-4 sm:pl-6 pr-12 py-4 border-b text-lg font-semibold tracking-tight text-gray-900">
+      {children}
+    </DialogTitle>
   );
 };
 
