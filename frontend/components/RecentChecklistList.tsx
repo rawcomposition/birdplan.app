@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
 import Link from "next/link";
+import Button from "components/Button";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
@@ -108,7 +109,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                 <tr>
                   <th className="text-left pl-1.5">Time ago</th>
                   {speciesCode && <th className="text-center">{speciesName}</th>}
-                  {!speciesCode && <th className="text-center min-w-[2rem]">Species Count</th>}
+                  {!speciesCode && <th className="text-center min-w-8">Species Count</th>}
                   <th className="text-right"></th>
                 </tr>
               </thead>
@@ -177,9 +178,9 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             <Alert style="error" className="-mx-1 my-1">
               <Icon name="xMarkCircle" className="text-xl" />
               Failed to load recent checklists
-              <button className="text-sky-600 font-medium" onClick={() => refetch()}>
+              <Button color="link" onClick={() => refetch()}>
                 Retry
-              </button>
+              </Button>
             </Alert>
           )}
         </>

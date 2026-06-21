@@ -150,17 +150,17 @@ export default function Hotspot({ hotspot }: Props) {
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
             {!originalName && !translateMutation.isPending && (
-              <button type="button" className="block text-sky-600" onClick={() => translateMutation.mutate({})}>
+              <Button type="button" color="link" size="none" className="block" onClick={() => translateMutation.mutate({})}>
                 Translate
-              </button>
+              </Button>
             )}
             {translateMutation.isPending && <div className="text-gray-400">Translating...</div>}
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <button type="button" className="text-sky-600" onClick={() => resetMutation.mutate({})}>
+                <Button type="button" color="link" size="none" onClick={() => resetMutation.mutate({})}>
                   Reset
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -174,7 +174,7 @@ export default function Hotspot({ hotspot }: Props) {
             color="gray"
             size="sm"
           >
-            <Icon name="feather" className="mr-1 -mt-[3px] text-[#1c6900]" /> Targets
+            <Icon name="feather" className="mr-1 mt-[-3px] text-success" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
@@ -190,7 +190,7 @@ export default function Hotspot({ hotspot }: Props) {
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <Icon name="verticalDots" />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm right-0 top-10 rounded bg-white shadow-lg py-1.5 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col z-10">
+            <Menu.Items className="absolute text-sm right-0 top-10 rounded bg-white shadow-lg py-1.5 w-[170px] ring-1 ring-black/5 flex flex-col z-10">
               <Menu.Item>
                 <a
                   href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
@@ -222,9 +222,9 @@ export default function Hotspot({ hotspot }: Props) {
           <button
             type="button"
             onClick={handleSave}
-            className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-sky-600 mt-4 flex items-center gap-2"
+            className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-link mt-4 flex items-center gap-2"
           >
-            <Icon name="plus" className="text-lg text-sky-600" /> Add to trip
+            <Icon name="plus" className="text-lg text-link" /> Add to trip
           </button>
         )}
 

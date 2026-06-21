@@ -31,7 +31,7 @@ Monorepo with four npm workspaces:
 
 - **`shared/`** — `@birdplan/shared`: shared TypeScript types only (`types.ts`). The single source of truth for domain models (`Trip`, `Hotspot`, `Profile`, `Participant`, etc.). Imported by both frontend and backend via the `@birdplan/shared` alias. Changing a type here affects both sides — re-run `typecheck`.
 - **`backend/`** — Hono API server (ESM, `type: module`). Connects to MongoDB via Mongoose, uses Firebase Admin for auth verification and Storage.
-- **`frontend/`** — Next.js 15 **pages router** (not app router; no `src/` dir). React 19, Tailwind 3, React Query, Zustand, Mapbox.
+- **`frontend/`** — Next.js 15 **pages router** (not app router; no `src/` dir). React 19, Tailwind 4, React Query, Zustand, Mapbox.
 - **`scripts/`** — standalone `tsx` utility scripts.
 
 ### Backend
@@ -50,6 +50,7 @@ Monorepo with four npm workspaces:
 - **Mutations**: `hooks/useMutation.ts` for general mutations; `hooks/useTripMutation.ts` for optimistic trip updates — pass an `updateCache(old, input)` reducer; it handles optimistic `setQueryData`, rollback on error, and invalidation of the `/trips/:id` key.
 - **Trip state**: `providers/trip.tsx` owns the current trip (from the `tripId` route param), participants, `canEdit`/`isOwner`, and transient map UI state (selected species, halo, satellite toggle).
 - Modals live in `modals/` and are orchestrated via `providers/modals.tsx` / `ModalProvider`.
+- **UI primitives**: shadcn components in `components/ui/` use the `base-nova` style (see `components.json`), so they're built on **Base UI** (`@base-ui/react`), not Radix — there is no `@radix-ui/*` dependency. Icons via `lucide-react`.
 
 ### Life lists (domain core)
 

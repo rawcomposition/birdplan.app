@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
+import Card from "components/Card";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
 
 export type HotspotItem = OpenBirdingHotspotRanking & {
@@ -28,7 +29,7 @@ export default function SpeciesHotspotList({
   loading,
 }: Props) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <Card className="overflow-hidden">
       <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="text-base font-bold text-gray-800">Top hotspots</div>
@@ -54,7 +55,7 @@ export default function SpeciesHotspotList({
           hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

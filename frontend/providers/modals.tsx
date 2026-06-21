@@ -5,6 +5,7 @@ import { KeyValue } from "lib/types";
 
 // components
 import ModalWrapper from "components/ModalWrapper";
+import { DialogTitle } from "components/ui/dialog";
 import clsx from "clsx";
 
 // modals
@@ -26,7 +27,6 @@ type ModalConfig = {
   id: string;
   Component: React.ComponentType<any>;
   position: ModalPosition;
-  small?: boolean;
   maxHeight?: number | string;
 };
 
@@ -44,7 +44,6 @@ const modals: ModalConfig[] = [
   {
     id: "addMarker",
     Component: Marker,
-    small: true,
     position: "right",
   },
   {
@@ -60,13 +59,11 @@ const modals: ModalConfig[] = [
   {
     id: "viewMarker",
     Component: Marker,
-    small: true,
     position: "right",
   },
   {
     id: "addItineraryLocation",
     Component: AddItineraryLocation,
-    small: true,
     position: "right",
   },
   {
@@ -159,7 +156,6 @@ const ModalProvider = ({ children }: Props) => {
       {children}
       <ModalWrapper
         position={modal?.position}
-        small={modal?.small}
         maxHeight={modal?.maxHeight}
         open={!!modal && !closing}
         onClose={handleDismiss}
@@ -181,7 +177,7 @@ const Footer = ({ children }: { children: React.ReactNode }) => {
     <footer
       className={clsx(
         "flex items-center",
-        position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-gray-50"
+        position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-white"
       )}
     >
       {children}
@@ -192,9 +188,11 @@ const Footer = ({ children }: { children: React.ReactNode }) => {
 const Header = ({ children }: { children: React.ReactNode }) => {
   const { position } = React.useContext(FieldContext);
   return position === "center" ? (
-    <h3 className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</h3>
+    <DialogTitle className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</DialogTitle>
   ) : (
-    <h3 className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50 text-lg font-medium">{children}</h3>
+    <DialogTitle className="pl-4 sm:pl-6 pr-12 py-4 border-b text-lg font-semibold tracking-tight text-gray-900">
+      {children}
+    </DialogTitle>
   );
 };
 
@@ -209,7 +207,7 @@ const Body = ({
 }) => {
   const { position } = React.useContext(FieldContext);
   const padding = position === "center" ? "px-6 sm:px-7 pt-4" : "px-4 sm:px-6 pt-4";
-  return <div className={clsx(!noPadding && padding, className, "overflow-auto flex-grow")}>{children}</div>;
+  return <div className={clsx(!noPadding && padding, className, "overflow-auto grow")}>{children}</div>;
 };
 
 export { ModalProvider, useModal, Footer, Header, Body };

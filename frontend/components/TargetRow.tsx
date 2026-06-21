@@ -72,12 +72,12 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
           <img
             src={img.url}
             alt={name}
-            className="w-16 aspect-[4/3] min-w-[3.5rem] rounded object-cover my-1 mx-1 sm:mx-0"
+            className="w-16 aspect-4/3 min-w-14 rounded object-cover my-1 mx-1 sm:mx-0"
             loading="lazy"
             title={img?.by ? `Photo by ${img.by}` : ""}
           />
         ) : (
-          <div className="w-16 aspect-[4/3] min-w-[3.5rem] rounded bg-gray-200 my-1 mx-1 sm:mx-0" />
+          <div className="w-16 aspect-4/3 min-w-14 rounded bg-gray-200 my-1 mx-1 sm:mx-0" />
         )}
       </td>
       <td>

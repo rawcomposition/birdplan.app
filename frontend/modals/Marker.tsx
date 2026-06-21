@@ -140,7 +140,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
                 <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
                   <Icon name="verticalDots" />
                 </Menu.Button>
-                <Menu.Items className="absolute text-sm left-0 top-10 rounded bg-white shadow-lg py-1.5 w-[180px] ring-1 ring-black ring-opacity-5 flex flex-col">
+                <Menu.Items className="absolute text-sm left-0 top-10 rounded bg-white shadow-lg py-1.5 w-[180px] ring-1 ring-black/5 flex flex-col">
                   <Menu.Item>
                     <a
                       href={googleUrl}
@@ -237,7 +237,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
                     type="button"
                     key={it}
                     onClick={() => setIcon(it as MarkerIconT)}
-                    className={clsx("border-2 p-1", icon === it ? "border-blue-500 rounded-md" : "border-transparent")}
+                    className={clsx("border-2 p-1", icon === it ? "border-primary rounded-md" : "border-transparent")}
                   >
                     <MarkerWithIcon icon={it as MarkerIconT} className="scale-125" />
                   </button>

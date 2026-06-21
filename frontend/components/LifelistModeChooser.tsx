@@ -44,7 +44,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
         <Link
           href={withReturnTo("/import-lifelist", asPath)}
           onClick={close}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-link"
         >
           Manage your World life list →
         </Link>
@@ -97,10 +97,10 @@ function OptionRow({ checked, disabled, onSelect, title, description, children }
         <span
           className={clsx(
             "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
-            checked ? "border-blue-500" : "border-gray-300"
+            checked ? "border-primary" : "border-gray-300"
           )}
         >
-          {checked && <span className="h-2 w-2 rounded-full bg-blue-500" />}
+          {checked && <span className="h-2 w-2 rounded-full bg-primary" />}
         </span>
         <div className="flex-1">
           <div className="text-[15px] font-bold text-gray-900">{title}</div>

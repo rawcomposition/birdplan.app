@@ -52,7 +52,7 @@ export default function LoginForm({ message, email }: Props) {
         <div>
           <Input type="password" name="password" placeholder="Password" required autoFocus={!!email} />
           <div className="text-right mt-1">
-            <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
+            <Link href="/forgot-password" className="text-sm text-link">
               Forgot password?
             </Link>
           </div>
@@ -83,7 +83,7 @@ export default function LoginForm({ message, email }: Props) {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Don&apos;t have an account?{" "}
-          <Link href={signupHref} className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href={signupHref} className="font-medium text-link">
             Sign up
           </Link>
         </p>

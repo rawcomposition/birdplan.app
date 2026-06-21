@@ -111,7 +111,7 @@ export default function ManageLifelist({ participantId }: Props) {
           <Link
             href={withReturnTo(`/${trip?._id}/participants`, asPath)}
             onClick={close}
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-sky-600"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-link"
           >
             Manage other participants&apos; life lists →
           </Link>

@@ -36,7 +36,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
         size="sm"
         href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
       >
-        <Icon name="directions" className="mr-1 -mt-[3px] text-[#c2410d]" /> Directions
+        <Icon name="directions" className="mr-1 mt-[-3px] text-[#c2410d]" /> Directions
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
         <a
@@ -44,7 +44,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700"
           target="_blank"
         >
-          <GoogleMapsIcon className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
+          <GoogleMapsIcon className="text-lg ml-3.5 mr-1.5 shrink-0" />
           View in Google Maps
         </a>
         <a
@@ -52,7 +52,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
           className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700 sm:hidden"
           target="_blank"
         >
-          <OrganicMapsIcon className="text-lg ml-3.5 mr-1.5 flex-shrink-0" />
+          <OrganicMapsIcon className="text-lg ml-3.5 mr-1.5 shrink-0" />
           View in Organic Maps
         </a>
         {(!!filteredHotspots?.length || !!filteredMarkers?.length) && (
@@ -69,7 +69,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                     <MarkerWithIcon
                       showStroke={false}
                       icon={marker.icon as MarkerIconT}
-                      className="inline-block ml-1 scale-75 flex-shrink-0"
+                      className="inline-block ml-1 scale-75 shrink-0"
                     />
                     <span className="truncate">{marker.name}</span>
                   </Link>
@@ -85,7 +85,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                     <MarkerWithIcon
                       showStroke={false}
                       icon="hotspot"
-                      className="inline-block ml-1 scale-75 flex-shrink-0"
+                      className="inline-block ml-1 scale-75 shrink-0"
                     />
                     <span className="truncate">{hotspot.name}</span>
                   </Link>

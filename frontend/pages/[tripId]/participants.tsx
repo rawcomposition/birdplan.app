@@ -8,6 +8,7 @@ import Header from "components/Header";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import Button from "components/Button";
+import Card from "components/Card";
 import Input from "components/Input";
 import NotFound from "components/NotFound";
 import LoginModal from "components/LoginModal";
@@ -81,7 +82,7 @@ export default function TripParticipants() {
           </h1>
           <p className="text-gray-500 mb-8">Manage trip participants and life lists.</p>
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm px-4 sm:px-5 mb-4">
+          <Card className="px-4 sm:px-5 mb-4">
             {participants == null ? (
               <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
                 <Icon name="loading" className="animate-spin" /> Loading participants...
@@ -89,9 +90,9 @@ export default function TripParticipants() {
             ) : participants.length === 0 ? (
               <p className="py-6 text-sm text-gray-500">No participants yet.</p>
             ) : (
-              participants.map((p, i) => <ParticipantRow key={p._id} participant={p} index={i} />)
+              participants.map((p) => <ParticipantRow key={p._id} participant={p} />)
             )}
-          </div>
+          </Card>
 
           {canEdit && (
             <button

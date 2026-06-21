@@ -27,7 +27,7 @@ export default function HotspotStats({ id, speciesTotal, checklistsTotal }: Prop
 
   return (
     <div className="flex gap-10 text-gray-500">
-      <div className="flex flex-col text-[#1c6900]">
+      <div className="flex flex-col text-success">
         <span className="text-3xl font-bold">{speciesTotal ?? "--"}</span>
         <span className="text-xs">Species</span>
       </div>

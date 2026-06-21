@@ -8,7 +8,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function ColModal({ open, onClose, children }: Props) {
+export default function SlideOver({ open, onClose, children }: Props) {
   return (
     <Transition.Root show={open} as={React.Fragment}>
       <div className="absolute inset-0 z-10 overflow-hidden">
@@ -29,7 +29,7 @@ export default function ColModal({ open, onClose, children }: Props) {
             >
               <Icon name="angleLeft" /> Back
             </button>
-            <div className="px-6 py-4 flex-grow overflow-y-auto">{children}</div>
+            <div className="px-6 py-4 grow overflow-y-auto">{children}</div>
           </div>
         </Transition.Child>
       </div>

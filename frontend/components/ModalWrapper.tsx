@@ -1,128 +1,66 @@
 import React from "react";
-import { Transition } from "@headlessui/react";
-import CloseButton from "components/CloseButton";
-import clsx from "clsx";
+import { Dialog, DialogContent } from "components/ui/dialog";
+import { Sheet, SheetContent } from "components/ui/sheet";
 import ErrorBoundary from "components/ErrorBoundary";
 import { ModalPosition } from "providers/modals";
 
 type Props = {
   open: boolean;
-  small?: boolean;
   position?: ModalPosition;
   maxHeight?: number | string;
+  dismissable?: boolean;
   onClose: () => void;
   children: React.ReactNode;
 };
 
-export default function ModalWrapper({
-  open,
-  onClose,
-  small,
-  position = "right",
-  maxHeight = "auto",
-  children,
-}: Props) {
-  React.useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
+export default function ModalWrapper({ position = "right", ...props }: Props) {
+  return position === "center" ? <CenterDialog {...props} /> : <RightSheet {...props} />;
+}
 
-    document.addEventListener("keydown", handleEsc);
+type RoleProps = Omit<Props, "position">;
 
-    return () => {
-      document.removeEventListener("keydown", handleEsc);
-    };
-  }, []);
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onClose();
-  };
-
+function CenterDialog({ open, onClose, maxHeight = "auto", dismissable = true, children }: RoleProps) {
   return (
-    <>
-      <Transition
-        as="div"
-        show={open}
-        enter="ease-out duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="ease-in duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-        className="fixed inset-0 z-10 w-full bg-black/50 sm:hidden"
-        onClick={handleBackdropClick}
-      />
-
-      {position === "center" && (
-        <Transition
-          as="div"
-          show={open}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          className="fixed inset-0 z-20 w-full bg-white bg-opacity-70 hidden sm:block"
-          onClick={handleBackdropClick}
-        />
-      )}
-
-      <Transition
-        as="div"
-        show={open}
-        enter="ease-out duration-300"
-        enterFrom={
-          position === "center" ? "opacity-0 scale-95" : "opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
-        }
-        enterTo={position === "center" ? "opacity-100 scale-100" : "opacity-100 translate-y-0 sm:translate-x-0"}
-        leave="ease-in duration-200"
-        leaveFrom={position === "center" ? "opacity-100 scale-100" : "opacity-100 translate-y-0 sm:translate-x-0"}
-        leaveTo={
-          position === "center" ? "opacity-0 scale-95" : "opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
-        }
-        className={clsx(
-          "fixed z-30 w-full",
-          position === "center"
-            ? "inset-0 flex items-center justify-center p-4"
-            : "bottom-0 left-0 right-0 sm:left-auto sm:top-[60px] sm:max-w-md bg-black/10 sm:bg-transparent",
-          position === "right" && (small ? "top-1/2" : "top-44")
-        )}
-        onClick={position === "center" ? handleBackdropClick : undefined}
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen && dismissable) onClose();
+      }}
+    >
+      <DialogContent
+        showCloseButton={dismissable}
+        style={{ maxHeight }}
+        className="flex flex-col gap-0 overflow-hidden rounded-2xl p-0 w-[calc(100%-2rem)] max-w-[460px] sm:max-w-[460px]"
       >
-        <div
-          className={clsx(
-            "items-center justify-center text-center",
-            position === "center" ? "max-w-[460px] w-full mx-auto relative" : "h-full"
-          )}
-          onClick={position === "center" ? (e) => e.stopPropagation() : undefined}
-        >
-          <CloseButton
-            className={clsx(
-              "absolute z-40",
-              position === "center" ? "top-6 right-5 p-0" : "top-2 right-2 sm:right-4 p-2 bg-gray-50 rounded-full"
-            )}
-            onClick={onClose}
-          />
-          <div
-            className={clsx(
-              "relative transform bg-white text-left flex flex-col overflow-hidden",
-              position === "center"
-                ? "rounded-[18px] sm:shadow-[0_24px_60px_-12px_rgba(20,30,48,0.26),0_2px_6px_rgba(20,30,48,0.05)]"
-                : "rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none sm:shadow-left h-full"
-            )}
-            style={{
-              maxHeight: position === "center" ? maxHeight : undefined,
-              overflow: position === "center" ? "auto" : undefined,
-            }}
-          >
-            <ErrorBoundary>{children}</ErrorBoundary>
-          </div>
-        </div>
-      </Transition>
-    </>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RightSheet({ open, onClose, dismissable = true, children }: RoleProps) {
+  return (
+    <Sheet
+      open={open}
+      modal={false}
+      disablePointerDismissal
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen && dismissable) onClose();
+      }}
+    >
+      <SheetContent
+        side="right"
+        showCloseButton={dismissable}
+        initialFocus={false}
+        finalFocus={false}
+        className="gap-0 p-0 shadow-left data-[side=right]:w-full data-[side=right]:sm:max-w-md"
+        overlayProps={{
+          className: "z-40 bg-black/50 sm:hidden",
+          onClick: () => dismissable && onClose(),
+        }}
+      >
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </SheetContent>
+    </Sheet>
   );
 }

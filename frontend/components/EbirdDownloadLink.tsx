@@ -9,7 +9,7 @@ export default function EbirdDownloadLink({ className, world }: { className?: st
       href={world ? EBIRD_WORLD_LIFELIST_URL : EBIRD_LIFELIST_URL}
       target="_blank"
       rel="noreferrer"
-      className={`whitespace-nowrap text-sm font-medium text-sky-600 ${className || ""}`}
+      className={`whitespace-nowrap text-sm font-medium text-link ${className || ""}`}
     >
       Download from eBird <Icon name="external" className="text-xs" />
     </a>

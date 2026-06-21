@@ -7,6 +7,8 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import toast from "react-hot-toast";
 import { useTrip } from "providers/trip";
 import SpeciesCard from "components/SpeciesCard";
+import Card from "components/Card";
+import Button from "components/Button";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import Input from "components/Input";
@@ -109,12 +111,12 @@ export default function TripTargets() {
                   </div>
                 )}
                 {targetsError && (
-                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-center mt-4 space-y-2">
+                  <Card className="p-4 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">Error loading targets</h3>
-                    <button className="text-sky-600 font-medium" onClick={() => refetchTargets()}>
+                    <Button color="link" onClick={() => refetchTargets()}>
                       Try Again
-                    </button>
-                  </div>
+                    </Button>
+                  </Card>
                 )}
                 {!!targetSpecies?.length && (
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
@@ -128,7 +130,7 @@ export default function TripTargets() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search species"
-                        className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-sm outline-blue-500 outline-offset-0 focus:border-slate-400"
+                        className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-xs outline-blue-500 outline-offset-0 focus:border-slate-400"
                       />
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3">
@@ -137,7 +139,7 @@ export default function TripTargets() {
                         onClick={() => setShowStarred(!showStarred)}
                         aria-pressed={showStarred}
                         className={clsx(
-                          "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                          "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
                           showStarred
                             ? "border-yellow-300 bg-yellow-50 text-yellow-800"
                             : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
@@ -156,7 +158,7 @@ export default function TripTargets() {
                           aria-pressed={showMutual}
                           title="Show only targets that everyone in your group still needs"
                           className={clsx(
-                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-sm",
+                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
                             showMutual
                               ? "border-emerald-300 bg-emerald-50 text-emerald-800"
                               : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
@@ -177,22 +179,22 @@ export default function TripTargets() {
                   </div>
                 )}
                 {!!regionData?.items?.length && !truncatedTargets?.length && (
-                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4">
+                  <Card className="p-6 text-center mt-4">
                     <h3 className="text-lg font-medium mb-2 text-gray-700">No targets found</h3>
                     <p className="text-gray-500 text-sm">
                       {showStarred || (showMutual && isGroup) || search
                         ? "Try clearing your filters."
                         : "It looks like you have already seen all the species in this region."}
                     </p>
-                  </div>
+                  </Card>
                 )}
                 {!isLoadingTargets && !targetsError && !regionData?.items?.length && (
-                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 text-center mt-4 space-y-2">
+                  <Card className="p-6 text-center mt-4 space-y-2">
                     <h3 className="text-lg font-medium text-gray-700">No target data available for this region</h3>
-                  </div>
+                  </Card>
                 )}
                 {!!truncatedTargets?.length && (
-                  <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                  <Card className="overflow-hidden">
                     <table className="w-full">
                       <thead className="hidden sm:table-header-group bg-gray-50 border-b border-gray-200">
                         <tr>
@@ -232,12 +234,12 @@ export default function TripTargets() {
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </Card>
                 )}
 
                 <div className="my-4 text-center pb-4">
                   {filteredTargets?.length > showCount && (
-                    <button type="button" className="text-sky-600 font-bold text-sm" onClick={() => setPage(page + 1)}>
+                    <button type="button" className="text-link font-bold text-sm" onClick={() => setPage(page + 1)}>
                       Show {Math.min(filteredTargets.length - showCount, PAGE_SIZE)} more
                     </button>
                   )}
@@ -251,7 +253,7 @@ export default function TripTargets() {
           {selectedSpecies && (
             <div className="absolute inset-0 z-10 flex flex-col">
               {selectedSpecies && <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />}
-              <div className="w-full flex-grow relative">
+              <div className="w-full grow relative">
                 {trip?.bounds && (
                   <MapBox
                     key={trip._id}

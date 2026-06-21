@@ -2,6 +2,7 @@ import React from "react";
 import clsx from "clsx";
 import { Menu, Transition } from "@headlessui/react";
 import Icon from "components/Icon";
+import Card from "components/Card";
 import MutualBadge from "components/MutualBadge";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 
@@ -41,9 +42,9 @@ export default function SpeciesHero({
   onShowMap,
 }: Props) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col sm:flex-row">
+    <Card className="overflow-hidden flex flex-col sm:flex-row">
       <div
-        className="bg-gray-100 sm:w-[360px] sm:flex-shrink-0 aspect-[4/3] sm:self-start bg-cover bg-center"
+        className="bg-gray-100 sm:w-[360px] sm:shrink-0 aspect-4/3 sm:self-start bg-cover bg-center"
         style={photoUrl ? { backgroundImage: `url(${photoUrl})` } : undefined}
         title={photoBy ? `Photo by ${photoBy}` : undefined}
       >
@@ -66,15 +67,7 @@ export default function SpeciesHero({
             </div>
             {scientificName && <div className="italic text-gray-600 text-sm mt-1">{scientificName}</div>}
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              type="button"
-              onClick={onShowMap}
-              className="hidden lg:inline-flex h-9 px-4 rounded-lg bg-gray-800 text-white hover:bg-gray-900 text-sm font-semibold items-center gap-1.5"
-            >
-              <Icon name="map" className="text-sm" />
-              View Map
-            </button>
+          <div className="flex items-center gap-2 shrink-0">
             <Menu as="div" className="relative">
               <Menu.Button
                 className="h-9 w-9 rounded-lg border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 grid place-items-center"
@@ -97,7 +90,7 @@ export default function SpeciesHero({
                         type="button"
                         onClick={onShowMap}
                         className={clsx(
-                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left lg:hidden",
+                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left",
                           active ? "bg-gray-50 text-gray-900" : "text-gray-800"
                         )}
                       >
@@ -172,6 +165,6 @@ export default function SpeciesHero({
           className="mt-10 sm:mt-auto"
         />
       </div>
-    </div>
+    </Card>
   );
 }

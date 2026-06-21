@@ -1,6 +1,8 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Icon from "components/Icon";
+import Avatar from "components/Avatar";
+import { avatarFromFirebaseUser } from "lib/avatar";
 import { useUser } from "providers/user";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,19 +26,13 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
   if (!user) return null;
 
   return (
-    <Menu as="div" className="relative flex-shrink-0">
+    <Menu as="div" className="relative shrink-0">
       <Menu.Button
         className={
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
         }
       >
-        {user.photoURL ? (
-          <img src={user.photoURL} className="h-7 w-7 object-cover rounded-full opacity-85" />
-        ) : (
-          <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
-            <Icon name="user" className="text-gray-500" />
-          </div>
-        )}
+        <Avatar user={avatarFromFirebaseUser(user)} size={28} />
       </Menu.Button>
 
       <Transition>
@@ -55,7 +51,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
         >
           <Menu.Items>
             <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">
-              {user.photoURL && <img src={user.photoURL} className="h-[32px] w-[32px] object-cover rounded-full" />}
+              <Avatar user={avatarFromFirebaseUser(user)} size={32} />
               <div className="text-sm">
                 <p className="font-semibold">{user?.displayName}</p>
                 {user.email && <p className="text-gray-600">{user.email}</p>}

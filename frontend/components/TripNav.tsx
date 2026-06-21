@@ -29,7 +29,7 @@ export default function TripNav({ active, border = true }: Props) {
 
   return (
     <div className={clsx("bg-white px-2 pb-2 pt-0.5 h-[55px]", border && "border-b border-gray-100")}>
-      <div className="flex gap-1.5 items-center flex-shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
+      <div className="flex gap-1.5 items-center shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link
             href={`/${trip?._id}/${slug}`}
@@ -39,7 +39,7 @@ export default function TripNav({ active, border = true }: Props) {
               active === slug ? "bg-sky-600 text-gray-100" : "hover:bg-slate-300 text-gray-600"
             )}
           >
-            <Icon name={icon as any} className="!hidden xs:!inline" />
+            <Icon name={icon as any} className="hidden! xs:inline!" />
             {name}
           </Link>
         ))}

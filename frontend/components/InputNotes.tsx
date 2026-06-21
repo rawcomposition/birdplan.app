@@ -57,7 +57,7 @@ export default function InputNotes({ value, onBlur }: Props) {
                 }, 0);
               }
             }}
-            className="text-sky-600 text-[12px] font-bold px-3 py-1"
+            className="text-link text-[12px] font-bold px-3 py-1"
           >
             {isEditing ? "Done" : "Edit"}
           </button>

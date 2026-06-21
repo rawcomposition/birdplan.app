@@ -35,13 +35,13 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
             <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
               <Icon name="verticalDots" />
             </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black ring-opacity-5 flex flex-col gap-1">
+            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black/5 flex flex-col gap-1">
               <Menu.Item>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sky-600"
+                  className="text-link"
                 >
                   View on Google Maps
                 </a>

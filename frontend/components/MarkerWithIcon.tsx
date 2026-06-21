@@ -17,7 +17,7 @@ export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, clas
   return (
     <div
       className={clsx(
-        "relative cursor-pointer shadow w-[25px] h-[25px] rounded-full inline-flex items-center justify-center",
+        "relative cursor-pointer shadow-sm w-[25px] h-[25px] rounded-full inline-flex items-center justify-center",
         showStroke && "border-white border-2",
         className
       )}
@@ -26,7 +26,7 @@ export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, clas
       }}
     >
       {highlight && (
-        <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 border-2 border-white/80 rounded-full bg-white/70 -z-[1]" />
+        <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 border-2 border-white/80 rounded-full bg-white/70 z-[-1]" />
       )}
       <Icon name={iconData.icon} className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
     </div>

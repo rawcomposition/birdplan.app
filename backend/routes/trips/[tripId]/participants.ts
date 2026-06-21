@@ -39,6 +39,7 @@ participants.get("/", async (c) => {
     _id: p._id,
     uid: p.uid,
     name: p.name,
+    photoUrl: p.uid ? profilesByUid.get(p.uid)?.photoUrl : undefined,
     ...(isEditor ? { email: p.email } : {}),
     status: p.status,
     listMode: p.listMode,

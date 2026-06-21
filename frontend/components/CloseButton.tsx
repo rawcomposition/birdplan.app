@@ -11,7 +11,7 @@ export default function CloseButton({ className, onClick }: Props) {
   return (
     <button
       type="button"
-      className={clsx("text-gray-400 hover:text-gray-500 focus:outline-none", className)}
+      className={clsx("text-gray-400 hover:text-gray-500 focus:outline-hidden", className)}
       onClick={onClick}
       aria-label="Close"
     >

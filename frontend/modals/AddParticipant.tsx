@@ -61,7 +61,7 @@ export default function AddParticipant() {
               onClick={() => setTab(t)}
               className={clsx(
                 "rounded-md px-3 py-1.5 font-medium transition-colors",
-                tab === t ? "bg-white text-gray-800 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                tab === t ? "bg-white text-gray-800 shadow-xs" : "text-gray-500 hover:text-gray-700"
               )}
             >
               {t === "named" ? "Name Only" : "Editor"}
@@ -115,9 +115,9 @@ export default function AddParticipant() {
             footer={tab === "invite" ? "They can change this once they accept the invite." : undefined}
           />
         ) : (
-          <button type="button" onClick={() => setShowAttach(true)} className="mt-1 text-sm font-medium text-sky-600">
+          <Button type="button" color="link" size="none" onClick={() => setShowAttach(true)} className="mt-1 text-sm">
             + Attach life list
-          </button>
+          </Button>
         )}
       </Body>
       <Footer>
