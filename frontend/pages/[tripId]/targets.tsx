@@ -156,58 +156,60 @@ export default function TripTargets() {
                           className="w-full h-9 pl-9 pr-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 shadow-xs outline-blue-500 outline-offset-0 focus:border-slate-400"
                         />
                       </div>
-                      <div className="flex items-center gap-2 sm:gap-3 sm:ml-auto">
-                        <button
-                          type="button"
-                          onClick={() => setShowStarred(!showStarred)}
-                          aria-pressed={showStarred}
-                          className={clsx(
-                            "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
-                            showStarred
-                              ? "border-yellow-300 bg-yellow-50 text-yellow-800"
-                              : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
-                          )}
-                        >
-                          <Icon
-                            name={showStarred ? "star" : "starOutline"}
-                            className={
-                              showStarred ? "text-yellow-500" : "text-gray-400"
-                            }
-                          />
-                          Starred
-                        </button>
-                        {isGroup && (
+                      <div className="flex items-start gap-2 sm:items-center sm:ml-auto">
+                        <div className="flex flex-1 flex-wrap items-center gap-2 sm:gap-3 sm:flex-none">
                           <button
                             type="button"
-                            onClick={() => setShowMutual(!showMutual)}
-                            aria-pressed={showMutual}
-                            title="Show only targets that everyone in your group still needs"
+                            onClick={() => setShowStarred(!showStarred)}
+                            aria-pressed={showStarred}
                             className={clsx(
                               "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
-                              showMutual
-                                ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                              showStarred
+                                ? "border-yellow-300 bg-yellow-50 text-yellow-800"
                                 : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
                             )}
                           >
                             <Icon
-                              name={
-                                showMutual
-                                  ? "userFriends"
-                                  : "userFriendsOutline"
-                              }
+                              name={showStarred ? "star" : "starOutline"}
                               className={
-                                showMutual
-                                  ? "text-emerald-600"
+                                showStarred
+                                  ? "text-yellow-500"
                                   : "text-gray-400"
                               }
                             />
-                            Mutual
+                            Starred
                           </button>
-                        )}
-                        <TargetViewToggle trip={trip} align="left" />
-                        <div className="ml-auto sm:ml-0">
-                          <TargetsOptionsDropdown trip={trip} />
+                          {isGroup && (
+                            <button
+                              type="button"
+                              onClick={() => setShowMutual(!showMutual)}
+                              aria-pressed={showMutual}
+                              title="Show only targets that everyone in your group still needs"
+                              className={clsx(
+                                "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-medium whitespace-nowrap shadow-xs",
+                                showMutual
+                                  ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
+                              )}
+                            >
+                              <Icon
+                                name={
+                                  showMutual
+                                    ? "userFriends"
+                                    : "userFriendsOutline"
+                                }
+                                className={
+                                  showMutual
+                                    ? "text-emerald-600"
+                                    : "text-gray-400"
+                                }
+                              />
+                              Mutual
+                            </button>
+                          )}
+                          <TargetViewToggle trip={trip} align="left" />
                         </div>
+                        <TargetsOptionsDropdown trip={trip} />
                       </div>
                     </div>
                   </>
