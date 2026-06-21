@@ -1,5 +1,4 @@
 import React from "react";
-import Head from "next/head";
 import Button from "components/Button";
 import Icon from "components/Icon";
 import { useUser } from "providers/user";
@@ -44,9 +43,7 @@ export default function BirdPlan() {
   const isLoggedIn = !!user?.uid;
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>BirdPlan.app - Plan Your Next Birding Adventure</title>
-      </Head>
 
       <HomeHeader />
       <main className="container px-4">

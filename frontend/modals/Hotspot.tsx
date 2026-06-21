@@ -15,7 +15,7 @@ import { Menu } from "@headlessui/react";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
-import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -34,7 +34,7 @@ export default function Hotspot({ hotspot }: Props) {
   const originalName = savedHotspot?.originalName;
   const [modalSpecies, setModalSpecies] = React.useState(selectedSpecies);
   const [tab, setTab] = React.useState(modalSpecies ? "checklists" : "targets");
-  const router = useRouter();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   const tabs = [
@@ -125,7 +125,7 @@ export default function Hotspot({ hotspot }: Props) {
     }
   };
 
-  const hasSpecies = !!modalSpecies && router.pathname.includes("targets");
+  const hasSpecies = !!modalSpecies && location.pathname.includes("targets");
   React.useEffect(() => {
     if (hasSpecies) {
       setHalo({ lat, lng, color: "#ce0d02" });

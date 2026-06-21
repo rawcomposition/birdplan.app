@@ -1,12 +1,14 @@
 import { auth } from "lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { getPostAuthDest } from "lib/helpers";
+import useNavContext from "hooks/useNavContext";
 
 export default function useEmailLogin() {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const navContext = useNavContext();
   const [loading, setLoading] = useState(false);
 
   const login = async (email: string, password: string, disableLoader = false) => {
@@ -15,7 +17,7 @@ export default function useEmailLogin() {
     try {
       if (!auth) throw new Error("Firebase auth not initialized");
       await signInWithEmailAndPassword(auth, email, password);
-      router.push(getPostAuthDest(router));
+      navigate(getPostAuthDest(navContext));
       toast.dismiss(toastId);
     } catch (error: any) {
       if (error.code === "auth/wrong-password") {

@@ -1,12 +1,14 @@
 import { auth } from "lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { getPostAuthDest } from "lib/helpers";
+import useNavContext from "hooks/useNavContext";
 
 export default function useEmailSignup() {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const navContext = useNavContext();
   const [loading, setLoading] = useState(false);
 
   const signup = async (name: string, email: string, password: string) => {
@@ -17,7 +19,7 @@ export default function useEmailSignup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       toast.success("Account created successfully!", { id: toastId });
-      router.push(getPostAuthDest(router));
+      navigate(getPostAuthDest(navContext));
     } catch (error: any) {
       console.error("Signup error:", error);
       if (error.code === "auth/email-already-in-use") {

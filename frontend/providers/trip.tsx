@@ -1,9 +1,9 @@
 import React from "react";
 import { Trip, ParticipantView } from "@birdplan/shared";
 import { auth } from "lib/firebase";
-import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 import { useUser } from "providers/user";
-import { fullMonths, months } from "lib/helpers";
+import { fullMonths, months, getTripIdFromPath } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 
 type SelectedSpecies = {
@@ -65,8 +65,8 @@ type Props = {
 };
 
 const TripProvider = ({ children }: Props) => {
-  const { query, pathname } = useRouter();
-  const id = query.tripId?.toString();
+  const { pathname } = useLocation();
+  const id = getTripIdFromPath(pathname);
 
   const {
     data: trip,

@@ -3,7 +3,7 @@ import Button from "components/Button";
 import Input from "components/Input";
 import toast from "react-hot-toast";
 import Field from "components/Field";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { auth } from "lib/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 
@@ -12,7 +12,7 @@ export default function PasswordChangeForm() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ export default function PasswordChangeForm() {
       setNewPassword("");
       setConfirmPassword("");
       toast.success("Password updated successfully");
-      router.push("/login?event=passwordUpdated");
+      navigate("/login?event=passwordUpdated");
     } catch (error: any) {
       if (error.code === "auth/wrong-password") {
         toast.error("Current password is incorrect");
@@ -57,7 +57,7 @@ export default function PasswordChangeForm() {
         toast.error("Too many attempts. Please try again later.");
       } else if (error.code === "auth/requires-recent-login") {
         toast.error("Please sign in again before changing your password");
-        router.push("/login");
+        navigate("/login");
       } else {
         toast.error("Error updating password. Please try again.");
       }

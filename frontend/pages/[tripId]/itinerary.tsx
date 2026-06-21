@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import TripNav from "components/TripNav";
 import { useUser } from "providers/user";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -73,9 +72,7 @@ export default function Itinerary() {
   return (
     <div className="flex flex-col h-full">
       {trip && (
-        <Head>
           <title>{`${trip.name} | BirdPlan.app`}</title>
-        </Head>
       )}
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />

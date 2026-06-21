@@ -2,9 +2,9 @@ import { initializeApp, FirebaseApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, Auth } from "firebase/auth";
 
 const hasFirebaseConfig = !!(
-  process.env.NEXT_PUBLIC_FIREBASE_KEY &&
-  process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID &&
-  process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  import.meta.env.VITE_FIREBASE_KEY &&
+  import.meta.env.VITE_FIREBASE_SENDER_ID &&
+  import.meta.env.VITE_FIREBASE_APP_ID
 );
 
 let app: FirebaseApp | null = null;
@@ -13,11 +13,11 @@ let authReady: Promise<void> = Promise.resolve();
 
 if (hasFirebaseConfig) {
   const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_KEY,
+    apiKey: import.meta.env.VITE_FIREBASE_KEY,
     authDomain: "bird-planner.firebaseapp.com",
     projectId: "bird-planner",
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
     storageBucket: "bird-planner.appspot.com",
   };
 

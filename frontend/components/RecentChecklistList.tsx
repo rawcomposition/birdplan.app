@@ -2,7 +2,6 @@ import React from "react";
 import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "providers/trip";
-import Link from "next/link";
 import Button from "components/Button";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
@@ -154,13 +153,13 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
           )}
           {expanded && (
             <p className="text-sm mt-2 text-center">
-              <Link
+              <a
                 target="_blank"
                 className="text-sm text-blue-900 mt-2"
                 href={`https://ebird.org/hotspot/${hotspotId}/activity?yr=all&m=`}
               >
                 View more on eBird
-              </Link>
+              </a>
             </p>
           )}
           {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (

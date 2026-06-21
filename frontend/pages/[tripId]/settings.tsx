@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import { useTrip } from "providers/trip";
 import toast from "react-hot-toast";
 import MonthSelect from "components/MonthSelect";
@@ -9,8 +8,7 @@ import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
 import Input from "components/Input";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import { useNavigate, Link } from "react-router-dom";
 import { months } from "lib/helpers";
 import Button from "components/Button";
 import NotFound from "components/NotFound";
@@ -49,7 +47,7 @@ type SettingsFormProps = {
 };
 
 function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [startMonth, setStartMonth] = React.useState<Option>({
     value: trip.startMonth.toString(),
@@ -66,7 +64,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     method: "DELETE",
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
-      router.push("/trips");
+      navigate("/trips");
     },
   });
 
@@ -77,7 +75,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
       toast.success("Trip updated");
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
       await queryClient.invalidateQueries({ queryKey: [`/trips/${trip._id}`] });
-      router.push(`/${trip._id}`);
+      navigate(`/${trip._id}`);
     },
   });
 
@@ -103,14 +101,12 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>Trip Settings | BirdPlan.app</title>
-      </Head>
 
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <Link
-          href={`/${trip._id}`}
+          to={`/${trip._id}`}
           className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
         >
           ← Back to trip

@@ -118,7 +118,7 @@ export default function Mapbox({
         mapStyle={
           showSatellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"
         }
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
+        mapboxAccessToken={import.meta.env.VITE_MAPBOX_KEY}
         interactiveLayerIds={activeLayers}
         onMouseLeave={(e) => {
           e.target.getCanvas().style.cursor = "";

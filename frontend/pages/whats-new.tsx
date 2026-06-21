@@ -1,15 +1,12 @@
 import React from "react";
-import Head from "next/head";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function WhatsNew() {
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>{`What's New | BirdPlan.app`}</title>
-      </Head>
 
       <HomeHeader />
       <main className="container px-4">
@@ -102,7 +99,7 @@ export default function WhatsNew() {
           <h2>April 27, 2025</h2>
           <ul>
             <li>
-              ✨ Added a <Link href="/support">support page</Link> with a contact form.
+              ✨ Added a <Link to="/support">support page</Link> with a contact form.
             </li>
           </ul>
           <h2>April 17, 2025</h2>

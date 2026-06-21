@@ -5,10 +5,10 @@ import useEmailSignup from "hooks/useEmailSignup";
 import Input from "components/Input";
 import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getForwardReturnTo, withQueryParams, withReturnTo } from "lib/helpers";
+import useNavContext from "hooks/useNavContext";
 
 type Props = {
   message?: string;
@@ -16,12 +16,12 @@ type Props = {
 };
 
 export default function SignupForm({ message, email }: Props) {
-  const router = useRouter();
+  const navContext = useNavContext();
   const { signup: emailSignup, loading: emailSignupLoading } = useEmailSignup();
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
   const { loading: userLoading } = useUser();
 
-  const loginHref = withQueryParams(withReturnTo("/login", getForwardReturnTo(router)), { email });
+  const loginHref = withQueryParams(withReturnTo("/login", getForwardReturnTo(navContext)), { email });
 
   const isLoading = userLoading || emailSignupLoading || googleLoading;
 
@@ -86,7 +86,7 @@ export default function SignupForm({ message, email }: Props) {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Already have an account?{" "}
-          <Link href={loginHref} className="font-medium text-link">
+          <Link to={loginHref} className="font-medium text-link">
             Sign in
           </Link>
         </p>

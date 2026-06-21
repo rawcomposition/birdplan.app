@@ -1,10 +1,9 @@
 import React from "react";
-import Link from "next/link";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "components/Icon";
 import Button from "components/Button";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import clsx from "clsx";
-import { useRouter } from "next/router";
 import { useTrip } from "providers/trip";
 import { useModal } from "providers/modals";
 import { useUser } from "providers/user";
@@ -27,12 +26,12 @@ export default function Header({ title, parent, border }: Props) {
   const { close } = useModal();
   const { user } = useUser();
 
-  const router = useRouter();
-  const isSubPage = router.pathname !== "/trips";
+  const navigate = useNavigate();
+  const isSubPage = useLocation().pathname !== "/trips";
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (trip?._id) router.push(`/${trip._id}/participants`);
+    if (trip?._id) navigate(`/${trip._id}/participants`);
   };
 
   return (
@@ -46,14 +45,14 @@ export default function Header({ title, parent, border }: Props) {
         </div>
       )}
       <Link
-        href={user?.uid ? "/trips" : "/"}
+        to={user?.uid ? "/trips" : "/"}
         className={clsx("sm:w-60 flex items-center shrink-0", isSubPage && "hidden md:flex")}
       >
         <Logo className="w-[50px] mr-4 ml-6 mb-[-2px]" />
         <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
       </Link>
       {isSubPage && (
-        <Link href={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
+        <Link to={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
           <Icon name="angleLeft" className="text-gray-500 text-2xl flex items-center" />
         </Link>
       )}
@@ -62,7 +61,7 @@ export default function Header({ title, parent, border }: Props) {
           <nav className="flex items-center min-w-0">
             {parent && (
               <>
-                <Link href={parent.href} className="text-gray-600 px-5 py-1.5 hidden md:flex items-center font-medium">
+                <Link to={parent.href} className="text-gray-600 px-5 py-1.5 hidden md:flex items-center font-medium">
                   {parent.title}
                 </Link>
                 <BreadcrumbArrow className="hidden md:block" />

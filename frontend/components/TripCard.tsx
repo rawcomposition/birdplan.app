@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { Trip } from "@birdplan/shared";
 import ReactCountryFlag from "react-country-flag";
 
@@ -19,7 +19,7 @@ export default function TripCard({ trip }: Props) {
   if (!render) return null;
 
   return (
-    <Link href={`/${_id}`}>
+    <Link to={`/${_id}`}>
       <div className="bg-white rounded-lg shadow-sm relative p-4">
         {trip?.imgUrl && (
           <img

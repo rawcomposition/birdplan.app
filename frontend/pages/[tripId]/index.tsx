@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
@@ -65,9 +64,7 @@ export default function Trip() {
   return (
     <div className="flex flex-col h-full">
       {trip && (
-        <Head>
           <title>{`${trip.name} | BirdPlan.app`}</title>
-        </Head>
       )}
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />

@@ -1,7 +1,6 @@
 import React from "react";
-import Link from "next/link";
+import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Header, Body, Footer, useModal } from "providers/modals";
 import { useTrip } from "providers/trip";
@@ -20,7 +19,8 @@ type Props = {
 export default function ManageLifelist({ participantId }: Props) {
   const { close } = useModal();
   const { trip, isOwner, canEdit, participants } = useTrip();
-  const { asPath } = useRouter();
+  const location = useLocation();
+  const asPath = `${location.pathname}${location.search}`;
   const queryClient = useQueryClient();
 
   const p = participants?.find((x) => x._id === participantId);
@@ -109,7 +109,7 @@ export default function ManageLifelist({ participantId }: Props) {
 
         {isSelf && isGroup && !asPath.startsWith(`/${trip?._id}/participants`) && (
           <Link
-            href={withReturnTo(`/${trip?._id}/participants`, asPath)}
+            to={withReturnTo(`/${trip?._id}/participants`, asPath)}
             onClick={close}
             className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-link"
           >

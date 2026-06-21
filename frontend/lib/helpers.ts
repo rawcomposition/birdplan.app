@@ -1,5 +1,4 @@
 import { Trip } from "@birdplan/shared";
-import type { NextRouter } from "next/router";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -197,17 +196,39 @@ export function withQueryParams(path: string, params: Record<string, string | un
   return `${path}${path.includes("?") ? "&" : "?"}${query}`;
 }
 
-export function getForwardReturnTo(router: NextRouter): string | undefined {
-  const { returnTo } = router.query;
-  if (typeof returnTo === "string" && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
-    return returnTo;
-  }
-  if (router.pathname === "/login" || router.pathname === "/signup") return undefined;
-  return router.asPath;
+export type NavContext = { returnTo?: string; pathname: string; asPath: string };
+
+const RESERVED_ROUTES = new Set([
+  "login",
+  "signup",
+  "support",
+  "trips",
+  "account",
+  "create",
+  "whats-new",
+  "reset-password",
+  "forgot-password",
+  "my-rarest-lifers",
+  "import-lifelist",
+  "accept",
+]);
+
+export function getTripIdFromPath(pathname: string): string | undefined {
+  const segment = pathname.split("/").filter(Boolean)[0];
+  if (!segment || RESERVED_ROUTES.has(segment)) return undefined;
+  return segment;
 }
 
-export function getPostAuthDest(router: NextRouter): string {
-  return getForwardReturnTo(router) || "/trips";
+export function getForwardReturnTo({ returnTo, pathname, asPath }: NavContext): string | undefined {
+  if (returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//")) {
+    return returnTo;
+  }
+  if (pathname === "/login" || pathname === "/signup") return undefined;
+  return asPath;
+}
+
+export function getPostAuthDest(ctx: NavContext): string {
+  return getForwardReturnTo(ctx) || "/trips";
 }
 
 export function getReturnLabel(returnTo?: string | null): string {

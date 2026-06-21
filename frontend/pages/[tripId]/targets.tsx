@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import MapBox from "components/Mapbox";
 import { useModal } from "providers/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
@@ -104,9 +103,7 @@ export default function TripTargets() {
   return (
     <div className="flex flex-col h-full" onClick={handleContainerClick}>
       {trip && (
-        <Head>
           <title>{`${trip.name} | BirdPlan.app`}</title>
-        </Head>
       )}
 
       <Header

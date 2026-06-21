@@ -1,9 +1,8 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import Button from "components/Button";
 import TripCard from "components/TripCard";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import Notice from "components/Notice";
@@ -22,9 +21,7 @@ export default function Trips() {
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>My Trips | BirdPlan.app</title>
-      </Head>
 
       <Header border />
       <main className="max-w-2xl w-full mx-auto pb-12">
@@ -43,7 +40,7 @@ export default function Trips() {
           {!isLoading && data?.length === 0 && (
             <p className="text-gray-500 text-lg">
               You don&apos;t have any trips yet.{" "}
-              <Link className="text-link font-bold" href="/create">
+              <Link className="text-link font-bold" to="/create">
                 Create one!
               </Link>
             </p>

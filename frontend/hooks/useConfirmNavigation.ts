@@ -1,23 +1,11 @@
 import React from "react";
-import { useRouter } from "next/router";
+import { useBlocker } from "react-router-dom";
 
 export default function useConfirmNavigation(isDirty: boolean) {
-  const router = useRouter();
-
-  React.useEffect(() => {
-    const handleRouteChange = (url: string, { shallow }: { shallow: boolean }) => {
-      if (isDirty && !window.confirm("Are you sure? Changes you made will not be saved.")) {
-        router.events.emit("routeChangeError", "Route change aborted", url, { shallow });
-        throw new Error("Route change aborted.");
-      }
-    };
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
-  }, [isDirty]);
+  useBlocker(({ currentLocation, nextLocation }) => {
+    if (!isDirty || currentLocation.pathname === nextLocation.pathname) return false;
+    return !window.confirm("Are you sure? Changes you made will not be saved.");
+  });
 
   React.useEffect(() => {
     const handleWindowClose = (e: BeforeUnloadEvent) => {

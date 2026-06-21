@@ -1,6 +1,5 @@
 import React from "react";
-import Head from "next/head";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import Logo from "components/Logo";
 
 type PropTypes = {
@@ -14,12 +13,10 @@ export default function UtilityPage({ heading, title, children }: PropTypes) {
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 px-4 md:min-h-[600px]">
       {documentTitle && (
-        <Head>
           <title>{documentTitle}</title>
-        </Head>
       )}
       <div className="flex flex-col items-center">
-        <Link href="/" aria-label="BirdPlan.app home">
+        <Link to="/" aria-label="BirdPlan.app home">
           <Logo className="w-[80px] mx-auto" />
         </Link>
         {typeof heading === "string" ? (

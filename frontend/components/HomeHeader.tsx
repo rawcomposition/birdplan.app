@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import clsx from "clsx";
 import Button from "components/Button";
 import { useUser } from "providers/user";
@@ -10,7 +10,7 @@ export default function HomeHeader() {
   return (
     <header className="bg-white border-b border-gray-100 py-4 shrink-0 flex items-center">
       <div className="container flex items-center px-4">
-        <Link href="/trips" className={clsx("flex items-center")}>
+        <Link to="/trips" className={clsx("flex items-center")}>
           <Logo className="w-[50px] mr-4" />
           <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
         </Link>

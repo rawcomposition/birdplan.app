@@ -1,12 +1,11 @@
 import React from "react";
 import { useUser } from "providers/user";
 import UtilityPage from "components/UtilityPage";
-import { useRouter } from "next/router";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Input from "components/Input";
 import Button from "components/Button";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import Icon from "components/Icon";
 
@@ -15,11 +14,12 @@ interface VerificationData {
 }
 
 export default function ResetPassword() {
-  const router = useRouter();
-  const { token } = router.query;
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
   const { loading: userLoading, user } = useUser();
 
-  if (user?.uid && !userLoading) router.push("/trips");
+  if (user?.uid && !userLoading) navigate("/trips");
 
   const {
     data: verificationData,
@@ -36,7 +36,7 @@ export default function ResetPassword() {
     method: "POST",
     onSuccess: () => {
       toast.success("Password reset successfully");
-      router.push("/login");
+      navigate("/login");
     },
   });
 
@@ -74,7 +74,7 @@ export default function ResetPassword() {
       <UtilityPage heading="Reset Password">
         <p className="text-center text-lg text-gray-700">Invalid or expired reset link.</p>
         <div className="text-center mt-4">
-          <Link href="/forgot-password" className="font-medium text-link">
+          <Link to="/forgot-password" className="font-medium text-link">
             Request a new reset link
           </Link>
         </div>

@@ -6,7 +6,7 @@ import AcceptError from "components/AcceptError";
 import Button from "components/Button";
 import Icon from "components/Icon";
 import { useUser } from "providers/user";
-import { useRouter } from "next/router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Profile, InviteInfo } from "@birdplan/shared";
 import useMutation from "hooks/useMutation";
@@ -14,9 +14,9 @@ import { withReturnTo } from "lib/helpers";
 
 export default function Accept() {
   const { user, loading } = useUser();
-  const router = useRouter();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { inviteId } = router.query;
+  const { inviteId } = useParams();
   const uid = user?.uid;
   const firedRef = React.useRef(false);
 
@@ -45,9 +45,9 @@ export default function Accept() {
       const profile = queryClient.getQueryData<Profile>(["/profile"]);
       const dest = `/${data?.tripId}/lifelist?from=accept`;
       if (profile?.lifelist?.length) {
-        router.push(dest);
+        navigate(dest);
       } else {
-        router.push(`${withReturnTo("/import-lifelist", dest)}&onboarding=1`);
+        navigate(`${withReturnTo("/import-lifelist", dest)}&onboarding=1`);
       }
     },
   });

@@ -1,7 +1,5 @@
 import React from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -35,8 +33,7 @@ import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
 import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
-  const router = useRouter();
-  const speciesCode = router.query.speciesCode?.toString() || "";
+  const { speciesCode = "" } = useParams();
   const { user } = useUser();
   const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { myLifelist } = useTripLifelist(trip);
@@ -303,9 +300,7 @@ export default function SpeciesDetail() {
   return (
     <div className="flex flex-col h-full" onClick={handleContainerClick}>
       {trip && speciesName && (
-        <Head>
           <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>
-        </Head>
       )}
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
       <TripNav active="targets" />
@@ -315,7 +310,7 @@ export default function SpeciesDetail() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
             <div className="mb-4">
               <Link
-                href={`/${trip?._id}/targets`}
+                to={`/${trip?._id}/targets`}
                 className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
               >
                 <Icon name="arrowRight" className="text-xs rotate-180" />
