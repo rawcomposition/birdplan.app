@@ -5,9 +5,9 @@ import useEmailLogin from "hooks/useEmailLogin";
 import Input from "components/Input";
 import Button from "components/Button";
 import GoogleIcon from "components/GoogleIcon";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link } from "react-router-dom";
 import { getForwardReturnTo, withQueryParams, withReturnTo } from "lib/helpers";
+import useNavContext from "hooks/useNavContext";
 
 type Props = {
   message?: string;
@@ -15,13 +15,13 @@ type Props = {
 };
 
 export default function LoginForm({ message, email }: Props) {
-  const router = useRouter();
+  const navContext = useNavContext();
   const [emailLoginLoading, setEmailLoginLoading] = React.useState(false);
   const { login: googleLogin, loading: googleLoading } = useGoogleLogin();
   const { login: emailLogin } = useEmailLogin();
   const { loading: userLoading } = useUser();
 
-  const signupHref = withQueryParams(withReturnTo("/signup", getForwardReturnTo(router)), { email });
+  const signupHref = withQueryParams(withReturnTo("/signup", getForwardReturnTo(navContext)), { email });
 
   const isLoading = userLoading || googleLoading || emailLoginLoading;
 
@@ -52,7 +52,7 @@ export default function LoginForm({ message, email }: Props) {
         <div>
           <Input type="password" name="password" placeholder="Password" required autoFocus={!!email} />
           <div className="text-right mt-1">
-            <Link href="/forgot-password" className="text-sm text-link">
+            <Link to="/forgot-password" className="text-sm text-link">
               Forgot password?
             </Link>
           </div>
@@ -83,7 +83,7 @@ export default function LoginForm({ message, email }: Props) {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Don&apos;t have an account?{" "}
-          <Link href={signupHref} className="font-medium text-link">
+          <Link to={signupHref} className="font-medium text-link">
             Sign up
           </Link>
         </p>

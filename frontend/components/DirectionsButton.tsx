@@ -3,7 +3,6 @@ import Button from "components/Button";
 import SlideOver from "components/SlideOver";
 import { useTrip } from "providers/trip";
 import MarkerWithIcon from "components/MarkerWithIcon";
-import Link from "next/link";
 import Icon from "components/Icon";
 import OrganicMapsIcon from "components/OrganicMapsIcon";
 import GoogleMapsIcon from "components/GoogleMapsIcon";
@@ -61,7 +60,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
             <ul className="flex flex-col pl-2 space-y-0.5">
               {filteredMarkers.map((marker) => (
                 <li key={marker.id}>
-                  <Link
+                  <a
                     href={`https://www.google.com/maps/dir/?api=1&origin=${marker.lat},${marker.lng}&destination=${lat},${lng}`}
                     className="flex items-center gap-2 text-sm cursor-pointer text-gray-700"
                     target="_blank"
@@ -72,12 +71,12 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                       className="inline-block ml-1 scale-75 shrink-0"
                     />
                     <span className="truncate">{marker.name}</span>
-                  </Link>
+                  </a>
                 </li>
               ))}
               {filteredHotspots.map((hotspot) => (
                 <li key={hotspot.id}>
-                  <Link
+                  <a
                     href={`https://www.google.com/maps/dir/?api=1&origin=${hotspot.lat},${hotspot.lng}&destination=${lat},${lng}`}
                     className="flex items-center gap-2 text-sm cursor-pointer py-0.5 text-gray-700"
                     target="_blank"
@@ -88,7 +87,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
                       className="inline-block ml-1 scale-75 shrink-0"
                     />
                     <span className="truncate">{hotspot.name}</span>
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>

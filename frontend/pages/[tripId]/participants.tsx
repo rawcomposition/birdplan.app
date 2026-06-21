@@ -1,7 +1,5 @@
 import React from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
@@ -16,26 +14,23 @@ import { useModal } from "providers/modals";
 import { getReturnLabel } from "lib/helpers";
 
 export default function TripParticipants() {
-  const router = useRouter();
+  const [searchParams] = useSearchParams();
   const { trip, is404, canEdit, participants } = useTrip();
   const { open } = useModal();
   const linkRef = React.useRef<HTMLInputElement>(null);
 
-  const returnTo =
-    typeof router.query.returnTo === "string" ? router.query.returnTo : null;
-  const isNew = router.query.new === "1";
+  const returnTo = searchParams.get("returnTo");
+  const isNew = searchParams.get("new") === "1";
   const backHref = returnTo || `/${trip?._id}`;
   const backLabel = returnTo ? getReturnLabel(returnTo) : "trip";
-  const shareLink = `${process.env.NEXT_PUBLIC_URL}/${trip?._id}`;
+  const shareLink = `${import.meta.env.VITE_URL}/${trip?._id}`;
   const handleLinkFocus = () => linkRef.current?.select();
 
   if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>Participants | BirdPlan.app</title>
-      </Head>
 
       <Header
         title={trip?.name || ""}
@@ -44,7 +39,7 @@ export default function TripParticipants() {
       <main className="max-w-2xl w-full mx-auto pb-12">
         {(returnTo || !isNew) && (
           <Link
-            href={backHref}
+            to={backHref}
             className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
           >
             ← Back to {backLabel}

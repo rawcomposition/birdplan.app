@@ -19,13 +19,10 @@ type Props = {
 
 const UserProvider = ({ children }: Props) => {
   const [user, setUser] = React.useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(!!auth);
 
   React.useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
+    if (!auth) return;
     onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);

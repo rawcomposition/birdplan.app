@@ -8,7 +8,7 @@ import type { Target } from "@birdplan/shared";
 import { useSpeciesImages } from "providers/species-images";
 import useTripMutation from "hooks/useTripMutation";
 import MutualBadge from "components/MutualBadge";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 
 type PropsT = Target & {
   index: number;
@@ -18,7 +18,7 @@ type PropsT = Target & {
 
 export default function TargetRow({ index, code, name, frequency, obs, samples, isMutual }: PropsT) {
   const { trip, canEdit } = useTrip();
-  const router = useRouter();
+  const navigate = useNavigate();
   const { getSpeciesImg } = useSpeciesImages();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
@@ -51,7 +51,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
 
   const handleRowClick = () => {
     if (!trip?._id) return;
-    router.push(`/${trip._id}/targets/${code}`);
+    navigate(`/${trip._id}/targets/${code}`);
   };
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();

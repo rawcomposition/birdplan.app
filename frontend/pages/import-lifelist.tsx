@@ -1,9 +1,8 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { useProfile } from "providers/profile";
-import { useRouter } from "next/router";
+import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
-import Head from "next/head";
 import Button from "components/Button";
 import Card from "components/Card";
 import Footer from "components/Footer";
@@ -11,7 +10,7 @@ import Icon from "components/Icon";
 import LoginModal from "components/LoginModal";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import useMutation from "hooks/useMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
@@ -21,12 +20,15 @@ import Alert from "components/Alert";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
+  const [seededKey, setSeededKey] = React.useState<string | null>(null);
   const { lifelist, lifelistUpdatedAt, exceptions } = useProfile();
   const queryClient = useQueryClient();
-  const router = useRouter();
+  const [searchParams] = useSearchParams();
 
-  const { tripId, returnTo, onboarding } = router.query;
-  const returnToStr = typeof returnTo === "string" ? returnTo : tripId ? `/${tripId}` : null;
+  const tripId = searchParams.get("tripId");
+  const returnTo = searchParams.get("returnTo");
+  const onboarding = searchParams.get("onboarding");
+  const returnToStr = returnTo || (tripId ? `/${tripId}` : null);
   const redirectUrl = returnToStr || `/trips`;
   const backLabel = getReturnLabel(returnToStr);
   const isOnboarding = onboarding === "1";
@@ -60,18 +62,19 @@ export default function ImportLifelist() {
     queryKey: ["/taxonomy"],
   });
 
-  React.useEffect(() => {
-    if (!exceptionsString) return;
-    const codes = exceptionsString.split(",");
-    const value = codes.map((code) => {
-      const taxon = taxonomy?.find((it) => it.code === code);
-      return {
-        label: taxon?.name || `Unknown (${code})`,
-        value: taxon?.code!,
-      };
-    });
-    setExceptionsValue(value);
-  }, [exceptionsString, taxonomy]);
+  const seedKey = `${exceptionsString || ""}|${taxonomy ? "1" : "0"}`;
+  if (exceptionsString && seedKey !== seededKey) {
+    setSeededKey(seedKey);
+    setExceptionsValue(
+      exceptionsString.split(",").map((code) => {
+        const taxon = taxonomy?.find((it) => it.code === code);
+        return {
+          label: taxon?.name || `Unknown (${code})`,
+          value: taxon?.code ?? code,
+        };
+      })
+    );
+  }
 
   const taxonomySearch = (input: string, callback: (options: Option[]) => void) => {
     const options = taxonomy?.filter((it) => it.name.toLowerCase().includes(input.toLowerCase()))?.slice(0, 25) || [];
@@ -81,15 +84,13 @@ export default function ImportLifelist() {
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>World Life List | BirdPlan.app</title>
-      </Head>
 
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
         {!isOnboarding && (
           <Link
-            href={redirectUrl}
+            to={redirectUrl}
             className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
           >
             ← Back to {backLabel}

@@ -25,9 +25,6 @@ export default function useFetchHotspots() {
   });
 
   const hotspots = data || [];
-
-  const hotspotsRef = React.useRef<eBirdHotspot[]>([]);
-  hotspotsRef.current = hotspots;
   const hasFetched = hotspots.length > 0;
 
   const syncMutation = useTripMutation<{ updates: SyncUpdate[] }>({
@@ -54,7 +51,7 @@ export default function useFetchHotspots() {
     if (!canEdit || !hasFetched || !trip?._id || !trip.hotspots?.length) return;
     const updates: SyncUpdate[] = [];
     for (const saved of trip.hotspots) {
-      const live = hotspotsRef.current.find((h) => h.id === saved.id);
+      const live = hotspots.find((h) => h.id === saved.id);
       if (!live) continue;
       if (
         !Number.isFinite(live.species) ||
@@ -79,12 +76,12 @@ export default function useFetchHotspots() {
     if (updates.length === 0) return;
     syncMutation.mutate({ updates });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canEdit, hasFetched, trip?._id, trip?.hotspots]);
+  }, [canEdit, hasFetched, trip?._id, trip?.hotspots, hotspots]);
 
   const layer = React.useMemo(() => {
     if (!hasFetched) return null;
     const savedIds = trip?.hotspots?.map((it) => it.id) || [];
-    const layerHotspots = hotspotsRef.current.filter((it) => !savedIds.includes(it.id));
+    const layerHotspots = hotspots.filter((it) => !savedIds.includes(it.id));
     return {
       type: "FeatureCollection",
       features: [
@@ -104,7 +101,7 @@ export default function useFetchHotspots() {
         }),
       ],
     };
-  }, [trip?.hotspots, hasFetched]);
+  }, [trip?.hotspots, hasFetched, hotspots]);
 
   return { hotspots, hotspotLayer: layer };
 }

@@ -1,5 +1,4 @@
-import React from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { Trip } from "@birdplan/shared";
 import ReactCountryFlag from "react-country-flag";
 
@@ -8,18 +7,10 @@ type Props = {
 };
 
 export default function TripCard({ trip }: Props) {
-  const [render, setRender] = React.useState(false);
   const { _id, name, hotspots } = trip;
 
-  // Avoid hydration errors from loading trips from localStorage
-  React.useEffect(() => {
-    setRender(true);
-  }, []);
-
-  if (!render) return null;
-
   return (
-    <Link href={`/${_id}`}>
+    <Link to={`/${_id}`}>
       <div className="bg-white rounded-lg shadow-sm relative p-4">
         {trip?.imgUrl && (
           <img

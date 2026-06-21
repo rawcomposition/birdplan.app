@@ -1,13 +1,13 @@
 import React from "react";
 import UtilityPage from "components/UtilityPage";
 import LoginForm from "components/LoginForm";
-import { useRouter } from "next/router";
+import { useSearchParams } from "react-router-dom";
 
 export default function Login() {
-  const router = useRouter();
+  const [searchParams] = useSearchParams();
 
-  const event = router.query.event as string | undefined;
-  const email = typeof router.query.email === "string" ? router.query.email : undefined;
+  const event = searchParams.get("event") ?? undefined;
+  const email = searchParams.get("email") ?? undefined;
 
   const message =
     event === "emailUpdated"

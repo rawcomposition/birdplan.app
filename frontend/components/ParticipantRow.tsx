@@ -1,6 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ParticipantView } from "@birdplan/shared";
 import { useTrip } from "providers/trip";
@@ -20,7 +20,7 @@ export default function ParticipantRow({ participant: p }: Props) {
   const { trip, isOwner, canEdit } = useTrip();
   const { open } = useModal();
   const queryClient = useQueryClient();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const isSelf = p.isMe;
   const isPending = p.status === "pending";
@@ -45,7 +45,7 @@ export default function ParticipantRow({ participant: p }: Props) {
       invalidate();
       if (p.isMe) {
         queryClient.invalidateQueries({ queryKey: ["/trips"] });
-        router.push("/trips");
+        navigate("/trips");
       }
     },
   });

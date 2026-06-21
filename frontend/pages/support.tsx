@@ -1,5 +1,4 @@
 import React from "react";
-import Head from "next/head";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
 import { useUser } from "providers/user";
@@ -9,7 +8,7 @@ import Input from "components/Input";
 import Button from "components/Button";
 import Icon from "components/Icon";
 import useMutation from "hooks/useMutation";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function Support() {
   const { user } = useUser();
@@ -55,9 +54,7 @@ export default function Support() {
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>Support | BirdPlan.app</title>
-      </Head>
 
       <HomeHeader />
       <main className="container px-4">
@@ -71,7 +68,7 @@ export default function Support() {
                 We&apos;ve received your request and will get back to you as soon as possible.
               </p>
               <Link
-                href={user?.uid ? `/trips` : "/"}
+                to={user?.uid ? `/trips` : "/"}
                 className="text-gray-500 hover:text-gray-600 ml-4 md:ml-0 inline-flex items-center"
               >
                 {user?.uid ? "← Back to trips" : "← Back to home"}

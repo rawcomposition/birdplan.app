@@ -4,8 +4,7 @@ import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import { avatarFromFirebaseUser } from "lib/avatar";
 import { useUser } from "providers/user";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link, useLocation } from "react-router-dom";
 import clsx from "clsx";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
 import { useProfile } from "providers/profile";
@@ -21,7 +20,8 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
   const { lifelist } = useProfile();
   const lifelistCount = lifelist?.length || 0;
   const { logout } = useFirebaseLogout();
-  const { asPath } = useRouter();
+  const location = useLocation();
+  const asPath = `${location.pathname}${location.search}`;
 
   if (!user) return null;
 
@@ -60,7 +60,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
             <Menu.Item>
               <Link
                 className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                href="/account"
+                to="/account"
               >
                 <Icon name="user" />
                 <span>Account</span>
@@ -69,7 +69,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
             <Menu.Item>
               <Link
                 className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                href={withReturnTo("/import-lifelist", asPath)}
+                to={withReturnTo("/import-lifelist", asPath)}
               >
                 <Icon name="feather" />
                 {lifelistCount > 0 ? (

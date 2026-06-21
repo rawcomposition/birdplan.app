@@ -1,4 +1,3 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { EBIRD_BASE_URL } from "lib/config";
 
@@ -39,15 +38,13 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
       obsDt,
     })) || [];
 
-  const obsRef = React.useRef<Obs[]>([]);
-  obsRef.current = obs;
   const hasFetched = obs.length > 0;
 
   const layer = hasFetched
     ? {
         type: "FeatureCollection",
         features: [
-          ...obsRef.current.map((it) => {
+          ...obs.map((it) => {
             return {
               type: "Feature",
               geometry: {

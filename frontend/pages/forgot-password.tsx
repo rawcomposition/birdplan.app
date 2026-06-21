@@ -1,19 +1,18 @@
 import React from "react";
 import { useUser } from "providers/user";
 import UtilityPage from "components/UtilityPage";
-import { useRouter } from "next/router";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "components/Input";
 import Button from "components/Button";
 import useMutation from "hooks/useMutation";
-import Link from "next/link";
 import Alert from "components/Alert";
 
 export default function ForgotPassword() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [submitted, setSubmitted] = React.useState(false);
   const { loading: userLoading, user } = useUser();
 
-  if (user?.uid && !userLoading) router.push("/trips");
+  if (user?.uid && !userLoading) navigate("/trips");
 
   const mutation = useMutation({
     url: "/auth/forgot-password",
@@ -38,7 +37,7 @@ export default function ForgotPassword() {
           <Alert style="info" className="mb-6">
             If an account exists with this email, you will receive password reset instructions shortly.
           </Alert>
-          <Link href="/login" className="font-medium text-link">
+          <Link to="/login" className="font-medium text-link">
             ← Return to login
           </Link>
         </div>
@@ -57,7 +56,7 @@ export default function ForgotPassword() {
             </Button>
           </form>
           <div className="text-center mt-6">
-            <Link href="/login" className="font-medium text-sm text-link">
+            <Link to="/login" className="font-medium text-sm text-link">
               ← Back to login
             </Link>
           </div>

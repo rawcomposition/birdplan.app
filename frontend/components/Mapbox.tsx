@@ -118,7 +118,7 @@ export default function Mapbox({
         mapStyle={
           showSatellite ? "mapbox://styles/mapbox/satellite-streets-v11" : "mapbox://styles/mapbox/outdoors-v11"
         }
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_KEY}
+        mapboxAccessToken={import.meta.env.VITE_MAPBOX_KEY}
         interactiveLayerIds={activeLayers}
         onMouseLeave={(e) => {
           e.target.getCanvas().style.cursor = "";
@@ -141,7 +141,7 @@ export default function Mapbox({
             close();
           }
         }}
-        // @ts-ignore
+        // @ts-expect-error react-map-gl bounds prop typing mismatch
         bounds={[
           [bounds.minX, bounds.minY],
           [bounds.maxX, bounds.maxY],
@@ -189,13 +189,13 @@ export default function Mapbox({
         ))}
         {hotspotLayer && (
           <Source id="hotspot-layer" type="geojson" data={hotspotLayer}>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...hsLayerStyle} />
           </Source>
         )}
         {obsLayer && (
           <Source id="obs-layer" type="geojson" data={obsLayer}>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...obsLayerStyle} />
           </Source>
         )}

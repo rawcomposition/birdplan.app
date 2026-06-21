@@ -19,13 +19,15 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   }
 
   if (showLoading) toast.loading("Loading...", { id: url });
-  await authReady;
-  const token = await auth?.currentUser?.getIdToken();
+  const isBackend = urlWithParams.startsWith(import.meta.env.VITE_API_URL);
+  let token: string | undefined;
+  if (isBackend) {
+    await authReady;
+    token = await auth?.currentUser?.getIdToken();
+  }
   const res = await fetch(urlWithParams, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token || ""}`,
-    },
+    headers: isBackend ? { Authorization: `Bearer ${token || ""}` } : undefined,
   });
   if (showLoading) toast.dismiss(url);
 
@@ -48,7 +50,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
   await authReady;
   const token = await auth?.currentUser?.getIdToken();
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+  const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
   const res = await fetch(fullUrl, {
     method,
     headers: {

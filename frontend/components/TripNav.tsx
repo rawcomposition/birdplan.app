@@ -1,8 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import { useTrip } from "providers/trip";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link, useLocation } from "react-router-dom";
 import { useModal } from "providers/modals";
 import TripOptionsDropdown from "components/TripOptionsDropdown";
 import Icon from "components/Icon";
@@ -20,7 +19,7 @@ type Props = {
 
 export default function TripNav({ active, border = true }: Props) {
   const { trip } = useTrip();
-  const { pathname } = useRouter();
+  const { pathname } = useLocation();
   const { close } = useModal();
 
   React.useEffect(() => {
@@ -32,7 +31,7 @@ export default function TripNav({ active, border = true }: Props) {
       <div className="flex gap-1.5 items-center shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link
-            href={`/${trip?._id}/${slug}`}
+            to={`/${trip?._id}/${slug}`}
             key={slug}
             className={clsx(
               "flex items-center text-[14px] gap-2 font-medium justify-center rounded-full py-1 px-2.5",

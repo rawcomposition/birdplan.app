@@ -1,7 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { Link, useLocation } from "react-router-dom";
 import { Trip } from "@birdplan/shared";
 import LifelistField from "components/LifelistField";
 import { useProfile } from "providers/profile";
@@ -19,7 +18,8 @@ type Props = {
 export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
   const { lifelist: worldList } = useProfile();
   const { myLifelist } = useTripLifelist(trip);
-  const { asPath } = useRouter();
+  const location = useLocation();
+  const asPath = `${location.pathname}${location.search}`;
   const { close } = useModal();
 
   const { selectedMode, savedMode, selectWorld, selectCustom, handleCustomImport, listMutation } = mode;
@@ -42,7 +42,7 @@ export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
         description={`${(worldList?.length || 0).toLocaleString()} species`}
       >
         <Link
-          href={withReturnTo("/import-lifelist", asPath)}
+          to={withReturnTo("/import-lifelist", asPath)}
           onClick={close}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-link"
         >

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -8,9 +8,9 @@ export default function Footer() {
         RawComposition
       </a>
       <span className="mx-2">•</span>
-      <Link href="/support">Support</Link>
+      <Link to="/support">Support</Link>
       <span className="mx-2">•</span>
-      <Link href="/whats-new">What&apos;s New</Link>
+      <Link to="/whats-new">What&apos;s New</Link>
       <span className="mx-2">•</span>
       <a href="https://github.com/rawcomposition/birdplan.app" target="_blank">
         Github

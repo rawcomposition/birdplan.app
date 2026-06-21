@@ -1,15 +1,12 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 
 export default function ImportLifelist() {
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>My Rarest Lifers | BirdPlan.app</title>
-      </Head>
 
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">

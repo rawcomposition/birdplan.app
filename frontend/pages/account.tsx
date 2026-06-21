@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "components/Header";
-import Head from "next/head";
 import Footer from "components/Footer";
 import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
@@ -14,7 +13,7 @@ import { useState } from "react";
 import { IconNameT } from "lib/icons";
 import PasswordChangeForm from "components/PasswordChangeForm";
 import EmailChangeForm from "components/EmailChangeForm";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import Alert from "components/Alert";
 
 const providerNames = {
@@ -51,13 +50,11 @@ export default function Account() {
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>My Account | BirdPlan.app</title>
-      </Head>
 
       <Header />
       <main className="max-w-4xl w-full mx-auto px-4 lg:px-0">
-        <Link href="/trips" className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
+        <Link to="/trips" className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
           ← Back to trips
         </Link>
         <h1 className="text-3xl font-bold text-gray-700 mb-8 mt-4">

@@ -1,8 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import Header from "components/Header";
-import Head from "next/head";
 import Button from "components/Button";
 import Footer from "components/Footer";
 import MonthSelect from "components/MonthSelect";
@@ -16,7 +15,7 @@ import { useModal } from "providers/modals";
 import dayjs from "dayjs";
 import useMutation from "hooks/useMutation";
 import RegionFields from "components/RegionFields";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import {
   RegionFieldsValue,
   emptyRegionFieldsValue,
@@ -33,14 +32,14 @@ export default function CreateTrip() {
   const [region, setRegion] = React.useState<RegionFieldsValue>(emptyRegionFieldsValue);
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
-  const router = useRouter();
+  const navigate = useNavigate();
   const { close } = useModal();
 
   const mutation = useMutation<{ id: string }, TripInput>({
     url: "/trips",
     method: "POST",
     onSuccess: ({ id }) => {
-      router.push(`/${id}/lifelist?from=create`);
+      navigate(`/${id}/lifelist?from=create`);
       close();
     },
   });
@@ -63,13 +62,11 @@ export default function CreateTrip() {
 
   return (
     <div className="flex flex-col h-full">
-      <Head>
         <title>Create Trip | BirdPlan.app</title>
-      </Head>
 
       <Header />
       <main className="max-w-lg w-full mx-auto pb-12">
-        <Link href="/trips" className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center">
+        <Link to="/trips" className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center">
           ← Back to trips
         </Link>
         <div className="p-4 md:p-0 mt-12">

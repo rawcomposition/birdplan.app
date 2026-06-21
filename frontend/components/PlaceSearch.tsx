@@ -18,7 +18,7 @@ export default function PlaceSearch({ className, country, onChange, focus, ...pr
   };
 
   React.useEffect(() => {
-    //@ts-ignore
+    //@ts-expect-error window.google injected by Google Maps script
     if (isInitalizedRef.current || !window.google) {
       return;
     }
@@ -37,7 +37,7 @@ export default function PlaceSearch({ className, country, onChange, focus, ...pr
       componentRestrictions: { country: country.toLowerCase() },
       fields: ["place_id", "name", "geometry", "types"],
     };
-    //@ts-ignore
+    //@ts-expect-error window.google injected by Google Maps script
     const googlePlaces = new window.google.maps.places.Autocomplete(inputRef.current, options);
     googlePlaces.setFields(["place_id", "name", "geometry", "types"]);
     googlePlaces.addListener("place_changed", () => {

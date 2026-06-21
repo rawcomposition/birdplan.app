@@ -1,6 +1,6 @@
 import React from "react";
 import { Menu, Transition } from "@headlessui/react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
@@ -42,7 +42,7 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Export KML",
-      href: `${process.env.NEXT_PUBLIC_API_URL}/trips/${trip?._id}/export?uid=${uid}&targets=${view}`,
+      href: `${import.meta.env.VITE_API_URL}/trips/${trip?._id}/export?uid=${uid}&targets=${view}`,
       icon: "export",
     },
     {
@@ -90,10 +90,18 @@ export default function TripOptionsDropdown({ className }: Props) {
                       <Icon name={icon as any} />
                       <span>{name}</span>
                     </button>
+                  ) : /^(https?:|mailto:|tel:|om:)/.test(href ?? "") ? (
+                    <a
+                      className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
+                      href={href ?? "#"}
+                    >
+                      <Icon name={icon as any} />
+                      <span>{name}</span>
+                    </a>
                   ) : (
                     <Link
                       className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
-                      href={href ?? "#"}
+                      to={href ?? "#"}
                     >
                       <Icon name={icon as any} />
                       <span>{name}</span>

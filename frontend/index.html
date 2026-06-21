@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BirdPlan.app - Plan Your Next Birding Adventure</title>
+    <meta
+      name="description"
+      content="Plan your next birding adventure with ease using our interactive map tool. The user-friendly interface lets you customize your trip and stay organized along the way."
+    />
+    <meta property="og:title" content="BirdPlan.app - Plan Your Next Birding Adventure" />
+    <meta
+      property="og:description"
+      content="Plan your next birding adventure with ease using our interactive map tool. The user-friendly interface lets you customize your trip and stay organized along the way."
+    />
+    <meta property="og:image" content="https://birdplan.app/og-banner.jpg" />
+    <meta property="og:url" content="https://birdplan.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BirdPlan.app" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="manifest" href="/manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&family=Ubuntu:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="icon" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-icon.png" />
+    <script
+      src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=%VITE_GOOGLE_MAPS_KEY%&sensor=false&libraries=places"
+      async
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

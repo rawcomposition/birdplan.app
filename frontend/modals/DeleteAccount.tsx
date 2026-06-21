@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { Header, Body, Footer, useModal } from "providers/modals";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
@@ -8,7 +8,7 @@ import useFirebaseLogout from "hooks/useFirebaseLogout";
 
 export default function DeleteAccount() {
   const [confirmInput, setConfirmInput] = useState("");
-  const router = useRouter();
+  const navigate = useNavigate();
   const { close } = useModal();
   const { logout } = useFirebaseLogout();
 
@@ -22,7 +22,7 @@ export default function DeleteAccount() {
       close();
       await logout();
       toast.success("Your account has been deleted");
-      router.push("/");
+      navigate("/");
     },
   });
 

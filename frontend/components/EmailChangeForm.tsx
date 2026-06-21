@@ -5,7 +5,7 @@ import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import Field from "components/Field";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   currentEmail: string;
@@ -14,7 +14,7 @@ type Props = {
 export default function EmailChangeForm({ currentEmail }: Props) {
   const [email, setEmail] = useState(currentEmail);
   const queryClient = useQueryClient();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const updateEmailMutation = useMutation({
     url: "/account/update-email",
@@ -22,7 +22,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
     onSuccess: () => {
       toast.success("Email updated successfully");
       queryClient.invalidateQueries({ queryKey: ["/profile"] });
-      router.push("/login?event=emailUpdated");
+      navigate("/login?event=emailUpdated");
     },
   });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "lib/utils";
 
@@ -62,11 +62,19 @@ export default function Button({
     className
   );
 
-  return href ? (
-    <Link href={href} className={classes} {...props}>
-      {children}
-    </Link>
-  ) : (
+  if (href) {
+    return /^(https?:|mailto:|tel:|om:)/.test(href) ? (
+      <a href={href} className={classes} {...props}>
+        {children}
+      </a>
+    ) : (
+      <Link to={href} className={classes} {...props}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
     <button type={type} className={classes} disabled={disabled} {...props}>
       {children}
     </button>
