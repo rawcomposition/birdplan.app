@@ -6,7 +6,6 @@ import { ModalPosition } from "providers/modals";
 
 type Props = {
   open: boolean;
-  small?: boolean;
   position?: ModalPosition;
   maxHeight?: number | string;
   dismissable?: boolean;

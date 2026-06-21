@@ -27,7 +27,6 @@ type ModalConfig = {
   id: string;
   Component: React.ComponentType<any>;
   position: ModalPosition;
-  small?: boolean;
   maxHeight?: number | string;
 };
 
@@ -45,7 +44,6 @@ const modals: ModalConfig[] = [
   {
     id: "addMarker",
     Component: Marker,
-    small: true,
     position: "right",
   },
   {
@@ -61,13 +59,11 @@ const modals: ModalConfig[] = [
   {
     id: "viewMarker",
     Component: Marker,
-    small: true,
     position: "right",
   },
   {
     id: "addItineraryLocation",
     Component: AddItineraryLocation,
-    small: true,
     position: "right",
   },
   {
@@ -160,7 +156,6 @@ const ModalProvider = ({ children }: Props) => {
       {children}
       <ModalWrapper
         position={modal?.position}
-        small={modal?.small}
         maxHeight={modal?.maxHeight}
         open={!!modal && !closing}
         onClose={handleDismiss}
