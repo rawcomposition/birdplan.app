@@ -10,6 +10,7 @@ import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/Part
 import Badge from "components/Badge";
 import Button from "components/Button";
 import Avatar from "components/Avatar";
+import { avatarFromParticipant } from "lib/avatar";
 
 type Props = {
   participant: ParticipantView;
@@ -86,7 +87,7 @@ export default function ParticipantRow({ participant: p }: Props) {
   return (
     <div className="border-b border-gray-100 last:border-0 transition-colors">
       <div className="flex items-center gap-3.5 py-3">
-        <Avatar name={p.name} email={p.email} seed={p.uid || p._id} size={36} />
+        <Avatar user={avatarFromParticipant(p)} size={36} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-gray-800">
             {label}

@@ -7,6 +7,7 @@ import { useUser } from "providers/user";
 import { useModal } from "providers/modals";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
+import { avatarFromFirebaseUser } from "lib/avatar";
 import Button from "components/Button";
 import clsx from "clsx";
 import { useState } from "react";
@@ -90,13 +91,7 @@ export default function Account() {
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Account</h2>
                 <div className="flex flex-col gap-4 mb-2">
                   <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 border rounded-lg w-full">
-                    <Avatar
-                      photoUrl={user.photoURL}
-                      name={user.displayName}
-                      email={user.email}
-                      seed={user.uid}
-                      size={40}
-                    />
+                    <Avatar user={avatarFromFirebaseUser(user)} size={40} />
                     <div>
                       <p className="font-semibold">{user?.displayName}</p>
                       {user.email && <p className="text-gray-600">{user.email}</p>}

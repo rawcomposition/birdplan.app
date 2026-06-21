@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
 import clsx from "clsx";
 import { gravatarUrl } from "lib/gravatar";
+import { AvatarUser } from "lib/avatar";
 
 const COLORS = [
   "bg-blue-500",
@@ -33,16 +34,14 @@ function initialsFor(name?: string | null, email?: string | null) {
 }
 
 type Props = {
-  name?: string | null;
-  email?: string | null;
-  photoUrl?: string | null;
-  seed?: string | null;
+  user: AvatarUser;
   gravatar?: boolean;
   size?: number;
   className?: string;
 };
 
-export default function Avatar({ name, email, photoUrl, seed, gravatar = true, size = 36, className }: Props) {
+export default function Avatar({ user, gravatar = true, size = 36, className }: Props) {
+  const { seed, name, email, photoUrl } = user;
   const label = name?.trim() || email?.trim() || "?";
   const initials = initialsFor(name, email);
   const color = colorFor((seed || email || name || label).trim().toLowerCase());

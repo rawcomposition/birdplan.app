@@ -89,6 +89,7 @@ export type Profile = {
   uid: string;
   name?: string;
   email?: string;
+  photoUrl?: string;
   lifelist: string[];
   lifelistUpdatedAt?: Date | null;
   exceptions?: string[];
@@ -125,6 +126,7 @@ export type ParticipantView = {
   uid?: string;
   name?: string;
   email?: string;
+  photoUrl?: string;
   status: ParticipantStatus;
   listMode: ParticipantListMode;
   isOwner: boolean;
