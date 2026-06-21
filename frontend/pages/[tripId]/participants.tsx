@@ -90,7 +90,7 @@ export default function TripParticipants() {
             ) : participants.length === 0 ? (
               <p className="py-6 text-sm text-gray-500">No participants yet.</p>
             ) : (
-              participants.map((p, i) => <ParticipantRow key={p._id} participant={p} index={i} />)
+              participants.map((p) => <ParticipantRow key={p._id} participant={p} />)
             )}
           </Card>
 

@@ -1,5 +1,4 @@
 import React from "react";
-import clsx from "clsx";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,15 +9,13 @@ import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
 import Badge from "components/Badge";
 import Button from "components/Button";
-
-const AVATAR_COLORS = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-cyan-600"];
+import Avatar from "components/Avatar";
 
 type Props = {
   participant: ParticipantView;
-  index: number;
 };
 
-export default function ParticipantRow({ participant: p, index }: Props) {
+export default function ParticipantRow({ participant: p }: Props) {
   const { trip, isOwner, canEdit } = useTrip();
   const { open } = useModal();
   const queryClient = useQueryClient();
@@ -61,7 +58,6 @@ export default function ParticipantRow({ participant: p, index }: Props) {
   };
 
   const label = p.name || p.email || "Unknown";
-  const initial = (p.name || p.email || "?").trim().charAt(0).toUpperCase();
   const canRemove = !p.isOwner && (p.isMe || canEdit);
 
   const items: ParticipantMenuItem[] = [];
@@ -90,14 +86,7 @@ export default function ParticipantRow({ participant: p, index }: Props) {
   return (
     <div className="border-b border-gray-100 last:border-0 transition-colors">
       <div className="flex items-center gap-3.5 py-3">
-        <span
-          className={clsx(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white",
-            AVATAR_COLORS[index % AVATAR_COLORS.length]
-          )}
-        >
-          {initial}
-        </span>
+        <Avatar name={p.name} email={p.email} seed={p.uid || p._id} size={36} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-gray-800">
             {label}
