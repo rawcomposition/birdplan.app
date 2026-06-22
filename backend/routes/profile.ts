@@ -16,20 +16,17 @@ profile.get("/", async (c) => {
   const tokenName = typeof session.name === "string" && session.name.trim() ? session.name : null;
   const tokenEmail = typeof session.email === "string" && session.email.trim() ? session.email.toLowerCase() : null;
   const tokenPhotoUrl = typeof session.picture === "string" && session.picture.trim() ? session.picture : null;
-  const missingName = !tokenName;
-  const missingEmail = !tokenEmail;
-  const missingPhotoUrl = !tokenPhotoUrl;
 
   if (tokenName) set.name = tokenName;
   if (tokenEmail) set.email = tokenEmail;
   if (tokenPhotoUrl) set.photoUrl = tokenPhotoUrl;
 
-  if (missingName || missingEmail || missingPhotoUrl) {
-    const user = await auth?.getUser(session.uid);
-    if (!user) throw new HTTPException(400, { message: "User not found" });
-    if (missingName && user.displayName) set.name = user.displayName;
-    if (missingEmail && user.email) set.email = user.email.toLowerCase();
-    if (missingPhotoUrl && user.photoURL) set.photoUrl = user.photoURL;
+  if (!tokenName) {
+    const existing = await Profile.findOne({ uid: session.uid }).select("name").lean();
+    if (!existing?.name) {
+      const user = await auth?.getUser(session.uid);
+      if (user?.displayName) set.name = user.displayName;
+    }
   }
 
   const profile = await Profile.findOneAndUpdate(
