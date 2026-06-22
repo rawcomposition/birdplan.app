@@ -10,7 +10,7 @@ import Avatar from "components/Avatar";
 import { avatarFromProfile } from "lib/avatar";
 import { useUser } from "providers/user";
 import { Link, useLocation } from "react-router-dom";
-import useFirebaseLogout from "hooks/useFirebaseLogout";
+import useLogout from "hooks/useLogout";
 import { useProfile } from "providers/profile";
 import { withReturnTo } from "lib/helpers";
 
@@ -26,7 +26,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
   const profile = useProfile();
   const { lifelist } = profile;
   const lifelistCount = lifelist?.length || 0;
-  const { logout } = useFirebaseLogout();
+  const { logout } = useLogout();
   const location = useLocation();
   const asPath = `${location.pathname}${location.search}`;
 

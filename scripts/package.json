@@ -6,6 +6,7 @@
   "scripts": {
     "get-avicommons": "tsx get-avicommons.ts",
     "tz-sync-regions": "tsx tz-sync-regions.ts",
+    "backfill-emails": "tsx backfill-emails.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -65,6 +65,9 @@ participants.post("/", async (c) => {
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
+  const inviter = await Profile.findOne({ uid: session.uid }).select("name").lean();
+  const inviterName = inviter?.name || "";
+
   const body = await c.req.json<AddParticipantInput>();
 
   if (body.type === "named") {
@@ -102,7 +105,7 @@ participants.post("/", async (c) => {
     }
     await sendInviteEmail({
       tripName: trip.name,
-      fromName: session.name || "",
+      fromName: inviterName,
       email,
       url: `${process.env.FRONTEND_URL}/accept/${body.upgradeId}`,
     });
@@ -128,7 +131,7 @@ participants.post("/", async (c) => {
 
   await sendInviteEmail({
     tripName: trip.name,
-    fromName: session.name || "",
+    fromName: inviterName,
     email,
     url: `${process.env.FRONTEND_URL}/accept/${participant._id}`,
   });
@@ -171,9 +174,11 @@ participants.post("/:id/resend", async (c) => {
   if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
   if (p.status !== "pending" || !p.email) throw new HTTPException(400, { message: "No pending invite to resend" });
 
+  const inviter = await Profile.findOne({ uid: session.uid }).select("name").lean();
+
   await sendInviteEmail({
     tripName: trip.name,
-    fromName: session.name || "",
+    fromName: inviter?.name || "",
     email: p.email,
     url: `${process.env.FRONTEND_URL}/accept/${p._id}`,
   });

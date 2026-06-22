@@ -18,10 +18,10 @@ export default function Notice() {
     url: "/profile",
     method: "PATCH",
     onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: [`/profile`] });
-      const prevData = queryClient.getQueryData([`/profile`]);
+      await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
+      const prevData = queryClient.getQueryData(["/auth/me"]);
 
-      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) => {
+      queryClient.setQueryData<Profile | undefined>(["/auth/me"], (old) => {
         if (!old) return old;
         return { ...old, dismissedNoticeId: data.dismissedNoticeId };
       });
@@ -29,7 +29,7 @@ export default function Notice() {
       return { prevData };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
     },
   });
 

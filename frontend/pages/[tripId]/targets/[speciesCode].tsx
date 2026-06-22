@@ -93,13 +93,13 @@ export default function SpeciesDetail() {
     url: `/profile/lifelist/add`,
     method: "POST",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
       queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
     },
     onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: ["/profile"] });
-      const prevData = queryClient.getQueryData([`/profile`]);
-      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) =>
+      await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
+      const prevData = queryClient.getQueryData(["/auth/me"]);
+      queryClient.setQueryData<Profile | undefined>(["/auth/me"], (old) =>
         old
           ? {
               ...old,
@@ -110,7 +110,7 @@ export default function SpeciesDetail() {
       );
       return { prevData };
     },
-    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData([`/profile`], ctx?.prevData),
+    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData(["/auth/me"], ctx?.prevData),
   });
 
   const customSeenMutation = useTripMutation<{ code: string }>({

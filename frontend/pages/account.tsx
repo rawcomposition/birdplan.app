@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "components/Header";
 import Footer from "components/Footer";
-import LoginModal from "components/LoginModal";
 import { useUser } from "providers/user";
 import { useModal } from "providers/modals";
 import Icon from "components/Icon";
@@ -11,16 +10,9 @@ import Button from "components/Button";
 import clsx from "clsx";
 import { useState } from "react";
 import { IconNameT } from "lib/icons";
-import PasswordChangeForm from "components/PasswordChangeForm";
 import EmailChangeForm from "components/EmailChangeForm";
 import { Link } from "react-router-dom";
-import Alert from "components/Alert";
 import { useProfile } from "providers/profile";
-
-const providerNames = {
-  "google.com": "Google",
-  "apple.com": "Apple",
-};
 
 type TabItem = {
   id: string;
@@ -31,7 +23,6 @@ type TabItem = {
 const tabs: TabItem[] = [
   { id: "profile", icon: "user", label: "Account" },
   { id: "email", icon: "envelope", label: "Email" },
-  { id: "password", icon: "lock", label: "Password" },
   { id: "delete", icon: "warning", label: "Danger Zone" },
 ];
 
@@ -43,12 +34,6 @@ export default function Account() {
 
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
-
-  const socialProviders = user.providerData
-    .filter((provider) => provider.providerId !== "password")
-    .map((provider) => providerNames[provider.providerId as keyof typeof providerNames]);
-
-  const isEmailProvider = user.providerData.some((provider) => provider.providerId === "password");
 
   return (
     <div className="flex flex-col h-full">
@@ -96,11 +81,6 @@ export default function Account() {
                       {profile.email && <p className="text-gray-600">{profile.email}</p>}
                     </div>
                   </div>
-                  {socialProviders.length > 0 && (
-                    <p className="text-sm text-gray-600">
-                      You logged in using your <strong>{socialProviders.join(", ")}</strong> account.
-                    </p>
-                  )}
                 </div>
               </div>
             )}
@@ -108,28 +88,7 @@ export default function Account() {
             {activeTab === "email" && (
               <div className="max-w-md">
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Change Email</h2>
-
-                {!isEmailProvider ? (
-                  <Alert style="warning">
-                    You cannot change your email because you logged in using {socialProviders.join(", ")}.
-                  </Alert>
-                ) : (
-                  <EmailChangeForm currentEmail={user.email || ""} />
-                )}
-              </div>
-            )}
-
-            {activeTab === "password" && (
-              <div className="max-w-md">
-                <h2 className="text-xl font-medium text-gray-800 mb-6">Change Password</h2>
-
-                {isEmailProvider ? (
-                  <PasswordChangeForm />
-                ) : (
-                  <Alert style="warning">
-                    Your account is managed through your {socialProviders.join(", ")} account.
-                  </Alert>
-                )}
+                <EmailChangeForm currentEmail={profile.email || ""} />
               </div>
             )}
 
@@ -151,7 +110,6 @@ export default function Account() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

@@ -1,83 +1,140 @@
 import { Hono } from "hono";
-import { nanoId } from "lib/utils.js";
-import { connect, Profile } from "lib/db.js";
 import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
-import { RESET_TOKEN_EXPIRATION } from "lib/config.js";
-import { sendResetEmail } from "lib/email.js";
-import { auth as firebaseAuth } from "lib/firebaseAdmin.js";
+import { connect, Profile, Session, Participant } from "lib/db.js";
+import { nanoId, authenticate } from "lib/utils.js";
+import { createSession, invalidateSession } from "lib/session.js";
+import { issueOtp, verifyOtp } from "lib/otp.js";
+import { enforceRateLimit } from "lib/rateLimit.js";
+import { SESSION_INACTIVITY_DAYS, SESSION_REFRESH_THRESHOLD_HOURS, RATE_LIMITS } from "lib/config.js";
 
 const auth = new Hono();
 
-auth.post("/forgot-password", async (c) => {
-  const { email } = await c.req.json<{ email: string }>();
-  if (!email) throw new HTTPException(400, { message: "Email is required" });
+const normalizeEmail = (email?: string | null) => email?.trim().toLowerCase() || "";
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const getIp = (c: { req: { header: (name: string) => string | undefined } }) =>
+  c.req.header("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
-  await connect();
-  const user = await firebaseAuth?.getUserByEmail(email);
+async function claimInvite(inviteId: string, email: string, uid: string, name?: string): Promise<string | undefined> {
+  const pending = await Participant.findById(inviteId).lean();
+  if (!pending || pending.status !== "pending" || pending.uid) return undefined;
+  if (normalizeEmail(pending.email) !== email) return undefined;
 
-  if (!user || !user.providerData.some((provider) => provider.providerId === "password")) {
-    console.log("User not found/invalid provider", user?.providerData);
-    return Response.json({});
+  const existing = await Participant.findOne({ tripId: pending.tripId, uid, status: "active" }).lean();
+  if (existing) {
+    await Participant.deleteOne({ _id: pending._id });
+    return pending.tripId;
   }
 
-  const resetToken = nanoId(64);
-  const resetTokenExpires = dayjs().add(RESET_TOKEN_EXPIRATION, "hours").toDate();
-  const url = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+  const hasCuratedList = !!pending.lifelist?.length;
+  try {
+    const result = await Participant.updateOne(
+      { _id: inviteId, status: "pending", uid: { $exists: false } },
+      { $set: { status: "active", uid, name, ...(hasCuratedList ? {} : { listMode: "world" }) } }
+    );
+    if (result.matchedCount === 0) return undefined;
+  } catch (err) {
+    if ((err as { code?: number })?.code === 11000) {
+      await Participant.deleteOne({ _id: inviteId, status: "pending" });
+      return pending.tripId;
+    }
+    throw err;
+  }
+  return pending.tripId;
+}
 
-  await Profile.updateOne({ uid: user.uid }, { resetToken, resetTokenExpires });
-  await sendResetEmail({ email, url });
+auth.post("/request-code", async (c) => {
+  const { email: rawEmail } = await c.req.json<{ email: string }>();
+  const email = normalizeEmail(rawEmail);
+  const ip = getIp(c);
+
+  if (!email || !isValidEmail(email)) return c.json({ ok: true });
+
+  await connect();
+
+  const emailOk = await enforceRateLimit("request_code", "email", email, RATE_LIMITS.requestCodeEmail);
+  const ipOk = await enforceRateLimit("request_code", "ip", ip, RATE_LIMITS.requestCodeIp);
+  if (!emailOk || !ipOk) throw new HTTPException(429, { message: "Too many requests. Please try again later." });
+
+  await issueOtp(email, ip);
+
+  return c.json({ ok: true });
+});
+
+auth.post("/verify-code", async (c) => {
+  const {
+    email: rawEmail,
+    code,
+    inviteId,
+  } = await c.req.json<{ email: string; code: string; inviteId?: string }>();
+  const email = normalizeEmail(rawEmail);
+  const ip = getIp(c);
+
+  if (!email || !code) throw new HTTPException(400, { message: "Email and code are required" });
+
+  await connect();
+
+  const emailOk = await enforceRateLimit("verify_code", "email", email, RATE_LIMITS.verifyCodeEmail);
+  const ipOk = await enforceRateLimit("verify_code", "ip", ip, RATE_LIMITS.verifyCodeIp);
+  if (!emailOk || !ipOk) throw new HTTPException(429, { message: "Too many requests. Please try again later." });
+
+  await verifyOtp(email, code);
+
+  let profile = await Profile.findOne({ email }).lean();
+  let isNewUser = false;
+  if (!profile) {
+    try {
+      profile = (await Profile.create({ uid: nanoId(), email })).toObject();
+      isNewUser = true;
+    } catch (err) {
+      if ((err as { code?: number })?.code === 11000) {
+        profile = await Profile.findOne({ email }).lean();
+      } else {
+        throw err;
+      }
+    }
+  }
+  if (!profile) throw new HTTPException(500, { message: "Failed to create account" });
+
+  const { token } = await createSession(profile.uid, {
+    userAgent: c.req.header("user-agent"),
+    ip,
+  });
+
+  let claimedTripId: string | undefined;
+  if (inviteId) {
+    claimedTripId = await claimInvite(inviteId, email, profile.uid, profile.name);
+  }
+
+  return c.json({ token, isNewUser, claimedTripId });
+});
+
+auth.get("/me", async (c) => {
+  const session = await authenticate(c);
+
+  await connect();
+  const profile = await Profile.findOne({ uid: session.uid }).lean();
+  if (!profile) {
+    await invalidateSession(session._id);
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  const now = Date.now();
+  const lastActive = new Date(session.lastActiveAt).getTime();
+  if (now - lastActive > SESSION_REFRESH_THRESHOLD_HOURS * 60 * 60 * 1000) {
+    const nowDate = new Date();
+    const expiresAt = dayjs(nowDate).add(SESSION_INACTIVITY_DAYS, "day").toDate();
+    await Session.updateOne({ _id: session._id }, { $set: { lastActiveAt: nowDate, expiresAt } });
+    await Profile.updateOne({ uid: session.uid }, { $set: { lastActiveAt: nowDate } });
+  }
+
+  return c.json(profile);
+});
+
+auth.post("/logout", async (c) => {
+  const session = await authenticate(c);
+  await invalidateSession(session._id);
   return c.json({});
-});
-
-auth.post("/reset-password", async (c) => {
-  const { token, password } = await c.req.json<{ token: string; password: string }>();
-  if (!token || !password) throw new HTTPException(400, { message: "Missing required fields" });
-
-  await connect();
-  const profile = await Profile.findOne({ resetToken: token }).lean();
-
-  if (!profile || !profile.uid) {
-    throw new HTTPException(400, { message: "Invalid or expired token" });
-  }
-
-  const user = await firebaseAuth?.getUser(profile.uid);
-
-  if (!user) {
-    throw new HTTPException(400, { message: "User not found" });
-  }
-
-  if (user.providerData.some((provider) => provider.providerId === "google.com")) {
-    throw new HTTPException(400, { message: "You must use 'Sign in with Google' to login" });
-  } else if (user.providerData.some((provider) => provider.providerId === "apple.com")) {
-    throw new HTTPException(400, { message: "You must use 'Sign in with Apple' to login" });
-  }
-
-  if (!profile.resetTokenExpires || dayjs().isAfter(dayjs(profile.resetTokenExpires))) {
-    throw new HTTPException(400, { message: "Reset token has expired" });
-  }
-
-  await firebaseAuth?.updateUser(user.uid, { password });
-
-  await Profile.updateOne({ uid: user.uid }, { $unset: { resetToken: "", resetTokenExpires: "" } });
-
-  return c.json({ message: "Password reset successfully" });
-});
-
-auth.get("/verify-reset-token", async (c) => {
-  const { searchParams } = new URL(c.req.url);
-  const token = searchParams.get("token");
-
-  if (!token) throw new HTTPException(400, { message: "Token is required" });
-
-  await connect();
-  const profile = await Profile.findOne({ resetToken: token }).lean();
-
-  if (!profile || !profile.resetTokenExpires || dayjs().isAfter(dayjs(profile.resetTokenExpires))) {
-    throw new HTTPException(400, { message: "Invalid or expired token" });
-  }
-
-  return c.json({ isValid: true });
 });
 
 export default auth;

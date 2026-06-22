@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { RESET_TOKEN_EXPIRATION } from "lib/config.js";
+import { OTP_EXPIRATION_MINUTES, IS_DEV } from "lib/config.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -11,6 +11,11 @@ type Props = {
 };
 
 export const sendEmail = async ({ to, subject, html, replyTo }: Props) => {
+  if (IS_DEV) {
+    console.log(`\n📧 [dev] email not sent\n  to: ${to}\n  subject: ${subject}\n  body: ${html}\n`);
+    return;
+  }
+
   await resend.emails.send({
     from: "BirdPlan.app <support@birdplan.app>",
     to,
@@ -36,15 +41,15 @@ export const sendInviteEmail = async ({ tripName, fromName, email, url }: invite
   });
 };
 
-type resetEmailProps = {
+type otpEmailProps = {
   email: string;
-  url: string;
+  code: string;
 };
 
-export const sendResetEmail = async ({ email, url }: resetEmailProps) => {
+export const sendOtpEmail = async ({ email, code }: otpEmailProps) => {
   await sendEmail({
     to: email,
-    subject: "Reset your BirdPlan.app password",
-    html: `Hello,<br /><br />Click the link below to reset your BirdPlan.app password.<br /><br /><a href="${url}">Reset Password</a><br /><br />This link will expire in ${RESET_TOKEN_EXPIRATION} hours. If you did not request a password reset, please ignore this email.`,
+    subject: `${code} is your BirdPlan.app sign-in code`,
+    html: `Hello,<br /><br />Your BirdPlan.app sign-in code is:<br /><br /><div style="font-size:28px;font-weight:bold;letter-spacing:4px;">${code}</div><br />This code expires in ${OTP_EXPIRATION_MINUTES} minutes. If you didn't request it, you can safely ignore this email.`,
   });
 };

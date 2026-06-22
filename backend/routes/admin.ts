@@ -2,34 +2,9 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { authenticate } from "lib/utils.js";
 import { connect, Profile, Trip } from "lib/db.js";
-import { auth as firebaseAuth } from "lib/firebaseAdmin.js";
 import type { AdminDashboard, AdminDashboardUser } from "@birdplan/shared";
 
 const admin = new Hono();
-
-async function getProvidersByUid(uids: string[]) {
-  const map = new Map<string, string[]>();
-  if (!firebaseAuth || uids.length === 0) return map;
-  const auth = firebaseAuth;
-
-  const batches: string[][] = [];
-  for (let i = 0; i < uids.length; i += 100) {
-    batches.push(uids.slice(i, i + 100));
-  }
-
-  const results = await Promise.all(batches.map((batch) => auth.getUsers(batch.map((uid) => ({ uid })))));
-
-  for (const result of results) {
-    for (const user of result.users) {
-      map.set(
-        user.uid,
-        user.providerData.map((provider) => provider.providerId)
-      );
-    }
-  }
-
-  return map;
-}
 
 admin.get("/", async (c) => {
   const session = await authenticate(c);
@@ -54,8 +29,6 @@ admin.get("/", async (c) => {
     Profile.find({}).select("uid name email photoUrl lastActiveAt createdAt").lean(),
   ]);
 
-  const providersByUid = await getProvidersByUid(profiles.map((profile) => profile.uid));
-
   const users: AdminDashboardUser[] = profiles.map((profile) => ({
     _id: profile._id,
     uid: profile.uid,
@@ -64,7 +37,6 @@ admin.get("/", async (c) => {
     photoUrl: profile.photoUrl,
     createdAt: (profile as unknown as { createdAt: Date }).createdAt?.toISOString?.() ?? "",
     lastActiveAt: profile.lastActiveAt ?? null,
-    providers: providersByUid.get(profile.uid) ?? [],
   }));
 
   const response: AdminDashboard = {

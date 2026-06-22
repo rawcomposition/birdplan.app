@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { rateLimiter } from "hono-rate-limiter";
 import trip from "./[tripId]/index.js";
 import { authenticate, getBounds } from "lib/utils.js";
-import { connect, Trip, Participant, TripShareToken } from "lib/db.js";
+import { connect, Trip, Participant, TripShareToken, Profile } from "lib/db.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripInput } from "@birdplan/shared";
@@ -118,10 +118,13 @@ trips.post("/", async (c) => {
   const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
 
   await connect();
+  const profile = await Profile.findOne({ uid: session.uid }).select("name").lean();
+  const ownerName = profile?.name || "";
+
   const trip = await Trip.create({
     ...data,
     ownerId: session.uid,
-    ownerName: session.name,
+    ownerName,
     bounds,
     imgUrl,
     itinerary: [],
@@ -132,7 +135,7 @@ trips.post("/", async (c) => {
   await Participant.create({
     tripId: trip._id,
     uid: session.uid,
-    name: session.name,
+    name: ownerName,
     status: "active",
     listMode: "world",
     isOwner: true,

@@ -6,7 +6,6 @@ import Icon from "components/Icon";
 import Button from "components/Button";
 import Card from "components/Card";
 import NotFound from "components/NotFound";
-import LoginModal from "components/LoginModal";
 import LifelistEditor from "components/LifelistEditor";
 import { useTrip } from "providers/trip";
 import useLifelistMode from "hooks/useLifelistMode";
@@ -58,7 +57,6 @@ export default function TripLifelist() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import Button from "components/Button";
 import Card from "components/Card";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
-import LoginModal from "components/LoginModal";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
 import { Link } from "react-router-dom";
@@ -40,7 +39,7 @@ export default function ImportLifelist() {
     url: "/profile",
     method: "PATCH",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
     },
   });
 
@@ -49,7 +48,7 @@ export default function ImportLifelist() {
     method: "PUT",
     onSuccess: () => {
       toast.success("Life list imported");
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
     },
   });
 
@@ -181,7 +180,6 @@ export default function ImportLifelist() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

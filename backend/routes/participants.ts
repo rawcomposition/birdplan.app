@@ -1,11 +1,12 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { connect, Participant, Profile, Trip } from "lib/db.js";
-import { auth } from "lib/firebaseAdmin.js";
 import { authenticate } from "lib/utils.js";
 import type { InviteInfo } from "@birdplan/shared";
 
 const participants = new Hono();
+
+const normalizeEmail = (email?: string | null) => email?.trim().toLowerCase() || "";
 
 participants.get("/:id/invite", async (c) => {
   const id: string = c.req.param("id");
@@ -17,14 +18,11 @@ participants.get("/:id/invite", async (c) => {
   const trip = await Trip.findById(invite.tripId).lean();
   if (!trip) throw new HTTPException(404, { message: "This invite no longer exists." });
 
-  const accountExists = invite.email ? await Profile.exists({ email: invite.email }) : false;
-
   const info: InviteInfo = {
     tripId: invite.tripId,
     tripName: trip.name,
     inviterName: trip.ownerName,
     email: invite.status === "pending" ? invite.email : undefined,
-    method: accountExists ? "login" : "signup",
     status: invite.status,
   };
 
@@ -52,7 +50,14 @@ participants.patch("/:id/accept", async (c) => {
   }
 
   const profile = await Profile.findOne({ uid: session.uid }).lean();
-  const name = profile?.name || session.name || (await auth?.getUser(session.uid))?.displayName || pending.name;
+
+  if (pending.status === "pending" && normalizeEmail(pending.email) !== normalizeEmail(profile?.email)) {
+    throw new HTTPException(403, {
+      message: pending.email ? `Sign in as ${pending.email} to accept this invite.` : "This invite cannot be accepted.",
+    });
+  }
+
+  const name = profile?.name || pending.name;
 
   const hasCuratedList = !!pending.lifelist?.length;
 

@@ -81,7 +81,7 @@ export default function Support() {
               </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <Field label="Name">
-                  <Input type="text" name="name" defaultValue={user?.displayName || ""} required autoFocus />
+                  <Input type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
                 </Field>
 
                 <Field label="Email">

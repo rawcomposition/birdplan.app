@@ -1,58 +1,122 @@
 import React, { useState } from "react";
 import Button from "components/Button";
 import Input from "components/Input";
+import Field from "components/Field";
+import Alert from "components/Alert";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
-import Field from "components/Field";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 
 type Props = {
   currentEmail: string;
 };
 
 export default function EmailChangeForm({ currentEmail }: Props) {
-  const [email, setEmail] = useState(currentEmail);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const [step, setStep] = useState<"email" | "code">("email");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const updateEmailMutation = useMutation({
-    url: "/account/update-email",
+  const requestMutation = useMutation({
+    url: "/account/request-email-change",
     method: "POST",
+    showToastError: false,
     onSuccess: () => {
-      toast.success("Email updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["/profile"] });
-      navigate("/login?event=emailUpdated");
+      setError(null);
+      setStep("code");
     },
+    onError: (err: any) => setError(err.message || "Something went wrong. Please try again."),
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const updateMutation = useMutation({
+    url: "/account/update-email",
+    method: "POST",
+    showToastError: false,
+    onSuccess: () => {
+      toast.success("Email updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
+      setStep("email");
+      setEmail("");
+      setCode("");
+    },
+    onError: (err: any) => setError(err.message || "Invalid or expired code."),
+  });
+
+  const handleRequest = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email) return;
-    updateEmailMutation.mutate({ email });
+    const normalized = email.trim().toLowerCase();
+    if (!normalized || normalized === currentEmail.toLowerCase()) return;
+    setError(null);
+    requestMutation.mutate({ email: normalized });
   };
 
-  const isDirty = currentEmail !== email;
+  const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    updateMutation.mutate({ email: email.trim().toLowerCase(), code: code.trim() });
+  };
+
+  const isDirty = !!email.trim() && email.trim().toLowerCase() !== currentEmail.toLowerCase();
 
   return (
     <div className="max-w-md">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+      {error && (
+        <Alert style="error" className="mb-4">
+          {error}
+        </Alert>
+      )}
+      {step === "email" ? (
+        <form onSubmit={handleRequest} className="space-y-4">
           <Field label="New Email">
             <Input
               type="email"
               name="email"
               value={email}
+              placeholder="you@example.com"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               required
             />
           </Field>
-        </div>
-        <p className="text-sm text-gray-600">You will need to sign in again after updating your email.</p>
-        <Button type="submit" color="primary" disabled={updateEmailMutation.isPending || !isDirty || !email}>
-          Update Email
-        </Button>
-      </form>
+          <p className="text-sm text-gray-600">We&apos;ll send a 6-digit code to your new email to confirm the change.</p>
+          <Button type="submit" color="primary" disabled={requestMutation.isPending || !isDirty}>
+            {requestMutation.isPending ? "Sending..." : "Send code"}
+          </Button>
+        </form>
+      ) : (
+        <form onSubmit={handleUpdate} className="space-y-4">
+          <Field label={`Enter the code sent to ${email}`}>
+            <Input
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              name="code"
+              maxLength={6}
+              value={code}
+              placeholder="6-digit code"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value.replace(/\D/g, ""))}
+              required
+              autoFocus
+            />
+          </Field>
+          <div className="flex items-center gap-3">
+            <Button type="submit" color="primary" disabled={updateMutation.isPending || code.length < 6}>
+              {updateMutation.isPending ? "Updating..." : "Update Email"}
+            </Button>
+            <button
+              type="button"
+              className="text-sm text-gray-500 hover:text-gray-700"
+              onClick={() => {
+                setStep("email");
+                setCode("");
+                setError(null);
+              }}
+            >
+              Use a different email
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import React from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "lib/firebase";
-import { User as FirebaseUser } from "firebase/auth";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Profile } from "@birdplan/shared";
+import { useSessionToken } from "lib/sessionToken";
 
 export const UserContext = React.createContext<{
-  user: FirebaseUser | null;
+  user: Profile | null;
   refreshUser: () => Promise<void>;
   loading: boolean;
 }>({
@@ -18,24 +18,20 @@ type Props = {
 };
 
 const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = React.useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(!!auth);
+  const token = useSessionToken();
+  const queryClient = useQueryClient();
 
-  React.useEffect(() => {
-    if (!auth) return;
-    onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-  }, []);
+  const { data, isLoading } = useQuery<Profile>({
+    queryKey: ["/auth/me"],
+    enabled: !!token,
+  });
+
+  const user = token ? data ?? null : null;
+  const loading = !!token && isLoading;
 
   const refreshUser = React.useCallback(async () => {
-    if (!auth) return;
-    await auth.currentUser?.reload();
-    if (auth.currentUser) {
-      setUser({ ...auth.currentUser });
-    }
-  }, []);
+    await queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
+  }, [queryClient]);
 
   return <UserContext.Provider value={{ loading, user, refreshUser }}>{children}</UserContext.Provider>;
 };

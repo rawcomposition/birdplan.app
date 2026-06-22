@@ -1,7 +1,6 @@
 import React from "react";
 import UtilityPage from "components/UtilityPage";
-import LoginForm from "components/LoginForm";
-import SignupForm from "components/SignupForm";
+import AuthForm from "components/AuthForm";
 import AcceptError from "components/AcceptError";
 import Button from "components/Button";
 import Icon from "components/Icon";
@@ -20,11 +19,6 @@ export default function Accept() {
   const uid = user?.uid;
   const firedRef = React.useRef(false);
 
-  const { isSuccess: profileLoaded } = useQuery<Profile>({
-    queryKey: ["/profile"],
-    enabled: !!uid,
-  });
-
   const {
     data: invite,
     isError: inviteIsError,
@@ -33,7 +27,7 @@ export default function Accept() {
     isFetching: inviteFetching,
   } = useQuery<InviteInfo>({
     queryKey: [`/participants/${inviteId}/invite`],
-    enabled: !!inviteId && !uid,
+    enabled: !!inviteId,
     retry: false,
   });
 
@@ -42,7 +36,7 @@ export default function Accept() {
     method: "PATCH",
     showToastError: false,
     onSuccess: (data: any) => {
-      const profile = queryClient.getQueryData<Profile>(["/profile"]);
+      const profile = queryClient.getQueryData<Profile>(["/auth/me"]);
       const dest = `/${data?.tripId}/lifelist?from=accept`;
       if (profile?.lifelist?.length) {
         navigate(dest);
@@ -53,14 +47,14 @@ export default function Accept() {
   });
 
   React.useEffect(() => {
-    if (!uid || !inviteId || !profileLoaded || firedRef.current) return;
+    if (!uid || !inviteId || firedRef.current) return;
+    if (!invite || invite.status !== "pending") return;
     firedRef.current = true;
     acceptMutation.mutate({});
-  }, [uid, inviteId, profileLoaded]);
+  }, [uid, inviteId, invite]);
 
   const retry = () => acceptMutation.mutate({});
 
-  const method = invite?.method;
   const inviteLoading = !invite && !inviteIsError;
 
   const heading = invite ? (
@@ -76,11 +70,11 @@ export default function Accept() {
 
   return (
     <UtilityPage heading={heading} title="Accept Invite">
-      {loading || (!uid && inviteLoading) ? (
+      {loading || inviteLoading ? (
         <div className="text-center">
           <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
         </div>
-      ) : !uid && inviteIsError ? (
+      ) : inviteIsError ? (
         <AcceptError
           title="Error accepting invite"
           message={inviteError?.message || "This invite is no longer valid."}
@@ -91,18 +85,14 @@ export default function Accept() {
             Go to homepage
           </Button>
         </AcceptError>
-      ) : !uid && invite && invite.status !== "pending" ? (
+      ) : invite && invite.status !== "pending" ? (
         <AcceptError title="Error accepting invite" message="This invite has already been accepted.">
           <Button color="primary" href="/">
             Go to homepage
           </Button>
         </AcceptError>
       ) : !uid ? (
-        method === "login" ? (
-          <LoginForm email={invite?.email} />
-        ) : (
-          <SignupForm email={invite?.email} />
-        )
+        <AuthForm email={invite?.email} lockEmail inviteId={inviteId} />
       ) : acceptMutation.isError ? (
         <AcceptError
           title="Error accepting invite"

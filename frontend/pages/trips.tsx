@@ -3,7 +3,6 @@ import Header from "components/Header";
 import Button from "components/Button";
 import TripCard from "components/TripCard";
 import { Link } from "react-router-dom";
-import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import Notice from "components/Notice";
 import { useQuery } from "@tanstack/react-query";
@@ -49,7 +48,6 @@ export default function Trips() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

@@ -6,15 +6,13 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   _id: { type: String, default: () => nanoId() },
   uid: { type: String, required: true, unique: true },
   name: String,
-  email: String,
+  email: { type: String, required: true, lowercase: true },
   photoUrl: String,
   lifelist: { type: [String], default: [] },
   lifelistUpdatedAt: { type: Date, default: null },
   exceptions: { type: [String], default: [] },
   dismissedNoticeId: String,
   lastActiveAt: { type: Date, default: new Date() },
-  resetToken: String,
-  resetTokenExpires: Date,
   isAdmin: { type: Boolean, default: false },
 };
 

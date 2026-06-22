@@ -7,7 +7,6 @@ import clsx from "clsx";
 import { AdminDashboard, AdminDashboardUser } from "@birdplan/shared";
 import Header from "components/Header";
 import Footer from "components/Footer";
-import LoginModal from "components/LoginModal";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
@@ -17,18 +16,6 @@ import { useUser } from "providers/user";
 import { useProfile } from "providers/profile";
 
 dayjs.extend(relativeTime);
-
-const providerLabels: Record<string, string> = {
-  password: "Email",
-  "google.com": "Google",
-  "apple.com": "Apple",
-};
-
-const providerColors: Record<string, string> = {
-  password: "bg-gray-100 text-gray-600",
-  "google.com": "bg-red-50 text-red-600",
-  "apple.com": "bg-gray-800 text-white",
-};
 
 type SortKey = "lastActiveAt" | "createdAt";
 
@@ -75,27 +62,8 @@ function SortHeader({
   );
 }
 
-function ProviderBadges({ providers }: { providers: string[] }) {
-  if (!providers.length) return <span className="text-gray-400">—</span>;
-  return (
-    <div className="flex flex-wrap gap-1">
-      {providers.map((provider) => (
-        <span
-          key={provider}
-          className={clsx(
-            "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
-            providerColors[provider] || "bg-gray-100 text-gray-600"
-          )}
-        >
-          {providerLabels[provider] || provider}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 export default function Admin() {
-  const { user, loading } = useUser();
+  const { loading } = useUser();
   const profile = useProfile();
   const [sortKey, setSortKey] = React.useState<SortKey>("lastActiveAt");
   const [sortDir, setSortDir] = React.useState<"asc" | "desc">("desc");
@@ -106,7 +74,6 @@ export default function Admin() {
   });
 
   if (loading) return null;
-  if (!user) return <LoginModal showLoader={false} />;
   if (!profile.uid) return null;
   if (!profile.isAdmin) return <Navigate to="/" replace />;
 
@@ -169,7 +136,6 @@ export default function Admin() {
                     <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
                       <tr>
                         <th className="px-4 py-3 text-left font-medium">User</th>
-                        <th className="px-4 py-3 text-left font-medium">Sign-in</th>
                         <SortHeader
                           label="Last active"
                           sortKey="lastActiveAt"
@@ -197,9 +163,6 @@ export default function Admin() {
                                 {u.email && <p className="text-gray-500 truncate">{u.email}</p>}
                               </div>
                             </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <ProviderBadges providers={u.providers} />
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(u.lastActiveAt)}</td>
                           <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(u.createdAt)}</td>

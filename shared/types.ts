@@ -95,9 +95,44 @@ export type Profile = {
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
-  resetToken?: string;
-  resetTokenExpires?: Date;
   isAdmin?: boolean;
+};
+
+export type Session = {
+  _id: string;
+  secretHash: string;
+  uid: string;
+  lastActiveAt: Date;
+  expiresAt: Date;
+  userAgent?: string;
+  ip?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type OtpCode = {
+  _id: string;
+  email: string;
+  codeHash: string;
+  expiresAt: Date;
+  attempts: number;
+  consumedAt?: Date | null;
+  ip?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type RateLimit = {
+  _id: string;
+  action: string;
+  scopeType: string;
+  scopeValue: string;
+  windowMs: number;
+  count: number;
+  windowStartAt: Date;
+  expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type AdminDashboardUser = {
@@ -108,7 +143,6 @@ export type AdminDashboardUser = {
   photoUrl?: string;
   createdAt: string;
   lastActiveAt: Date | null;
-  providers: string[];
 };
 
 export type AdminStats = {
@@ -162,7 +196,6 @@ export type InviteInfo = {
   tripName: string;
   inviterName?: string;
   email?: string;
-  method: "login" | "signup";
   status: ParticipantStatus;
 };
 

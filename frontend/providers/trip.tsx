@@ -1,8 +1,8 @@
 import React from "react";
 import { Trip, ParticipantView } from "@birdplan/shared";
-import { auth } from "lib/firebase";
 import { useLocation } from "react-router-dom";
 import { useUser } from "providers/user";
+import { useSessionToken } from "lib/sessionToken";
 import { fullMonths, months, getTripIdFromPath } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 
@@ -80,12 +80,13 @@ const TripProvider = ({ children }: Props) => {
   });
 
   const { user } = useUser();
+  const token = useSessionToken();
   const canEdit = !!trip?.viewer;
   const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
 
   const { data: participants } = useQuery<ParticipantView[]>({
     queryKey: [`/trips/${id}/participants`],
-    enabled: !!id && !!auth?.currentUser && !!trip,
+    enabled: !!id && !!token && !!trip,
     refetchOnWindowFocus: false,
   });
 
@@ -94,7 +95,7 @@ const TripProvider = ({ children }: Props) => {
   const [halo, setHalo] = React.useState<HaloT>(); // Used to highlight selected geoJSON feature
   const [showAllHotspots, setShowAllHotspots] = React.useState(false);
   const [showSatellite, setShowSatellite] = React.useState(false);
-  const is404 = !!auth?.currentUser && !!id && !trip && !isLoading;
+  const is404 = !!token && !!id && !trip && !isLoading;
 
   const dateRangeLabel =
     trip?.startMonth && trip?.endMonth
