@@ -7,7 +7,7 @@ import {
 } from "components/ui/dropdown-menu";
 import { User, Feather, LogOut } from "lucide-react";
 import Avatar from "components/Avatar";
-import { avatarFromFirebaseUser } from "lib/avatar";
+import { avatarFromProfile } from "lib/avatar";
 import { useUser } from "providers/user";
 import { Link, useLocation } from "react-router-dom";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
@@ -23,7 +23,8 @@ const itemClass = "gap-2 px-3 py-2.5 text-sm font-medium text-gray-700";
 
 const AccountDropdown = ({ className, dropUp }: Props) => {
   const { user } = useUser();
-  const { lifelist } = useProfile();
+  const profile = useProfile();
+  const { lifelist } = profile;
   const lifelistCount = lifelist?.length || 0;
   const { logout } = useFirebaseLogout();
   const location = useLocation();
@@ -38,14 +39,14 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
         }
       >
-        <Avatar user={avatarFromFirebaseUser(user)} size={28} />
+        <Avatar user={avatarFromProfile(profile)} size={28} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side={dropUp ? "top" : "bottom"} className="w-auto min-w-[240px] p-0">
         <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">
-          <Avatar user={avatarFromFirebaseUser(user)} size={32} />
+          <Avatar user={avatarFromProfile(profile)} size={32} />
           <div className="text-sm">
-            <p className="font-semibold">{user?.displayName}</p>
-            {user.email && <p className="text-gray-600">{user.email}</p>}
+            <p className="font-semibold">{profile.name}</p>
+            {profile.email && <p className="text-gray-600">{profile.email}</p>}
           </div>
         </div>
         <div className="p-1">

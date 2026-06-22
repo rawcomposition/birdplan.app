@@ -4,7 +4,7 @@ import { connect, Profile } from "lib/db.js";
 import { sciNamesToCodes } from "lib/taxonomy.js";
 import { auth } from "lib/firebaseAdmin.js";
 import { HTTPException } from "hono/http-exception";
-import type { LifelistImportInput, AddToLifelistInput, Profile as ProfileT } from "@birdplan/shared";
+import type { LifelistImportInput, AddToLifelistInput } from "@birdplan/shared";
 
 const profile = new Hono();
 
@@ -12,42 +12,33 @@ profile.get("/", async (c) => {
   const session = await authenticate(c);
 
   await connect();
-  const sync: Partial<Pick<ProfileT, "lastActiveAt" | "photoUrl">> = { lastActiveAt: new Date() };
-  if (session.picture) sync.photoUrl = session.picture;
+  const set: Record<string, string | Date> = { lastActiveAt: new Date() };
+  const tokenName = typeof session.name === "string" && session.name.trim() ? session.name : null;
+  const tokenEmail = typeof session.email === "string" && session.email.trim() ? session.email.toLowerCase() : null;
+  const tokenPhotoUrl = typeof session.picture === "string" && session.picture.trim() ? session.picture : null;
 
-  let [profile] = await Promise.all([
-    Profile.findOne({ uid: session.uid }).lean(),
-    Profile.updateOne({ uid: session.uid }, sync),
-  ]);
+  if (tokenName) set.name = tokenName;
+  if (tokenEmail) set.email = tokenEmail;
+  if (tokenPhotoUrl) set.photoUrl = tokenPhotoUrl;
 
-  if (!profile) {
-    const user = await auth?.getUser(session.uid);
-    if (!user) {
-      throw new HTTPException(400, { message: "User not found" });
-    }
-    const newProfile = await Profile.create({
-      uid: session.uid,
-      name: user.displayName,
-      email: user.email?.toLowerCase(),
-      photoUrl: user.photoURL,
-    });
-    profile = newProfile.toObject();
-  }
-
-  if (!profile.name) {
-    const user = await auth?.getUser(session.uid);
-    if (!user) {
-      throw new HTTPException(400, { message: "User not found" });
-    }
-    if (user.displayName) {
-      await Profile.updateOne({ uid: session.uid }, { name: user.displayName });
-      profile = { ...profile, name: user.displayName };
+  if (!tokenName) {
+    const existing = await Profile.findOne({ uid: session.uid }).select("name").lean();
+    if (!existing?.name) {
+      const user = await auth?.getUser(session.uid);
+      if (user?.displayName) set.name = user.displayName;
     }
   }
 
-  if (session.picture && profile.photoUrl !== session.picture) {
-    profile = { ...profile, photoUrl: session.picture };
-  }
+  const profile = await Profile.findOneAndUpdate(
+    { uid: session.uid },
+    {
+      $set: set,
+      $setOnInsert: { uid: session.uid },
+    },
+    { upsert: true, new: true }
+  ).lean();
+  if (!profile) throw new HTTPException(500, { message: "Profile not found" });
+
   return c.json(profile);
 });
 
