@@ -14,7 +14,12 @@ import useTripMutation from "hooks/useTripMutation";
 import { CustomMarker, MarkerUpdateInput } from "@birdplan/shared";
 import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
-import { Menu } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
 import Error from "components/Error";
@@ -136,45 +141,24 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
           <div className="px-4 sm:px-6 pt-4">
             <div className="flex gap-2 mb-2">
               <DirectionsButton lat={marker.lat} lng={marker.lng} markerId={marker.id} googleUrl={googleUrl} />
-              <Menu as="div" className="relative inline-block text-left z-10">
-                <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="inline-flex items-center rounded bg-gray-100 px-2 py-[10px] text-[14px] text-gray-600">
                   <Icon name="verticalDots" />
-                </Menu.Button>
-                <Menu.Items className="absolute text-sm left-0 top-10 rounded bg-white shadow-lg py-1.5 w-[180px] ring-1 ring-black/5 flex flex-col">
-                  <Menu.Item>
-                    <a
-                      href={googleUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-gray-700 hover:bg-gray-50 px-3 py-2"
-                    >
-                      View on Google Maps
-                    </a>
-                  </Menu.Item>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[180px]">
+                  <DropdownMenuItem render={<a href={googleUrl} target="_blank" rel="noreferrer" />}>
+                    View on Google Maps
+                  </DropdownMenuItem>
                   {canEdit && (
                     <>
-                      <Menu.Item>
-                        <button
-                          type="button"
-                          onClick={() => setIsEditMode(true)}
-                          className="inline-flex items-center gap-1 w-full text-gray-700 px-3 py-2 hover:bg-gray-50"
-                        >
-                          Edit Marker
-                        </button>
-                      </Menu.Item>
-                      <Menu.Item>
-                        <button
-                          type="button"
-                          onClick={handleRemoveMarker}
-                          className="inline-flex items-center gap-1 w-full text-red-700 px-3 py-2 hover:bg-gray-50"
-                        >
-                          Remove from trip
-                        </button>
-                      </Menu.Item>
+                      <DropdownMenuItem onClick={() => setIsEditMode(true)}>Edit Marker</DropdownMenuItem>
+                      <DropdownMenuItem variant="destructive" onClick={handleRemoveMarker}>
+                        Remove from trip
+                      </DropdownMenuItem>
                     </>
                   )}
-                </Menu.Items>
-              </Menu>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <InputNotes
               value={marker.notes}

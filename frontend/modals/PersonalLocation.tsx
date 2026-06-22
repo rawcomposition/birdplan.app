@@ -3,7 +3,12 @@ import { Header, Body } from "providers/modals";
 import { Hotspot as HotspotT } from "@birdplan/shared";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
-import { Menu } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
 import { useTrip } from "providers/trip";
 
@@ -31,23 +36,24 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
       <Body className="relative min-h-[240px]">
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} />
-          <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex items-center rounded bg-gray-100 px-2 py-[10px] text-[14px] text-gray-600">
               <Icon name="verticalDots" />
-            </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-10 rounded bg-white shadow-lg px-4 py-2 w-[170px] ring-1 ring-black/5 flex flex-col gap-1">
-              <Menu.Item>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-link"
-                >
-                  View on Google Maps
-                </a>
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[170px]">
+              <DropdownMenuItem
+                render={
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                }
+              >
+                View on Google Maps
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         {speciesCode && <ObsList hotspotId={id} speciesCode={speciesCode} />}
       </Body>

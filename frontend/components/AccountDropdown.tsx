@@ -1,11 +1,15 @@
 import React from "react";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import { avatarFromFirebaseUser } from "lib/avatar";
 import { useUser } from "providers/user";
 import { Link, useLocation } from "react-router-dom";
-import clsx from "clsx";
 import useFirebaseLogout from "hooks/useFirebaseLogout";
 import { useProfile } from "providers/profile";
 import { withReturnTo } from "lib/helpers";
@@ -14,6 +18,8 @@ type Props = {
   className?: string;
   dropUp?: boolean;
 };
+
+const itemClass = "gap-2 px-3 py-2.5 text-sm font-medium text-gray-700";
 
 const AccountDropdown = ({ className, dropUp }: Props) => {
   const { user } = useUser();
@@ -26,76 +32,45 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
   if (!user) return null;
 
   return (
-    <Menu as="div" className="relative shrink-0">
-      <Menu.Button
+    <DropdownMenu>
+      <DropdownMenuTrigger
         className={
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
         }
       >
         <Avatar user={avatarFromFirebaseUser(user)} size={28} />
-      </Menu.Button>
-
-      <Transition>
-        <Transition.Child
-          as="div"
-          enter="transition duration-200 ease-out"
-          enterFrom="scale-95 opacity-0"
-          enterTo="scale-100 opacity-100"
-          leave="transition duration-150 ease-in"
-          leaveFrom="scale-100 opacity-100"
-          leaveTo="scale-95 opacity-0"
-          className={clsx(
-            dropUp ? "bottom-24 right-4" : "right-2 top-9 ",
-            "absolute z-20 min-w-[240px] origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-700 shadow-lg"
-          )}
-        >
-          <Menu.Items>
-            <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">
-              <Avatar user={avatarFromFirebaseUser(user)} size={32} />
-              <div className="text-sm">
-                <p className="font-semibold">{user?.displayName}</p>
-                {user.email && <p className="text-gray-600">{user.email}</p>}
-              </div>
-            </div>
-            <Menu.Item>
-              <Link
-                className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                to="/account"
-              >
-                <Icon name="user" />
-                <span>Account</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item>
-              <Link
-                className="flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                to={withReturnTo("/import-lifelist", asPath)}
-              >
-                <Icon name="feather" />
-                {lifelistCount > 0 ? (
-                  <span>
-                    <span>Update Life List</span>&nbsp;&nbsp;
-                    <span className="text-gray-500 font-normal">({lifelistCount})</span>
-                  </span>
-                ) : (
-                  <span>Import Life List</span>
-                )}
-              </Link>
-            </Menu.Item>
-            <Menu.Item>
-              <button
-                type="button"
-                className="w-full flex items-center gap-2 border-b border-gray-200 p-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                onClick={logout}
-              >
-                <Icon name="logout" />
-                <span>Logout</span>
-              </button>
-            </Menu.Item>
-          </Menu.Items>
-        </Transition.Child>
-      </Transition>
-    </Menu>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" side={dropUp ? "top" : "bottom"} className="w-auto min-w-[240px] p-0">
+        <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">
+          <Avatar user={avatarFromFirebaseUser(user)} size={32} />
+          <div className="text-sm">
+            <p className="font-semibold">{user?.displayName}</p>
+            {user.email && <p className="text-gray-600">{user.email}</p>}
+          </div>
+        </div>
+        <div className="p-1">
+          <DropdownMenuItem className={itemClass} render={<Link to="/account" />}>
+            <Icon name="user" />
+            <span>Account</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className={itemClass} render={<Link to={withReturnTo("/import-lifelist", asPath)} />}>
+            <Icon name="feather" />
+            {lifelistCount > 0 ? (
+              <span>
+                <span>Update Life List</span>&nbsp;&nbsp;
+                <span className="font-normal text-gray-500">({lifelistCount})</span>
+              </span>
+            ) : (
+              <span>Import Life List</span>
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuItem className={itemClass} onClick={logout}>
+            <Icon name="logout" />
+            <span>Logout</span>
+          </DropdownMenuItem>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

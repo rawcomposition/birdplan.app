@@ -1,10 +1,15 @@
 import React from "react";
-import { Menu, Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import { useModal } from "providers/modals";
 import { useProfile } from "providers/profile";
 import { useTrip } from "providers/trip";
 import useTargetView from "hooks/useTargetView";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
 
 type Props = {
@@ -56,63 +61,30 @@ export default function TripOptionsDropdown({ className }: Props) {
   const filteredLinks = links.filter((it) => !it.hidden);
 
   return (
-    <Menu as="div" className="relative z-20 ml-auto">
-      <Menu.Button
+    <DropdownMenu>
+      <DropdownMenuTrigger
         className={
           className ||
-          "flex items-center text-[14px] gap-2 font-medium justify-center rounded py-1 px-1 hover:bg-slate-300 text-gray-600"
+          "ml-auto flex shrink-0 items-center justify-center gap-2 rounded px-1 py-1 text-[14px] font-medium text-gray-600 hover:bg-slate-300"
         }
       >
         <Icon name="verticalDots" className="text-lg" />
-      </Menu.Button>
-
-      <Transition>
-        <Transition.Child
-          as="div"
-          enter="transition duration-200 ease-out"
-          enterFrom="scale-95 opacity-0"
-          enterTo="scale-100 opacity-100"
-          leave="transition duration-150 ease-in"
-          leaveFrom="scale-100 opacity-100"
-          leaveTo="scale-95 opacity-0"
-          className="-right-2 top-9 absolute  z-50 min-w-[240px] origin-top-right ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white text-gray-700 shadow-md py-2"
-        >
-          <Menu.Items>
-            {filteredLinks.map(({ name, href, onClick, icon }) => (
-              <Menu.Item key={name}>
-                {({ active }) =>
-                  onClick ? (
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50 w-full"
-                      onClick={onClick}
-                    >
-                      <Icon name={icon as any} />
-                      <span>{name}</span>
-                    </button>
-                  ) : /^(https?:|mailto:|tel:|om:)/.test(href ?? "") ? (
-                    <a
-                      className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
-                      href={href ?? "#"}
-                    >
-                      <Icon name={icon as any} />
-                      <span>{name}</span>
-                    </a>
-                  ) : (
-                    <Link
-                      className="flex items-center gap-2 p-2 pl-4 text-[13px] text-gray-900 hover:bg-gray-50"
-                      to={href ?? "#"}
-                    >
-                      <Icon name={icon as any} />
-                      <span>{name}</span>
-                    </Link>
-                  )
-                }
-              </Menu.Item>
-            ))}
-          </Menu.Items>
-        </Transition.Child>
-      </Transition>
-    </Menu>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-auto min-w-[240px]">
+        {filteredLinks.map(({ name, href, onClick, icon }) => {
+          const render = onClick ? undefined : /^(https?:|mailto:|tel:|om:)/.test(href ?? "") ? (
+            <a href={href ?? "#"} />
+          ) : (
+            <Link to={href ?? "#"} />
+          );
+          return (
+            <DropdownMenuItem key={name} onClick={onClick} render={render}>
+              <Icon name={icon as any} />
+              <span>{name}</span>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -1,5 +1,11 @@
 import clsx from "clsx";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
+import useMediaQuery from "hooks/useMediaQuery";
 
 type Props = {
   className?: string;
@@ -26,6 +32,8 @@ export default function MapButton({
   childItems,
   ...props
 }: Props) {
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+
   if (!childItems?.length) {
     return (
       <button
@@ -45,47 +53,27 @@ export default function MapButton({
     );
   }
   return (
-    <Menu as="div" className="relative z-20 ml-auto">
-      <Menu.Button
+    <DropdownMenu>
+      <DropdownMenuTrigger
         className={clsx(
           className,
-          "w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg text-[20px] group relative",
+          "group relative flex h-12 w-12 items-center justify-center rounded-full bg-white text-[20px] shadow-lg",
           active ? "text-[#1172ab]" : "text-gray-700",
           disabled ? "opacity-60" : "hover:bg-gray-100"
         )}
       >
         {children}
         {tooltip && <Tooltip>{tooltip}</Tooltip>}
-      </Menu.Button>
-
-      <Transition>
-        <Transition.Child
-          as="div"
-          enter="transition duration-200 ease-out"
-          enterFrom="scale-95 opacity-0"
-          enterTo="scale-100 opacity-100"
-          leave="transition duration-150 ease-in"
-          leaveFrom="scale-100 opacity-100"
-          leaveTo="scale-95 opacity-0"
-          className="right-14 sm:right-auto sm:left-14 top-2 absolute  z-50 min-w-[200px] origin-top-right sm:origin-top-left ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white text-gray-700 shadow-md py-2"
-        >
-          <Menu.Items>
-            {childItems.map(({ label, onClick, icon }) => (
-              <Menu.Item key={label}>
-                <button
-                  type="button"
-                  className="flex items-center gap-3 p-2.5 pl-5 text-[15px] text-gray-900 hover:bg-gray-50 w-full"
-                  onClick={onClick}
-                >
-                  {icon}
-                  <span>{label}</span>
-                </button>
-              </Menu.Item>
-            ))}
-          </Menu.Items>
-        </Transition.Child>
-      </Transition>
-    </Menu>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side={isDesktop ? "right" : "left"} align="start" sideOffset={8} className="w-auto min-w-[200px]">
+        {childItems.map(({ label, onClick, icon }) => (
+          <DropdownMenuItem key={label} onClick={onClick} className="gap-3 p-2.5 pl-5 text-[15px] text-gray-900">
+            {icon}
+            <span>{label}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

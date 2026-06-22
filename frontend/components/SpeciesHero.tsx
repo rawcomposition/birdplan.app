@@ -1,6 +1,10 @@
 import React from "react";
-import clsx from "clsx";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
 import Card from "components/Card";
 import MutualBadge from "components/MutualBadge";
@@ -68,93 +72,35 @@ export default function SpeciesHero({
             {scientificName && <div className="italic text-gray-600 text-sm mt-1">{scientificName}</div>}
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Menu as="div" className="relative">
-              <Menu.Button
-                className="h-9 w-9 rounded-lg border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 grid place-items-center"
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="grid h-9 w-9 place-items-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                 aria-label="More actions"
               >
                 <Icon name="verticalDots" className="text-base" />
-              </Menu.Button>
-              <Transition
-                enter="transition duration-150 ease-out"
-                enterFrom="scale-95 opacity-0"
-                enterTo="scale-100 opacity-100"
-                leave="transition duration-100 ease-in"
-                leaveFrom="scale-100 opacity-100"
-                leaveTo="scale-95 opacity-0"
-              >
-                <Menu.Items className="absolute right-0 top-10 z-30 min-w-[220px] origin-top-right ring-[0.5px] ring-gray-700/10 overflow-hidden rounded-lg bg-white shadow-md py-1.5">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        type="button"
-                        onClick={onShowMap}
-                        className={clsx(
-                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left",
-                          active ? "bg-gray-50 text-gray-900" : "text-gray-800"
-                        )}
-                      >
-                        <Icon name="map" className="text-gray-500" />
-                        View Map
-                      </button>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item disabled={!canEdit}>
-                    {({ active, disabled }) => (
-                      <button
-                        type="button"
-                        onClick={onToggleStar}
-                        disabled={disabled}
-                        className={clsx(
-                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left",
-                          active ? "bg-gray-50 text-gray-900" : "text-gray-800",
-                          disabled && "opacity-60 cursor-not-allowed"
-                        )}
-                      >
-                        <Icon
-                          name={starred ? "star" : "starOutline"}
-                          className={starred ? "text-yellow-500" : "text-gray-500"}
-                        />
-                        {starred ? "Remove star" : "Star species"}
-                      </button>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href={ebirdUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={clsx(
-                          "flex items-center gap-2.5 px-4 py-2 text-[13px]",
-                          active ? "bg-gray-50 text-gray-900" : "text-gray-800"
-                        )}
-                      >
-                        <Icon name="external" className="text-gray-500" />
-                        View on eBird
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item disabled={!canEdit || seen}>
-                    {({ active, disabled }) => (
-                      <button
-                        type="button"
-                        onClick={onMarkSeen}
-                        disabled={disabled}
-                        className={clsx(
-                          "flex items-center gap-2.5 px-4 py-2 text-[13px] w-full text-left",
-                          active ? "bg-gray-50 text-gray-900" : "text-gray-800",
-                          disabled && "opacity-60 cursor-not-allowed"
-                        )}
-                      >
-                        <Icon name="check" className={seen ? "text-green-600" : "text-gray-500"} />
-                        {seen ? "Marked as seen" : "Mark as seen"}
-                      </button>
-                    )}
-                  </Menu.Item>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
+                <DropdownMenuItem onClick={onShowMap}>
+                  <Icon name="map" className="text-gray-500" />
+                  View Map
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onToggleStar} disabled={!canEdit}>
+                  <Icon
+                    name={starred ? "star" : "starOutline"}
+                    className={starred ? "text-yellow-500" : "text-gray-500"}
+                  />
+                  {starred ? "Remove star" : "Star species"}
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<a href={ebirdUrl} target="_blank" rel="noopener noreferrer" />}>
+                  <Icon name="external" className="text-gray-500" />
+                  View on eBird
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onMarkSeen} disabled={!canEdit || seen}>
+                  <Icon name="check" className={seen ? "text-green-600" : "text-gray-500"} />
+                  {seen ? "Marked as seen" : "Mark as seen"}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
