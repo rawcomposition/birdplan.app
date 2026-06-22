@@ -49,6 +49,7 @@ const ProfileProvider = ({ children }: Props) => {
         dismissedNoticeId: profile?.dismissedNoticeId,
         lastActiveAt: profile?.lastActiveAt || new Date(),
         name: profile?.name || "",
+        isAdmin: profile?.isAdmin || false,
       }}
     >
       {children}

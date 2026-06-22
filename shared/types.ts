@@ -97,6 +97,28 @@ export type Profile = {
   lastActiveAt: Date | null;
   resetToken?: string;
   resetTokenExpires?: Date;
+  isAdmin?: boolean;
+};
+
+export type AdminDashboardUser = {
+  _id: string;
+  uid: string;
+  name?: string;
+  email?: string;
+  photoUrl?: string;
+  createdAt: string;
+  lastActiveAt: Date | null;
+  providers: string[];
+};
+
+export type AdminStats = {
+  users: { total: number; active30d: number; active6mo: number };
+  trips: { total: number; created30d: number; created6mo: number };
+};
+
+export type AdminDashboard = {
+  stats: AdminStats;
+  users: AdminDashboardUser[];
 };
 
 export type LifelistImportInput = {

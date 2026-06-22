@@ -211,6 +211,7 @@ const RESERVED_ROUTES = new Set([
   "my-rarest-lifers",
   "import-lifelist",
   "accept",
+  "admin",
 ]);
 
 export function getTripIdFromPath(pathname: string): string | undefined {

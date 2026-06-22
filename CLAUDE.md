@@ -13,8 +13,8 @@ In React (frontend), prefer derivation, lazy initialization, and custom hooks ov
 All commands run from the repo root (npm workspaces). Node >= 22.
 
 ```bash
-npm run dev              # run frontend (5100 backend + Next.js) concurrently
-npm run dev:frontend     # Next.js dev server (turbopack)
+npm run dev              # run frontend (Vite :5280) + backend (:5100) concurrently
+npm run dev:frontend     # Vite dev server on :5280
 npm run dev:backend      # Hono server with tsx watch on :5100
 npm run lint             # ESLint (frontend only)
 npm run typecheck        # builds backend + frontend, typechecks scripts + shared
@@ -31,7 +31,7 @@ Monorepo with four npm workspaces:
 
 - **`shared/`** — `@birdplan/shared`: shared TypeScript types only (`types.ts`). The single source of truth for domain models (`Trip`, `Hotspot`, `Profile`, `Participant`, etc.). Imported by both frontend and backend via the `@birdplan/shared` alias. Changing a type here affects both sides — re-run `typecheck`.
 - **`backend/`** — Hono API server (ESM, `type: module`). Connects to MongoDB via Mongoose, uses Firebase Admin for auth verification and Storage.
-- **`frontend/`** — Next.js 15 **pages router** (not app router; no `src/` dir). React 19, Tailwind 4, React Query, Zustand, Mapbox.
+- **`frontend/`** — Vite SPA with **React Router 7** (`createBrowserRouter`; no `src/` dir). React 19, Tailwind 4, React Query, Zustand, Mapbox.
 - **`scripts/`** — standalone `tsx` utility scripts.
 
 ### Backend
@@ -45,8 +45,8 @@ Monorepo with four npm workspaces:
 
 ### Frontend
 
-- `pages/_app.tsx` sets up the provider stack (order matters): `QueryClientProvider` → `SpeciesImagesProvider` → `UserProvider` → `ProfileProvider` → `TripProvider` → `ModalProvider`. The React Query client is persisted to IndexedDB (`idb-keyval`) for offline cache; bump `QUERY_CACHE_BUSTER` to invalidate persisted cache.
-- **Data fetching**: React Query with a global `queryFn` keyed by URL — `useQuery({ queryKey: ["/trips/123"] })` automatically GETs `NEXT_PUBLIC_API_URL + /trips/123` with the Firebase token attached. `lib/http.ts` (`get`/`mutate`) handles auth headers and error normalization.
+- **Entry / routing**: `main.tsx` mounts `<RouterProvider>` inside `ErrorBoundary` → `QueryClientProvider`, and configures the React Query client (persisted to IndexedDB via `idb-keyval` for offline cache; bump `QUERY_CACHE_BUSTER` to invalidate persisted cache). `router.tsx` defines routes with `createBrowserRouter`, all nested under `RootLayout`. Route components live in `pages/` (file names like `pages/[tripId]/targets.tsx` are conventional; route paths use `:param` syntax). `RootLayout.tsx` renders the provider stack (order matters): `SpeciesImagesProvider` → `UserProvider` → `ProfileProvider` → `TripProvider` → `ModalProvider` → `<Outlet />`.
+- **Data fetching**: React Query with a global `queryFn` keyed by URL — `useQuery({ queryKey: ["/trips/123"] })` automatically GETs `import.meta.env.VITE_API_URL + /trips/123` with the Firebase token attached. `lib/http.ts` (`get`/`mutate`) handles auth headers and error normalization.
 - **Mutations**: `hooks/useMutation.ts` for general mutations; `hooks/useTripMutation.ts` for optimistic trip updates — pass an `updateCache(old, input)` reducer; it handles optimistic `setQueryData`, rollback on error, and invalidation of the `/trips/:id` key.
 - **Trip state**: `providers/trip.tsx` owns the current trip (from the `tripId` route param), participants, `canEdit`/`isOwner`, and transient map UI state (selected species, halo, satellite toggle).
 - Modals live in `modals/` and are orchestrated via `providers/modals.tsx` / `ModalProvider`.
@@ -63,4 +63,4 @@ Life lists are the central domain concept. The model:
 
 ## Deployment
 
-Vercel (region `pdx1`), MongoDB Atlas. Backend builds to `dist/` and runs with `node`; frontend uses Next.js `output: "standalone"`. Env vars are read from `.env` files in `backend/` and `frontend/` (frontend public vars prefixed `NEXT_PUBLIC_`).
+Vercel (region `pdx1`), MongoDB Atlas. Backend builds to `dist/` and runs with `node`; frontend is a Vite static build to `dist/` (`frontend/vercel.json` sets `framework: vite` with an SPA rewrite to `index.html`). Env vars are read from `.env` files in `backend/` and `frontend/` (frontend vars exposed to the client are prefixed `VITE_`, e.g. `VITE_API_URL`).

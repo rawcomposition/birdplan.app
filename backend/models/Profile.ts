@@ -15,6 +15,7 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   lastActiveAt: { type: Date, default: new Date() },
   resetToken: String,
   resetTokenExpires: Date,
+  isAdmin: { type: Boolean, default: false },
 };
 
 const ProfileSchema = new Schema(fields, {

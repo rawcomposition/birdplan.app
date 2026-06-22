@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "RootLayout";
 import Home from "pages/index";
@@ -22,6 +23,8 @@ import TripParticipants from "pages/[tripId]/participants";
 import TripLifelist from "pages/[tripId]/lifelist";
 import NotFound from "components/NotFound";
 
+const Admin = lazy(() => import("pages/admin"));
+
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -38,6 +41,14 @@ export const router = createBrowserRouter([
       { path: "/forgot-password", element: <ForgotPassword /> },
       { path: "/my-rarest-lifers", element: <MyRarestLifers /> },
       { path: "/import-lifelist", element: <ImportLifelist /> },
+      {
+        path: "/admin",
+        element: (
+          <Suspense fallback={null}>
+            <Admin />
+          </Suspense>
+        ),
+      },
       { path: "/accept/:inviteId", element: <Accept /> },
       { path: "/:tripId", element: <TripIndex /> },
       { path: "/:tripId/settings", element: <TripSettings /> },
