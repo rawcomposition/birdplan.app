@@ -11,7 +11,12 @@ import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
 import clsx from "clsx";
 import InputNotes from "components/InputNotes";
-import { Menu } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
@@ -186,34 +191,23 @@ export default function Hotspot({ hotspot }: Props) {
           >
             <img src="/ebird.png" width={48} />
           </Button>
-          <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="text-[14px] rounded text-gray-600 bg-gray-100 px-2 py-[10px] inline-flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex items-center rounded bg-gray-100 px-2 py-[10px] text-[14px] text-gray-600">
               <Icon name="verticalDots" />
-            </Menu.Button>
-            <Menu.Items className="absolute text-sm right-0 top-10 rounded bg-white shadow-lg py-1.5 w-[170px] ring-1 ring-black/5 flex flex-col z-10">
-              <Menu.Item>
-                <a
-                  href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-gray-700 hover:bg-gray-50 px-3 py-2"
-                >
-                  Illustrated Checklist
-                </a>
-              </Menu.Item>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[170px]">
+              <DropdownMenuItem
+                render={<a href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`} target="_blank" rel="noreferrer" />}
+              >
+                Illustrated Checklist
+              </DropdownMenuItem>
               {canEdit && isSaved && (
-                <Menu.Item>
-                  <button
-                    type="button"
-                    onClick={handleSave}
-                    className="inline-flex items-center gap-1 w-full text-red-700 px-3 py-2 hover:bg-gray-50"
-                  >
-                    Remove from trip
-                  </button>
-                </Menu.Item>
+                <DropdownMenuItem variant="destructive" onClick={handleSave}>
+                  Remove from trip
+                </DropdownMenuItem>
               )}
-            </Menu.Items>
-          </Menu>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
         <HotspotFavs hotspotId={id} />

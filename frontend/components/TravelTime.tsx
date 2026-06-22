@@ -1,7 +1,13 @@
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
+import { PersonStanding, Car, Bike } from "lucide-react";
 import { formatTime, formatDistance } from "lib/helpers";
-import { Menu } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import clsx from "clsx";
 import useTripMutation from "hooks/useTripMutation";
 
@@ -91,9 +97,12 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
 
       {isEditing ? (
         <div className="flex items-center gap-2">
-          <Menu as="div" className="text-gray-500 text-xs relative">
-            <Menu.Button
-              className={clsx(" cursor-pointer", !!travelData?.isDeleted && "hover:text-gray-700 hover:underline")}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className={clsx(
+                "relative cursor-pointer text-xs text-gray-500",
+                !!travelData?.isDeleted && "hover:text-gray-700 hover:underline"
+              )}
             >
               {isLoading && !travelData ? (
                 <>loading...</>
@@ -102,37 +111,19 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
               ) : (
                 !travelData?.isDeleted && TravelInfo
               )}
-            </Menu.Button>
-            <Menu.Items className="absolute text-sm -right-2 top-6 rounded bg-white shadow-lg py-1 w-[130px] ring-1 ring-black/5 flex flex-col z-10">
-              <Menu.Item>
-                <button
-                  type="button"
-                  onClick={() => calcTravelTimeMutation.mutate({ id, method: "walking" })}
-                  className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
-                >
-                  <Icon name="walking" /> Walk
-                </button>
-              </Menu.Item>
-              <Menu.Item>
-                <button
-                  type="button"
-                  onClick={() => calcTravelTimeMutation.mutate({ id, method: "driving" })}
-                  className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
-                >
-                  <Icon name="car" /> Drive
-                </button>
-              </Menu.Item>
-              <Menu.Item>
-                <button
-                  type="button"
-                  onClick={() => calcTravelTimeMutation.mutate({ id, method: "cycling" })}
-                  className="flex items-center gap-2 px-4 py-1.5 text-gray-600 hover:bg-gray-100"
-                >
-                  <Icon name="cycling" /> Bike
-                </button>
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[130px]">
+              <DropdownMenuItem onClick={() => calcTravelTimeMutation.mutate({ id, method: "walking" })}>
+                <PersonStanding /> Walk
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => calcTravelTimeMutation.mutate({ id, method: "driving" })}>
+                <Car /> Drive
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => calcTravelTimeMutation.mutate({ id, method: "cycling" })}>
+                <Bike /> Bike
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {travelData && !travelData?.isDeleted && (
             <button
               type="button"
