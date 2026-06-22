@@ -18,6 +18,11 @@ export const setSessionToken = (token: string | null) => {
 
 export const clearSessionToken = () => setSessionToken(null);
 
+export const clearSessionTokenStorage = () => {
+  current = null;
+  if (typeof localStorage !== "undefined") localStorage.removeItem(TOKEN_KEY);
+};
+
 const subscribe = (callback: () => void) => {
   listeners.add(callback);
   return () => listeners.delete(callback);
