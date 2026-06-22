@@ -1,5 +1,4 @@
-import type { User as FirebaseUser } from "firebase/auth";
-import type { ParticipantView } from "@birdplan/shared";
+import type { ParticipantView, Profile } from "@birdplan/shared";
 
 export type AvatarUser = {
   seed: string;
@@ -8,12 +7,12 @@ export type AvatarUser = {
   photoUrl?: string | null;
 };
 
-export function avatarFromFirebaseUser(user: FirebaseUser): AvatarUser {
+export function avatarFromProfile(profile: Pick<Profile, "uid" | "name" | "email" | "photoUrl">): AvatarUser {
   return {
-    seed: user.uid,
-    name: user.displayName,
-    email: user.email,
-    photoUrl: user.photoURL,
+    seed: profile.uid,
+    name: profile.name,
+    email: profile.email,
+    photoUrl: profile.photoUrl,
   };
 }
 

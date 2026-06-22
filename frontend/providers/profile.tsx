@@ -9,6 +9,8 @@ const initialState: Profile = {
   _id: "",
   uid: "",
   name: "",
+  email: "",
+  photoUrl: "",
   lifelist: [],
   exceptions: [],
   dismissedNoticeId: "",
@@ -39,6 +41,8 @@ const ProfileProvider = ({ children }: Props) => {
       value={{
         _id: profile?._id || "",
         uid: profile?.uid || "",
+        email: profile?.email || "",
+        photoUrl: profile?.photoUrl || "",
         lifelist,
         lifelistUpdatedAt: profile?.lifelistUpdatedAt || null,
         exceptions: profile?.exceptions || [],
