@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
-import Icon from "components/Icon";
+import { User, Feather, LogOut } from "lucide-react";
 import Avatar from "components/Avatar";
 import { avatarFromFirebaseUser } from "lib/avatar";
 import { useUser } from "providers/user";
@@ -50,11 +50,11 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
         </div>
         <div className="p-1">
           <DropdownMenuItem className={itemClass} render={<Link to="/account" />}>
-            <Icon name="user" />
+            <User />
             <span>Account</span>
           </DropdownMenuItem>
           <DropdownMenuItem className={itemClass} render={<Link to={withReturnTo("/import-lifelist", asPath)} />}>
-            <Icon name="feather" />
+            <Feather />
             {lifelistCount > 0 ? (
               <span>
                 <span>Update Life List</span>&nbsp;&nbsp;
@@ -65,7 +65,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
             )}
           </DropdownMenuItem>
           <DropdownMenuItem className={itemClass} onClick={logout}>
-            <Icon name="logout" />
+            <LogOut />
             <span>Logout</span>
           </DropdownMenuItem>
         </div>

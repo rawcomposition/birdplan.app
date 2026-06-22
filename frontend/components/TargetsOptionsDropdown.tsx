@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Download } from "lucide-react";
 
 type Props = {
   trip?: Trip | null;
@@ -18,7 +19,7 @@ export default function TargetsOptionsDropdown({ trip }: Props) {
   const items = [
     {
       name: "Download group life list",
-      icon: "download",
+      icon: <Download />,
       onClick: download,
       hidden: !isGroup,
     },
@@ -37,7 +38,7 @@ export default function TargetsOptionsDropdown({ trip }: Props) {
       <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
         {items.map(({ name, icon, onClick }) => (
           <DropdownMenuItem key={name} onClick={onClick}>
-            <Icon name={icon as any} />
+            {icon}
             <span>{name}</span>
           </DropdownMenuItem>
         ))}

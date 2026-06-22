@@ -11,6 +11,7 @@ import Badge from "components/Badge";
 import Button from "components/Button";
 import Avatar from "components/Avatar";
 import { avatarFromParticipant } from "lib/avatar";
+import { Feather, Pencil, Mail, Trash2 } from "lucide-react";
 
 type Props = {
   participant: ParticipantView;
@@ -63,21 +64,21 @@ export default function ParticipantRow({ participant: p }: Props) {
 
   const items: ParticipantMenuItem[] = [];
   if (isSelf) {
-    items.push({ name: "Change life list", icon: "feather", onClick: manageList });
+    items.push({ name: "Change life list", icon: <Feather />, onClick: manageList });
   } else if (isNameOnly && canEdit) {
-    items.push({ name: "Edit", icon: "pencil", onClick: manageList });
+    items.push({ name: "Edit", icon: <Pencil />, onClick: manageList });
     items.push({
       name: "Invite as editor",
-      icon: "envelope",
+      icon: <Mail />,
       onClick: () => open("inviteAsEditor", { participantId: p._id, name: p.name }),
     });
   } else if (isPending) {
-    if (canEdit) items.push({ name: "Resend invite", icon: "envelope", onClick: () => resendMutation.mutate({}) });
+    if (canEdit) items.push({ name: "Resend invite", icon: <Mail />, onClick: () => resendMutation.mutate({}) });
     if (isOwner)
-      items.push({ name: p.hasList ? "Replace life list" : "Attach life list", icon: "feather", onClick: manageList });
+      items.push({ name: p.hasList ? "Replace life list" : "Attach life list", icon: <Feather />, onClick: manageList });
   }
   if (canRemove) {
-    items.push({ name: p.isMe ? "Leave trip" : "Remove", icon: "trash", danger: true, onClick: handleRemove });
+    items.push({ name: p.isMe ? "Leave trip" : "Remove", icon: <Trash2 />, danger: true, onClick: handleRemove });
   }
 
   const secondary = !p.hasList

@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Map, Star, ExternalLink, Check } from "lucide-react";
 import Card from "components/Card";
 import MutualBadge from "components/MutualBadge";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
@@ -81,22 +82,23 @@ export default function SpeciesHero({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
                 <DropdownMenuItem onClick={onShowMap}>
-                  <Icon name="map" className="text-gray-500" />
+                  <Map className="text-gray-500" />
                   View Map
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onToggleStar} disabled={!canEdit}>
-                  <Icon
-                    name={starred ? "star" : "starOutline"}
-                    className={starred ? "text-yellow-500" : "text-gray-500"}
+                  <Star
+                    className={starred ? undefined : "text-gray-500"}
+                    fill={starred ? "rgb(234 179 8)" : "none"}
+                    stroke={starred ? "rgb(234 179 8)" : "currentColor"}
                   />
                   {starred ? "Remove star" : "Star species"}
                 </DropdownMenuItem>
                 <DropdownMenuItem render={<a href={ebirdUrl} target="_blank" rel="noopener noreferrer" />}>
-                  <Icon name="external" className="text-gray-500" />
+                  <ExternalLink className="text-gray-500" />
                   View on eBird
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onMarkSeen} disabled={!canEdit || seen}>
-                  <Icon name="check" className={seen ? "text-green-600" : "text-gray-500"} />
+                  <Check className={seen ? "text-green-600" : "text-gray-500"} />
                   {seen ? "Marked as seen" : "Mark as seen"}
                 </DropdownMenuItem>
               </DropdownMenuContent>

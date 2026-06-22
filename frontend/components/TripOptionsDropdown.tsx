@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Feather, Users, Settings, Download, Send } from "lucide-react";
 
 type Props = {
   className?: string;
@@ -30,30 +31,30 @@ export default function TripOptionsDropdown({ className }: Props) {
       name: `Life List (${viewerMode})`,
       onClick: viewer ? () => open("manageLifelist", { participantId: viewer.participantId }) : undefined,
       href: viewer ? undefined : `/${trip?._id}/participants`,
-      icon: "feather",
+      icon: <Feather />,
       hidden: !canEdit,
     },
     {
       name: `Participants${participants ? ` (${participants.length})` : ""}`,
       href: `/${trip?._id}/participants`,
-      icon: "user",
+      icon: <Users />,
       hidden: !canEdit,
     },
     {
       name: "Trip Settings",
       href: `/${trip?._id}/settings`,
-      icon: "cog",
+      icon: <Settings />,
       hidden: !canEdit,
     },
     {
       name: "Export KML",
       href: `${import.meta.env.VITE_API_URL}/trips/${trip?._id}/export?uid=${uid}&targets=${view}`,
-      icon: "export",
+      icon: <Download />,
     },
     {
       name: "Send to OpenBirding",
       onClick: () => open("openBirding"),
-      icon: "export",
+      icon: <Send />,
       hidden: !canEdit,
     },
   ];
@@ -79,7 +80,7 @@ export default function TripOptionsDropdown({ className }: Props) {
           );
           return (
             <DropdownMenuItem key={name} onClick={onClick} render={render}>
-              <Icon name={icon as any} />
+              {icon}
               <span>{name}</span>
             </DropdownMenuItem>
           );

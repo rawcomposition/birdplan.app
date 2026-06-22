@@ -12,6 +12,7 @@ import { useUser } from "providers/user";
 import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
+import { Star, Utensils, MapPin } from "lucide-react";
 import NotFound from "components/NotFound";
 
 export default function Trip() {
@@ -90,17 +91,17 @@ export default function Trip() {
                 {
                   label: "eBird Hotspot",
                   onClick: () => open("addHotspot"),
-                  icon: <Icon name="star" />,
+                  icon: <Star />,
                 },
                 {
                   label: "Place",
                   onClick: () => open("addPlace"),
-                  icon: <Icon name="utensils" />,
+                  icon: <Utensils />,
                 },
                 {
                   label: "Custom",
                   onClick: () => setIsAddingMarker((prev) => !prev),
-                  icon: <Icon name="genericMarker" />,
+                  icon: <MapPin />,
                 },
               ]}
             >

@@ -1,5 +1,6 @@
 import { useTrip } from "providers/trip";
 import Icon from "components/Icon";
+import { PersonStanding, Car, Bike } from "lucide-react";
 import { formatTime, formatDistance } from "lib/helpers";
 import {
   DropdownMenu,
@@ -113,13 +114,13 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[130px]">
               <DropdownMenuItem onClick={() => calcTravelTimeMutation.mutate({ id, method: "walking" })}>
-                <Icon name="walking" /> Walk
+                <PersonStanding /> Walk
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => calcTravelTimeMutation.mutate({ id, method: "driving" })}>
-                <Icon name="car" /> Drive
+                <Car /> Drive
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => calcTravelTimeMutation.mutate({ id, method: "cycling" })}>
-                <Icon name="cycling" /> Bike
+                <Bike /> Bike
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

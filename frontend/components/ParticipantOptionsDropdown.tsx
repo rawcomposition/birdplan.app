@@ -9,7 +9,7 @@ import Icon from "components/Icon";
 
 export type ParticipantMenuItem = {
   name: string;
-  icon: string;
+  icon: React.ReactNode;
   onClick: () => void;
   danger?: boolean;
 };
@@ -32,7 +32,7 @@ export default function ParticipantOptionsDropdown({ items }: Props) {
       <DropdownMenuContent align="end" className="w-auto min-w-[200px]">
         {items.map(({ name, icon, onClick, danger }) => (
           <DropdownMenuItem key={name} onClick={onClick} variant={danger ? "destructive" : "default"}>
-            <Icon name={icon as any} />
+            {icon}
             <span>{name}</span>
           </DropdownMenuItem>
         ))}
