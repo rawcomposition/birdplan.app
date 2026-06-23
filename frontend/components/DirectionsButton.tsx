@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "components/Button";
 import SlideOver from "components/SlideOver";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import Icon from "components/Icon";
 import OrganicMapsIcon from "components/OrganicMapsIcon";

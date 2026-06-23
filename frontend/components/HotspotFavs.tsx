@@ -1,6 +1,6 @@
 import React from "react";
 import FavButton from "components/FavButton";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 
 type Props = {
   hotspotId: string;

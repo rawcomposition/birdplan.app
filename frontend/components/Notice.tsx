@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import CloseButton from "components/CloseButton";
-import { useProfile } from "providers/profile";
+import { useProfile } from "hooks/useProfile";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Profile } from "@birdplan/shared";

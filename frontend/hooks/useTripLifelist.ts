@@ -1,5 +1,5 @@
 import { Trip } from "@birdplan/shared";
-import { useProfile } from "providers/profile";
+import { useProfile } from "hooks/useProfile";
 
 export type TripLifelist = {
   lifelist: string[];

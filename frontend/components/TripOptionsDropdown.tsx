@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useModal } from "providers/modals";
-import { useProfile } from "providers/profile";
-import { useTrip } from "providers/trip";
+import { useModal } from "stores/modals";
+import { useProfile } from "hooks/useProfile";
+import { useTrip } from "hooks/useTrip";
 import useTargetView from "hooks/useTargetView";
 import {
   DropdownMenu,

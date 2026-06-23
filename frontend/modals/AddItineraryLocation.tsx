@@ -1,8 +1,8 @@
 import React from "react";
-import { Header, Body } from "providers/modals";
-import { useTrip } from "providers/trip";
+import { Header, Body } from "components/Modal";
+import { useTrip } from "hooks/useTrip";
 import MarkerWithIcon from "components/MarkerWithIcon";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import useTripMutation from "hooks/useTripMutation";
 import { nanoId } from "lib/helpers";
 import { MarkerIconT } from "lib/icons";

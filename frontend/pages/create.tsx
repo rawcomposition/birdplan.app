@@ -10,7 +10,7 @@ import Field from "components/Field";
 import Input from "components/Input";
 import { Option } from "lib/types";
 import { TripInput } from "@birdplan/shared";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import dayjs from "dayjs";
 import useMutation from "hooks/useMutation";
 import RegionFields from "components/RegionFields";

@@ -1,24 +1,16 @@
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { UserProvider } from "providers/user";
-import { ModalProvider } from "providers/modals";
-import { ProfileProvider } from "providers/profile";
-import { TripProvider } from "providers/trip";
-import { SpeciesImagesProvider } from "providers/species-images";
+import { ModalRoot } from "components/Modal";
+import { useClearSelectedSpeciesOnNavigate } from "hooks/useTrip";
 
 export default function RootLayout() {
+  useClearSelectedSpeciesOnNavigate();
+
   return (
-    <SpeciesImagesProvider>
-      <UserProvider>
-        <Toaster containerStyle={{ zIndex: 10001 }} />
-        <ProfileProvider>
-          <TripProvider>
-            <ModalProvider>
-              <Outlet />
-            </ModalProvider>
-          </TripProvider>
-        </ProfileProvider>
-      </UserProvider>
-    </SpeciesImagesProvider>
+    <>
+      <Toaster containerStyle={{ zIndex: 10001 }} />
+      <Outlet />
+      <ModalRoot />
+    </>
   );
 }

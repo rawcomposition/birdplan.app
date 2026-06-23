@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "components/Button";
 import Icon from "components/Icon";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
 

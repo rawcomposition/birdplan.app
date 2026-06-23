@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "components/Header";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import toast from "react-hot-toast";
 import MonthSelect from "components/MonthSelect";
 import Footer from "components/Footer";

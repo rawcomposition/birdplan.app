@@ -1,8 +1,8 @@
 import React from "react";
 import Header from "components/Header";
 import Footer from "components/Footer";
-import { useUser } from "providers/user";
-import { useModal } from "providers/modals";
+import { useUser } from "hooks/useUser";
+import { useModal } from "stores/modals";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import { avatarFromProfile } from "lib/avatar";
@@ -12,7 +12,7 @@ import { useState } from "react";
 import { IconNameT } from "lib/icons";
 import EmailChangeForm from "components/EmailChangeForm";
 import { Link } from "react-router-dom";
-import { useProfile } from "providers/profile";
+import { useProfile } from "hooks/useProfile";
 
 type TabItem = {
   id: string;

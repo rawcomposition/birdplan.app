@@ -2,7 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import Button from "components/Button";
 import Alert from "components/Alert";

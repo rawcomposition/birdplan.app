@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import Button from "components/Button";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import Logo from "components/Logo";
 export default function HomeHeader() {
   const { user } = useUser();

@@ -7,7 +7,7 @@ import Footer from "components/Footer";
 import Notice from "components/Notice";
 import { useQuery } from "@tanstack/react-query";
 import { Trip } from "@birdplan/shared";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import Error from "components/Error";
 
 export default function Trips() {

@@ -2,7 +2,7 @@ import React from "react";
 import UtilityPage from "components/UtilityPage";
 import AuthForm from "components/AuthForm";
 import { Navigate, useSearchParams } from "react-router-dom";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import { getPostAuthDest } from "lib/helpers";
 import useNavContext from "hooks/useNavContext";
 

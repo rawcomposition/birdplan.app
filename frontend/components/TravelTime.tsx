@@ -1,4 +1,4 @@
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import { PersonStanding, Car, Bike } from "lucide-react";
 import { formatTime, formatDistance } from "lib/helpers";

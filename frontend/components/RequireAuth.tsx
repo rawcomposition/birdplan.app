@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import Icon from "components/Icon";
 import { withReturnTo } from "lib/helpers";
 

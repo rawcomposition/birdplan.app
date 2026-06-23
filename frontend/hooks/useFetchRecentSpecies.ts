@@ -1,4 +1,4 @@
-import { useProfile } from "providers/profile";
+import { useProfile } from "hooks/useProfile";
 import { RecentSpecies } from "lib/types";
 import { useQuery } from "@tanstack/react-query";
 

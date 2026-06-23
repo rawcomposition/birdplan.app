@@ -6,8 +6,8 @@ import { MarkerIconT } from "lib/icons";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
-import { useModal } from "providers/modals";
-import { useTrip } from "providers/trip";
+import { useModal } from "stores/modals";
+import { useTrip } from "hooks/useTrip";
 
 type Props = {
   bounds: Trip["bounds"];

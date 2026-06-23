@@ -3,26 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const AVICOMMONS_DOMAIN = "https://static.avicommons.org";
 
-type ContextT = {
-  getSpeciesImg: (
-    code: string,
-    size?: "240" | "320" | "480" | "900"
-  ) => { url: string; by: string | undefined } | undefined;
-};
-
-const initialState: ContextT = {
-  getSpeciesImg: () => undefined,
-};
-
-export const SpeciesImagesContext = React.createContext<ContextT>({
-  ...initialState,
-});
-
-type Props = {
-  children: React.ReactNode;
-};
-
-const SpeciesImagesProvider = ({ children }: Props) => {
+export const useSpeciesImages = () => {
   const { data } = useQuery<Record<string, [string, string]>>({
     queryKey: ["avicommons"],
     queryFn: () => fetch("/avicommons.json").then((res) => res.json()),
@@ -45,20 +26,5 @@ const SpeciesImagesProvider = ({ children }: Props) => {
     [data]
   );
 
-  return (
-    <SpeciesImagesContext.Provider
-      value={{
-        getSpeciesImg,
-      }}
-    >
-      {children}
-    </SpeciesImagesContext.Provider>
-  );
+  return { getSpeciesImg };
 };
-
-const useSpeciesImages = () => {
-  const state = React.useContext(SpeciesImagesContext);
-  return { ...state };
-};
-
-export { SpeciesImagesProvider, useSpeciesImages };

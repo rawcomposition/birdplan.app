@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Header, Body, Footer, useModal } from "providers/modals";
+import { Header, Body, Footer } from "components/Modal";
+import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import Button from "components/Button";

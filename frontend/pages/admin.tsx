@@ -12,8 +12,8 @@ import Avatar from "components/Avatar";
 import Card from "components/Card";
 import Error from "components/Error";
 import { avatarFromProfile } from "lib/avatar";
-import { useUser } from "providers/user";
-import { useProfile } from "providers/profile";
+import { useUser } from "hooks/useUser";
+import { useProfile } from "hooks/useProfile";
 
 dayjs.extend(relativeTime);
 

@@ -1,9 +1,9 @@
 import React from "react";
-import { Body } from "providers/modals";
+import { Body } from "components/Modal";
 import { HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
 import Button from "components/Button";
 import toast from "react-hot-toast";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
 import { isRegionEnglish, getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
@@ -63,7 +63,7 @@ export default function Hotspot({ hotspot }: Props) {
   const removeMutation = useTripMutation({
     url: `/trips/${trip?._id}/hotspots/${id}`,
     method: "DELETE",
-    updateCache: (old, input) => ({
+    updateCache: (old) => ({
       ...old,
       hotspots: old.hotspots.filter((it) => it.id !== id),
     }),

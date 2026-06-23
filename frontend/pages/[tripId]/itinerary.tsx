@@ -1,13 +1,13 @@
 import React from "react";
 import Header from "components/Header";
 import TripNav from "components/TripNav";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
 import Input from "components/Input";
 import Button from "components/Button";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import toast from "react-hot-toast";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
 import useTripMutation from "hooks/useTripMutation";

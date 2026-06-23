@@ -3,21 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Profile } from "@birdplan/shared";
 import { useSessionToken } from "lib/sessionToken";
 
-export const UserContext = React.createContext<{
-  user: Profile | null;
-  refreshUser: () => Promise<void>;
-  loading: boolean;
-}>({
-  user: null,
-  refreshUser: async () => {},
-  loading: false,
-});
-
-type Props = {
-  children: React.ReactNode;
-};
-
-const UserProvider = ({ children }: Props) => {
+export const useUser = () => {
   const token = useSessionToken();
   const queryClient = useQueryClient();
 
@@ -33,12 +19,5 @@ const UserProvider = ({ children }: Props) => {
     await queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
   }, [queryClient]);
 
-  return <UserContext.Provider value={{ loading, user, refreshUser }}>{children}</UserContext.Provider>;
+  return { user, loading, refreshUser };
 };
-
-const useUser = () => {
-  const state = React.useContext(UserContext);
-  return { ...state };
-};
-
-export { UserProvider, useUser };

@@ -36,7 +36,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 
   try {
     json = await res.json();
-  } catch (error) {}
+  } catch {}
   if (!res.ok) {
     if (res.status === 401) {
       if (isBackend) onUnauthorized?.();
@@ -66,7 +66,7 @@ export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: s
   let json: any | null = null;
   try {
     json = await res.json();
-  } catch (error) {}
+  } catch {}
 
   if (!res.ok) {
     if (res.status === 401) {

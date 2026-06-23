@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import toast from "react-hot-toast";
 import Field from "components/Field";
 import Input from "components/Input";

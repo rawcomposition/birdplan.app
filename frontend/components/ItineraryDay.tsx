@@ -1,8 +1,8 @@
 import React from "react";
 import Button from "components/Button";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
@@ -35,7 +35,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
   const removeDayMutation = useTripMutation({
     url: `/trips/${trip?._id}/itinerary/${day.id}`,
     method: "DELETE",
-    updateCache: (old, input) => ({
+    updateCache: (old) => ({
       ...old,
       itinerary: old.itinerary?.filter((it) => it.id !== day.id) || [],
     }),

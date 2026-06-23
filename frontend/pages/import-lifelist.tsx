@@ -1,6 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useProfile } from "providers/profile";
+import { useProfile } from "hooks/useProfile";
 import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Button from "components/Button";

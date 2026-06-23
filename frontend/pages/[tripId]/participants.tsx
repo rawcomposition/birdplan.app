@@ -8,8 +8,8 @@ import Card from "components/Card";
 import Input from "components/Input";
 import NotFound from "components/NotFound";
 import ParticipantRow from "components/ParticipantRow";
-import { useTrip } from "providers/trip";
-import { useModal } from "providers/modals";
+import { useTrip } from "hooks/useTrip";
+import { useModal } from "stores/modals";
 import { getReturnLabel } from "lib/helpers";
 
 export default function TripParticipants() {

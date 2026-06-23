@@ -8,10 +8,10 @@ import {
 import { User, Feather, LogOut } from "lucide-react";
 import Avatar from "components/Avatar";
 import { avatarFromProfile } from "lib/avatar";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import { Link, useLocation } from "react-router-dom";
 import useLogout from "hooks/useLogout";
-import { useProfile } from "providers/profile";
+import { useProfile } from "hooks/useProfile";
 import { withReturnTo } from "lib/helpers";
 
 type Props = {

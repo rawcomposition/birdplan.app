@@ -3,7 +3,7 @@ import UtilityPage from "components/UtilityPage";
 import AcceptError from "components/AcceptError";
 import Button from "components/Button";
 import Icon from "components/Icon";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AcceptInviteResponse, InviteInfo } from "@birdplan/shared";

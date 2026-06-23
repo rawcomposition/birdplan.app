@@ -5,7 +5,7 @@ import Input from "components/Input";
 import Button from "components/Button";
 import Field from "components/Field";
 import Icon from "components/Icon";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import useMutation from "hooks/useMutation";
 import { withReturnTo } from "lib/helpers";
 

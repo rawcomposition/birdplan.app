@@ -2,7 +2,7 @@ import React from "react";
 import { Dialog, DialogContent } from "components/ui/dialog";
 import { Sheet, SheetContent } from "components/ui/sheet";
 import ErrorBoundary from "components/ErrorBoundary";
-import { ModalPosition } from "providers/modals";
+import { ModalPosition } from "stores/modals";
 
 type Props = {
   open: boolean;

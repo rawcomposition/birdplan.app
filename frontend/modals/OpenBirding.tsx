@@ -1,7 +1,8 @@
 import React from "react";
-import { Header, Body, Footer, useModal } from "providers/modals";
+import { Header, Body, Footer } from "components/Modal";
+import { useModal } from "stores/modals";
 import Button from "components/Button";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 
 export default function OpenBirding() {

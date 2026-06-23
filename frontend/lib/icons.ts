@@ -269,13 +269,6 @@ export const icons = {
   },
 };
 
-type MarkerIconsT = {
-  [key: string]: {
-    icon: IconNameT;
-    color: string;
-  };
-};
-
 const markerColos = {
   sky: "#0284c7",
   black: "#334155",

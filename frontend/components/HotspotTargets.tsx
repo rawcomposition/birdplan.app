@@ -1,5 +1,5 @@
 import React from "react";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import Button from "components/Button";
 import HotspotTargetRow from "components/HotspotTargetRow";
@@ -18,7 +18,7 @@ type Props = {
   onAddToTrip: () => void;
 };
 
-export default function HotspotTargets({ hotspotId, onSpeciesClick, onAddToTrip }: Props) {
+export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const [view, setView] = React.useState<string>("all");
   const { trip, dateRangeLabel } = useTrip();
   const { lifelist } = useTargetView(trip);
