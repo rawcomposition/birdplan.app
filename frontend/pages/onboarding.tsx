@@ -14,6 +14,7 @@ export default function Onboarding() {
   const [searchParams] = useSearchParams();
   const { user, loading, refreshUser } = useUser();
   const [name, setName] = React.useState("");
+  const submitted = React.useRef(false);
 
   const returnTo = searchParams.get("returnTo") || "/trips";
 
@@ -21,6 +22,7 @@ export default function Onboarding() {
     url: "/profile",
     method: "PATCH",
     onSuccess: async () => {
+      submitted.current = true;
       await refreshUser();
       navigate(`${withReturnTo("/import-lifelist", returnTo)}&onboarding=1`);
     },
@@ -40,7 +42,7 @@ export default function Onboarding() {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.name) {
+  if (user.name && !submitted.current) {
     return <Navigate to={returnTo} replace />;
   }
 
