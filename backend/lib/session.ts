@@ -79,3 +79,8 @@ export async function invalidateSession(id: string) {
   await connect();
   await SessionModel.deleteOne({ _id: id });
 }
+
+export async function invalidateOtherSessions(uid: string, exceptSessionId: string) {
+  await connect();
+  await SessionModel.deleteMany({ uid, _id: { $ne: exceptSessionId } });
+}

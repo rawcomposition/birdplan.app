@@ -22,7 +22,7 @@ type TabItem = {
 
 const tabs: TabItem[] = [
   { id: "profile", icon: "user", label: "Account" },
-  { id: "email", icon: "envelope", label: "Email" },
+  { id: "email", icon: "envelope", label: "Change Email" },
   { id: "delete", icon: "warning", label: "Danger Zone" },
 ];
 
@@ -37,7 +37,7 @@ export default function Account() {
 
   return (
     <div className="flex flex-col h-full">
-        <title>My Account | BirdPlan.app</title>
+      <title>My Account | BirdPlan.app</title>
 
       <Header />
       <main className="max-w-4xl w-full mx-auto px-4 lg:px-0">

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { authenticate, isDuplicateKeyError } from "lib/utils.js";
 import { connect, Profile, Trip, Participant, Session, OtpCode } from "lib/db.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
+import { invalidateOtherSessions } from "lib/session.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
 import { RATE_LIMITS } from "lib/config.js";
 import { HTTPException } from "hono/http-exception";
@@ -84,6 +85,8 @@ account.post("/update-email", async (c) => {
     if (isDuplicateKeyError(err)) throw new HTTPException(400, { message: "That email is already in use" });
     throw err;
   }
+
+  await invalidateOtherSessions(session.uid, session._id);
 
   return c.json({ message: "Email updated successfully" });
 });
