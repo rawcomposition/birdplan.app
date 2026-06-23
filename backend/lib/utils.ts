@@ -3,10 +3,18 @@ import type { Context } from "hono";
 import { customAlphabet } from "nanoid";
 import type { Trip, Hotspot, Session } from "@birdplan/shared";
 import { validateSessionToken } from "lib/session.js";
+import { INVITE_EXPIRATION_DAYS } from "lib/config.js";
 
 export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
+
+export const newInviteToken = () => ({
+  inviteToken: nanoId(40),
+  inviteExpiresAt: new Date(Date.now() + INVITE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000),
+});
+
+export const isDuplicateKeyError = (err: unknown): boolean => (err as { code?: number })?.code === 11000;
 
 function getBearerToken(c: Context): string {
   const authHeader = c.req.header("authorization");

@@ -13,6 +13,8 @@ const fields: Record<keyof Omit<Participant, "createdAt" | "updatedAt">, any> = 
   lifelist: { type: [String], default: [] },
   lifelistUpdatedAt: { type: Date, default: null },
   isOwner: { type: Boolean, required: true, default: false },
+  inviteToken: String,
+  inviteExpiresAt: { type: Date, default: null },
 };
 
 const ParticipantSchema = new Schema(fields, {
@@ -23,6 +25,7 @@ ParticipantSchema.index({ tripId: 1, createdAt: 1 });
 ParticipantSchema.index({ uid: 1 });
 ParticipantSchema.index({ tripId: 1, uid: 1 }, { unique: true, partialFilterExpression: { uid: { $exists: true } } });
 ParticipantSchema.index({ tripId: 1, email: 1 }, { unique: true, partialFilterExpression: { email: { $exists: true } } });
+ParticipantSchema.index({ inviteToken: 1 }, { unique: true, sparse: true });
 
 const ParticipantModel =
   (mongoose.models.Participant as Model<Participant>) || model<Participant>("Participant", ParticipantSchema);

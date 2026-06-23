@@ -9,6 +9,7 @@ import {
   computeFrequency,
   generateOpenBirdingCode,
   getBounds,
+  isDuplicateKeyError,
 } from "lib/utils.js";
 import { connect, Trip, Invite, Participant, Profile, TripShareToken } from "lib/db.js";
 import { isTripEditor, isEditorInRoster, loadActiveRoster, loadProfilesByUid, resolveTripLifelist } from "lib/participants.js";
@@ -249,7 +250,7 @@ trip.post("/share-code", async (c) => {
       const expiresAt = new Date(savedAt + SHARE_CODE_TTL_MINUTES * 60 * 1000);
       return c.json({ shareCode: savedCode, expiresAt: expiresAt.toISOString() });
     } catch (error: any) {
-      const isDuplicateCode = error?.code === 11000 && error?.keyPattern?.shareCode;
+      const isDuplicateCode = isDuplicateKeyError(error) && error?.keyPattern?.shareCode;
       if (!isDuplicateCode || attempt === maxRetries - 1) throw error;
     }
   }

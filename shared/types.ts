@@ -173,6 +173,8 @@ export type Participant = {
   lifelist: string[];
   lifelistUpdatedAt?: Date | null;
   isOwner: boolean;
+  inviteToken?: string | null;
+  inviteExpiresAt?: Date | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -197,6 +199,14 @@ export type InviteInfo = {
   inviterName?: string;
   email?: string;
   status: ParticipantStatus;
+  accountExists: boolean;
+};
+
+export type AcceptInviteResponse = {
+  tripId: string;
+  token?: string;
+  hasName: boolean;
+  hasLifelist: boolean;
 };
 
 export type AddParticipantInput =

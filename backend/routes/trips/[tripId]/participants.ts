@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate } from "lib/utils.js";
+import { authenticate, newInviteToken, isDuplicateKeyError } from "lib/utils.js";
 import { connect, Trip, Participant, Profile } from "lib/db.js";
 import { isTripEditor, isEditorInRoster, participantEffectiveList } from "lib/participants.js";
 import { sciNamesToCodes } from "lib/taxonomy.js";
@@ -40,7 +40,7 @@ participants.get("/", async (c) => {
     uid: p.uid,
     name: p.name,
     photoUrl: p.uid ? profilesByUid.get(p.uid)?.photoUrl : undefined,
-    ...(isEditor ? { email: p.email } : {}),
+    ...(isEditor ? { email: p.uid ? profilesByUid.get(p.uid)?.email : p.email } : {}),
     status: p.status,
     listMode: p.listMode,
     isOwner: p.isOwner,
@@ -88,8 +88,14 @@ participants.post("/", async (c) => {
   const email = body.email?.trim().toLowerCase();
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
-  const dupEmail = await Participant.exists({ tripId, email });
+  const invitedProfile = await Profile.findOne({ email }).select("uid").lean();
+  const dupEmail = await Participant.exists({
+    tripId,
+    $or: [{ email }, ...(invitedProfile ? [{ uid: invitedProfile.uid }] : [])],
+  });
   if (dupEmail) throw new HTTPException(400, { message: alreadyAddedMessage });
+
+  const invite = newInviteToken();
 
   if (body.upgradeId) {
     const named = await Participant.findOne({ _id: body.upgradeId, tripId }).lean();
@@ -97,17 +103,17 @@ participants.post("/", async (c) => {
     try {
       await Participant.updateOne(
         { _id: body.upgradeId },
-        { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world" } }
+        { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world", ...invite } }
       );
     } catch (err) {
-      if ((err as { code?: number })?.code === 11000) throw new HTTPException(400, { message: alreadyAddedMessage });
+      if (isDuplicateKeyError(err)) throw new HTTPException(400, { message: alreadyAddedMessage });
       throw err;
     }
     await sendInviteEmail({
       tripName: trip.name,
       fromName: inviterName,
       email,
-      url: `${process.env.FRONTEND_URL}/accept/${body.upgradeId}`,
+      url: `${process.env.FRONTEND_URL}/accept/${invite.inviteToken}`,
     });
     return c.json({ id: body.upgradeId });
   }
@@ -123,9 +129,10 @@ participants.post("/", async (c) => {
       lifelist: codes,
       lifelistUpdatedAt: codes.length ? new Date() : null,
       isOwner: false,
+      ...invite,
     });
   } catch (err) {
-    if ((err as { code?: number })?.code === 11000) throw new HTTPException(400, { message: alreadyAddedMessage });
+    if (isDuplicateKeyError(err)) throw new HTTPException(400, { message: alreadyAddedMessage });
     throw err;
   }
 
@@ -133,7 +140,7 @@ participants.post("/", async (c) => {
     tripName: trip.name,
     fromName: inviterName,
     email,
-    url: `${process.env.FRONTEND_URL}/accept/${participant._id}`,
+    url: `${process.env.FRONTEND_URL}/accept/${invite.inviteToken}`,
   });
 
   return c.json({ id: participant._id });
@@ -176,11 +183,14 @@ participants.post("/:id/resend", async (c) => {
 
   const inviter = await Profile.findOne({ uid: session.uid }).select("name").lean();
 
+  const invite = newInviteToken();
+  await Participant.updateOne({ _id: id }, { $set: invite });
+
   await sendInviteEmail({
     tripName: trip.name,
     fromName: inviter?.name || "",
     email: p.email,
-    url: `${process.env.FRONTEND_URL}/accept/${p._id}`,
+    url: `${process.env.FRONTEND_URL}/accept/${invite.inviteToken}`,
   });
   return c.json({});
 });

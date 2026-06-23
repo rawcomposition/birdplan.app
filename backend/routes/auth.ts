@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
 import { connect, Profile, Session, Participant } from "lib/db.js";
-import { nanoId, authenticate } from "lib/utils.js";
+import { nanoId, authenticate, isDuplicateKeyError } from "lib/utils.js";
 import { createSession, invalidateSession } from "lib/session.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
@@ -34,7 +34,7 @@ async function claimInvite(inviteId: string, email: string, uid: string, name?: 
     );
     if (result.matchedCount === 0) return undefined;
   } catch (err) {
-    if ((err as { code?: number })?.code === 11000) {
+    if (isDuplicateKeyError(err)) {
       await Participant.deleteOne({ _id: inviteId, status: "pending" });
       return pending.tripId;
     }
@@ -87,7 +87,7 @@ auth.post("/verify-code", async (c) => {
       profile = (await Profile.create({ uid: nanoId(), email })).toObject();
       isNewUser = true;
     } catch (err) {
-      if ((err as { code?: number })?.code === 11000) {
+      if (isDuplicateKeyError(err)) {
         profile = await Profile.findOne({ email }).lean();
       } else {
         throw err;

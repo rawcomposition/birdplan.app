@@ -6,6 +6,8 @@ export const IS_DEV = process.env.NODE_ENV !== "production";
 export const OTP_EXPIRATION_MINUTES = 10;
 export const OTP_MAX_ATTEMPTS = 5;
 
+export const INVITE_EXPIRATION_DAYS = 7;
+
 export const SESSION_INACTIVITY_DAYS = 365;
 export const SESSION_REFRESH_THRESHOLD_HOURS = 24;
 
