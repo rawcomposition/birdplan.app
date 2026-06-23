@@ -17,7 +17,7 @@ import { useProfile } from "providers/profile";
 
 dayjs.extend(relativeTime);
 
-type SortKey = "lastActiveAt" | "createdAt";
+type SortKey = "lastActiveAt" | "lastAuthenticatedAt" | "createdAt";
 
 const formatDate = (value: string | Date | null) => {
   if (!value) return "—";
@@ -144,6 +144,13 @@ export default function Admin() {
                           onSort={handleSort}
                         />
                         <SortHeader
+                          label="Last login"
+                          sortKey="lastAuthenticatedAt"
+                          activeKey={sortKey}
+                          dir={sortDir}
+                          onSort={handleSort}
+                        />
+                        <SortHeader
                           label="Created"
                           sortKey="createdAt"
                           activeKey={sortKey}
@@ -165,6 +172,7 @@ export default function Admin() {
                             </div>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(u.lastActiveAt)}</td>
+                          <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(u.lastAuthenticatedAt)}</td>
                           <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(u.createdAt)}</td>
                         </tr>
                       ))}

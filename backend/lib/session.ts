@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import dayjs from "dayjs";
 import type { Session } from "@birdplan/shared";
-import { connect, Session as SessionModel } from "lib/db.js";
+import { connect, Profile as ProfileModel, Session as SessionModel } from "lib/db.js";
 import { SESSION_INACTIVITY_DAYS } from "lib/config.js";
 
 const SESSION_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
@@ -48,6 +48,8 @@ export async function createSession(uid: string, meta: SessionMeta = {}) {
     userAgent: meta.userAgent,
     ip: meta.ip,
   });
+
+  await ProfileModel.updateOne({ uid }, { $set: { lastAuthenticatedAt: now } });
 
   return { token: `${id}.${secret}`, id };
 }

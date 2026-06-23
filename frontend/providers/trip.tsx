@@ -87,7 +87,6 @@ const TripProvider = ({ children }: Props) => {
   const { data: participants } = useQuery<ParticipantView[]>({
     queryKey: [`/trips/${id}/participants`],
     enabled: !!id && !!token && !!trip,
-    refetchOnWindowFocus: false,
   });
 
   const [selectedSpecies, setSelectedSpecies] = React.useState<SelectedSpecies>();

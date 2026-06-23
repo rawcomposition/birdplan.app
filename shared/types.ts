@@ -95,6 +95,7 @@ export type Profile = {
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
+  lastAuthenticatedAt?: Date | null;
   isAdmin?: boolean;
 };
 
@@ -143,6 +144,7 @@ export type AdminDashboardUser = {
   photoUrl?: string;
   createdAt: string;
   lastActiveAt: Date | null;
+  lastAuthenticatedAt: Date | null;
 };
 
 export type AdminStats = {

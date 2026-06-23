@@ -26,7 +26,7 @@ admin.get("/", async (c) => {
     Trip.countDocuments({}),
     Trip.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
     Trip.countDocuments({ createdAt: { $gte: sixMonthsAgo } }),
-    Profile.find({}).select("uid name email photoUrl lastActiveAt createdAt").lean(),
+    Profile.find({}).select("uid name email photoUrl lastActiveAt lastAuthenticatedAt createdAt").lean(),
   ]);
 
   const users: AdminDashboardUser[] = profiles.map((profile) => ({
@@ -37,6 +37,7 @@ admin.get("/", async (c) => {
     photoUrl: profile.photoUrl,
     createdAt: (profile as unknown as { createdAt: Date }).createdAt?.toISOString?.() ?? "",
     lastActiveAt: profile.lastActiveAt ?? null,
+    lastAuthenticatedAt: profile.lastAuthenticatedAt ?? null,
   }));
 
   const response: AdminDashboard = {

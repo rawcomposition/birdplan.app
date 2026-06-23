@@ -13,6 +13,7 @@ const fields: Record<keyof Omit<Profile, "createdAt" | "updatedAt">, any> = {
   exceptions: { type: [String], default: [] },
   dismissedNoticeId: String,
   lastActiveAt: { type: Date, default: new Date() },
+  lastAuthenticatedAt: { type: Date, default: null },
   isAdmin: { type: Boolean, default: false },
 };
 
