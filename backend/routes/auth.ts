@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
-import { connect, Profile, Session, Participant } from "lib/db.js";
+import { connect, Profile, Session } from "lib/db.js";
 import { nanoId, authenticate, isDuplicateKeyError } from "lib/utils.js";
 import { createSession, invalidateSession } from "lib/session.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
@@ -14,34 +14,6 @@ const normalizeEmail = (email?: string | null) => email?.trim().toLowerCase() ||
 const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const getIp = (c: { req: { header: (name: string) => string | undefined } }) =>
   c.req.header("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-
-async function claimInvite(inviteId: string, email: string, uid: string, name?: string): Promise<string | undefined> {
-  const pending = await Participant.findById(inviteId).lean();
-  if (!pending || pending.status !== "pending" || pending.uid) return undefined;
-  if (normalizeEmail(pending.email) !== email) return undefined;
-
-  const existing = await Participant.findOne({ tripId: pending.tripId, uid, status: "active" }).lean();
-  if (existing) {
-    await Participant.deleteOne({ _id: pending._id });
-    return pending.tripId;
-  }
-
-  const hasCuratedList = !!pending.lifelist?.length;
-  try {
-    const result = await Participant.updateOne(
-      { _id: inviteId, status: "pending", uid: { $exists: false } },
-      { $set: { status: "active", uid, name, ...(hasCuratedList ? {} : { listMode: "world" }) } }
-    );
-    if (result.matchedCount === 0) return undefined;
-  } catch (err) {
-    if (isDuplicateKeyError(err)) {
-      await Participant.deleteOne({ _id: inviteId, status: "pending" });
-      return pending.tripId;
-    }
-    throw err;
-  }
-  return pending.tripId;
-}
 
 auth.post("/request-code", async (c) => {
   const { email: rawEmail } = await c.req.json<{ email: string }>();
@@ -62,11 +34,7 @@ auth.post("/request-code", async (c) => {
 });
 
 auth.post("/verify-code", async (c) => {
-  const {
-    email: rawEmail,
-    code,
-    inviteId,
-  } = await c.req.json<{ email: string; code: string; inviteId?: string }>();
+  const { email: rawEmail, code } = await c.req.json<{ email: string; code: string }>();
   const email = normalizeEmail(rawEmail);
   const ip = getIp(c);
 
@@ -101,12 +69,7 @@ auth.post("/verify-code", async (c) => {
     ip,
   });
 
-  let claimedTripId: string | undefined;
-  if (inviteId) {
-    claimedTripId = await claimInvite(inviteId, email, profile.uid, profile.name);
-  }
-
-  return c.json({ token, isNewUser, claimedTripId });
+  return c.json({ token, isNewUser });
 });
 
 auth.get("/me", async (c) => {

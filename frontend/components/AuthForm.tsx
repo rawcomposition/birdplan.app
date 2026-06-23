@@ -14,12 +14,11 @@ type Props = {
   message?: string;
   email?: string;
   lockEmail?: boolean;
-  inviteId?: string;
 };
 
 const RESEND_COOLDOWN = 30;
 
-export default function AuthForm({ heading, message, email: initialEmail, lockEmail, inviteId }: Props) {
+export default function AuthForm({ heading, message, email: initialEmail, lockEmail }: Props) {
   const navigate = useNavigate();
   const navContext = useNavContext();
   const [step, setStep] = React.useState<"email" | "code">("email");
@@ -66,8 +65,8 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
     }
     setError(null);
     try {
-      const res = await verifyCode.mutateAsync({ email: email.trim().toLowerCase(), code: code.trim(), inviteId });
-      const dest = res.claimedTripId ? `/${res.claimedTripId}/lifelist?from=accept` : getPostAuthDest(navContext);
+      const res = await verifyCode.mutateAsync({ email: email.trim().toLowerCase(), code: code.trim() });
+      const dest = getPostAuthDest(navContext);
       navigate(res.isNewUser ? withReturnTo("/onboarding", dest) : dest);
     } catch (err: any) {
       setError(err.message || "Invalid or expired code.");
