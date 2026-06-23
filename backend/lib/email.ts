@@ -36,7 +36,7 @@ export const sendInviteEmail = async ({ tripName, fromName, email, url }: invite
   await sendEmail({
     to: email,
     subject: `${fromName} has invited you to join ${tripName}`,
-    html: `Hello,<br /><br />${fromName} invited to join their trip called '${tripName}'.<br /><br /><a href=${url}>Accept Invite</a><br /><br />This invite expires in ${INVITE_EXPIRATION_DAYS} days.`,
+    html: `Hello,<br /><br />${fromName} invited you to join their trip called '${tripName}'.<br /><br /><a href="${url}">Accept Invite</a><br /><br />This invite expires in ${INVITE_EXPIRATION_DAYS} days.`,
     replyTo: email,
   });
 };
