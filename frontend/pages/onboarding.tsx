@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import UtilityPage from "components/UtilityPage";
 import Input from "components/Input";
 import Button from "components/Button";
@@ -37,13 +37,11 @@ export default function Onboarding() {
   }
 
   if (!user) {
-    navigate("/login");
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   if (user.name) {
-    navigate(returnTo);
-    return null;
+    return <Navigate to={returnTo} replace />;
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

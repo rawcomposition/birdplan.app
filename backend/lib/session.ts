@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import dayjs from "dayjs";
 import type { Session } from "@birdplan/shared";
-import { Session as SessionModel } from "lib/db.js";
+import { connect, Session as SessionModel } from "lib/db.js";
 import { SESSION_INACTIVITY_DAYS } from "lib/config.js";
 
 const SESSION_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
@@ -33,6 +33,7 @@ export function constantTimeEqual(a: string, b: string): boolean {
 type SessionMeta = { userAgent?: string; ip?: string };
 
 export async function createSession(uid: string, meta: SessionMeta = {}) {
+  await connect();
   const id = generateSecureRandomString();
   const secret = generateSecureRandomString();
   const now = new Date();
@@ -57,6 +58,8 @@ export async function validateSessionToken(token: string): Promise<Session | nul
   const [id, secret] = parts;
   if (!id || !secret) return null;
 
+  await connect();
+
   const session = await SessionModel.findById(id).lean<Session>();
   if (!session) return null;
 
@@ -71,5 +74,6 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 }
 
 export async function invalidateSession(id: string) {
+  await connect();
   await SessionModel.deleteOne({ _id: id });
 }

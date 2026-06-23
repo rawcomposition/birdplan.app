@@ -20,6 +20,8 @@ const ProfileSchema = new Schema(fields, {
   timestamps: true,
 });
 
+ProfileSchema.index({ email: 1 }, { unique: true });
+
 const ProfileModel = (mongoose.models.Profile as Model<Profile>) || model<Profile>("Profile", ProfileSchema);
 
 export default ProfileModel;

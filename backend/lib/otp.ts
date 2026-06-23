@@ -23,26 +23,29 @@ export async function issueOtp(email: string, ip?: string) {
 }
 
 export async function verifyOtp(email: string, code: string) {
-  const otp = await OtpCode.findOne({ email, consumedAt: null, expiresAt: { $gt: new Date() } })
-    .sort({ createdAt: -1 })
-    .lean();
-  if (!otp) throw new HTTPException(400, { message: "Invalid or expired code" });
+  const now = new Date();
 
-  if (otp.attempts >= OTP_MAX_ATTEMPTS) {
-    await OtpCode.updateOne({ _id: otp._id }, { $set: { consumedAt: new Date() } });
-    throw new HTTPException(400, { message: "Too many attempts. Please request a new code." });
-  }
+  const otp = await OtpCode.findOneAndUpdate(
+    { email, consumedAt: null, expiresAt: { $gt: now }, attempts: { $lt: OTP_MAX_ATTEMPTS } },
+    { $inc: { attempts: 1 } },
+    { sort: { createdAt: -1 }, new: true }
+  ).lean();
 
-  if (!constantTimeEqual(sha256(code), otp.codeHash)) {
-    const nextAttempts = otp.attempts + 1;
-    await OtpCode.updateOne(
-      { _id: otp._id },
-      nextAttempts >= OTP_MAX_ATTEMPTS
-        ? { $inc: { attempts: 1 }, $set: { consumedAt: new Date() } }
-        : { $inc: { attempts: 1 } }
-    );
+  if (!otp) {
+    const locked = await OtpCode.exists({
+      email,
+      consumedAt: null,
+      expiresAt: { $gt: now },
+      attempts: { $gte: OTP_MAX_ATTEMPTS },
+    });
+    if (locked) throw new HTTPException(400, { message: "Too many attempts. Please request a new code." });
     throw new HTTPException(400, { message: "Invalid or expired code" });
   }
 
-  await OtpCode.updateOne({ _id: otp._id }, { $set: { consumedAt: new Date() } });
+  if (!constantTimeEqual(sha256(code), otp.codeHash)) {
+    throw new HTTPException(400, { message: "Invalid or expired code" });
+  }
+
+  const consumed = await OtpCode.updateOne({ _id: otp._id, consumedAt: null }, { $set: { consumedAt: now } });
+  if (consumed.matchedCount === 0) throw new HTTPException(400, { message: "Invalid or expired code" });
 }

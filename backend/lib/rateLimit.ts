@@ -7,26 +7,19 @@ type RateScope = { action: string; scopeType: string; scopeValue: string };
 
 async function hitRule(scope: RateScope, rule: RateRule): Promise<boolean> {
   const now = Date.now();
-  const windowStartThreshold = new Date(now - rule.windowMs);
-  const match = { ...scope, windowMs: rule.windowMs };
+  const windowStartAt = new Date(Math.floor(now / rule.windowMs) * rule.windowMs);
 
   const doc = await RateLimitModel.findOneAndUpdate(
-    { ...match, windowStartAt: { $gt: windowStartThreshold } },
-    { $inc: { count: 1 } },
-    { new: true }
+    { ...scope, windowMs: rule.windowMs, windowStartAt },
+    {
+      $inc: { count: 1 },
+      $setOnInsert: { expiresAt: new Date(windowStartAt.getTime() + rule.windowMs) },
+    },
+    { upsert: true, new: true }
   ).lean<RateLimit>();
 
-  if (doc) {
-    return doc.count <= rule.limit;
-  }
-
-  await RateLimitModel.updateOne(
-    match,
-    { $set: { count: 1, windowStartAt: new Date(now), expiresAt: new Date(now + rule.windowMs) } },
-    { upsert: true }
-  );
-
-  return true;
+  if (!doc) return true;
+  return doc.count <= rule.limit;
 }
 
 export async function enforceRateLimit(

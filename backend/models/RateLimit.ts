@@ -15,7 +15,7 @@ const RateLimitSchema = new Schema(fields, {
   timestamps: true,
 });
 
-RateLimitSchema.index({ action: 1, scopeType: 1, scopeValue: 1, windowMs: 1 }, { unique: true });
+RateLimitSchema.index({ action: 1, scopeType: 1, scopeValue: 1, windowMs: 1, windowStartAt: 1 }, { unique: true });
 RateLimitSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const RateLimitModel = (mongoose.models.RateLimit as Model<RateLimit>) || model<RateLimit>("RateLimit", RateLimitSchema);
