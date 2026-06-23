@@ -37,9 +37,9 @@ app.notFound((c) => {
 });
 
 app.onError((err, c) => {
-  const message = err instanceof Error ? err.message : "Internal Server Error";
-  const status = err instanceof HTTPException ? err.status : 500;
-  return c.json({ message }, status);
+  if (err instanceof HTTPException) return c.json({ message: err.message }, err.status);
+  console.error(err);
+  return c.json({ message: "Something went wrong. Please try again." }, 500);
 });
 
 serve(
