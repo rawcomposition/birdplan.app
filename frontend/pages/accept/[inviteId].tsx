@@ -117,13 +117,7 @@ export default function Accept() {
       <div className="space-y-3">
         {!user && (
           <p className="text-center text-gray-600">
-            {invite.accountExists ? (
-              <>
-                Accept as <span className="font-semibold text-gray-800">{invite.email}</span>.
-              </>
-            ) : (
-              "Accept your invitation to start planning together."
-            )}
+            Accept as <span className="font-semibold text-gray-800">{invite.email}</span>.
           </p>
         )}
         <Button color="primary" className="w-full" onClick={accept} disabled={acceptMutation.isPending}>
