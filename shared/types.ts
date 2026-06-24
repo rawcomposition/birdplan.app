@@ -258,12 +258,12 @@ export type InviteInput = {
   tripId: string;
 };
 
-export type TripShareTokenType = "openbirding";
+export type IntegrationTokenType = "openbirding";
 
-export type TripShareToken = {
+export type IntegrationToken = {
   _id: string;
   tripId: string;
-  type: TripShareTokenType;
+  type: IntegrationTokenType;
   lastUsedAt?: string;
   createdAt: string;
   updatedAt: string;

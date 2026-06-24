@@ -11,7 +11,7 @@ import {
   getBounds,
   isDuplicateKeyError,
 } from "lib/utils.js";
-import { connect, Trip, Invite, Participant, User, TripShareToken } from "lib/db.js";
+import { connect, Trip, Invite, Participant, User, IntegrationToken } from "lib/db.js";
 import { isTripEditor, isEditorInRoster, loadActiveRoster, loadUsersById, resolveTripLifelist } from "lib/participants.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
@@ -132,7 +132,7 @@ trip.delete("/", async (c) => {
     Trip.deleteOne({ _id: tripId }),
     Participant.deleteMany({ tripId }),
     Invite.deleteMany({ tripId }),
-    TripShareToken.deleteMany({ tripId }),
+    IntegrationToken.deleteMany({ tripId }),
   ]);
 
   return c.json({});

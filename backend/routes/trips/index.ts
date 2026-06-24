@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { rateLimiter } from "hono-rate-limiter";
 import trip from "./[tripId]/index.js";
 import { authenticate, getBounds } from "lib/utils.js";
-import { connect, Trip, Participant, TripShareToken, User } from "lib/db.js";
+import { connect, Trip, Participant, IntegrationToken, User } from "lib/db.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripInput } from "@birdplan/shared";
@@ -69,21 +69,21 @@ trips.get("/openbirding/:codeOrToken", shareCodeLimiter, async (c) => {
       throw new HTTPException(404, { message: "Trip not found" });
     }
 
-    const shareToken = await TripShareToken.create({ tripId: trip._id, type: "openbirding" });
+    const integrationToken = await IntegrationToken.create({ tripId: trip._id, type: "openbirding" });
 
-    return c.json({ ...serializeTripForImport(trip), updateToken: shareToken._id });
+    return c.json({ ...serializeTripForImport(trip), updateToken: integrationToken._id });
   }
 
-  const shareToken = await TripShareToken.findOneAndUpdate(
+  const integrationToken = await IntegrationToken.findOneAndUpdate(
     { _id: codeOrToken, type: "openbirding" },
     { $set: { lastUsedAt: new Date() } }
   ).lean();
 
-  if (!shareToken) {
+  if (!integrationToken) {
     throw new HTTPException(404, { message: "Invalid token" });
   }
 
-  const trip = await Trip.findById(shareToken.tripId).lean();
+  const trip = await Trip.findById(integrationToken.tripId).lean();
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
