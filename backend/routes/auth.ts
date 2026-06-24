@@ -10,7 +10,7 @@ import { redeemMagicLink } from "lib/magicLink.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
 import { logEvent } from "lib/log.js";
 import { sendNtfyNotification } from "lib/notify.js";
-import { SESSION_INACTIVITY_DAYS, SESSION_REFRESH_THRESHOLD_HOURS, RATE_LIMITS } from "lib/config.js";
+import { SESSION_INACTIVITY_DAYS, RATE_LIMITS } from "lib/config.js";
 import type { RedeemMagicLinkResponse } from "@birdplan/shared";
 
 const auth = new Hono();
@@ -111,14 +111,12 @@ auth.get("/me", async (c) => {
     throw new HTTPException(401, { message: "Unauthorized" });
   }
 
-  const now = Date.now();
-  const lastActive = new Date(session.lastActiveAt).getTime();
-  if (now - lastActive > SESSION_REFRESH_THRESHOLD_HOURS * 60 * 60 * 1000) {
-    const nowDate = new Date();
-    const expiresAt = dayjs(nowDate).add(SESSION_INACTIVITY_DAYS, "day").toDate();
-    await Session.updateOne({ _id: session._id }, { $set: { lastActiveAt: nowDate, expiresAt } });
-    await User.updateOne({ _id: session.userId }, { $set: { lastActiveAt: nowDate } });
-  }
+  const nowDate = new Date();
+  const expiresAt = dayjs(nowDate).add(SESSION_INACTIVITY_DAYS, "day").toDate();
+  await Promise.all([
+    Session.updateOne({ _id: session._id }, { $set: { lastActiveAt: nowDate, expiresAt } }),
+    User.updateOne({ _id: session.userId }, { $set: { lastActiveAt: nowDate } }),
+  ]);
 
   return c.json(user);
 });

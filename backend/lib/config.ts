@@ -11,7 +11,6 @@ export const INVITE_EXPIRATION_DAYS = 7;
 export const MAGIC_LINK_EXPIRATION_DAYS = 7;
 
 export const SESSION_INACTIVITY_DAYS = 365;
-export const SESSION_REFRESH_THRESHOLD_HOURS = 24;
 
 type RateRule = { limit: number; windowMs: number };
 
