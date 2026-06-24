@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import clsx from "clsx";
-import { CopyIcon, CheckIcon } from "lucide-react";
 import { AdminDashboard, AdminDashboardUser, AdminDashboardLog, GenerateMagicLinkResponse } from "@birdplan/shared";
 import Header from "components/Header";
 import Footer from "components/Footer";
@@ -15,17 +14,10 @@ import Card from "components/Card";
 import Error from "components/Error";
 import Button from "components/Button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "components/ui/dialog";
 import { mutate } from "lib/http";
 import { avatarFromUser } from "lib/avatar";
 import { useUser } from "hooks/useUser";
+import { useModal } from "stores/modals";
 
 dayjs.extend(relativeTime);
 
@@ -96,54 +88,15 @@ function SortHeader({
   );
 }
 
-function CopyLinkField({ url }: { url: string }) {
-  const [copied, setCopied] = React.useState(false);
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    toast.success("Link copied");
-  };
-
-  return (
-    <div className="flex items-center gap-2">
-      <input
-        readOnly
-        value={url}
-        onFocus={(e) => e.target.select()}
-        className="min-w-0 flex-1 rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 font-mono text-xs text-gray-700"
-      />
-      <Button color="primary" size="sm" onClick={copy} className="flex items-center gap-1.5 whitespace-nowrap">
-        {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
-        {copied ? "Copied" : "Copy"}
-      </Button>
-    </div>
-  );
-}
-
-function MagicLinkDetails({ link }: { link: GenerateMagicLinkResponse }) {
-  return (
-    <div className="space-y-3">
-      {link.isNewUser && (
-        <p className="text-sm text-gray-600">
-          A new account was created for <span className="font-medium">{link.email}</span>.
-        </p>
-      )}
-      <CopyLinkField key={link.url} url={link.url} />
-      <p className="text-xs text-gray-500">Single-use · expires {dayjs(link.expiresAt).fromNow()}</p>
-    </div>
-  );
-}
-
 function UserActions({ user }: { user: AdminDashboardUser }) {
-  const [link, setLink] = React.useState<GenerateMagicLinkResponse | null>(null);
+  const { open } = useModal();
   const [generating, setGenerating] = React.useState(false);
 
   const generate = async () => {
     setGenerating(true);
     try {
       const res = await mutate("POST", `/admin/users/${user._id}/magic-link`);
-      setLink(res as GenerateMagicLinkResponse);
+      open("generateMagicLink", { link: res as GenerateMagicLinkResponse, email: user.email });
     } catch (err: any) {
       toast.error(err.message || "Failed to generate link");
     } finally {
@@ -152,102 +105,28 @@ function UserActions({ user }: { user: AdminDashboardUser }) {
   };
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
-          disabled={generating}
-          aria-label="User actions"
-        >
-          <Icon name={generating ? "loading" : "verticalDots"} className={clsx(generating && "animate-spin")} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={generate}>Generate magic link</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <Dialog open={!!link} onOpenChange={(open) => !open && setLink(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Magic sign-in link</DialogTitle>
-            <DialogDescription>Send this link to {user.email || "the user"}.</DialogDescription>
-          </DialogHeader>
-          {link && <MagicLinkDetails link={link} />}
-        </DialogContent>
-      </Dialog>
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
+        disabled={generating}
+        aria-label="User actions"
+      >
+        <Icon name={generating ? "loading" : "verticalDots"} className={clsx(generating && "animate-spin")} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={generate}>Generate magic link</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
 function NewUserMagicLink() {
-  const [open, setOpen] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [generating, setGenerating] = React.useState(false);
-  const [link, setLink] = React.useState<GenerateMagicLinkResponse | null>(null);
-
-  const reset = () => {
-    setEmail("");
-    setLink(null);
-    setGenerating(false);
-  };
-
-  const generate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const target = email.trim().toLowerCase();
-    if (!target) return;
-    setGenerating(true);
-    try {
-      const res = await mutate("POST", "/admin/magic-link", { email: target });
-      setLink(res as GenerateMagicLinkResponse);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to generate link");
-    } finally {
-      setGenerating(false);
-    }
-  };
+  const { open } = useModal();
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(value) => {
-        setOpen(value);
-        if (!value) reset();
-      }}
-    >
-      <DialogTrigger
-        render={
-          <Button color="primary" size="sm">
-            Generate magic link
-          </Button>
-        }
-      />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Generate magic link</DialogTitle>
-          <DialogDescription>
-            Enter an email to create a sign-in link. If no account exists, one is created.
-          </DialogDescription>
-        </DialogHeader>
-        {link ? (
-          <MagicLinkDetails link={link} />
-        ) : (
-          <form onSubmit={generate} className="space-y-3">
-            <input
-              type="email"
-              required
-              autoFocus
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-gray-200 px-2.5 py-1.5 text-sm"
-            />
-            <Button type="submit" color="primary" size="sm" disabled={generating || !email.trim()} className="w-full">
-              {generating ? <Icon name="loading" className="animate-spin" /> : "Generate link"}
-            </Button>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
+    <Button color="primary" size="sm" onClick={() => open("generateMagicLink")}>
+      Generate magic link
+    </Button>
   );
 }
 

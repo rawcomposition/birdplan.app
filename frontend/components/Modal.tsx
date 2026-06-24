@@ -20,6 +20,7 @@ import OpenBirding from "modals/OpenBirding";
 import AddParticipant from "modals/AddParticipant";
 import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
+import GenerateMagicLink from "modals/GenerateMagicLink";
 
 type ModalConfig = {
   Component: React.ComponentType<any>;
@@ -39,6 +40,7 @@ const modals: Record<ModalId, ModalConfig> = {
   addParticipant: { Component: AddParticipant },
   inviteAsEditor: { Component: InviteAsEditor },
   manageLifelist: { Component: ManageLifelist },
+  generateMagicLink: { Component: GenerateMagicLink },
 };
 
 const ModalRoot = () => {

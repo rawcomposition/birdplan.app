@@ -15,7 +15,8 @@ export type ModalId =
   | "openBirding"
   | "addParticipant"
   | "inviteAsEditor"
-  | "manageLifelist";
+  | "manageLifelist"
+  | "generateMagicLink";
 
 export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   hotspot: "right",
@@ -30,6 +31,7 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   addParticipant: "center",
   inviteAsEditor: "center",
   manageLifelist: "center",
+  generateMagicLink: "center",
 };
 
 type ModalState = {
