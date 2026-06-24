@@ -1,6 +1,6 @@
 import React from "react";
 import Icon from "components/Icon";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import useTripMutation from "hooks/useTripMutation";
 import { HotspotFav } from "@birdplan/shared";
 

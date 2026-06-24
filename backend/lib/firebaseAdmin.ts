@@ -15,9 +15,6 @@ if (hasFirebaseConfig && !firebase.apps.length) {
   });
 }
 
-export const admin = firebase;
-export const auth = hasFirebaseConfig ? firebase.auth() : null;
-
 export async function uploadMapboxImageToStorage(mapboxImageUrl: string): Promise<string | null> {
   if (!hasFirebaseConfig) {
     console.warn("Firebase not configured, skipping image upload");

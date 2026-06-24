@@ -1,10 +1,10 @@
 import React from "react";
-import { Header, Body } from "providers/modals";
+import { Header, Body } from "components/Modal";
 import Button from "components/Button";
 import Field from "components/Field";
 import Input from "components/Input";
-import { useModal } from "providers/modals";
-import { useTrip } from "providers/trip";
+import { useModal } from "stores/modals";
+import { useTrip } from "hooks/useTrip";
 import { nanoId } from "lib/helpers";
 import { MarkerIconT, markerIcons } from "lib/icons";
 import MarkerWithIcon from "components/MarkerWithIcon";

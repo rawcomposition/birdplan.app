@@ -27,11 +27,11 @@ export default function ReactSelectAsyncStyled(props: SelectProps) {
           fontWeight: "normal",
           fontSize: "0.875rem",
         }),
-        input: (base, state) => ({
+        input: (base) => ({
           ...base,
           fontSize: "1rem",
         }),
-        container: (base, state) => ({
+        container: (base) => ({
           ...base,
           fontSize: "0.875rem",
         }),

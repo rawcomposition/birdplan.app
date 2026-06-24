@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate } from "lib/utils.js";
-import { connect, Trip, Participant, Profile } from "lib/db.js";
+import { authenticate, newInviteToken, isDuplicateKeyError } from "lib/utils.js";
+import { connect, Trip, Participant, User } from "lib/db.js";
 import { isTripEditor, isEditorInRoster, participantEffectiveList } from "lib/participants.js";
 import { sciNamesToCodes } from "lib/taxonomy.js";
 import { sendInviteEmail } from "lib/email.js";
@@ -28,24 +28,24 @@ participants.get("/", async (c) => {
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
 
   const roster = await Participant.find({ tripId }).sort({ createdAt: 1 }).lean();
-  const isEditor = isEditorInRoster(roster, session?.uid);
+  const isEditor = isEditorInRoster(roster, session?.userId);
   if (!trip.isPublic && !isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
-  const uids = roster.map((p) => p.uid).filter((u): u is string => !!u);
-  const profiles = uids.length ? await Profile.find({ uid: { $in: uids } }).lean() : [];
-  const profilesByUid = new Map(profiles.map((p) => [p.uid, p]));
+  const userIds = roster.map((p) => p.userId).filter((u): u is string => !!u);
+  const users = userIds.length ? await User.find({ _id: { $in: userIds } }).lean() : [];
+  const usersById = new Map(users.map((u) => [u._id, u]));
 
   const views: ParticipantView[] = roster.map((p) => ({
     _id: p._id,
-    uid: p.uid,
+    userId: p.userId,
     name: p.name,
-    photoUrl: p.uid ? profilesByUid.get(p.uid)?.photoUrl : undefined,
-    ...(isEditor ? { email: p.email } : {}),
+    photoUrl: p.userId ? usersById.get(p.userId)?.photoUrl : undefined,
+    ...(isEditor ? { email: p.userId ? usersById.get(p.userId)?.email : p.email } : {}),
     status: p.status,
     listMode: p.listMode,
     isOwner: p.isOwner,
-    isMe: !!session?.uid && p.uid === session.uid,
-    count: participantEffectiveList(p, profilesByUid).length,
+    isMe: !!session?.userId && p.userId === session.userId,
+    count: participantEffectiveList(p, usersById).length,
     hasList: (p.status === "active" && p.listMode === "world") || !!p.lifelistUpdatedAt,
   }));
 
@@ -60,10 +60,13 @@ participants.post("/", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
+
+  const inviter = await User.findOne({ _id: session.userId }).select("name").lean();
+  const inviterName = inviter?.name || "";
 
   const body = await c.req.json<AddParticipantInput>();
 
@@ -85,26 +88,32 @@ participants.post("/", async (c) => {
   const email = body.email?.trim().toLowerCase();
   if (!email) throw new HTTPException(400, { message: "Email is required" });
 
-  const dupEmail = await Participant.exists({ tripId, email });
+  const invitedUser = await User.findOne({ email }).select("_id").lean();
+  const dupEmail = await Participant.exists({
+    tripId,
+    $or: [{ email }, ...(invitedUser ? [{ userId: invitedUser._id }] : [])],
+  });
   if (dupEmail) throw new HTTPException(400, { message: alreadyAddedMessage });
+
+  const invite = newInviteToken();
 
   if (body.upgradeId) {
     const named = await Participant.findOne({ _id: body.upgradeId, tripId }).lean();
-    if (!named || named.uid) throw new HTTPException(400, { message: "Cannot upgrade this participant" });
+    if (!named || named.userId) throw new HTTPException(400, { message: "Cannot upgrade this participant" });
     try {
       await Participant.updateOne(
         { _id: body.upgradeId },
-        { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world" } }
+        { $set: { email, status: "pending", listMode: named.lifelist?.length ? "custom" : "world", ...invite } }
       );
     } catch (err) {
-      if ((err as { code?: number })?.code === 11000) throw new HTTPException(400, { message: alreadyAddedMessage });
+      if (isDuplicateKeyError(err)) throw new HTTPException(400, { message: alreadyAddedMessage });
       throw err;
     }
     await sendInviteEmail({
       tripName: trip.name,
-      fromName: session.name || "",
+      fromName: inviterName,
       email,
-      url: `${process.env.FRONTEND_URL}/accept/${body.upgradeId}`,
+      url: `${process.env.FRONTEND_URL}/accept/${invite.inviteToken}`,
     });
     return c.json({ id: body.upgradeId });
   }
@@ -120,17 +129,18 @@ participants.post("/", async (c) => {
       lifelist: codes,
       lifelistUpdatedAt: codes.length ? new Date() : null,
       isOwner: false,
+      ...invite,
     });
   } catch (err) {
-    if ((err as { code?: number })?.code === 11000) throw new HTTPException(400, { message: alreadyAddedMessage });
+    if (isDuplicateKeyError(err)) throw new HTTPException(400, { message: alreadyAddedMessage });
     throw err;
   }
 
   await sendInviteEmail({
     tripName: trip.name,
-    fromName: session.name || "",
+    fromName: inviterName,
     email,
-    url: `${process.env.FRONTEND_URL}/accept/${participant._id}`,
+    url: `${process.env.FRONTEND_URL}/accept/${invite.inviteToken}`,
   });
 
   return c.json({ id: participant._id });
@@ -143,11 +153,11 @@ participants.patch("/:id", async (c) => {
   if (!tripId || !id) throw new HTTPException(400, { message: "Trip ID and participant ID are required" });
 
   await connect();
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.userId))) throw new HTTPException(403, { message: "Forbidden" });
 
   const p = await Participant.findOne({ _id: id, tripId }).lean();
   if (!p) throw new HTTPException(404, { message: "Participant not found" });
-  if (p.uid) throw new HTTPException(400, { message: "Can't rename a registered user" });
+  if (p.userId) throw new HTTPException(400, { message: "Can't rename a registered user" });
 
   const { name } = await c.req.json<UpdateParticipantInput>();
   if (!name?.trim()) throw new HTTPException(400, { message: "Name is required" });
@@ -168,14 +178,19 @@ participants.post("/:id/resend", async (c) => {
     Trip.findById(tripId).lean(),
   ]);
   if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
-  if (!(await isTripEditor(tripId, session.uid))) throw new HTTPException(403, { message: "Forbidden" });
+  if (!(await isTripEditor(tripId, session.userId))) throw new HTTPException(403, { message: "Forbidden" });
   if (p.status !== "pending" || !p.email) throw new HTTPException(400, { message: "No pending invite to resend" });
+
+  const inviter = await User.findOne({ _id: session.userId }).select("name").lean();
+
+  const invite = newInviteToken();
+  await Participant.updateOne({ _id: id }, { $set: invite });
 
   await sendInviteEmail({
     tripName: trip.name,
-    fromName: session.name || "",
+    fromName: inviter?.name || "",
     email: p.email,
-    url: `${process.env.FRONTEND_URL}/accept/${p._id}`,
+    url: `${process.env.FRONTEND_URL}/accept/${invite.inviteToken}`,
   });
   return c.json({});
 });
@@ -189,7 +204,7 @@ participants.patch("/:id/mode", async (c) => {
   await connect();
   const p = await Participant.findOne({ _id: id, tripId }).lean();
   if (!p) throw new HTTPException(404, { message: "Participant not found" });
-  if (!p.uid || p.uid !== session.uid) throw new HTTPException(403, { message: "Forbidden" });
+  if (!p.userId || p.userId !== session.userId) throw new HTTPException(403, { message: "Forbidden" });
 
   const { listMode } = await c.req.json<{ listMode: ParticipantListMode }>();
   if (listMode !== "world" && listMode !== "custom") throw new HTTPException(400, { message: "Invalid list mode" });
@@ -215,13 +230,13 @@ participants.put("/:id/list", async (c) => {
   ]);
   if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
 
-  const isSelf = !!p.uid && p.uid === session.uid;
-  const isNameOnly = !p.uid && p.status === "active";
-  const isPendingInvite = !p.uid && p.status === "pending";
+  const isSelf = !!p.userId && p.userId === session.userId;
+  const isNameOnly = !p.userId && p.status === "active";
+  const isPendingInvite = !p.userId && p.status === "pending";
   const allowed =
     isSelf ||
-    (isNameOnly && (await isTripEditor(tripId, session.uid))) ||
-    (isPendingInvite && trip.ownerId === session.uid);
+    (isNameOnly && (await isTripEditor(tripId, session.userId))) ||
+    (isPendingInvite && trip.ownerId === session.userId);
   if (!allowed) throw new HTTPException(403, { message: "Forbidden" });
 
   const { sciNames } = await c.req.json<LifelistImportInput>();
@@ -248,18 +263,18 @@ participants.delete("/:id/list", async (c) => {
   ]);
   if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
 
-  const isSelf = !!p.uid && p.uid === session.uid;
-  const isNameOnly = !p.uid && p.status === "active";
-  const isPendingInvite = !p.uid && p.status === "pending";
+  const isSelf = !!p.userId && p.userId === session.userId;
+  const isNameOnly = !p.userId && p.status === "active";
+  const isPendingInvite = !p.userId && p.status === "pending";
   const allowed =
     isSelf ||
-    (isNameOnly && (await isTripEditor(tripId, session.uid))) ||
-    (isPendingInvite && trip.ownerId === session.uid);
+    (isNameOnly && (await isTripEditor(tripId, session.userId))) ||
+    (isPendingInvite && trip.ownerId === session.userId);
   if (!allowed) throw new HTTPException(403, { message: "Forbidden" });
 
   await Participant.updateOne(
     { _id: id },
-    { $set: { lifelist: [], lifelistUpdatedAt: null, ...(p.uid ? { listMode: "world" } : {}) } }
+    { $set: { lifelist: [], lifelistUpdatedAt: null, ...(p.userId ? { listMode: "world" } : {}) } }
   );
   return c.json({});
 });
@@ -280,12 +295,12 @@ participants.post("/:id/seen", async (c) => {
   ]);
   if (!p || !trip) throw new HTTPException(404, { message: "Participant not found" });
 
-  const isSelf = !!p.uid && p.uid === session.uid;
-  const isOwnerManagingNamed = !p.uid && trip.ownerId === session.uid;
+  const isSelf = !!p.userId && p.userId === session.userId;
+  const isOwnerManagingNamed = !p.userId && trip.ownerId === session.userId;
   if (!isSelf && !isOwnerManagingNamed) throw new HTTPException(403, { message: "Forbidden" });
 
-  if (p.uid && p.listMode === "world") {
-    await Profile.updateOne({ uid: p.uid }, { $addToSet: { lifelist: code }, $pull: { exceptions: code } });
+  if (p.userId && p.listMode === "world") {
+    await User.updateOne({ _id: p.userId }, { $addToSet: { lifelist: code }, $pull: { exceptions: code } });
   } else {
     await Participant.updateOne({ _id: id }, { $addToSet: { lifelist: code }, $set: { lifelistUpdatedAt: new Date() } });
   }
@@ -303,8 +318,8 @@ participants.delete("/:id", async (c) => {
   if (!p) throw new HTTPException(404, { message: "Participant not found" });
   if (p.isOwner) throw new HTTPException(400, { message: "Cannot remove the trip owner" });
 
-  const isSelf = !!p.uid && p.uid === session.uid;
-  const isEditor = await isTripEditor(tripId, session.uid);
+  const isSelf = !!p.userId && p.userId === session.userId;
+  const isEditor = await isTripEditor(tripId, session.userId);
   if (!isSelf && !isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
   await Participant.deleteOne({ _id: id });

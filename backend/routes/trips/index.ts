@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { rateLimiter } from "hono-rate-limiter";
 import trip from "./[tripId]/index.js";
 import { authenticate, getBounds } from "lib/utils.js";
-import { connect, Trip, Participant, TripShareToken } from "lib/db.js";
+import { connect, Trip, Participant, IntegrationToken, User } from "lib/db.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripInput } from "@birdplan/shared";
@@ -69,21 +69,21 @@ trips.get("/openbirding/:codeOrToken", shareCodeLimiter, async (c) => {
       throw new HTTPException(404, { message: "Trip not found" });
     }
 
-    const shareToken = await TripShareToken.create({ tripId: trip._id, type: "openbirding" });
+    const integrationToken = await IntegrationToken.create({ tripId: trip._id, type: "openbirding" });
 
-    return c.json({ ...serializeTripForImport(trip), updateToken: shareToken._id });
+    return c.json({ ...serializeTripForImport(trip), updateToken: integrationToken._id });
   }
 
-  const shareToken = await TripShareToken.findOneAndUpdate(
+  const integrationToken = await IntegrationToken.findOneAndUpdate(
     { _id: codeOrToken, type: "openbirding" },
     { $set: { lastUsedAt: new Date() } }
   ).lean();
 
-  if (!shareToken) {
+  if (!integrationToken) {
     throw new HTTPException(404, { message: "Invalid token" });
   }
 
-  const trip = await Trip.findById(shareToken.tripId).lean();
+  const trip = await Trip.findById(integrationToken.tripId).lean();
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
@@ -97,7 +97,7 @@ trips.get("/", async (c) => {
   const session = await authenticate(c);
 
   await connect();
-  const tripIds = await Participant.find({ uid: session.uid, status: "active" }).distinct("tripId");
+  const tripIds = await Participant.find({ userId: session.userId, status: "active" }).distinct("tripId");
   const trips = await Trip.find({ _id: { $in: tripIds } })
     .sort({ createdAt: -1 })
     .lean();
@@ -118,10 +118,13 @@ trips.post("/", async (c) => {
   const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
 
   await connect();
+  const user = await User.findOne({ _id: session.userId }).select("name").lean();
+  const ownerName = user?.name || "";
+
   const trip = await Trip.create({
     ...data,
-    ownerId: session.uid,
-    ownerName: session.name,
+    ownerId: session.userId,
+    ownerName,
     bounds,
     imgUrl,
     itinerary: [],
@@ -131,8 +134,8 @@ trips.post("/", async (c) => {
 
   await Participant.create({
     tripId: trip._id,
-    uid: session.uid,
-    name: session.name,
+    userId: session.userId,
+    name: ownerName,
     status: "active",
     listMode: "world",
     isOwner: true,

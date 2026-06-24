@@ -19,7 +19,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.0",
-    "firebase": "^9.6.8",
     "idb-keyval": "^6.2.1",
     "lucide-react": "^1.21.0",
     "mapbox-gl": "^2.13.0",

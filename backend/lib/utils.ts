@@ -1,47 +1,42 @@
 import { HTTPException } from "hono/http-exception";
 import type { Context } from "hono";
-import { auth } from "lib/firebaseAdmin.js";
 import { customAlphabet } from "nanoid";
-import type { Trip, Hotspot } from "@birdplan/shared";
+import type { Trip, Hotspot, Session } from "@birdplan/shared";
+import { validateSessionToken } from "lib/session.js";
+import { INVITE_EXPIRATION_DAYS } from "lib/config.js";
 
 export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
 
-export async function authenticate(c: Context) {
-  if (!auth) {
-    throw new HTTPException(503, { message: "Authentication service not available" });
-  }
+export const newInviteToken = () => ({
+  inviteToken: nanoId(40),
+  inviteExpiresAt: new Date(Date.now() + INVITE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000),
+});
 
+export const isDuplicateKeyError = (err: unknown): boolean => (err as { code?: number })?.code === 11000;
+
+function getBearerToken(c: Context): string {
   const authHeader = c.req.header("authorization");
-
-  if (!authHeader?.startsWith("Bearer ")) {
-    throw new HTTPException(401, { message: "Unauthorized" });
-  }
-
-  const token = authHeader.split("Bearer ")[1];
-
-  try {
-    return await auth.verifyIdToken(token);
-  } catch (error) {
-    console.error("Firebase auth error:", error);
-    throw new HTTPException(401, { message: "Unauthorized" });
-  }
+  if (!authHeader?.startsWith("Bearer ")) return "";
+  return authHeader.slice("Bearer ".length).trim();
 }
 
-export async function authenticateOptional(c: Context) {
-  const authHeader = c.req.header("authorization");
-  const token = authHeader?.startsWith("Bearer ") ? authHeader.split("Bearer ")[1] : "";
+export async function authenticate(c: Context): Promise<Session> {
+  const token = getBearerToken(c);
+  if (!token) throw new HTTPException(401, { message: "Unauthorized" });
 
-  if (!auth || !token) {
-    return null;
-  }
+  const session = await validateSessionToken(token);
+  if (!session) throw new HTTPException(401, { message: "Unauthorized" });
 
-  try {
-    return await auth.verifyIdToken(token);
-  } catch {
-    return null;
-  }
+  return session;
+}
+
+export async function authenticateOptional(c: Context): Promise<Session | null> {
+  const token = getBearerToken(c);
+  if (!token) return null;
+
+  return await validateSessionToken(token);
 }
 
 export const getBounds = async (regionString: string) => {

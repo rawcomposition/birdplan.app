@@ -1,7 +1,7 @@
 import React from "react";
 import FavButton from "components/FavButton";
 import MutualBadge from "components/MutualBadge";
-import { useSpeciesImages } from "providers/species-images";
+import { useSpeciesImages } from "hooks/useSpeciesImages";
 
 type Props = {
   code: string;
@@ -19,7 +19,6 @@ export default function HotspotTargetRow({
   code,
   name,
   frequency,
-  index,
   hotspotId,
   range,
   isSaved,

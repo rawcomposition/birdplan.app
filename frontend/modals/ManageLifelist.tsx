@@ -2,8 +2,9 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Header, Body, Footer, useModal } from "providers/modals";
-import { useTrip } from "providers/trip";
+import { Header, Body, Footer } from "components/Modal";
+import { useModal } from "stores/modals";
+import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 import LifelistEditor from "components/LifelistEditor";
 import LifelistField from "components/LifelistField";
@@ -27,7 +28,7 @@ export default function ManageLifelist({ participantId }: Props) {
 
   const isSelf = !!p?.isMe;
   const isPending = p?.status === "pending";
-  const isNameOnly = !!p && !p.uid && !isPending;
+  const isNameOnly = !!p && !p.userId && !isPending;
   const isGroup = (participants?.length ?? 0) > 1;
 
   const [nameDraft, setNameDraft] = React.useState(p?.name || "");

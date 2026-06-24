@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mutate } from "lib/http";
 import { Trip } from "@birdplan/shared";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 
 type Options<TInput> = {
   url: string;

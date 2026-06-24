@@ -18,7 +18,7 @@
     "hono-rate-limiter": "^0.5.3",
     "mongoose": "^8.15.1",
     "nanoid": "^5.1.5",
-    "resend": "^4.5.2"
+    "resend": "^6.14.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

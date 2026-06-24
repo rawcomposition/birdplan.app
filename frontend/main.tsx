@@ -6,11 +6,12 @@ import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { toast } from "react-hot-toast";
 import * as idbKeyval from "idb-keyval";
-import { get } from "lib/http";
+import { get, setUnauthorizedHandler } from "lib/http";
+import { teardownSession, IDB_CACHE_KEY } from "lib/logout";
 import ErrorBoundary from "components/ErrorBoundary";
 import { router } from "router";
 
-const QUERY_CACHE_BUSTER = "birdplan-cache-v1";
+const QUERY_CACHE_BUSTER = "birdplan-cache-v2";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,9 +63,16 @@ const idbStorage = {
 
 persistQueryClient({
   queryClient,
-  persister: createAsyncStoragePersister({ storage: idbStorage, key: "BIRDPLAN_QUERY_CACHE" }),
+  persister: createAsyncStoragePersister({ storage: idbStorage, key: IDB_CACHE_KEY }),
   maxAge: 30 * 24 * 60 * 60 * 1000,
   buster: QUERY_CACHE_BUSTER,
+});
+
+setUnauthorizedHandler(async () => {
+  await teardownSession(queryClient);
+  if (!window.location.pathname.startsWith("/login")) {
+    window.location.href = "/login";
+  }
 });
 
 createRoot(document.getElementById("root")!).render(

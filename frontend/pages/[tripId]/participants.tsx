@@ -7,10 +7,9 @@ import Button from "components/Button";
 import Card from "components/Card";
 import Input from "components/Input";
 import NotFound from "components/NotFound";
-import LoginModal from "components/LoginModal";
 import ParticipantRow from "components/ParticipantRow";
-import { useTrip } from "providers/trip";
-import { useModal } from "providers/modals";
+import { useTrip } from "hooks/useTrip";
+import { useModal } from "stores/modals";
 import { getReturnLabel } from "lib/helpers";
 
 export default function TripParticipants() {
@@ -104,7 +103,6 @@ export default function TripParticipants() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

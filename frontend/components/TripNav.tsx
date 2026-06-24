@@ -1,8 +1,8 @@
 import React from "react";
 import clsx from "clsx";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import { Link, useLocation } from "react-router-dom";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import TripOptionsDropdown from "components/TripOptionsDropdown";
 import Icon from "components/Icon";
 

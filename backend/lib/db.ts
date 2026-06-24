@@ -1,8 +1,13 @@
 import Trip from "models/Trip.js";
-import Profile from "models/Profile.js";
+import User from "models/User.js";
 import Invite from "models/Invite.js";
 import Participant from "models/Participant.js";
-import TripShareToken from "models/TripShareToken.js";
+import IntegrationToken from "models/IntegrationToken.js";
+import Session from "models/Session.js";
+import OtpCode from "models/OtpCode.js";
+import MagicLink from "models/MagicLink.js";
+import RateLimit from "models/RateLimit.js";
+import Log from "models/Log.js";
 import mongoose from "mongoose";
 
 let isConnected = false;
@@ -44,4 +49,4 @@ export async function connect() {
   }
 }
 
-export { Trip, Profile, Invite, Participant, TripShareToken };
+export { Trip, User, Invite, Participant, IntegrationToken, Session, OtpCode, MagicLink, RateLimit, Log };

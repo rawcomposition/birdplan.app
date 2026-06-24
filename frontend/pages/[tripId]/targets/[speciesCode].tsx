@@ -16,12 +16,12 @@ import Card from "components/Card";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
-import { useTrip } from "providers/trip";
-import { useUser } from "providers/user";
+import { useTrip } from "hooks/useTrip";
+import { useUser } from "hooks/useUser";
 import useTripLifelist from "hooks/useTripLifelist";
 import useMutualTargets from "hooks/useMutualTargets";
-import { useSpeciesImages } from "providers/species-images";
-import { useModal } from "providers/modals";
+import { useSpeciesImages } from "hooks/useSpeciesImages";
+import { useModal } from "stores/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useTripMutation from "hooks/useTripMutation";
@@ -30,7 +30,7 @@ import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
 import { getMonthRange } from "lib/targets";
 import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
-import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
+import type { OpenBirdingHotspotRankingResponse, User } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
   const { speciesCode = "" } = useParams();
@@ -93,13 +93,13 @@ export default function SpeciesDetail() {
     url: `/profile/lifelist/add`,
     method: "POST",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
       queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
     },
     onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: ["/profile"] });
-      const prevData = queryClient.getQueryData([`/profile`]);
-      queryClient.setQueryData<Profile | undefined>([`/profile`], (old) =>
+      await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
+      const prevData = queryClient.getQueryData(["/auth/me"]);
+      queryClient.setQueryData<User | undefined>(["/auth/me"], (old) =>
         old
           ? {
               ...old,
@@ -110,7 +110,7 @@ export default function SpeciesDetail() {
       );
       return { prevData };
     },
-    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData([`/profile`], ctx?.prevData),
+    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData(["/auth/me"], ctx?.prevData),
   });
 
   const customSeenMutation = useTripMutation<{ code: string }>({
@@ -306,7 +306,7 @@ export default function SpeciesDetail() {
       {trip && speciesName && (
           <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>
       )}
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="targets" />
       <main className="flex-1 relative bg-gray-50">
         <ErrorBoundary>

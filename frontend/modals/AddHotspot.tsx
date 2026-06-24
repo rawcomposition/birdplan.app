@@ -1,9 +1,9 @@
 import React from "react";
-import { Header, Body } from "providers/modals";
+import { Header, Body } from "components/Modal";
 import Input from "components/Input";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import { eBirdHotspot, HotspotInput } from "@birdplan/shared";
 import Icon from "components/Icon";
 import clsx from "clsx";

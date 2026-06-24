@@ -1,5 +1,5 @@
 import { Trip } from "@birdplan/shared";
-import { useProfile } from "providers/profile";
+import { useUser } from "hooks/useUser";
 
 export type TripLifelist = {
   lifelist: string[];
@@ -9,7 +9,7 @@ export type TripLifelist = {
 };
 
 export default function useTripLifelist(trip?: Trip | null): TripLifelist {
-  const { lifelist: worldLifelist } = useProfile();
+  const { lifelist: worldLifelist } = useUser();
 
   const lifelist = trip?.groupLifelist ?? trip?.tripLifelist ?? trip?.viewerLifelist ?? worldLifelist;
   const myLifelist = trip?.viewer?.listMode === "custom" ? trip?.viewerLifelist ?? worldLifelist : worldLifelist;

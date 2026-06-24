@@ -1,0 +1,16 @@
+import * as idbKeyval from "idb-keyval";
+import type { QueryClient } from "@tanstack/react-query";
+import { clearSessionToken, clearSessionTokenStorage } from "lib/sessionToken";
+
+export const IDB_CACHE_KEY = "BIRDPLAN_QUERY_CACHE";
+
+export async function teardownSession(queryClient: QueryClient) {
+  clearSessionToken();
+  queryClient.clear();
+  await idbKeyval.del(IDB_CACHE_KEY);
+}
+
+export async function teardownSessionForReload() {
+  clearSessionTokenStorage();
+  await idbKeyval.del(IDB_CACHE_KEY);
+}

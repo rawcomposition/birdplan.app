@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import toast from "react-hot-toast";
 import Field from "components/Field";
 import Input from "components/Input";
@@ -10,12 +10,12 @@ import Icon from "components/Icon";
 import useMutation from "hooks/useMutation";
 import { Link } from "react-router-dom";
 
-export default function Support() {
+export default function Contact() {
   const { user } = useUser();
   const [submitted, setSubmitted] = React.useState(false);
 
   const mutation = useMutation({
-    url: "/support",
+    url: "/contact",
     method: "POST",
     onSuccess: () => {
       setSubmitted(true);
@@ -40,7 +40,7 @@ export default function Support() {
       userAgent: navigator.userAgent,
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
-      userId: user?.uid || "not logged in",
+      userId: user?._id || "not logged in",
     };
 
     mutation.mutate({
@@ -54,12 +54,12 @@ export default function Support() {
 
   return (
     <div className="flex flex-col h-full">
-        <title>Support | BirdPlan.app</title>
+        <title>Contact | BirdPlan.app</title>
 
       <HomeHeader />
       <main className="container px-4">
         <div className="max-w-2xl mx-auto py-12">
-          <h1 className="text-4xl text-gray-800 leading-normal font-bold mb-8">Support</h1>
+          <h1 className="text-4xl text-gray-800 leading-normal font-bold mb-8">Contact</h1>
 
           {submitted ? (
             <div className="bg-white p-8 rounded-lg shadow-sm">
@@ -68,10 +68,10 @@ export default function Support() {
                 We&apos;ve received your request and will get back to you as soon as possible.
               </p>
               <Link
-                to={user?.uid ? `/trips` : "/"}
+                to={user?._id ? `/trips` : "/"}
                 className="text-gray-500 hover:text-gray-600 ml-4 md:ml-0 inline-flex items-center"
               >
-                {user?.uid ? "← Back to trips" : "← Back to home"}
+                {user?._id ? "← Back to trips" : "← Back to home"}
               </Link>
             </div>
           ) : (
@@ -81,7 +81,7 @@ export default function Support() {
               </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <Field label="Name">
-                  <Input type="text" name="name" defaultValue={user?.displayName || ""} required autoFocus />
+                  <Input type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
                 </Field>
 
                 <Field label="Email">

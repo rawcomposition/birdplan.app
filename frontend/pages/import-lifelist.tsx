@@ -1,13 +1,12 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useProfile } from "providers/profile";
+import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Button from "components/Button";
 import Card from "components/Card";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
-import LoginModal from "components/LoginModal";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
 import { Link } from "react-router-dom";
@@ -21,7 +20,9 @@ import Alert from "components/Alert";
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
   const [seededKey, setSeededKey] = React.useState<string | null>(null);
-  const { lifelist, lifelistUpdatedAt, exceptions } = useProfile();
+  const { user, lifelist } = useUser();
+  const lifelistUpdatedAt = user?.lifelistUpdatedAt;
+  const exceptions = user?.exceptions;
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
 
@@ -40,7 +41,7 @@ export default function ImportLifelist() {
     url: "/profile",
     method: "PATCH",
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
     },
   });
 
@@ -49,7 +50,7 @@ export default function ImportLifelist() {
     method: "PUT",
     onSuccess: () => {
       toast.success("Life list imported");
-      queryClient.invalidateQueries({ queryKey: [`/profile`] });
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
     },
   });
 
@@ -181,7 +182,6 @@ export default function ImportLifelist() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

@@ -1,14 +1,14 @@
 import React from "react";
 import Header from "components/Header";
 import MapBox from "components/Mapbox";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { getMarkerColorIndex } from "lib/helpers";
 import toast from "react-hot-toast";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import CloseButton from "components/CloseButton";
 import TripNav from "components/TripNav";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
@@ -68,7 +68,7 @@ export default function Trip() {
           <title>{`${trip.name} | BirdPlan.app`}</title>
       )}
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="" border={false} />
       <main className="flex h-[calc(100%-60px-55px)] relative">
         <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">

@@ -3,12 +3,11 @@ import Header from "components/Header";
 import Button from "components/Button";
 import TripCard from "components/TripCard";
 import { Link } from "react-router-dom";
-import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import Notice from "components/Notice";
 import { useQuery } from "@tanstack/react-query";
 import { Trip } from "@birdplan/shared";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import Error from "components/Error";
 
 export default function Trips() {
@@ -16,7 +15,7 @@ export default function Trips() {
 
   const { data, isLoading, error, refetch } = useQuery<Trip[]>({
     queryKey: ["/trips"],
-    enabled: !!user?.uid,
+    enabled: !!user?._id,
   });
 
   return (
@@ -49,7 +48,6 @@ export default function Trips() {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

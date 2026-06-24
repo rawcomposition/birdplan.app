@@ -19,6 +19,7 @@
     "dev:backend": "npm run dev --workspace=backend",
     "get-avicommons": "npm run get-avicommons --workspace=scripts",
     "tz-sync-regions": "npm run tz-sync-regions --workspace=scripts",
+    "backfill-emails": "npm run backfill-emails --workspace=scripts",
     "lint": "npm run lint --workspace=frontend",
     "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=scripts && npm run typecheck --workspace=shared"
   },

@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "components/Button";
 import Icon from "components/Icon";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import Footer from "components/Footer";
 import HomeHeader from "components/HomeHeader";
 
@@ -40,7 +40,7 @@ const features = [
 
 export default function BirdPlan() {
   const { user } = useUser();
-  const isLoggedIn = !!user?.uid;
+  const isLoggedIn = !!user?._id;
   return (
     <div className="flex flex-col h-full">
         <title>BirdPlan.app - Plan Your Next Birding Adventure</title>

@@ -1,5 +1,5 @@
 import React from "react";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import TextareaAutosize from "react-textarea-autosize";
 
 type Props = {

@@ -2,7 +2,7 @@ import React from "react";
 import Icon from "components/Icon";
 import Button from "components/Button";
 import { dateTimeToRelative } from "lib/helpers";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";

@@ -6,12 +6,20 @@ import { Link } from "react-router-dom";
 export default function WhatsNew() {
   return (
     <div className="flex flex-col h-full">
-        <title>{`What's New | BirdPlan.app`}</title>
+      <title>What&apos;s New | BirdPlan.app</title>
 
       <HomeHeader />
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 24, 2026</h2>
+          <ul>
+            <li>
+              🔑 <strong>Sign in with Google has been removed.</strong> We&apos;ve switched to a simpler email sign-in:
+              enter your email and we&apos;ll send you a one-time code. This streamlines our authentication and reduces
+              our reliance on external services. To get back in, just use the same email address you signed up with.
+            </li>
+          </ul>
           <h2>June 19, 2026</h2>
           <ul>
             <li>
@@ -37,7 +45,11 @@ export default function WhatsNew() {
           <h2>June 11, 2026</h2>
           <ul>
             <li>
-              ✨ You can now send a trip to the <a href="https://openbirding.org" target="_blank" rel="noreferrer">OpenBirding</a> app from the trip options menu.
+              ✨ You can now send a trip to the{" "}
+              <a href="https://openbirding.org" target="_blank" rel="noreferrer">
+                OpenBirding
+              </a>{" "}
+              app from the trip options menu.
             </li>
           </ul>
           <h2>June 9, 2026</h2>
@@ -54,7 +66,10 @@ export default function WhatsNew() {
           </ul>
           <h2>May 4, 2026</h2>
           <ul>
-            <li>✨ New target species pages with ranked hotspots, filters for recent activity and frequency, and monthly charts.</li>
+            <li>
+              ✨ New target species pages with ranked hotspots, filters for recent activity and frequency, and monthly
+              charts.
+            </li>
           </ul>
           <h2>March 26, 2026</h2>
           <ul>
@@ -62,7 +77,13 @@ export default function WhatsNew() {
           </ul>
           <h2>March 25, 2026</h2>
           <ul>
-            <li>✨ Target species now load significantly faster, powered by <a href="https://openbirding.org" target="_blank" rel="noreferrer">OpenBirding.org</a>.</li>
+            <li>
+              ✨ Target species now load significantly faster, powered by{" "}
+              <a href="https://openbirding.org" target="_blank" rel="noreferrer">
+                OpenBirding.org
+              </a>
+              .
+            </li>
             <li>🐞 Fixed a bug where adding days to the itinerary would display duplicate days.</li>
           </ul>
           <h2>December 17, 2025</h2>
@@ -99,7 +120,7 @@ export default function WhatsNew() {
           <h2>April 27, 2025</h2>
           <ul>
             <li>
-              ✨ Added a <Link to="/support">support page</Link> with a contact form.
+              ✨ Added a <Link to="/contact">support page</Link> with a contact form.
             </li>
           </ul>
           <h2>April 17, 2025</h2>

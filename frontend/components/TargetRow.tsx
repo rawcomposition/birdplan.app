@@ -1,11 +1,11 @@
 import React from "react";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import type { Target } from "@birdplan/shared";
-import { useSpeciesImages } from "providers/species-images";
+import { useSpeciesImages } from "hooks/useSpeciesImages";
 import useTripMutation from "hooks/useTripMutation";
 import MutualBadge from "components/MutualBadge";
 import { useNavigate } from "react-router-dom";

@@ -1,8 +1,9 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Header, Body, Footer, useModal } from "providers/modals";
-import { useTrip } from "providers/trip";
+import { Header, Body, Footer } from "components/Modal";
+import { useModal } from "stores/modals";
+import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 import Button from "components/Button";
 import Input from "components/Input";

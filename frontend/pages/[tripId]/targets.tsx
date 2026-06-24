@@ -1,16 +1,15 @@
 import React from "react";
 import Header from "components/Header";
 import MapBox from "components/Mapbox";
-import { useModal } from "providers/modals";
+import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import toast from "react-hot-toast";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import SpeciesCard from "components/SpeciesCard";
 import Card from "components/Card";
 import Button from "components/Button";
 import TripNav from "components/TripNav";
-import { useUser } from "providers/user";
-import Input from "components/Input";
+import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
@@ -110,7 +109,7 @@ export default function TripTargets() {
 
       <Header
         title={trip?.name || ""}
-        parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }}
+        parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }}
       />
       <TripNav active="targets" />
       <main className="flex h-[calc(100%-60px-55px)] relative bg-gray-50">
@@ -129,18 +128,6 @@ export default function TripTargets() {
                 )}
                 {!isLoadingTargets && !!trip && (
                   <>
-                    {!!regionData?.items?.length && (
-                      <p className="mb-2 sm:mb-3 text-sm text-gray-600">
-                        Found{" "}
-                        <span className="font-semibold text-gray-900 tabular-nums">
-                          {filteredTargets?.length}
-                        </span>{" "}
-                        species above{" "}
-                        <span className="font-semibold text-gray-900 tabular-nums">
-                          {minPercent}%
-                        </span>
-                      </p>
-                    )}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                       <div className="relative w-full sm:flex-1 sm:max-w-sm">
                         <Icon
@@ -211,6 +198,18 @@ export default function TripTargets() {
                         <TargetsOptionsDropdown trip={trip} />
                       </div>
                     </div>
+                    {!!regionData?.items?.length && (
+                      <p className="mb-2 sm:mb-3 text-sm text-gray-600">
+                        Found{" "}
+                        <span className="font-semibold text-gray-900 tabular-nums">
+                          {filteredTargets?.length}
+                        </span>{" "}
+                        species above{" "}
+                        <span className="font-semibold text-gray-900 tabular-nums">
+                          {minPercent}%
+                        </span>
+                      </p>
+                    )}
                   </>
                 )}
                 {targetsError && (

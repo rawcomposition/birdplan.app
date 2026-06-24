@@ -1,8 +1,13 @@
 import { toast } from "react-hot-toast";
-import { auth, authReady } from "lib/firebase";
+import { getSessionToken } from "lib/sessionToken";
 
 type Params = {
   [key: string]: string | number | boolean;
+};
+
+let onUnauthorized: (() => void) | null = null;
+export const setUnauthorizedHandler = (fn: () => void) => {
+  onUnauthorized = fn;
 };
 
 export const get = async (url: string, params: Params, showLoading?: boolean) => {
@@ -20,11 +25,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 
   if (showLoading) toast.loading("Loading...", { id: url });
   const isBackend = urlWithParams.startsWith(import.meta.env.VITE_API_URL);
-  let token: string | undefined;
-  if (isBackend) {
-    await authReady;
-    token = await auth?.currentUser?.getIdToken();
-  }
+  const token = isBackend ? getSessionToken() : undefined;
   const res = await fetch(urlWithParams, {
     method: "GET",
     headers: isBackend ? { Authorization: `Bearer ${token || ""}` } : undefined,
@@ -35,9 +36,12 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 
   try {
     json = await res.json();
-  } catch (error) {}
+  } catch {}
   if (!res.ok) {
-    if (res.status === 401) throw new Error("Unauthorized");
+    if (res.status === 401) {
+      if (isBackend) onUnauthorized?.();
+      throw new Error("Unauthorized");
+    }
     if (res.status === 403) throw new Error("Forbidden");
     if (res.status === 404) throw new Error(json.message && json.message !== "Not Found" ? json.message : "Route not found");
     if (res.status === 405) throw new Error("Method not allowed");
@@ -48,8 +52,7 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
 };
 
 export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: string, data?: any) => {
-  await authReady;
-  const token = await auth?.currentUser?.getIdToken();
+  const token = getSessionToken();
   const fullUrl = `${import.meta.env.VITE_API_URL}${url}`;
   const res = await fetch(fullUrl, {
     method,
@@ -63,10 +66,13 @@ export const mutate = async (method: "POST" | "PUT" | "DELETE" | "PATCH", url: s
   let json: any | null = null;
   try {
     json = await res.json();
-  } catch (error) {}
+  } catch {}
 
   if (!res.ok) {
-    if (res.status === 401) throw new Error("Unauthorized");
+    if (res.status === 401) {
+      onUnauthorized?.();
+      throw new Error("Unauthorized");
+    }
     if (res.status === 403) throw new Error("Forbidden");
     if (res.status === 404)
       throw new Error(json?.message && json.message !== "Not Found" ? json.message : "Route not found");

@@ -1,9 +1,8 @@
 import React from "react";
 import Header from "components/Header";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import toast from "react-hot-toast";
 import MonthSelect from "components/MonthSelect";
-import LoginModal from "components/LoginModal";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
@@ -170,7 +169,6 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
         </div>
       </main>
       <Footer />
-      <LoginModal showLoader={false} />
     </div>
   );
 }

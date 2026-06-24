@@ -4,7 +4,7 @@ import trips from "routes/trips/index.js";
 import account from "routes/account.js";
 import profile from "routes/profile.js";
 import auth from "routes/auth.js";
-import support from "routes/support.js";
+import contact from "routes/contact.js";
 import taxonomy from "routes/taxonomy.js";
 import region from "routes/region.js";
 import ebirdProxy from "routes/ebird-proxy.js";
@@ -25,7 +25,7 @@ app.route("/v1/profile", profile);
 app.route("/v1/account", account);
 app.route("/v1/trips", trips);
 app.route("/v1/auth", auth);
-app.route("/v1/support", support);
+app.route("/v1/contact", contact);
 app.route("/v1/taxonomy", taxonomy);
 app.route("/v1/region", region);
 app.route("/v1/ebird-proxy", ebirdProxy);
@@ -37,9 +37,9 @@ app.notFound((c) => {
 });
 
 app.onError((err, c) => {
-  const message = err instanceof Error ? err.message : "Internal Server Error";
-  const status = err instanceof HTTPException ? err.status : 500;
-  return c.json({ message }, status);
+  if (err instanceof HTTPException) return c.json({ message: err.message }, err.status);
+  console.error(err);
+  return c.json({ message: "Something went wrong. Please try again." }, 500);
 });
 
 serve(

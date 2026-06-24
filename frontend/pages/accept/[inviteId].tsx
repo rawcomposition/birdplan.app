@@ -1,15 +1,14 @@
 import React from "react";
 import UtilityPage from "components/UtilityPage";
-import LoginForm from "components/LoginForm";
-import SignupForm from "components/SignupForm";
 import AcceptError from "components/AcceptError";
 import Button from "components/Button";
 import Icon from "components/Icon";
-import { useUser } from "providers/user";
+import { useUser } from "hooks/useUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Profile, InviteInfo } from "@birdplan/shared";
+import { AcceptInviteResponse, InviteInfo } from "@birdplan/shared";
 import useMutation from "hooks/useMutation";
+import { setSessionToken } from "lib/sessionToken";
 import { withReturnTo } from "lib/helpers";
 
 export default function Accept() {
@@ -17,13 +16,6 @@ export default function Accept() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { inviteId } = useParams();
-  const uid = user?.uid;
-  const firedRef = React.useRef(false);
-
-  const { isSuccess: profileLoaded } = useQuery<Profile>({
-    queryKey: ["/profile"],
-    enabled: !!uid,
-  });
 
   const {
     data: invite,
@@ -33,34 +25,32 @@ export default function Accept() {
     isFetching: inviteFetching,
   } = useQuery<InviteInfo>({
     queryKey: [`/participants/${inviteId}/invite`],
-    enabled: !!inviteId && !uid,
+    enabled: !!inviteId,
     retry: false,
   });
 
-  const acceptMutation = useMutation({
+  const acceptMutation = useMutation<AcceptInviteResponse>({
     url: `/participants/${inviteId}/accept`,
-    method: "PATCH",
+    method: "POST",
     showToastError: false,
-    onSuccess: (data: any) => {
-      const profile = queryClient.getQueryData<Profile>(["/profile"]);
-      const dest = `/${data?.tripId}/lifelist?from=accept`;
-      if (profile?.lifelist?.length) {
-        navigate(dest);
-      } else {
+    onSuccess: async (data) => {
+      if (data.token) {
+        setSessionToken(data.token);
+        await queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
+      }
+      const dest = `/${data.tripId}/lifelist?from=accept`;
+      if (!data.hasName) {
+        navigate(withReturnTo("/onboarding", dest));
+      } else if (!data.hasLifelist) {
         navigate(`${withReturnTo("/import-lifelist", dest)}&onboarding=1`);
+      } else {
+        navigate(dest);
       }
     },
   });
 
-  React.useEffect(() => {
-    if (!uid || !inviteId || !profileLoaded || firedRef.current) return;
-    firedRef.current = true;
-    acceptMutation.mutate({});
-  }, [uid, inviteId, profileLoaded]);
+  const accept = () => acceptMutation.mutate({});
 
-  const retry = () => acceptMutation.mutate({});
-
-  const method = invite?.method;
   const inviteLoading = !invite && !inviteIsError;
 
   const heading = invite ? (
@@ -74,13 +64,17 @@ export default function Accept() {
     "Accept Invite"
   );
 
-  return (
-    <UtilityPage heading={heading} title="Accept Invite">
-      {loading || (!uid && inviteLoading) ? (
+  const renderBody = () => {
+    if (loading || inviteLoading) {
+      return (
         <div className="text-center">
           <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
         </div>
-      ) : !uid && inviteIsError ? (
+      );
+    }
+
+    if (inviteIsError) {
+      return (
         <AcceptError
           title="Error accepting invite"
           message={inviteError?.message || "This invite is no longer valid."}
@@ -91,34 +85,51 @@ export default function Accept() {
             Go to homepage
           </Button>
         </AcceptError>
-      ) : !uid && invite && invite.status !== "pending" ? (
-        <AcceptError title="Error accepting invite" message="This invite has already been accepted.">
-          <Button color="primary" href="/">
-            Go to homepage
+      );
+    }
+
+    if (!invite || invite.status !== "pending") {
+      return (
+        <AcceptError title="Invite already accepted" message="This invite has already been accepted.">
+          <Button color="primary" href={invite ? `/${invite.tripId}` : "/trips"}>
+            Go to trip
           </Button>
         </AcceptError>
-      ) : !uid ? (
-        method === "login" ? (
-          <LoginForm email={invite?.email} />
-        ) : (
-          <SignupForm email={invite?.email} />
-        )
-      ) : acceptMutation.isError ? (
+      );
+    }
+
+    if (acceptMutation.isError) {
+      return (
         <AcceptError
           title="Error accepting invite"
           message={acceptMutation.error?.message || "We couldn't accept this invite."}
-          onRetry={retry}
+          onRetry={accept}
           retrying={acceptMutation.isPending}
         >
           <Button color="primary" href="/trips">
             Go to my trips
           </Button>
         </AcceptError>
-      ) : (
-        <div className="flex items-center justify-center gap-2 py-6 text-gray-600">
-          <Icon name="loading" className="animate-spin" /> One moment...
-        </div>
-      )}
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        {!user && (
+          <p className="text-center text-gray-600">
+            Accept as <span className="font-semibold text-gray-800">{invite.email}</span>.
+          </p>
+        )}
+        <Button color="primary" className="w-full" onClick={accept} disabled={acceptMutation.isPending}>
+          {acceptMutation.isPending ? "Accepting..." : user ? `Accept as ${user.email}` : "Accept invitation"}
+        </Button>
+      </div>
+    );
+  };
+
+  return (
+    <UtilityPage heading={heading} title="Accept Invite">
+      {renderBody()}
     </UtilityPage>
   );
 }

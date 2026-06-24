@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useModal } from "providers/modals";
-import { useProfile } from "providers/profile";
-import { useTrip } from "providers/trip";
+import { useModal } from "stores/modals";
+import { useUser } from "hooks/useUser";
+import { useTrip } from "hooks/useTrip";
 import useTargetView from "hooks/useTargetView";
 import {
   DropdownMenu,
@@ -19,7 +19,7 @@ type Props = {
 
 export default function TripOptionsDropdown({ className }: Props) {
   const { open } = useModal();
-  const { uid } = useProfile();
+  const { user } = useUser();
   const { trip, canEdit, participants } = useTrip();
   const { view } = useTargetView(trip);
 
@@ -48,7 +48,7 @@ export default function TripOptionsDropdown({ className }: Props) {
     },
     {
       name: "Export KML",
-      href: `${import.meta.env.VITE_API_URL}/trips/${trip?._id}/export?uid=${uid}&targets=${view}`,
+      href: `${import.meta.env.VITE_API_URL}/trips/${trip?._id}/export?userId=${user?._id}&targets=${view}`,
       icon: <Download />,
     },
     {

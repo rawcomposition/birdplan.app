@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Body } from "providers/modals";
+import { Header, Body } from "components/Modal";
 import { Hotspot as HotspotT } from "@birdplan/shared";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 
 type Props = {
   hotspot: HotspotT;

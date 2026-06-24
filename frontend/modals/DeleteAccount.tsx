@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header, Body, Footer, useModal } from "providers/modals";
+import { useQueryClient } from "@tanstack/react-query";
+import { Header, Body, Footer } from "components/Modal";
+import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import Button from "components/Button";
-import useFirebaseLogout from "hooks/useFirebaseLogout";
+import { teardownSession } from "lib/logout";
 
 export default function DeleteAccount() {
   const [confirmInput, setConfirmInput] = useState("");
   const navigate = useNavigate();
   const { close } = useModal();
-  const { logout } = useFirebaseLogout();
+  const queryClient = useQueryClient();
 
   const CONFIRM_TEXT = "DELETE";
   const isConfirmed = confirmInput === CONFIRM_TEXT;
@@ -20,7 +22,7 @@ export default function DeleteAccount() {
     method: "DELETE",
     onSuccess: async () => {
       close();
-      await logout();
+      await teardownSession(queryClient);
       toast.success("Your account has been deleted");
       navigate("/");
     },

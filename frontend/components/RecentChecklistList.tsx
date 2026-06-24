@@ -1,7 +1,7 @@
 import React from "react";
 import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
-import { useTrip } from "providers/trip";
+import { useTrip } from "hooks/useTrip";
 import Button from "components/Button";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";

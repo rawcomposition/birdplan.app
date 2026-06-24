@@ -1,8 +1,7 @@
 import React from "react";
-import Icon from "components/Icon";
 import CloseButton from "components/CloseButton";
-import { useTrip } from "providers/trip";
-import { useModal } from "providers/modals";
+import { useTrip } from "hooks/useTrip";
+import { useModal } from "stores/modals";
 
 type Props = {
   name: string;

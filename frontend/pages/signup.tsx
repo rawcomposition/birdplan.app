@@ -1,24 +1,25 @@
 import React from "react";
-import { useUser } from "providers/user";
 import UtilityPage from "components/UtilityPage";
-import SignupForm from "components/SignupForm";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import AuthForm from "components/AuthForm";
+import { Navigate, useSearchParams } from "react-router-dom";
+import { useUser } from "hooks/useUser";
 import { getPostAuthDest } from "lib/helpers";
 import useNavContext from "hooks/useNavContext";
 
 export default function Signup() {
-  const navigate = useNavigate();
   const navContext = useNavContext();
   const [searchParams] = useSearchParams();
-  const { loading: userLoading, user } = useUser();
+  const { loading, user } = useUser();
 
-  if (user?.uid && !userLoading) navigate(getPostAuthDest(navContext));
+  if (user?._id && !loading) {
+    return <Navigate to={getPostAuthDest(navContext)} replace />;
+  }
 
   const email = searchParams.get("email") ?? undefined;
 
   return (
-    <UtilityPage heading="Sign Up">
-      <SignupForm email={email} />
+    <UtilityPage heading="Get started">
+      <AuthForm email={email} />
     </UtilityPage>
   );
 }

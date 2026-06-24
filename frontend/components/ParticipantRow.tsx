@@ -3,8 +3,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ParticipantView } from "@birdplan/shared";
-import { useTrip } from "providers/trip";
-import { useModal } from "providers/modals";
+import { useTrip } from "hooks/useTrip";
+import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
 import Badge from "components/Badge";
@@ -25,7 +25,7 @@ export default function ParticipantRow({ participant: p }: Props) {
 
   const isSelf = p.isMe;
   const isPending = p.status === "pending";
-  const isNameOnly = !p.uid && !isPending;
+  const isNameOnly = !p.userId && !isPending;
   const canChangeList = isSelf;
 
   const invalidate = () => {

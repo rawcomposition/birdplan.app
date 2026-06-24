@@ -84,9 +84,8 @@ export type Hotspot = {
   favs?: HotspotFav[];
 };
 
-export type Profile = {
+export type User = {
   _id: string;
-  uid: string;
   name?: string;
   email?: string;
   photoUrl?: string;
@@ -95,20 +94,88 @@ export type Profile = {
   exceptions?: string[];
   dismissedNoticeId?: string;
   lastActiveAt: Date | null;
-  resetToken?: string;
-  resetTokenExpires?: Date;
+  lastAuthenticatedAt?: Date | null;
   isAdmin?: boolean;
+};
+
+export type Session = {
+  _id: string;
+  secretHash: string;
+  userId: string;
+  lastActiveAt: Date;
+  expiresAt: Date;
+  userAgent?: string;
+  ip?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type OtpCode = {
+  _id: string;
+  email: string;
+  codeHash: string;
+  expiresAt: Date;
+  attempts: number;
+  consumedAt?: Date | null;
+  ip?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type MagicLink = {
+  _id: string;
+  tokenHash: string;
+  userId: string;
+  expiresAt: Date;
+  consumedAt?: Date | null;
+  createdByUserId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type GenerateMagicLinkResponse = {
+  url: string;
+  expiresAt: string;
+  email?: string;
+  isNewUser?: boolean;
+};
+
+export type RedeemMagicLinkResponse = {
+  token: string;
+};
+
+export type RateLimit = {
+  _id: string;
+  action: string;
+  scopeType: string;
+  scopeValue: string;
+  windowMs: number;
+  count: number;
+  windowStartAt: Date;
+  expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type Log = {
+  _id: string;
+  type: string;
+  email?: string | null;
+  userId?: string | null;
+  ip?: string | null;
+  data?: Record<string, unknown> | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type AdminDashboardUser = {
   _id: string;
-  uid: string;
   name?: string;
   email?: string;
   photoUrl?: string;
   createdAt: string;
   lastActiveAt: Date | null;
-  providers: string[];
+  lastAuthenticatedAt: Date | null;
 };
 
 export type AdminStats = {
@@ -116,9 +183,20 @@ export type AdminStats = {
   trips: { total: number; created30d: number; created6mo: number };
 };
 
+export type AdminDashboardLog = {
+  _id: string;
+  type: string;
+  email?: string | null;
+  userId?: string | null;
+  ip?: string | null;
+  data?: Record<string, unknown> | null;
+  createdAt: string;
+};
+
 export type AdminDashboard = {
   stats: AdminStats;
   users: AdminDashboardUser[];
+  logs: AdminDashboardLog[];
 };
 
 export type LifelistImportInput = {
@@ -132,20 +210,22 @@ export type Participant = {
   _id: string;
   tripId: string;
   status: ParticipantStatus;
-  uid?: string;
+  userId?: string;
   email?: string;
   name?: string;
   listMode: ParticipantListMode;
   lifelist: string[];
   lifelistUpdatedAt?: Date | null;
   isOwner: boolean;
+  inviteToken?: string | null;
+  inviteExpiresAt?: Date | null;
   createdAt: string;
   updatedAt: string;
 };
 
 export type ParticipantView = {
   _id: string;
-  uid?: string;
+  userId?: string;
   name?: string;
   email?: string;
   photoUrl?: string;
@@ -162,8 +242,15 @@ export type InviteInfo = {
   tripName: string;
   inviterName?: string;
   email?: string;
-  method: "login" | "signup";
   status: ParticipantStatus;
+  accountExists: boolean;
+};
+
+export type AcceptInviteResponse = {
+  tripId: string;
+  token?: string;
+  hasName: boolean;
+  hasLifelist: boolean;
 };
 
 export type AddParticipantInput =
@@ -207,7 +294,7 @@ export type Invite = {
   ownerId: string;
   accepted: boolean;
   name?: string;
-  uid?: string;
+  userId?: string;
 };
 
 export type InviteInput = {
@@ -215,12 +302,12 @@ export type InviteInput = {
   tripId: string;
 };
 
-export type TripShareTokenType = "openbirding";
+export type IntegrationTokenType = "openbirding";
 
-export type TripShareToken = {
+export type IntegrationToken = {
   _id: string;
   tripId: string;
-  type: TripShareTokenType;
+  type: IntegrationTokenType;
   lastUsedAt?: string;
   createdAt: string;
   updatedAt: string;

@@ -1,0 +1,76 @@
+import React from "react";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import UtilityPage from "components/UtilityPage";
+import Input from "components/Input";
+import Button from "components/Button";
+import Field from "components/Field";
+import Icon from "components/Icon";
+import { useUser } from "hooks/useUser";
+import useMutation from "hooks/useMutation";
+import { withReturnTo } from "lib/helpers";
+
+export default function Onboarding() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user, loading, refreshUser } = useUser();
+  const [name, setName] = React.useState("");
+  const [submitted, setSubmitted] = React.useState(false);
+
+  const returnTo = searchParams.get("returnTo") || "/trips";
+
+  const nameMutation = useMutation({
+    url: "/profile",
+    method: "PATCH",
+    onSuccess: async () => {
+      setSubmitted(true);
+      await refreshUser();
+      navigate(`${withReturnTo("/import-lifelist", returnTo)}&onboarding=1`);
+    },
+  });
+
+  if (loading) {
+    return (
+      <UtilityPage heading="Welcome">
+        <div className="text-center">
+          <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+        </div>
+      </UtilityPage>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.name && !submitted) {
+    return <Navigate to={returnTo} replace />;
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    nameMutation.mutate({ name: name.trim() });
+  };
+
+  return (
+    <UtilityPage heading="Welcome to BirdPlan" title="Welcome">
+      <p className="text-sm text-gray-500 text-center mb-6">What should we call you?</p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Field label="Your name">
+          <Input
+            type="text"
+            name="name"
+            placeholder="Name"
+            required
+            autoFocus
+            value={name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          />
+        </Field>
+        <Button type="submit" color="primary" className="w-full" disabled={nameMutation.isPending || !name.trim()}>
+          {nameMutation.isPending ? "Saving..." : "Continue"}
+        </Button>
+      </form>
+    </UtilityPage>
+  );
+}

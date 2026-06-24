@@ -1,5 +1,11 @@
 import { Resend } from "resend";
-import { RESET_TOKEN_EXPIRATION } from "lib/config.js";
+import { HTTPException } from "hono/http-exception";
+import { OTP_EXPIRATION_MINUTES, INVITE_EXPIRATION_DAYS, IS_DEV } from "lib/config.js";
+import { sendNtfyNotification } from "lib/notify.js";
+
+const QUOTA_NOTIFY_BUCKETS = [0.5, 0.7, 0.8, 0.9, 0.95, 1.0];
+const RESEND_DAILY_LIMIT = 100;
+const RESEND_MONTHLY_LIMIT = 3000;
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -10,14 +16,49 @@ type Props = {
   replyTo?: string;
 };
 
+const notifyQuotaUsage = async (label: string, used: number, limit: number) => {
+  if (!Number.isFinite(used)) return;
+
+  const usedBefore = used - 1;
+  const crossed = QUOTA_NOTIFY_BUCKETS.find((bucket) => {
+    const threshold = Math.ceil(limit * bucket);
+    return usedBefore < threshold && used >= threshold;
+  });
+  if (crossed === undefined) return;
+
+  await sendNtfyNotification(
+    "⚠️ BirdPlan email quota",
+    `${label} email quota crossed ${Math.round(crossed * 100)}% — ${used}/${limit} sent.`,
+  );
+};
+
+const notifyQuotas = async (headers: Record<string, string> | null) => {
+  await notifyQuotaUsage("Daily", Number(headers?.["x-resend-daily-quota"]), RESEND_DAILY_LIMIT);
+  await notifyQuotaUsage("Monthly", Number(headers?.["x-resend-monthly-quota"]), RESEND_MONTHLY_LIMIT);
+};
+
 export const sendEmail = async ({ to, subject, html, replyTo }: Props) => {
-  await resend.emails.send({
+  if (IS_DEV) {
+    console.log(`\n📧 [dev] email not sent\n  to: ${to}\n  subject: ${subject}\n  body: ${html}\n`);
+    return;
+  }
+
+  const { error, headers } = await resend.emails.send({
     from: "BirdPlan.app <support@birdplan.app>",
     to,
     subject,
     html,
     replyTo,
   });
+
+  await notifyQuotas(headers);
+
+  if (error) {
+    console.error(`[resend] failed to send email to ${to}: ${error.name} — ${error.message}`);
+    throw new HTTPException(503, {
+      message: "We're unable to send emails right now. Please try again in a few minutes.",
+    });
+  }
 };
 
 type inviteEmailProps = {
@@ -31,20 +72,20 @@ export const sendInviteEmail = async ({ tripName, fromName, email, url }: invite
   await sendEmail({
     to: email,
     subject: `${fromName} has invited you to join ${tripName}`,
-    html: `Hello,<br /><br />${fromName} invited to join their trip called '${tripName}'.<br /><br /><a href=${url}>Accept Invite</a>`,
+    html: `Hello,<br /><br />${fromName} invited you to join their trip called '${tripName}'.<br /><br /><a href="${url}">Accept Invite</a><br /><br />This invite expires in ${INVITE_EXPIRATION_DAYS} days.`,
     replyTo: email,
   });
 };
 
-type resetEmailProps = {
+type otpEmailProps = {
   email: string;
-  url: string;
+  code: string;
 };
 
-export const sendResetEmail = async ({ email, url }: resetEmailProps) => {
+export const sendOtpEmail = async ({ email, code }: otpEmailProps) => {
   await sendEmail({
     to: email,
-    subject: "Reset your BirdPlan.app password",
-    html: `Hello,<br /><br />Click the link below to reset your BirdPlan.app password.<br /><br /><a href="${url}">Reset Password</a><br /><br />This link will expire in ${RESET_TOKEN_EXPIRATION} hours. If you did not request a password reset, please ignore this email.`,
+    subject: `${code} is your BirdPlan.app sign-in code`,
+    html: `Hello,<br /><br />Your BirdPlan.app sign-in code is:<br /><br /><div style="font-size:28px;font-weight:bold;letter-spacing:4px;">${code}</div><br />This code expires in ${OTP_EXPIRATION_MINUTES} minutes. If you didn't request it, you can safely ignore this email.`,
   });
 };
