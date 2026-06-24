@@ -1,6 +1,5 @@
 import Trip from "models/Trip.js";
 import User from "models/User.js";
-import Invite from "models/Invite.js";
 import Participant from "models/Participant.js";
 import IntegrationToken from "models/IntegrationToken.js";
 import Session from "models/Session.js";
@@ -49,4 +48,4 @@ export async function connect() {
   }
 }
 
-export { Trip, User, Invite, Participant, IntegrationToken, Session, OtpCode, MagicLink, RateLimit, Log };
+export { Trip, User, Participant, IntegrationToken, Session, OtpCode, MagicLink, RateLimit, Log };
