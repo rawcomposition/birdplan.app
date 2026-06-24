@@ -10,12 +10,12 @@ import Icon from "components/Icon";
 import useMutation from "hooks/useMutation";
 import { Link } from "react-router-dom";
 
-export default function Support() {
+export default function Contact() {
   const { user } = useUser();
   const [submitted, setSubmitted] = React.useState(false);
 
   const mutation = useMutation({
-    url: "/support",
+    url: "/contact",
     method: "POST",
     onSuccess: () => {
       setSubmitted(true);
@@ -54,12 +54,12 @@ export default function Support() {
 
   return (
     <div className="flex flex-col h-full">
-        <title>Support | BirdPlan.app</title>
+        <title>Contact | BirdPlan.app</title>
 
       <HomeHeader />
       <main className="container px-4">
         <div className="max-w-2xl mx-auto py-12">
-          <h1 className="text-4xl text-gray-800 leading-normal font-bold mb-8">Support</h1>
+          <h1 className="text-4xl text-gray-800 leading-normal font-bold mb-8">Contact</h1>
 
           {submitted ? (
             <div className="bg-white p-8 rounded-lg shadow-sm">

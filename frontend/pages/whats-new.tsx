@@ -99,7 +99,7 @@ export default function WhatsNew() {
           <h2>April 27, 2025</h2>
           <ul>
             <li>
-              ✨ Added a <Link to="/support">support page</Link> with a contact form.
+              ✨ Added a <Link to="/contact">support page</Link> with a contact form.
             </li>
           </ul>
           <h2>April 17, 2025</h2>

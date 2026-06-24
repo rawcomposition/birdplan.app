@@ -2,9 +2,9 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { sendEmail } from "lib/email.js";
 
-const support = new Hono();
+const contact = new Hono();
 
-type SupportRequest = {
+type ContactRequest = {
   name: string;
   email: string;
   type: string;
@@ -17,8 +17,8 @@ type SupportRequest = {
   };
 };
 
-support.post("/", async (c) => {
-  const data = await c.req.json<SupportRequest>();
+contact.post("/", async (c) => {
+  const data = await c.req.json<ContactRequest>();
   const { name, email, type, message, browserInfo } = data;
 
   if (!name || !email || !type || !message) {
@@ -51,4 +51,4 @@ support.post("/", async (c) => {
   return c.json({ success: true });
 });
 
-export default support;
+export default contact;

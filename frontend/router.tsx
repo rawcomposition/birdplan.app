@@ -1,10 +1,10 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import RootLayout from "RootLayout";
 import Home from "pages/index";
 import Login from "pages/login";
 import Signup from "pages/signup";
-import Support from "pages/support";
+import Contact from "pages/contact";
 import Trips from "pages/trips";
 import Account from "pages/account";
 import Create from "pages/create";
@@ -32,7 +32,8 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Signup /> },
-      { path: "/support", element: <Support /> },
+      { path: "/contact", element: <Contact /> },
+      { path: "/support", element: <Navigate to="/contact" replace /> },
       { path: "/whats-new", element: <WhatsNew /> },
       { path: "/onboarding", element: <Onboarding /> },
       { path: "/my-rarest-lifers", element: <MyRarestLifers /> },
