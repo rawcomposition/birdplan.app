@@ -25,7 +25,7 @@ export default function ParticipantRow({ participant: p }: Props) {
 
   const isSelf = p.isMe;
   const isPending = p.status === "pending";
-  const isNameOnly = !p.uid && !isPending;
+  const isNameOnly = !p.userId && !isPending;
   const canChangeList = isSelf;
 
   const invalidate = () => {

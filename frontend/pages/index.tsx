@@ -40,7 +40,7 @@ const features = [
 
 export default function BirdPlan() {
   const { user } = useUser();
-  const isLoggedIn = !!user?.uid;
+  const isLoggedIn = !!user?._id;
   return (
     <div className="flex flex-col h-full">
         <title>BirdPlan.app - Plan Your Next Birding Adventure</title>

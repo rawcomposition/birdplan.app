@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import dayjs from "dayjs";
 import type { Session } from "@birdplan/shared";
-import { connect, Profile as ProfileModel, Session as SessionModel } from "lib/db.js";
+import { connect, User as UserModel, Session as SessionModel } from "lib/db.js";
 import { SESSION_INACTIVITY_DAYS } from "lib/config.js";
 
 const SESSION_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
@@ -32,7 +32,7 @@ export function constantTimeEqual(a: string, b: string): boolean {
 
 type SessionMeta = { userAgent?: string; ip?: string };
 
-export async function createSession(uid: string, meta: SessionMeta = {}) {
+export async function createSession(userId: string, meta: SessionMeta = {}) {
   await connect();
   const id = generateSecureRandomString();
   const secret = generateSecureRandomString();
@@ -42,14 +42,14 @@ export async function createSession(uid: string, meta: SessionMeta = {}) {
   await SessionModel.create({
     _id: id,
     secretHash: hashSecret(secret),
-    uid,
+    userId,
     lastActiveAt: now,
     expiresAt,
     userAgent: meta.userAgent,
     ip: meta.ip,
   });
 
-  await ProfileModel.updateOne({ uid }, { $set: { lastAuthenticatedAt: now } });
+  await UserModel.updateOne({ _id: userId }, { $set: { lastAuthenticatedAt: now } });
 
   return { token: `${id}.${secret}`, id };
 }
@@ -80,7 +80,7 @@ export async function invalidateSession(id: string) {
   await SessionModel.deleteOne({ _id: id });
 }
 
-export async function invalidateOtherSessions(uid: string, exceptSessionId: string) {
+export async function invalidateOtherSessions(userId: string, exceptSessionId: string) {
   await connect();
-  await SessionModel.deleteMany({ uid, _id: { $ne: exceptSessionId } });
+  await SessionModel.deleteMany({ userId, _id: { $ne: exceptSessionId } });
 }

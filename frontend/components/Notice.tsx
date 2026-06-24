@@ -1,15 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
 import CloseButton from "components/CloseButton";
-import { useProfile } from "hooks/useProfile";
+import { useUser } from "hooks/useUser";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Profile } from "@birdplan/shared";
+import { User } from "@birdplan/shared";
 import { withReturnTo } from "lib/helpers";
 
 const noticeId = "";
 
 export default function Notice() {
-  const { _id, dismissedNoticeId } = useProfile();
+  const { user } = useUser();
   const queryClient = useQueryClient();
   const location = useLocation();
   const asPath = `${location.pathname}${location.search}`;
@@ -21,7 +21,7 @@ export default function Notice() {
       await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
       const prevData = queryClient.getQueryData(["/auth/me"]);
 
-      queryClient.setQueryData<Profile | undefined>(["/auth/me"], (old) => {
+      queryClient.setQueryData<User | undefined>(["/auth/me"], (old) => {
         if (!old) return old;
         return { ...old, dismissedNoticeId: data.dismissedNoticeId };
       });
@@ -34,8 +34,8 @@ export default function Notice() {
   });
 
   if (!noticeId) return null;
-  if (!_id) return null;
-  if (dismissedNoticeId === noticeId) return null;
+  if (!user?._id) return null;
+  if (user.dismissedNoticeId === noticeId) return null;
 
   return (
     <div className="bg-white border-l-4 border-primary p-4 mb-8">

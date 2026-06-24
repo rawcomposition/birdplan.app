@@ -40,7 +40,7 @@ export default function Support() {
       userAgent: navigator.userAgent,
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
-      userId: user?.uid || "not logged in",
+      userId: user?._id || "not logged in",
     };
 
     mutation.mutate({
@@ -68,10 +68,10 @@ export default function Support() {
                 We&apos;ve received your request and will get back to you as soon as possible.
               </p>
               <Link
-                to={user?.uid ? `/trips` : "/"}
+                to={user?._id ? `/trips` : "/"}
                 className="text-gray-500 hover:text-gray-600 ml-4 md:ml-0 inline-flex items-center"
               >
-                {user?.uid ? "← Back to trips" : "← Back to home"}
+                {user?._id ? "← Back to trips" : "← Back to home"}
               </Link>
             </div>
           ) : (

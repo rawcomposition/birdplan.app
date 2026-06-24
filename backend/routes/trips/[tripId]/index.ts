@@ -11,8 +11,8 @@ import {
   getBounds,
   isDuplicateKeyError,
 } from "lib/utils.js";
-import { connect, Trip, Invite, Participant, Profile, TripShareToken } from "lib/db.js";
-import { isTripEditor, isEditorInRoster, loadActiveRoster, loadProfilesByUid, resolveTripLifelist } from "lib/participants.js";
+import { connect, Trip, Invite, Participant, User, TripShareToken } from "lib/db.js";
+import { isTripEditor, isEditorInRoster, loadActiveRoster, loadUsersById, resolveTripLifelist } from "lib/participants.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, OpenBirdingLocationResponse } from "@birdplan/shared";
@@ -46,12 +46,12 @@ trip.get("/", async (c) => {
     throw new HTTPException(404, { message: "Trip not found" });
   }
 
-  if (!trip.isPublic && !isEditorInRoster(roster, session?.uid)) {
+  if (!trip.isPublic && !isEditorInRoster(roster, session?.userId)) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
-  const profilesByUid = await loadProfilesByUid(roster);
-  const resolved = resolveTripLifelist(roster, profilesByUid, session?.uid);
+  const usersById = await loadUsersById(roster);
+  const resolved = resolveTripLifelist(roster, usersById, session?.userId);
   const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
   return c.json({
     ...tripData,
@@ -81,7 +81,7 @@ trip.patch("/", async (c) => {
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
-  if (!(await isTripEditor(tripId, session.uid))) {
+  if (!(await isTripEditor(tripId, session.userId))) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
@@ -124,7 +124,7 @@ trip.delete("/", async (c) => {
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
-  if (trip.ownerId !== session.uid) {
+  if (trip.ownerId !== session.userId) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
@@ -140,7 +140,7 @@ trip.delete("/", async (c) => {
 
 trip.get("/export", async (c) => {
   const tripId: string | undefined = c.req.param("tripId");
-  const uid: string | undefined = c.req.query("uid");
+  const userId: string | undefined = c.req.query("userId");
   const targets: string | undefined = c.req.query("targets");
 
   if (!tripId) {
@@ -154,14 +154,14 @@ trip.get("/export", async (c) => {
     throw new HTTPException(404, { message: "Trip not found" });
   }
 
-  const profilesByUid = await loadProfilesByUid(roster);
-  const resolved = resolveTripLifelist(roster, profilesByUid, uid);
+  const usersById = await loadUsersById(roster);
+  const resolved = resolveTripLifelist(roster, usersById, userId);
   const lifelist =
     (targets === "personal" ? resolved.viewerLifelist : null) ??
     resolved.groupLifelist ??
     resolved.tripLifelist ??
     resolved.viewerLifelist ??
-    (uid ? (await Profile.findOne({ uid }).lean())?.lifelist : null) ??
+    (userId ? (await User.findOne({ _id: userId }).lean())?.lifelist : null) ??
     [];
   const months = getMonthRange(trip.startMonth, trip.endMonth);
 
@@ -221,7 +221,7 @@ trip.post("/share-code", async (c) => {
   if (!existing) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
-  if (!(await isTripEditor(tripId, session.uid))) {
+  if (!(await isTripEditor(tripId, session.userId))) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
@@ -273,7 +273,7 @@ trip.patch("/set-start-date", async (c) => {
   if (!trip) {
     throw new HTTPException(404, { message: "Trip not found" });
   }
-  if (!(await isTripEditor(tripId, session.uid))) {
+  if (!(await isTripEditor(tripId, session.userId))) {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 

@@ -45,14 +45,14 @@ export default function Header({ title, parent, border }: Props) {
         </div>
       )}
       <Link
-        to={user?.uid ? "/trips" : "/"}
+        to={user?._id ? "/trips" : "/"}
         className={clsx("sm:w-60 flex items-center shrink-0", isSubPage && "hidden md:flex")}
       >
         <Logo className="w-[50px] mr-4 ml-6 mb-[-2px]" />
         <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
       </Link>
       {isSubPage && (
-        <Link to={user?.uid ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
+        <Link to={user?._id ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
           <Icon name="angleLeft" className="text-gray-500 text-2xl flex items-center" />
         </Link>
       )}

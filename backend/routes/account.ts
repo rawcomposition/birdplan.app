@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authenticate, isDuplicateKeyError } from "lib/utils.js";
-import { connect, Profile, Trip, Participant, Session, OtpCode } from "lib/db.js";
+import { connect, User, Trip, Participant, Session, OtpCode } from "lib/db.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
 import { invalidateOtherSessions } from "lib/session.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
@@ -16,20 +16,20 @@ const getIp = (c: { req: { header: (name: string) => string | undefined } }) =>
 
 account.delete("/", async (c) => {
   const session = await authenticate(c);
-  const uid = session.uid;
+  const userId = session.userId;
 
   await connect();
 
-  const profile = await Profile.findOne({ uid }).select("email").lean();
-  const tripIds = await Trip.distinct("_id", { ownerId: uid });
+  const user = await User.findOne({ _id: userId }).select("email").lean();
+  const tripIds = await Trip.distinct("_id", { ownerId: userId });
 
   await Promise.all([
-    Profile.deleteOne({ uid }),
-    Participant.deleteMany({ uid }),
+    User.deleteOne({ _id: userId }),
+    Participant.deleteMany({ userId }),
     Participant.deleteMany({ tripId: { $in: tripIds } }),
-    Trip.deleteMany({ ownerId: uid }),
-    Session.deleteMany({ uid }),
-    profile?.email ? OtpCode.deleteMany({ email: profile.email }) : Promise.resolve(),
+    Trip.deleteMany({ ownerId: userId }),
+    Session.deleteMany({ userId }),
+    user?.email ? OtpCode.deleteMany({ email: user.email }) : Promise.resolve(),
   ]);
 
   return c.json({});
@@ -46,11 +46,11 @@ account.post("/request-email-change", async (c) => {
 
   const emailOk = await enforceRateLimit("request_code", "email", email, RATE_LIMITS.requestCodeEmail);
   const ipOk = await enforceRateLimit("request_code", "ip", ip, RATE_LIMITS.requestCodeIp);
-  const uidOk = await enforceRateLimit("request_code", "uid", session.uid, RATE_LIMITS.requestCodeIp);
-  if (!emailOk || !ipOk || !uidOk) throw new HTTPException(429, { message: "Too many requests. Please try again later." });
+  const userOk = await enforceRateLimit("request_code", "userId", session.userId, RATE_LIMITS.requestCodeIp);
+  if (!emailOk || !ipOk || !userOk) throw new HTTPException(429, { message: "Too many requests. Please try again later." });
 
-  const existing = await Profile.findOne({ email }).select("uid").lean();
-  if (existing && existing.uid !== session.uid) {
+  const existing = await User.findOne({ email }).select("_id").lean();
+  if (existing && existing._id !== session.userId) {
     throw new HTTPException(400, { message: "That email is already in use" });
   }
 
@@ -72,21 +72,21 @@ account.post("/update-email", async (c) => {
   const ipOk = await enforceRateLimit("verify_code", "ip", ip, RATE_LIMITS.verifyCodeIp);
   if (!emailOk || !ipOk) throw new HTTPException(429, { message: "Too many requests. Please try again later." });
 
-  const existing = await Profile.findOne({ email }).select("uid").lean();
-  if (existing && existing.uid !== session.uid) {
+  const existing = await User.findOne({ email }).select("_id").lean();
+  if (existing && existing._id !== session.userId) {
     throw new HTTPException(400, { message: "That email is already in use" });
   }
 
   await verifyOtp(email, code);
 
   try {
-    await Profile.updateOne({ uid: session.uid }, { $set: { email } });
+    await User.updateOne({ _id: session.userId }, { $set: { email } });
   } catch (err) {
     if (isDuplicateKeyError(err)) throw new HTTPException(400, { message: "That email is already in use" });
     throw err;
   }
 
-  await invalidateOtherSessions(session.uid, session._id);
+  await invalidateOtherSessions(session.userId, session._id);
 
   return c.json({ message: "Email updated successfully" });
 });

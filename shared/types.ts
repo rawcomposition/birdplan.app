@@ -84,9 +84,8 @@ export type Hotspot = {
   favs?: HotspotFav[];
 };
 
-export type Profile = {
+export type User = {
   _id: string;
-  uid: string;
   name?: string;
   email?: string;
   photoUrl?: string;
@@ -102,7 +101,7 @@ export type Profile = {
 export type Session = {
   _id: string;
   secretHash: string;
-  uid: string;
+  userId: string;
   lastActiveAt: Date;
   expiresAt: Date;
   userAgent?: string;
@@ -138,7 +137,6 @@ export type RateLimit = {
 
 export type AdminDashboardUser = {
   _id: string;
-  uid: string;
   name?: string;
   email?: string;
   photoUrl?: string;
@@ -168,7 +166,7 @@ export type Participant = {
   _id: string;
   tripId: string;
   status: ParticipantStatus;
-  uid?: string;
+  userId?: string;
   email?: string;
   name?: string;
   listMode: ParticipantListMode;
@@ -183,7 +181,7 @@ export type Participant = {
 
 export type ParticipantView = {
   _id: string;
-  uid?: string;
+  userId?: string;
   name?: string;
   email?: string;
   photoUrl?: string;
@@ -252,7 +250,7 @@ export type Invite = {
   ownerId: string;
   accepted: boolean;
   name?: string;
-  uid?: string;
+  userId?: string;
 };
 
 export type InviteInput = {

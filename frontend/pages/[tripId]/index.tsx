@@ -68,7 +68,7 @@ export default function Trip() {
           <title>{`${trip.name} | BirdPlan.app`}</title>
       )}
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="" border={false} />
       <main className="flex h-[calc(100%-60px-55px)] relative">
         <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">

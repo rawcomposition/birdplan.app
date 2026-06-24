@@ -1,6 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useProfile } from "hooks/useProfile";
+import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Button from "components/Button";
@@ -20,7 +20,9 @@ import Alert from "components/Alert";
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
   const [seededKey, setSeededKey] = React.useState<string | null>(null);
-  const { lifelist, lifelistUpdatedAt, exceptions } = useProfile();
+  const { user, lifelist } = useUser();
+  const lifelistUpdatedAt = user?.lifelistUpdatedAt;
+  const exceptions = user?.exceptions;
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
 

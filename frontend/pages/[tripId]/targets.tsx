@@ -109,7 +109,7 @@ export default function TripTargets() {
 
       <Header
         title={trip?.name || ""}
-        parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }}
+        parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }}
       />
       <TripNav active="targets" />
       <main className="flex h-[calc(100%-60px-55px)] relative bg-gray-50">

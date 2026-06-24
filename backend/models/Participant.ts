@@ -6,7 +6,7 @@ const fields: Record<keyof Omit<Participant, "createdAt" | "updatedAt">, any> = 
   _id: { type: String, default: () => nanoId() },
   tripId: { type: String, required: true },
   status: { type: String, required: true, default: "active" },
-  uid: String,
+  userId: String,
   email: String,
   name: String,
   listMode: { type: String, required: true, default: "world" },
@@ -22,8 +22,8 @@ const ParticipantSchema = new Schema(fields, {
 });
 
 ParticipantSchema.index({ tripId: 1, createdAt: 1 });
-ParticipantSchema.index({ uid: 1 });
-ParticipantSchema.index({ tripId: 1, uid: 1 }, { unique: true, partialFilterExpression: { uid: { $exists: true } } });
+ParticipantSchema.index({ userId: 1 });
+ParticipantSchema.index({ tripId: 1, userId: 1 }, { unique: true, partialFilterExpression: { userId: { $exists: true } } });
 ParticipantSchema.index({ tripId: 1, email: 1 }, { unique: true, partialFilterExpression: { email: { $exists: true } } });
 ParticipantSchema.index({ inviteToken: 1 }, { unique: true, sparse: true });
 

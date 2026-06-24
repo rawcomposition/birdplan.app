@@ -72,7 +72,7 @@ export const useTrip = () => {
   const { user } = useUser();
   const token = useSessionToken();
   const canEdit = !!trip?.viewer;
-  const isOwner = !!(user?.uid && trip?.ownerId === user.uid);
+  const isOwner = !!(user?._id && trip?.ownerId === user._id);
 
   const { data: participants } = useQuery<ParticipantView[]>({
     queryKey: [`/trips/${id}/participants`],

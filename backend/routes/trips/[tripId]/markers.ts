@@ -17,7 +17,7 @@ markers.post("/", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -39,7 +39,7 @@ markers.delete("/:markerId", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -62,7 +62,7 @@ markers.patch("/:markerId/notes", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -85,7 +85,7 @@ markers.patch("/:markerId", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });

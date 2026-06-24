@@ -5,7 +5,7 @@ import { useUser } from "hooks/useUser";
 import Logo from "components/Logo";
 export default function HomeHeader() {
   const { user } = useUser();
-  const isLoggedIn = !!user?.uid;
+  const isLoggedIn = !!user?._id;
 
   return (
     <header className="bg-white border-b border-gray-100 py-4 shrink-0 flex items-center">

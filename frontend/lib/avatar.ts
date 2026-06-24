@@ -1,4 +1,4 @@
-import type { ParticipantView, Profile } from "@birdplan/shared";
+import type { ParticipantView, User } from "@birdplan/shared";
 
 export type AvatarUser = {
   seed: string;
@@ -7,18 +7,18 @@ export type AvatarUser = {
   photoUrl?: string | null;
 };
 
-export function avatarFromProfile(profile: Pick<Profile, "uid" | "name" | "email" | "photoUrl">): AvatarUser {
+export function avatarFromUser(user: Pick<User, "_id" | "name" | "email" | "photoUrl">): AvatarUser {
   return {
-    seed: profile.uid,
-    name: profile.name,
-    email: profile.email,
-    photoUrl: profile.photoUrl,
+    seed: user._id,
+    name: user.name,
+    email: user.email,
+    photoUrl: user.photoUrl,
   };
 }
 
 export function avatarFromParticipant(p: ParticipantView): AvatarUser {
   return {
-    seed: p.uid || p._id,
+    seed: p.userId || p._id,
     name: p.name,
     email: p.email,
     photoUrl: p.photoUrl,

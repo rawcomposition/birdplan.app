@@ -77,7 +77,7 @@ export default function Itinerary() {
           <title>{`${trip.name} | BirdPlan.app`}</title>
       )}
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="itinerary" />
       <main className="flex h-[calc(100%-60px-55px)]">
         <ErrorBoundary>

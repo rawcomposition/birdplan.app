@@ -5,14 +5,13 @@ import { useUser } from "hooks/useUser";
 import { useModal } from "stores/modals";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
-import { avatarFromProfile } from "lib/avatar";
+import { avatarFromUser } from "lib/avatar";
 import Button from "components/Button";
 import clsx from "clsx";
 import { useState } from "react";
 import { IconNameT } from "lib/icons";
 import EmailChangeForm from "components/EmailChangeForm";
 import { Link } from "react-router-dom";
-import { useProfile } from "hooks/useProfile";
 
 type TabItem = {
   id: string;
@@ -28,7 +27,6 @@ const tabs: TabItem[] = [
 
 export default function Account() {
   const { user, loading } = useUser();
-  const profile = useProfile();
   const { open } = useModal();
   const [activeTab, setActiveTab] = useState<string>("profile");
 
@@ -75,10 +73,10 @@ export default function Account() {
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Account</h2>
                 <div className="flex flex-col gap-4 mb-2">
                   <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 border rounded-lg w-full">
-                    <Avatar user={avatarFromProfile(profile)} size={40} />
+                    <Avatar user={avatarFromUser(user)} size={40} />
                     <div>
-                      <p className="font-semibold">{profile.name}</p>
-                      {profile.email && <p className="text-gray-600">{profile.email}</p>}
+                      <p className="font-semibold">{user.name}</p>
+                      {user.email && <p className="text-gray-600">{user.email}</p>}
                     </div>
                   </div>
                 </div>
@@ -88,7 +86,7 @@ export default function Account() {
             {activeTab === "email" && (
               <div className="max-w-md">
                 <h2 className="text-xl font-medium text-gray-800 mb-6">Change Email</h2>
-                <EmailChangeForm currentEmail={profile.email || ""} />
+                <EmailChangeForm currentEmail={user.email || ""} />
               </div>
             )}
 

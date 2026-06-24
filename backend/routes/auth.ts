@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
-import { connect, Profile, Session } from "lib/db.js";
-import { nanoId, authenticate, isDuplicateKeyError } from "lib/utils.js";
+import { connect, User, Session } from "lib/db.js";
+import { authenticate, isDuplicateKeyError } from "lib/utils.js";
 import { createSession, invalidateSession } from "lib/session.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
@@ -48,23 +48,23 @@ auth.post("/verify-code", async (c) => {
 
   await verifyOtp(email, code);
 
-  let profile = await Profile.findOne({ email }).lean();
+  let user = await User.findOne({ email }).lean();
   let isNewUser = false;
-  if (!profile) {
+  if (!user) {
     try {
-      profile = (await Profile.create({ uid: nanoId(), email })).toObject();
+      user = (await User.create({ email })).toObject();
       isNewUser = true;
     } catch (err) {
       if (isDuplicateKeyError(err)) {
-        profile = await Profile.findOne({ email }).lean();
+        user = await User.findOne({ email }).lean();
       } else {
         throw err;
       }
     }
   }
-  if (!profile) throw new HTTPException(500, { message: "Failed to create account" });
+  if (!user) throw new HTTPException(500, { message: "Failed to create account" });
 
-  const { token } = await createSession(profile.uid, {
+  const { token } = await createSession(user._id, {
     userAgent: c.req.header("user-agent"),
     ip,
   });
@@ -76,8 +76,8 @@ auth.get("/me", async (c) => {
   const session = await authenticate(c);
 
   await connect();
-  const profile = await Profile.findOne({ uid: session.uid }).lean();
-  if (!profile) {
+  const user = await User.findOne({ _id: session.userId }).lean();
+  if (!user) {
     await invalidateSession(session._id);
     throw new HTTPException(401, { message: "Unauthorized" });
   }
@@ -88,10 +88,10 @@ auth.get("/me", async (c) => {
     const nowDate = new Date();
     const expiresAt = dayjs(nowDate).add(SESSION_INACTIVITY_DAYS, "day").toDate();
     await Session.updateOne({ _id: session._id }, { $set: { lastActiveAt: nowDate, expiresAt } });
-    await Profile.updateOne({ uid: session.uid }, { $set: { lastActiveAt: nowDate } });
+    await User.updateOne({ _id: session.userId }, { $set: { lastActiveAt: nowDate } });
   }
 
-  return c.json(profile);
+  return c.json(user);
 });
 
 auth.post("/logout", async (c) => {

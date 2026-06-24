@@ -30,7 +30,7 @@ import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
 import { getMonthRange } from "lib/targets";
 import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
-import type { OpenBirdingHotspotRankingResponse, Profile } from "@birdplan/shared";
+import type { OpenBirdingHotspotRankingResponse, User } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
   const { speciesCode = "" } = useParams();
@@ -99,7 +99,7 @@ export default function SpeciesDetail() {
     onMutate: async (data: any) => {
       await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
       const prevData = queryClient.getQueryData(["/auth/me"]);
-      queryClient.setQueryData<Profile | undefined>(["/auth/me"], (old) =>
+      queryClient.setQueryData<User | undefined>(["/auth/me"], (old) =>
         old
           ? {
               ...old,
@@ -306,7 +306,7 @@ export default function SpeciesDetail() {
       {trip && speciesName && (
           <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>
       )}
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?.uid ? "/trips" : "/" }} />
+      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="targets" />
       <main className="flex-1 relative bg-gray-50">
         <ErrorBoundary>

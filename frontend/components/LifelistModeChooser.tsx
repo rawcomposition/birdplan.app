@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { Link, useLocation } from "react-router-dom";
 import { Trip } from "@birdplan/shared";
 import LifelistField from "components/LifelistField";
-import { useProfile } from "hooks/useProfile";
+import { useUser } from "hooks/useUser";
 import { useModal } from "stores/modals";
 import useTripLifelist from "hooks/useTripLifelist";
 import useLifelistMode from "hooks/useLifelistMode";
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function LifelistModeChooser({ trip, canEdit, mode }: Props) {
-  const { lifelist: worldList } = useProfile();
+  const { lifelist: worldList } = useUser();
   const { myLifelist } = useTripLifelist(trip);
   const location = useLocation();
   const asPath = `${location.pathname}${location.search}`;

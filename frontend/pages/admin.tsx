@@ -11,9 +11,8 @@ import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
 import Error from "components/Error";
-import { avatarFromProfile } from "lib/avatar";
+import { avatarFromUser } from "lib/avatar";
 import { useUser } from "hooks/useUser";
-import { useProfile } from "hooks/useProfile";
 
 dayjs.extend(relativeTime);
 
@@ -63,19 +62,18 @@ function SortHeader({
 }
 
 export default function Admin() {
-  const { loading } = useUser();
-  const profile = useProfile();
+  const { user, loading } = useUser();
   const [sortKey, setSortKey] = React.useState<SortKey>("lastActiveAt");
   const [sortDir, setSortDir] = React.useState<"asc" | "desc">("desc");
 
   const { data, isLoading, error } = useQuery<AdminDashboard>({
     queryKey: ["/admin"],
-    enabled: !!profile.isAdmin,
+    enabled: !!user?.isAdmin,
   });
 
   if (loading) return null;
-  if (!profile.uid) return null;
-  if (!profile.isAdmin) return <Navigate to="/" replace />;
+  if (!user) return null;
+  if (!user.isAdmin) return <Navigate to="/" replace />;
 
   const handleSort = (key: SortKey) => {
     if (key === sortKey) {
@@ -164,7 +162,7 @@ export default function Admin() {
                         <tr key={u._id} className="hover:bg-gray-50">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
-                              <Avatar user={avatarFromProfile(u)} size={32} />
+                              <Avatar user={avatarFromUser(u)} size={32} />
                               <div className="min-w-0">
                                 <p className="font-medium text-gray-800 truncate">{u.name || "Unnamed"}</p>
                                 {u.email && <p className="text-gray-500 truncate">{u.email}</p>}

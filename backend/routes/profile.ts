@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authenticate } from "lib/utils.js";
-import { connect, Profile, Participant } from "lib/db.js";
+import { connect, User, Participant } from "lib/db.js";
 import { sciNamesToCodes } from "lib/taxonomy.js";
 import { HTTPException } from "hono/http-exception";
 import type { LifelistImportInput, AddToLifelistInput } from "@birdplan/shared";
@@ -31,10 +31,10 @@ profile.patch("/", async (c) => {
     if (!data.name) delete data.name;
   }
 
-  await Profile.updateOne({ uid: session.uid }, data);
+  await User.updateOne({ _id: session.userId }, data);
 
   if (data.name) {
-    await Participant.updateMany({ uid: session.uid }, { $set: { name: data.name } });
+    await Participant.updateMany({ userId: session.userId }, { $set: { name: data.name } });
   }
 
   return c.json({});
@@ -50,7 +50,7 @@ profile.put("/lifelist", async (c) => {
 
   const codes = await sciNamesToCodes(sciNames);
 
-  await Profile.updateOne({ uid: session.uid }, { $set: { lifelist: codes, lifelistUpdatedAt: new Date() } });
+  await User.updateOne({ _id: session.userId }, { $set: { lifelist: codes, lifelistUpdatedAt: new Date() } });
 
   return c.json({});
 });
@@ -63,8 +63,8 @@ profile.post("/lifelist/add", async (c) => {
   const { code } = await c.req.json<AddToLifelistInput>();
   if (!code) throw new HTTPException(400, { message: "Missing code" });
 
-  await Profile.updateOne(
-    { uid: session.uid },
+  await User.updateOne(
+    { _id: session.userId },
     { $addToSet: { lifelist: code }, $pull: { exceptions: code }, $set: { lifelistUpdatedAt: new Date() } },
   );
 

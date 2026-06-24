@@ -1,15 +1,15 @@
-import { connect, Participant, Profile as ProfileModel } from "lib/db.js";
-import type { Participant as ParticipantT, Profile, ParticipantListMode } from "@birdplan/shared";
+import { connect, Participant, User as UserModel } from "lib/db.js";
+import type { Participant as ParticipantT, User, ParticipantListMode } from "@birdplan/shared";
 
-export async function isTripEditor(tripId: string, uid?: string | null): Promise<boolean> {
-  if (!uid) return false;
+export async function isTripEditor(tripId: string, userId?: string | null): Promise<boolean> {
+  if (!userId) return false;
   await connect();
-  return !!(await Participant.exists({ tripId, uid, status: "active" }));
+  return !!(await Participant.exists({ tripId, userId, status: "active" }));
 }
 
-export function isEditorInRoster(roster: Pick<ParticipantT, "uid" | "status">[], uid?: string | null): boolean {
-  if (!uid) return false;
-  return roster.some((p) => p.uid === uid && p.status === "active");
+export function isEditorInRoster(roster: Pick<ParticipantT, "userId" | "status">[], userId?: string | null): boolean {
+  if (!userId) return false;
+  return roster.some((p) => p.userId === userId && p.status === "active");
 }
 
 export async function loadActiveRoster(tripId: string): Promise<ParticipantT[]> {
@@ -17,10 +17,10 @@ export async function loadActiveRoster(tripId: string): Promise<ParticipantT[]> 
   return (await Participant.find({ tripId, status: "active" }).lean()) as unknown as ParticipantT[];
 }
 
-export async function loadProfilesByUid(roster: Pick<ParticipantT, "uid">[]): Promise<Map<string, Profile>> {
-  const uids = roster.map((p) => p.uid).filter((u): u is string => !!u);
-  const profiles = uids.length ? await ProfileModel.find({ uid: { $in: uids } }).lean() : [];
-  return new Map(profiles.map((p) => [p.uid, p as unknown as Profile] as const));
+export async function loadUsersById(roster: Pick<ParticipantT, "userId">[]): Promise<Map<string, User>> {
+  const userIds = roster.map((p) => p.userId).filter((u): u is string => !!u);
+  const users = userIds.length ? await UserModel.find({ _id: { $in: userIds } }).lean() : [];
+  return new Map(users.map((u) => [u._id, u as unknown as User] as const));
 }
 
 export function computeIntersection(lists: string[][]): string[] {
@@ -50,13 +50,13 @@ export function computeUnion(lists: string[][]): string[] {
   return result;
 }
 
-type LeanParticipant = Pick<ParticipantT, "_id" | "uid" | "listMode" | "lifelist" | "lifelistUpdatedAt">;
+type LeanParticipant = Pick<ParticipantT, "_id" | "userId" | "listMode" | "lifelist" | "lifelistUpdatedAt">;
 
-export function participantEffectiveList(p: LeanParticipant, profilesByUid: Map<string, Profile>): string[] {
-  if (!p.uid) return p.lifelist || [];
-  const profile = profilesByUid.get(p.uid);
-  const base = p.listMode === "custom" ? p.lifelist || [] : profile?.lifelist || [];
-  const exceptions = profile?.exceptions;
+export function participantEffectiveList(p: LeanParticipant, usersById: Map<string, User>): string[] {
+  if (!p.userId) return p.lifelist || [];
+  const user = usersById.get(p.userId);
+  const base = p.listMode === "custom" ? p.lifelist || [] : user?.lifelist || [];
+  const exceptions = user?.exceptions;
   if (!exceptions?.length) return base;
   const ex = new Set(exceptions);
   return base.filter((code) => !ex.has(code));
@@ -73,24 +73,24 @@ export type ResolvedTripLifelist = {
 
 export function resolveTripLifelist(
   activeParticipants: ParticipantT[],
-  profilesByUid: Map<string, Profile>,
-  viewerUid?: string | null
+  usersById: Map<string, User>,
+  viewerUserId?: string | null
 ): ResolvedTripLifelist {
-  const viewerP = viewerUid ? activeParticipants.find((p) => p.uid === viewerUid) : null;
+  const viewerP = viewerUserId ? activeParticipants.find((p) => p.userId === viewerUserId) : null;
   const viewer = viewerP
     ? { participantId: viewerP._id, listMode: viewerP.listMode, listUpdatedAt: viewerP.lifelistUpdatedAt ?? null }
     : null;
-  const viewerLifelist = viewerP ? participantEffectiveList(viewerP, profilesByUid) : null;
+  const viewerLifelist = viewerP ? participantEffectiveList(viewerP, usersById) : null;
   const isPublicViewer = !viewerP;
 
   if (activeParticipants.length <= 1) {
     const owner = activeParticipants[0];
-    const tripLifelist = isPublicViewer && owner ? participantEffectiveList(owner, profilesByUid) : null;
+    const tripLifelist = isPublicViewer && owner ? participantEffectiveList(owner, usersById) : null;
     return { isGroup: false, groupLifelist: null, unionLifelist: null, tripLifelist, viewerLifelist, viewer };
   }
 
   const lists = activeParticipants
-    .map((p) => participantEffectiveList(p, profilesByUid))
+    .map((p) => participantEffectiveList(p, usersById))
     .filter((list) => list.length > 0);
   const groupLifelist = computeIntersection(lists);
   const unionLifelist = computeUnion(lists);

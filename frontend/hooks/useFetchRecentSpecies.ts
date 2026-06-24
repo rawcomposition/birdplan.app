@@ -1,9 +1,9 @@
-import { useProfile } from "hooks/useProfile";
+import { useUser } from "hooks/useUser";
 import { RecentSpecies } from "lib/types";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useFetchRecentSpecies(region?: string) {
-  const { lifelist } = useProfile();
+  const { lifelist } = useUser();
 
   const { data, isLoading, error, refetch } = useQuery<RecentSpecies[]>({
     queryKey: [`/region/${region}/species`],

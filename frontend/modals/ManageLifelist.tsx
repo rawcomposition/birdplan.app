@@ -28,7 +28,7 @@ export default function ManageLifelist({ participantId }: Props) {
 
   const isSelf = !!p?.isMe;
   const isPending = p?.status === "pending";
-  const isNameOnly = !!p && !p.uid && !isPending;
+  const isNameOnly = !!p && !p.userId && !isPending;
   const isGroup = (participants?.length ?? 0) > 1;
 
   const [nameDraft, setNameDraft] = React.useState(p?.name || "");

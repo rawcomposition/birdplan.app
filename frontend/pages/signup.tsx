@@ -11,7 +11,7 @@ export default function Signup() {
   const [searchParams] = useSearchParams();
   const { loading, user } = useUser();
 
-  if (user?.uid && !loading) {
+  if (user?._id && !loading) {
     return <Navigate to={getPostAuthDest(navContext)} replace />;
   }
 

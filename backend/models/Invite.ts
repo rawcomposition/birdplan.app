@@ -9,7 +9,7 @@ const fields: Record<keyof Omit<Invite, "createdAt" | "updatedAt">, any> = {
   ownerId: { type: String, required: true },
   accepted: { type: Boolean, required: true, default: false },
   name: String,
-  uid: String,
+  userId: String,
 };
 
 const InviteSchema = new Schema(fields, {
@@ -17,7 +17,7 @@ const InviteSchema = new Schema(fields, {
 });
 
 InviteSchema.index({ tripId: 1, createdAt: -1 }); // share modal
-InviteSchema.index({ tripId: 1, uid: 1 }); // trip editors endpoint
+InviteSchema.index({ tripId: 1, userId: 1 }); // trip editors endpoint
 
 const InviteModel = (mongoose.models.Invite as Model<Invite>) || model<Invite>("Invite", InviteSchema);
 

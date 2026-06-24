@@ -7,11 +7,10 @@ import {
 } from "components/ui/dropdown-menu";
 import { User, Feather, LogOut } from "lucide-react";
 import Avatar from "components/Avatar";
-import { avatarFromProfile } from "lib/avatar";
+import { avatarFromUser } from "lib/avatar";
 import { useUser } from "hooks/useUser";
 import { Link, useLocation } from "react-router-dom";
 import useLogout from "hooks/useLogout";
-import { useProfile } from "hooks/useProfile";
 import { withReturnTo } from "lib/helpers";
 
 type Props = {
@@ -22,9 +21,7 @@ type Props = {
 const itemClass = "gap-2 px-3 py-2.5 text-sm font-medium text-gray-700";
 
 const AccountDropdown = ({ className, dropUp }: Props) => {
-  const { user } = useUser();
-  const profile = useProfile();
-  const { lifelist } = profile;
+  const { user, lifelist } = useUser();
   const lifelistCount = lifelist?.length || 0;
   const { logout } = useLogout();
   const location = useLocation();
@@ -39,14 +36,14 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
         }
       >
-        <Avatar user={avatarFromProfile(profile)} size={28} />
+        <Avatar user={avatarFromUser(user)} size={28} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side={dropUp ? "top" : "bottom"} className="w-auto min-w-[240px] p-0">
         <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">
-          <Avatar user={avatarFromProfile(profile)} size={32} />
+          <Avatar user={avatarFromUser(user)} size={32} />
           <div className="text-sm">
-            <p className="font-semibold">{profile.name}</p>
-            {profile.email && <p className="text-gray-600">{profile.email}</p>}
+            <p className="font-semibold">{user.name}</p>
+            {user.email && <p className="text-gray-600">{user.email}</p>}
           </div>
         </div>
         <div className="p-1">

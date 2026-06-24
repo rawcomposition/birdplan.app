@@ -20,7 +20,7 @@ hotspots.post("/", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -42,7 +42,7 @@ hotspots.delete("/:hotspotId", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -62,7 +62,7 @@ hotspots.patch("/:hotspotId/translate-name", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -104,7 +104,7 @@ hotspots.post("/:hotspotId/add-species-fav", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -133,7 +133,7 @@ hotspots.patch("/sync", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -174,7 +174,7 @@ hotspots.patch("/:hotspotId/notes", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -230,7 +230,7 @@ hotspots.patch("/:hotspotId/remove-species-fav", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
@@ -257,7 +257,7 @@ hotspots.patch("/:hotspotId/reset-name", async (c) => {
   await connect();
   const [trip, isEditor] = await Promise.all([
     Trip.findById(tripId).lean(),
-    isTripEditor(tripId, session.uid),
+    isTripEditor(tripId, session.userId),
   ]);
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
