@@ -19,7 +19,7 @@ const HOUR = 60 * MINUTE;
 
 export const RATE_LIMITS: Record<string, RateRule[]> = {
   requestCodeEmail: [
-    { limit: 1, windowMs: 30 * SECOND },
+    { limit: 2, windowMs: 30 * SECOND },
     { limit: 5, windowMs: HOUR },
   ],
   requestCodeIp: [{ limit: 10, windowMs: HOUR }],
