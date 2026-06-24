@@ -11,8 +11,14 @@ import {
   getBounds,
   isDuplicateKeyError,
 } from "lib/utils.js";
-import { connect, Trip, Invite, Participant, User, IntegrationToken } from "lib/db.js";
-import { isTripEditor, isEditorInRoster, loadActiveRoster, loadUsersById, resolveTripLifelist } from "lib/participants.js";
+import { connect, Trip, Participant, User, IntegrationToken } from "lib/db.js";
+import {
+  isTripEditor,
+  isEditorInRoster,
+  loadActiveRoster,
+  loadUsersById,
+  resolveTripLifelist,
+} from "lib/participants.js";
 import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, OpenBirdingLocationResponse } from "@birdplan/shared";
@@ -131,7 +137,6 @@ trip.delete("/", async (c) => {
   await Promise.all([
     Trip.deleteOne({ _id: tripId }),
     Participant.deleteMany({ tripId }),
-    Invite.deleteMany({ tripId }),
     IntegrationToken.deleteMany({ tripId }),
   ]);
 
