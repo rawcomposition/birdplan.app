@@ -76,7 +76,7 @@ admin.get("/", async (c) => {
     userId: log.userId ?? null,
     ip: log.ip ?? null,
     data: log.data ?? null,
-    createdAt: (log as unknown as { createdAt: Date }).createdAt?.toISOString?.() ?? "",
+    createdAt: log.createdAt?.toISOString() ?? "",
   }));
 
   const response: AdminDashboard = {

@@ -35,7 +35,11 @@ export async function redeemMagicLink(token: string, meta: RedeemMeta = {}) {
 
   if (!link) throw new HTTPException(400, { message: "This link is invalid or has expired." });
 
-  const { token: sessionToken } = await createSession(link.userId, meta);
-
-  return { sessionToken, userId: link.userId };
+  try {
+    const { token: sessionToken } = await createSession(link.userId, meta);
+    return { sessionToken, userId: link.userId };
+  } catch (err) {
+    await MagicLink.updateOne({ _id: link._id }, { $set: { consumedAt: null } });
+    throw err;
+  }
 }

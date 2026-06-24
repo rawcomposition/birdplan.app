@@ -16,6 +16,7 @@ const LogSchema = new Schema(fields, {
 });
 
 LogSchema.index({ type: 1, createdAt: -1 });
+LogSchema.index({ createdAt: -1 });
 
 const LogModel = (mongoose.models.Log as Model<Log>) || model<Log>("Log", LogSchema);
 

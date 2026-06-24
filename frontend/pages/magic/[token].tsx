@@ -5,6 +5,7 @@ import Button from "components/Button";
 import Alert from "components/Alert";
 import Icon from "components/Icon";
 import useRedeemMagicLink from "hooks/useRedeemMagicLink";
+import { withReturnTo } from "lib/helpers";
 
 export default function Magic() {
   const { token } = useParams<{ token: string }>();
@@ -17,7 +18,7 @@ export default function Magic() {
     setError(null);
     try {
       await redeem.mutateAsync({ token });
-      navigate("/trips", { replace: true });
+      navigate(withReturnTo("/onboarding", "/trips"), { replace: true });
     } catch (err: any) {
       setError(err.message || "This link is invalid or has expired.");
     }
