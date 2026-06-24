@@ -126,7 +126,7 @@ async function run() {
       lifelist: [],
       exceptions: [],
       lastActiveAt: lastSignIn ?? fallback.lastActiveAt ?? now,
-      lastAuthenticatedAt: lastSignIn ?? null,
+      lastAuthenticatedAt: null,
       isAdmin: false,
       createdAt: created ?? fallback.lastActiveAt ?? now,
       updatedAt: now,

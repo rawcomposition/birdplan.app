@@ -1,11 +1,12 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "components/Input";
 import Field from "components/Field";
 import Button from "components/Button";
 import Alert from "components/Alert";
 import useRequestCode from "hooks/useRequestCode";
 import useVerifyCode from "hooks/useVerifyCode";
+import useReportNoCode from "hooks/useReportNoCode";
 import useNavContext from "hooks/useNavContext";
 import { getPostAuthDest, withReturnTo } from "lib/helpers";
 
@@ -26,9 +27,11 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
   const [code, setCode] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [cooldown, setCooldown] = React.useState(0);
+  const [showHelp, setShowHelp] = React.useState(false);
 
   const requestCode = useRequestCode();
   const verifyCode = useVerifyCode();
+  const reportNoCode = useReportNoCode();
 
   React.useEffect(() => {
     if (cooldown <= 0) return;
@@ -47,13 +50,17 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
     }
   };
 
+  const backToEmail = () => {
+    setStep("email");
+    setCode("");
+    setCooldown(0);
+    setShowHelp(false);
+    setError(null);
+  };
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    if (step === "code") {
-      setStep("email");
-      setCode("");
-      setCooldown(0);
-    }
+    if (step === "code") backToEmail();
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -125,16 +132,49 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
 
         {step === "code" && (
           <div className="text-center text-sm">
-            {cooldown > 0 ? (
-              <span className="text-gray-400">Resend in {cooldown}s</span>
+            {showHelp ? (
+              <div className="space-y-3 text-left text-gray-500">
+                <p>
+                  We sent a code to <span className="font-medium text-gray-700">{email}</span>.{" "}
+                  <button type="button" className="text-link font-medium" onClick={backToEmail}>
+                    Change email
+                  </button>
+                </p>
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>It can take 1–2 minutes to arrive.</li>
+                  <li>Check your spam or junk folder.</li>
+                  <li>
+                    {cooldown > 0 ? (
+                      <span className="text-gray-400">Resend in {cooldown}s</span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-link font-medium disabled:opacity-50"
+                        onClick={() => sendCode(email.trim().toLowerCase())}
+                        disabled={requestCode.isPending}
+                      >
+                        Resend code
+                      </button>
+                    )}
+                  </li>
+                </ul>
+                <p>
+                  Still stuck?{" "}
+                  <Link to="/contact" className="text-link font-medium">
+                    Contact us
+                  </Link>
+                </p>
+              </div>
             ) : (
               <button
                 type="button"
-                className="text-link font-medium disabled:opacity-50"
-                onClick={() => sendCode(email.trim().toLowerCase())}
-                disabled={requestCode.isPending}
+                className="text-link font-medium"
+                onClick={() => {
+                  setShowHelp(true);
+                  if (email.trim()) reportNoCode.mutate({ email: email.trim().toLowerCase() });
+                }}
               >
-                Resend code
+                Didn't receive the email?
               </button>
             )}
           </div>

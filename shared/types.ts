@@ -122,6 +122,28 @@ export type OtpCode = {
   updatedAt: Date;
 };
 
+export type MagicLink = {
+  _id: string;
+  tokenHash: string;
+  userId: string;
+  expiresAt: Date;
+  consumedAt?: Date | null;
+  createdByUserId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type GenerateMagicLinkResponse = {
+  url: string;
+  expiresAt: string;
+  email?: string;
+  isNewUser?: boolean;
+};
+
+export type RedeemMagicLinkResponse = {
+  token: string;
+};
+
 export type RateLimit = {
   _id: string;
   action: string;
@@ -131,6 +153,17 @@ export type RateLimit = {
   count: number;
   windowStartAt: Date;
   expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type Log = {
+  _id: string;
+  type: string;
+  email?: string | null;
+  userId?: string | null;
+  ip?: string | null;
+  data?: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -150,9 +183,20 @@ export type AdminStats = {
   trips: { total: number; created30d: number; created6mo: number };
 };
 
+export type AdminDashboardLog = {
+  _id: string;
+  type: string;
+  email?: string | null;
+  userId?: string | null;
+  ip?: string | null;
+  data?: Record<string, unknown> | null;
+  createdAt: string;
+};
+
 export type AdminDashboard = {
   stats: AdminStats;
   users: AdminDashboardUser[];
+  logs: AdminDashboardLog[];
 };
 
 export type LifelistImportInput = {

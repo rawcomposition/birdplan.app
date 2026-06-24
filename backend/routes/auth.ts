@@ -2,16 +2,19 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import dayjs from "dayjs";
 import { connect, User, Session } from "lib/db.js";
-import { authenticate, isDuplicateKeyError } from "lib/utils.js";
+import { authenticate } from "lib/utils.js";
+import { findOrCreateUserByEmail, normalizeEmail, isValidEmail } from "lib/users.js";
 import { createSession, invalidateSession } from "lib/session.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
+import { redeemMagicLink } from "lib/magicLink.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
+import { logEvent } from "lib/log.js";
+import { sendNtfyNotification } from "lib/notify.js";
 import { SESSION_INACTIVITY_DAYS, SESSION_REFRESH_THRESHOLD_HOURS, RATE_LIMITS } from "lib/config.js";
+import type { RedeemMagicLinkResponse } from "@birdplan/shared";
 
 const auth = new Hono();
 
-const normalizeEmail = (email?: string | null) => email?.trim().toLowerCase() || "";
-const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const getIp = (c: { req: { header: (name: string) => string | undefined } }) =>
   c.req.header("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
@@ -33,6 +36,25 @@ auth.post("/request-code", async (c) => {
   return c.json({ ok: true });
 });
 
+auth.post("/otp-not-received", async (c) => {
+  const { email: rawEmail } = await c.req.json<{ email: string }>();
+  const email = normalizeEmail(rawEmail);
+  const ip = getIp(c);
+
+  if (!email || !isValidEmail(email)) return c.json({ ok: true });
+
+  await connect();
+
+  const emailOk = await enforceRateLimit("otp_not_received", "email", email, RATE_LIMITS.otpNotReceivedEmail);
+  const ipOk = await enforceRateLimit("otp_not_received", "ip", ip, RATE_LIMITS.otpNotReceivedIp);
+  if (!emailOk || !ipOk) return c.json({ ok: true });
+
+  await logEvent({ type: "otp_not_received", email, ip });
+  await sendNtfyNotification("📭 OTP not received", `${email} reported not receiving their sign-in code.`);
+
+  return c.json({ ok: true });
+});
+
 auth.post("/verify-code", async (c) => {
   const { email: rawEmail, code } = await c.req.json<{ email: string; code: string }>();
   const email = normalizeEmail(rawEmail);
@@ -48,21 +70,7 @@ auth.post("/verify-code", async (c) => {
 
   await verifyOtp(email, code);
 
-  let user = await User.findOne({ email }).lean();
-  let isNewUser = false;
-  if (!user) {
-    try {
-      user = (await User.create({ email })).toObject();
-      isNewUser = true;
-    } catch (err) {
-      if (isDuplicateKeyError(err)) {
-        user = await User.findOne({ email }).lean();
-      } else {
-        throw err;
-      }
-    }
-  }
-  if (!user) throw new HTTPException(500, { message: "Failed to create account" });
+  const { user, isNewUser } = await findOrCreateUserByEmail(email);
 
   const { token } = await createSession(user._id, {
     userAgent: c.req.header("user-agent"),
@@ -70,6 +78,27 @@ auth.post("/verify-code", async (c) => {
   });
 
   return c.json({ token, isNewUser });
+});
+
+auth.post("/redeem-magic-link", async (c) => {
+  const { token } = await c.req.json<{ token: string }>();
+  const ip = getIp(c);
+
+  if (!token) throw new HTTPException(400, { message: "Missing token" });
+
+  await connect();
+
+  const ipOk = await enforceRateLimit("redeem_magic_link", "ip", ip, RATE_LIMITS.redeemMagicLinkIp);
+  if (!ipOk) throw new HTTPException(429, { message: "Too many requests. Please try again later." });
+
+  const { sessionToken, userId } = await redeemMagicLink(token, {
+    userAgent: c.req.header("user-agent"),
+    ip,
+  });
+
+  await logEvent({ type: "magic_link_redeemed", userId, ip });
+
+  return c.json<RedeemMagicLinkResponse>({ token: sessionToken });
 });
 
 auth.get("/me", async (c) => {

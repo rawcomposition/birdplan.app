@@ -13,6 +13,7 @@ import Onboarding from "pages/onboarding";
 import MyRarestLifers from "pages/my-rarest-lifers";
 import ImportLifelist from "pages/import-lifelist";
 import Accept from "pages/accept/[inviteId]";
+import Magic from "pages/magic/[token]";
 import TripIndex from "pages/[tripId]/index";
 import TripSettings from "pages/[tripId]/settings";
 import TripTargets from "pages/[tripId]/targets";
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "/onboarding", element: <Onboarding /> },
       { path: "/my-rarest-lifers", element: <MyRarestLifers /> },
       { path: "/accept/:inviteId", element: <Accept /> },
+      { path: "/magic/:token", element: <Magic /> },
       { path: "/:tripId", element: <TripIndex /> },
       { path: "/:tripId/targets", element: <TripTargets /> },
       { path: "/:tripId/targets/:speciesCode", element: <TripSpecies /> },

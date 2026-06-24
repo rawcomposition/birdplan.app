@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { HTTPException } from "hono/http-exception";
 import { OTP_EXPIRATION_MINUTES, INVITE_EXPIRATION_DAYS, IS_DEV } from "lib/config.js";
+import { sendNtfyNotification } from "lib/notify.js";
 
 const QUOTA_NOTIFY_BUCKETS = [0.5, 0.7, 0.8, 0.9, 0.95, 1.0];
 const RESEND_DAILY_LIMIT = 100;
@@ -13,20 +14,6 @@ type Props = {
   subject: string;
   html: string;
   replyTo?: string;
-};
-
-const sendNtfyNotification = async (title: string, message: string) => {
-  const topic = process.env.NTFY_TOPIC;
-  if (!topic) return;
-  try {
-    await fetch(`https://ntfy.sh/${topic}`, {
-      method: "POST",
-      headers: { Title: title },
-      body: message,
-    });
-  } catch (err) {
-    console.error(`[ntfy] failed to send notification: ${err instanceof Error ? err.message : err}`);
-  }
 };
 
 const notifyQuotaUsage = async (label: string, used: number, limit: number) => {

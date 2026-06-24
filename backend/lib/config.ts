@@ -8,6 +8,8 @@ export const OTP_MAX_ATTEMPTS = 5;
 
 export const INVITE_EXPIRATION_DAYS = 7;
 
+export const MAGIC_LINK_EXPIRATION_DAYS = 7;
+
 export const SESSION_INACTIVITY_DAYS = 365;
 export const SESSION_REFRESH_THRESHOLD_HOURS = 24;
 
@@ -25,4 +27,7 @@ export const RATE_LIMITS: Record<string, RateRule[]> = {
   requestCodeIp: [{ limit: 10, windowMs: HOUR }],
   verifyCodeEmail: [{ limit: 10, windowMs: 10 * MINUTE }],
   verifyCodeIp: [{ limit: 20, windowMs: 10 * MINUTE }],
+  otpNotReceivedEmail: [{ limit: 1, windowMs: 10 * MINUTE }],
+  otpNotReceivedIp: [{ limit: 10, windowMs: HOUR }],
+  redeemMagicLinkIp: [{ limit: 20, windowMs: 10 * MINUTE }],
 };

@@ -212,6 +212,7 @@ const RESERVED_ROUTES = new Set([
   "import-lifelist",
   "accept",
   "admin",
+  "magic",
 ]);
 
 export function getTripIdFromPath(pathname: string): string | undefined {
