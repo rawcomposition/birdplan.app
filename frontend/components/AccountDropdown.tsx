@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
-import { User, Feather, LogOut } from "lucide-react";
+import { User, Feather, LogOut, Shield } from "lucide-react";
 import Avatar from "components/Avatar";
 import { avatarFromUser } from "lib/avatar";
 import { useUser } from "hooks/useUser";
@@ -62,6 +62,12 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
               <span>Import Life List</span>
             )}
           </DropdownMenuItem>
+          {user.isAdmin && (
+            <DropdownMenuItem className={itemClass} render={<Link to="/admin" />}>
+              <Shield />
+              <span>Admin Dashboard</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem className={itemClass} onClick={logout}>
             <LogOut />
             <span>Logout</span>
