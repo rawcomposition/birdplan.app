@@ -19,7 +19,7 @@ import {
   loadUsersById,
   resolveTripLifelist,
 } from "lib/participants.js";
-import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
+import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
@@ -61,6 +61,7 @@ trip.get("/", async (c) => {
   const { shareCode, shareCodeCreatedAt, ...tripData } = trip;
   return c.json({
     ...tripData,
+    imgUrl: imageUrl(tripData.imgUrl),
     isGroupTrip: resolved.isGroup,
     ...(resolved.isGroup ? { unionLifelist: resolved.unionLifelist } : {}),
     ...(resolved.viewer

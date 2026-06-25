@@ -17,22 +17,23 @@ npm run dev              # run frontend (Vite :5280) + backend (:5100) concurren
 npm run dev:frontend     # Vite dev server on :5280
 npm run dev:backend      # Hono server with tsx watch on :5100
 npm run lint             # ESLint (frontend only)
-npm run typecheck        # builds backend + frontend, typechecks scripts + shared
+npm run typecheck        # builds backend + frontend, typechecks shared
 npm run build            # production build of frontend + backend
 ```
 
 There is no test suite. `typecheck` is the primary correctness gate — run it after changes that span workspaces, since `@birdplan/shared` types flow into both frontend and backend.
 
-Utility scripts: `npm run get-avicommons` (fetch bird image data), `npm run tz-sync-regions` (sync region timezones).
+Utility scripts live in `backend/scripts/` (run via `tsx`, reusing the backend's deps, `.env`, models, and `@birdplan/shared` alias) and are exposed from the repo root, e.g. `npm run get-avicommons` (fetch bird image data), `npm run tz-sync-regions` (sync region timezones), `npm run migrate-imgurl-to-filename` (one-off DB migration; pass `-- --write` to apply).
 
 ## Architecture
 
-Monorepo with four npm workspaces:
+Monorepo with three npm workspaces:
 
 - **`shared/`** — `@birdplan/shared`: shared TypeScript types only (`types.ts`). The single source of truth for domain models (`Trip`, `Hotspot`, `Profile`, `Participant`, etc.). Imported by both frontend and backend via the `@birdplan/shared` alias. Changing a type here affects both sides — re-run `typecheck`.
 - **`backend/`** — Hono API server (ESM, `type: module`). Connects to MongoDB via Mongoose, uses Firebase Admin for auth verification and Storage.
 - **`frontend/`** — Vite SPA with **React Router 7** (`createBrowserRouter`; no `src/` dir). React 19, Tailwind 4, React Query, Zustand, Mapbox.
-- **`scripts/`** — standalone `tsx` utility scripts.
+
+Standalone `tsx` utility scripts live in `backend/scripts/` (not a separate workspace) — see Commands above.
 
 ### Backend
 

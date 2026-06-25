@@ -1,8 +1,6 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 import fs from "fs";
 import path from "path";
-import { RegionTz } from "../shared/types";
+import type { RegionTz } from "@birdplan/shared";
 
 type SubRegionTz = Omit<RegionTz, "subregions">;
 
@@ -80,7 +78,7 @@ const fetchSubregions = async (countryCode: string): Promise<SubRegionTz[]> => {
 const syncCountries = async () => {
   console.log("Syncing countries and subregions...");
   try {
-    const filePath = path.join(__dirname, "../frontend/timezones.json");
+    const filePath = path.join(__dirname, "../../frontend/timezones.json");
 
     let oldData: RegionTz[] = [];
     if (fs.existsSync(filePath)) {
@@ -143,7 +141,7 @@ const syncCountries = async () => {
 
     fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
     fs.writeFileSync(
-      path.join(__dirname, "../frontend/timezones-flat.json"),
+      path.join(__dirname, "../../frontend/timezones-flat.json"),
       JSON.stringify(flattenedTimezones, null, 2)
     );
 

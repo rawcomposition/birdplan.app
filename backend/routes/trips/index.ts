@@ -4,7 +4,7 @@ import { rateLimiter } from "hono-rate-limiter";
 import trip from "./[tripId]/index.js";
 import { authenticate, getBounds } from "lib/utils.js";
 import { connect, Trip, Participant, IntegrationToken, User } from "lib/db.js";
-import { uploadMapboxImageToStorage } from "lib/firebaseAdmin.js";
+import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripInput } from "@birdplan/shared";
 
@@ -101,7 +101,7 @@ trips.get("/", async (c) => {
   const trips = await Trip.find({ _id: { $in: tripIds } })
     .sort({ createdAt: -1 })
     .lean();
-  return c.json(trips);
+  return c.json(trips.map((trip) => ({ ...trip, imgUrl: imageUrl(trip.imgUrl) })));
 });
 
 trips.post("/", async (c) => {
