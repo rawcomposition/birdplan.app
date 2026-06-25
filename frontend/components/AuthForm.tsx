@@ -127,7 +127,7 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
         )}
 
         <Button type="submit" color="primary" className="w-full" disabled={disabled}>
-          Continue
+          {requestCode.isPending ? "Sending code..." : verifyCode.isPending ? "Verifying code..." : "Continue"}
         </Button>
 
         {step === "code" && (
