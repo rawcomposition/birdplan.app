@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-06-24",
+    "title": "Simpler email sign-in",
+    "description": "We've switched to a simpler email sign-in that sends a one-time code instead of using a password, streamlining authentication and reducing our reliance on external services."
+  },
+  {
+    "date": "2026-06-19",
+    "title": "Group trips overhaul",
+    "description": "Everyone on a trip now keeps their own life list, and BirdPlan tracks targets for the whole group, including the mutual targets everyone still needs."
+  }
+]

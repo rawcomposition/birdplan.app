@@ -6,7 +6,9 @@ import { authenticate, getBounds } from "lib/utils.js";
 import { connect, Trip, Participant, IntegrationToken, User } from "lib/db.js";
 import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
-import type { TripInput } from "@birdplan/shared";
+import type { TripInput, ParticipantView, TripStats } from "@birdplan/shared";
+
+type ParticipantAvatar = Pick<ParticipantView, "_id" | "userId" | "name" | "photoUrl">;
 
 const shareCodeLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -91,17 +93,120 @@ trips.get("/openbirding/:codeOrToken", shareCodeLimiter, async (c) => {
   return c.json(serializeTripForImport(trip));
 });
 
+trips.get("/stats", async (c) => {
+  const session = await authenticate(c);
+
+  await connect();
+  const tripIds = await Participant.find({ userId: session.userId, status: "active" }).distinct("tripId");
+
+  const [stats] = await Trip.aggregate<TripStats>([
+    { $match: { _id: { $in: tripIds } } },
+    {
+      $project: {
+        hotspotCount: { $size: { $ifNull: ["$hotspots", []] } },
+        countries: {
+          $map: {
+            input: { $split: [{ $ifNull: ["$region", ""] }, ","] },
+            as: "code",
+            in: { $arrayElemAt: [{ $split: ["$$code", "-"] }, 0] },
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        tripCount: { $sum: 1 },
+        hotspotTotal: { $sum: "$hotspotCount" },
+        countrySets: { $push: "$countries" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        tripCount: 1,
+        hotspotTotal: 1,
+        countryCount: {
+          $size: {
+            $reduce: {
+              input: "$countrySets",
+              initialValue: [],
+              in: { $setUnion: ["$$value", "$$this"] },
+            },
+          },
+        },
+      },
+    },
+  ]);
+
+  return c.json(stats ?? { tripCount: 0, hotspotTotal: 0, countryCount: 0 });
+});
+
 trips.route("/:tripId", trip);
 
 trips.get("/", async (c) => {
   const session = await authenticate(c);
 
   await connect();
+  const limit = Math.min(Math.max(Number(c.req.query("limit")) || 12, 1), 50);
+  const cursor = c.req.query("cursor");
+
   const tripIds = await Participant.find({ userId: session.userId, status: "active" }).distinct("tripId");
-  const trips = await Trip.find({ _id: { $in: tripIds } })
-    .sort({ createdAt: -1 })
+
+  const match: Record<string, unknown> = { _id: { $in: tripIds } };
+  if (cursor) match.createdAt = { $lt: new Date(cursor) };
+
+  const docs = await Trip.aggregate([
+    { $match: match },
+    { $sort: { createdAt: -1 } },
+    { $limit: limit + 1 },
+    {
+      $project: {
+        name: 1,
+        region: 1,
+        imgUrl: 1,
+        startDate: 1,
+        endDate: 1,
+        startMonth: 1,
+        endMonth: 1,
+        createdAt: 1,
+        hotspotCount: { $size: { $ifNull: ["$hotspots", []] } },
+      },
+    },
+  ]);
+
+  const hasMore = docs.length > limit;
+  const page = hasMore ? docs.slice(0, limit) : docs;
+  const nextCursor = hasMore ? new Date(page[page.length - 1].createdAt).toISOString() : null;
+
+  const pageTripIds = page.map((t) => t._id);
+  const roster = await Participant.find({ tripId: { $in: pageTripIds }, status: "active" })
+    .sort({ createdAt: 1 })
     .lean();
-  return c.json(trips.map((trip) => ({ ...trip, imgUrl: imageUrl(trip.imgUrl) })));
+  const userIds = roster.map((p) => p.userId).filter((u): u is string => !!u);
+  const users = userIds.length ? await User.find({ _id: { $in: userIds } }).select("photoUrl").lean() : [];
+  const photoByUser = new Map(users.map((u) => [u._id, u.photoUrl]));
+  const participantsByTrip = new Map<string, ParticipantAvatar[]>();
+  for (const p of roster) {
+    const list = participantsByTrip.get(p.tripId) ?? [];
+    list.push({ _id: p._id, userId: p.userId, name: p.name, photoUrl: p.userId ? photoByUser.get(p.userId) : undefined });
+    participantsByTrip.set(p.tripId, list);
+  }
+
+  const items = page.map((trip) => ({
+    _id: trip._id,
+    name: trip.name,
+    region: trip.region,
+    imgUrl: imageUrl(trip.imgUrl),
+    startDate: trip.startDate,
+    endDate: trip.endDate,
+    startMonth: trip.startMonth,
+    endMonth: trip.endMonth,
+    hotspotCount: trip.hotspotCount,
+    participants: participantsByTrip.get(trip._id) ?? [],
+  }));
+
+  return c.json({ trips: items, nextCursor });
 });
 
 trips.post("/", async (c) => {

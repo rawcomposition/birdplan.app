@@ -36,6 +36,25 @@ export type Trip = {
   createdAt: string;
 };
 
+export type TripListItem = Pick<
+  Trip,
+  "_id" | "name" | "region" | "imgUrl" | "startDate" | "endDate" | "startMonth" | "endMonth"
+> & {
+  hotspotCount: number;
+  participants: Pick<ParticipantView, "_id" | "userId" | "name" | "photoUrl">[];
+};
+
+export type TripListPage = {
+  trips: TripListItem[];
+  nextCursor: string | null;
+};
+
+export type TripStats = {
+  tripCount: number;
+  hotspotTotal: number;
+  countryCount: number;
+};
+
 export type CustomMarker = {
   name: string;
   lat: number;
