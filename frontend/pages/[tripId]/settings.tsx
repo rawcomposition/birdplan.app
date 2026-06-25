@@ -18,6 +18,12 @@ import Icon from "components/Icon";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRegionCode, validateRegionFields, RegionFieldsValue } from "lib/region";
 import { Trip } from "@birdplan/shared";
+import dayjs from "dayjs";
+
+const monthOption = (month: number): Option => ({
+  value: month.toString(),
+  label: months[month - 1],
+});
 
 export default function TripSettings() {
   const { trip, is404, isOwner } = useTrip();
@@ -48,15 +54,23 @@ type SettingsFormProps = {
 function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [startMonth, setStartMonth] = React.useState<Option>({
-    value: trip.startMonth.toString(),
-    label: months[trip.startMonth - 1],
-  });
-  const [endMonth, setEndMonth] = React.useState<Option>({
-    value: trip.endMonth.toString(),
-    label: months[trip.endMonth - 1],
-  });
+  const [startDate, setStartDate] = React.useState(trip.startDate ?? "");
+  const [endDate, setEndDate] = React.useState(trip.endDate ?? "");
+  const [startMonth, setStartMonth] = React.useState<Option>(monthOption(trip.startMonth));
+  const [endMonth, setEndMonth] = React.useState<Option>(monthOption(trip.endMonth));
   const [region, setRegion] = React.useState<RegionFieldsValue>(initialRegion);
+
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setStartDate(value);
+    if (value) setStartMonth(monthOption(dayjs(value).month() + 1));
+  };
+
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEndDate(value);
+    if (value) setEndMonth(monthOption(dayjs(value).month() + 1));
+  };
 
   const deleteTripMutation = useMutation({
     url: `/trips/${trip._id}`,
@@ -88,6 +102,8 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     updateTripMutation.mutate({
       name,
       region: getRegionCode(region)!,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
       startMonth: Number(startMonth.value),
       endMonth: Number(endMonth.value),
     });
@@ -124,7 +140,30 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 />
               </Field>
               <div>
-                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Timeframe</label>
+                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Dates</label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    type="date"
+                    name="startDate"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                    className="grow"
+                  />
+                  <span className="text-gray-500 px-2">to</span>
+                  <Input
+                    type="date"
+                    name="endDate"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                    className="grow"
+                  />
+                </div>
+                <p className="mt-1 text-sm text-gray-500">
+                  Approximate dates are fine — you can refine them later.
+                </p>
+              </div>
+              <div>
+                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Timeframe (months)</label>
                 <div className="flex gap-2 items-center">
                   <MonthSelect
                     onChange={setStartMonth}

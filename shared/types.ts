@@ -15,6 +15,7 @@ export type Trip = {
   markers: CustomMarker[];
   itinerary?: Day[];
   startDate?: string;
+  endDate?: string;
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
@@ -316,6 +317,8 @@ export type IntegrationToken = {
 export type TripInput = {
   name: string;
   region: string;
+  startDate?: string;
+  endDate?: string;
   startMonth: number;
   endMonth: number;
 };
@@ -323,6 +326,8 @@ export type TripInput = {
 export type TripUpdateInput = {
   name: string;
   region: string;
+  startDate?: string;
+  endDate?: string;
   startMonth: number;
   endMonth: number;
 };

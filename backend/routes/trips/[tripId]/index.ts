@@ -97,6 +97,8 @@ trip.patch("/", async (c) => {
   const newData: Record<string, any> = {
     name: data.name,
     region: data.region,
+    startDate: data.startDate ?? null,
+    endDate: data.endDate ?? null,
     startMonth: data.startMonth,
     endMonth: data.endMonth,
   };
@@ -262,30 +264,6 @@ trip.post("/share-code", async (c) => {
   }
 
   throw new HTTPException(500, { message: "Failed to generate share code" });
-});
-
-trip.patch("/set-start-date", async (c) => {
-  const session = await authenticate(c);
-  const tripId: string | undefined = c.req.param("tripId");
-
-  if (!tripId) {
-    throw new HTTPException(400, { message: "Trip ID is required" });
-  }
-
-  const { startDate } = await c.req.json<{ startDate: string }>();
-
-  await connect();
-  const trip = await Trip.findById(tripId).lean();
-  if (!trip) {
-    throw new HTTPException(404, { message: "Trip not found" });
-  }
-  if (!(await isTripEditor(tripId, session.userId))) {
-    throw new HTTPException(403, { message: "Forbidden" });
-  }
-
-  await Trip.updateOne({ _id: tripId }, { startDate });
-
-  return c.json({});
 });
 
 export default trip;

@@ -3,10 +3,8 @@ import Header from "components/Header";
 import TripNav from "components/TripNav";
 import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
-import Input from "components/Input";
 import Button from "components/Button";
 import { useTrip } from "hooks/useTrip";
-import toast from "react-hot-toast";
 import { useModal } from "stores/modals";
 import Icon from "components/Icon";
 import NotFound from "components/NotFound";
@@ -19,7 +17,6 @@ export default function Itinerary() {
   const { is404, trip, canEdit } = useTrip();
   const { close, modalId } = useModal();
   const hasStartDate = !!trip?.startDate;
-  const [editingStartDate, setEditingStartDate] = React.useState(false);
   const shouldDefaultEdit = !!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length);
   const [editing, setEditing] = React.useState(shouldDefaultEdit);
   const [prevShouldDefaultEdit, setPrevShouldDefaultEdit] = React.useState(shouldDefaultEdit);
@@ -30,15 +27,6 @@ export default function Itinerary() {
     if (shouldDefaultEdit) setEditing(true);
   }
 
-  const setStartDateMutation = useTripMutation<{ startDate: string }>({
-    url: `/trips/${trip?._id}/set-start-date`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      startDate: input.startDate,
-    }),
-  });
-
   const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
     url: `/trips/${trip?._id}/itinerary`,
     method: "POST",
@@ -47,16 +35,6 @@ export default function Itinerary() {
       itinerary: [...(old.itinerary || []), input],
     }),
   });
-
-  const submitStartDate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const date = form.date.value;
-    if (!date) return toast.error("Please choose a date");
-    setStartDateMutation.mutate({ startDate: date });
-    setEditingStartDate(false);
-    setEditing(true);
-  };
 
   const handleAddDay = () => {
     addDayMutation.mutate({ id: nanoId(6), locations: [] });
@@ -103,31 +81,17 @@ export default function Itinerary() {
                       </Button>
                     )}
                   </div>
-                  {canEdit && !!trip?.startDate && !editingStartDate && (
-                    <button
-                      type="button"
-                      onClick={() => setEditingStartDate(true)}
-                      className="text-[14px] text-gray-600 hover:text-gray-700 block mt-2 hover:underline"
-                    >
-                      Edit start date
-                    </button>
-                  )}
                 </div>
 
-                {canEdit && (!trip?.startDate || editingStartDate) && (
+                {canEdit && !trip?.startDate && (
                   <div className="pt-4 p-5 bg-white rounded-lg shadow-sm mb-8">
-                    <h2 className="text-xl font-bold text-gray-700 mb-4">Choose start date</h2>
-                    <form className="flex gap-2" onSubmit={submitStartDate}>
-                      <Input
-                        name="date"
-                        type="date"
-                        defaultValue={trip?.startDate}
-                        className="grow flex xs:block"
-                      />
-                      <Button type="submit" color="primary">
-                        Set
-                      </Button>
-                    </form>
+                    <h2 className="text-xl font-bold text-gray-700 mb-2">Set your trip dates</h2>
+                    <p className="text-gray-600 mb-4">
+                      Add a start date in trip settings to build your day-by-day itinerary.
+                    </p>
+                    <Button href={`/${trip?._id}/settings`} color="primary">
+                      Go to Trip Settings
+                    </Button>
                   </div>
                 )}
                 {!canEdit && !trip?.startDate && (

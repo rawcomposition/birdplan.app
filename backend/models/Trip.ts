@@ -87,6 +87,7 @@ const fields: Record<
     },
   ],
   startDate: { type: String, default: null },
+  endDate: { type: String, default: null },
   startMonth: { type: Number, required: true },
   endMonth: { type: Number, required: true },
   imgUrl: { type: String, default: null },
