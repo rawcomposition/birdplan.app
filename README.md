@@ -12,9 +12,7 @@ Try it out at [https://BirdPlan.app](https://BirdPlan.app) or see [what's new](h
 - [Hono](https://hono.dev/) (backend)
 - [MongoDB](https://www.mongodb.com/)
 - [Tailwind](https://tailwindcss.com/)
-- [Firebase](https://firebase.google.com/)
-  - Auth
-  - Storage
+- [Cloudflare R2](https://developers.cloudflare.com/r2/) (image storage)
 - [Typescript](https://www.typescriptlang.org/)
 
 ## Current Deployment

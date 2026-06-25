@@ -18,7 +18,6 @@
     "dev:backend": "npm run dev --workspace=backend",
     "get-avicommons": "npm run get-avicommons --workspace=backend",
     "tz-sync-regions": "npm run tz-sync-regions --workspace=backend",
-    "migrate-imgurl-to-filename": "npm run migrate-imgurl-to-filename --workspace=backend --",
     "lint": "npm run lint --workspace=frontend",
     "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=shared"
   },

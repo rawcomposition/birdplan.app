@@ -125,7 +125,7 @@ const DIMENSIONS = [
     key: "security",
     when: ctx.hasBackend,
     guidance:
-      "The Firebase ID token is the only trust anchor — never accept uid/email/ownership from the request body. Guard against NoSQL/operator injection: never pass untrusted objects straight into Mongoose filters or $where; cast ids and values to expected primitives. No mass-assignment: don't spread `await c.req.json()` directly into updateOne/findByIdAndUpdate — whitelist fields against the shared *Input type. No secrets, tokens, or API keys in responses or logs; sensitive fields (e.g. shareCode/shareCodeCreatedAt) must be stripped before serializing a trip (see the existing destructure-and-omit pattern).",
+      "The validated session token (`authenticate(c)` → `session.userId`) is the only trust anchor — never accept userId/email/ownership from the request body. Guard against NoSQL/operator injection: never pass untrusted objects straight into Mongoose filters or $where; cast ids and values to expected primitives. No mass-assignment: don't spread `await c.req.json()` directly into updateOne/findByIdAndUpdate — whitelist fields against the shared *Input type. No secrets, tokens, or API keys in responses or logs; sensitive fields (e.g. shareCode/shareCodeCreatedAt) must be stripped before serializing a trip (see the existing destructure-and-omit pattern).",
   },
   {
     key: "race-data-integrity",
