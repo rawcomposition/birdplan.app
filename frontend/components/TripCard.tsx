@@ -21,7 +21,13 @@ export default function TripCard({ trip }: Props) {
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white sm:flex-row">
       <Link to={`/${_id}`} className="relative block aspect-[300/185] w-full shrink-0 bg-gray-100 sm:w-56">
-        {imgUrl && <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />}
+        {imgUrl && (
+          <img
+            src={imgUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover [filter:saturate(0.92)_brightness(0.93)]"
+          />
+        )}
         {daysUntilStart !== null && (
           <div className="absolute top-2.5 left-2.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-gray-800 shadow-md">
             {daysUntilStart === 0 ? "Today" : `In ${daysUntilStart} ${daysUntilStart === 1 ? "day" : "days"}`}
