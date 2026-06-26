@@ -10,7 +10,6 @@ import Account from "pages/account";
 import Create from "pages/create";
 import WhatsNew from "pages/whats-new";
 import Onboarding from "pages/onboarding";
-import MyRarestLifers from "pages/my-rarest-lifers";
 import ImportLifelist from "pages/import-lifelist";
 import Accept from "pages/accept/[inviteId]";
 import Magic from "pages/magic/[token]";
@@ -37,7 +36,6 @@ export const router = createBrowserRouter([
       { path: "/support", element: <Navigate to="/contact" replace /> },
       { path: "/whats-new", element: <WhatsNew /> },
       { path: "/onboarding", element: <Onboarding /> },
-      { path: "/my-rarest-lifers", element: <MyRarestLifers /> },
       { path: "/accept/:inviteId", element: <Accept /> },
       { path: "/magic/:token", element: <Magic /> },
       { path: "/:tripId", element: <TripIndex /> },
