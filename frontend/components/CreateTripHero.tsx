@@ -17,7 +17,7 @@ export default function CreateTripHero() {
   return (
     <aside
       className="absolute inset-y-0 right-0 hidden overflow-hidden lg:block"
-      style={{ left: "calc(max((100vw - 80rem) / 2, 0px) + 36rem + 3rem)" }}
+      style={{ left: "calc(max((100vw - 80rem) / 2, 0px) + 42rem + 3rem)" }}
     >
       <img src={image.src} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div

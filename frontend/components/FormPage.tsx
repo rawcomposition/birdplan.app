@@ -32,8 +32,8 @@ export default function FormPage({
     <div className="flex flex-col h-full">
       {documentTitle && <title>{documentTitle}</title>}
       {header ?? <Header />}
-      <main className="flex-1 overflow-y-auto bg-gray-50">
-        <div className="mx-auto w-full max-w-xl px-4 py-6 pb-16 sm:px-6 sm:py-8">
+      <main className="flex-1 overflow-y-auto bg-background">
+        <div className="mx-auto w-full max-w-2xl px-4 py-6 pb-16 sm:px-6 sm:py-8">
           {back && <BackLink to={back.to} label={back.label} className="mb-5" />}
           <Heading
             hat={hat}

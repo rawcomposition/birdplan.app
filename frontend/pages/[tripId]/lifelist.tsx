@@ -43,7 +43,7 @@ export default function TripLifelist() {
             className="mb-8"
           />
 
-          <Card className="p-5 mb-6">
+          <Card className="rounded-2xl p-5 mb-6">
             {trip ? (
               <LifelistEditor trip={trip} mode={lifelistMode} embedded />
             ) : (

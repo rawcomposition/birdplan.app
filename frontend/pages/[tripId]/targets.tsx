@@ -112,7 +112,7 @@ export default function TripTargets() {
         parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }}
       />
       <TripNav active="targets" />
-      <main className="flex h-[calc(100%-60px-55px)] relative bg-gray-50">
+      <main className="flex h-[calc(100%-60px-55px)] relative bg-background">
         <ErrorBoundary>
           <div className="h-full overflow-auto w-full">
             <div className="h-full grow flex sm:relative flex-col w-full">

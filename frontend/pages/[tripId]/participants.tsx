@@ -36,7 +36,7 @@ export default function TripParticipants() {
       header={<Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />}
       back={returnTo || !isNew ? { to: backHref, label: `Back to ${backLabel}` } : undefined}
     >
-      <Card className="mb-4 px-4 sm:px-5">
+      <Card className="mb-4 rounded-2xl px-4 sm:px-5">
         {participants == null ? (
           <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
             <Icon name="loading" className="animate-spin" /> Loading participants...
@@ -58,9 +58,11 @@ export default function TripParticipants() {
         </button>
       )}
 
-      <Field label="View-only link" className="mt-8">
-        <Input name="link" value={shareLink} readOnly ref={linkRef} onFocus={handleLinkFocus} />
-      </Field>
+      <Card className="mt-8 rounded-2xl p-5 sm:p-6">
+        <Field label="View-only link">
+          <Input name="link" value={shareLink} readOnly ref={linkRef} onFocus={handleLinkFocus} />
+        </Field>
+      </Card>
 
       <div className="mt-8 flex">
         <Button href={backHref} color="pillPrimary" size="pill" className="ml-auto">

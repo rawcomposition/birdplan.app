@@ -90,7 +90,7 @@ export default function ImportLifelist() {
       back={isOnboarding ? undefined : { to: redirectUrl, label: `Back to ${backLabel}` }}
     >
           {hasList && (
-            <Card className="p-5 mb-6">
+            <Card className="rounded-2xl p-5 mb-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>

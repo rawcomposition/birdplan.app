@@ -6,6 +6,7 @@ import MonthSelect from "components/MonthSelect";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
+import Card from "components/Card";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
 import FormPage from "components/FormPage";
@@ -129,7 +130,8 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
       documentTitle="Trip Settings | BirdPlan.app"
       back={{ to: `/${trip._id}`, label: "Back to trip" }}
     >
-      <form className="flex flex-col gap-[22px]" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <Card className="flex flex-col gap-[22px] rounded-2xl p-5 sm:p-6">
         <Field label="Trip name">
           <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus defaultValue={trip.name} />
         </Field>
@@ -159,8 +161,9 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
         />
 
         <RegionFields value={region} onChange={setRegion} />
+        </Card>
 
-        <div className="mt-2 flex justify-end gap-3">
+        <div className="mt-6 flex justify-end gap-3">
           <Button href={`/${trip._id}`} color="pillOutlineGray" size="pill">
             Cancel
           </Button>
@@ -170,7 +173,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
         </div>
 
         {isOwner && (
-          <div className="mt-6 border-t border-gray-100 pt-6">
+          <div className="mt-8 border-t border-gray-100 pt-6">
             <button
               type="button"
               onClick={handleDelete}

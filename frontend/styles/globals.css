@@ -80,7 +80,7 @@
 
 @layer base {
   :root {
-    --background: hsl(240 20% 99%);
+    --background: rgb(246 248 251);
     --foreground: hsl(221 39% 11%);
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(221 39% 11%);

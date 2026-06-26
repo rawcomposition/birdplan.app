@@ -126,11 +126,11 @@ export default function CreateTrip() {
       <Header border />
       <main className="relative min-h-0 flex-1 overflow-hidden">
         <div className="mx-auto h-full max-w-7xl">
-          <div className="mx-auto h-full max-w-xl overflow-y-auto lg:mx-0">
+          <div className="mx-auto h-full max-w-2xl overflow-y-auto lg:mx-0">
             <div className="flex min-h-full flex-col px-5 py-8 sm:px-9 lg:pr-0">
               <BackLink to="/trips" label="Back to trips" className="mb-6" />
 
-              <Heading hat="New trip" title="Where are you headed?" size="lg" className="mb-7" />
+              <Heading hat="New trip" title="Where are you headed?" className="mb-7" />
 
               <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-[22px]">
