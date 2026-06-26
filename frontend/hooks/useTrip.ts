@@ -4,7 +4,7 @@ import { Trip, ParticipantView } from "@birdplan/shared";
 import { useLocation } from "react-router-dom";
 import { useUser } from "hooks/useUser";
 import { useSessionToken } from "lib/sessionToken";
-import { fullMonths, months, getTripIdFromPath } from "lib/helpers";
+import { formatMonthRange, getTripIdFromPath } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 
 type SelectedSpecies = {
@@ -82,12 +82,7 @@ export const useTrip = () => {
   const ui = useTripUiStore();
   const is404 = !!token && !!id && !trip && !isLoading;
 
-  const dateRangeLabel =
-    trip?.startMonth && trip?.endMonth
-      ? trip.startMonth === trip.endMonth
-        ? fullMonths[trip.startMonth - 1]
-        : `${months[trip.startMonth - 1]} - ${months[trip.endMonth - 1]}`
-      : "";
+  const dateRangeLabel = trip?.startMonth && trip?.endMonth ? formatMonthRange(trip.startMonth, trip.endMonth) : "";
 
   return {
     trip: trip || null,

@@ -15,6 +15,7 @@ export type Trip = {
   markers: CustomMarker[];
   itinerary?: Day[];
   startDate?: string;
+  endDate?: string;
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
@@ -33,6 +34,25 @@ export type Trip = {
   shareCodeCreatedAt?: string;
   updatedAt: string;
   createdAt: string;
+};
+
+export type TripListItem = Pick<
+  Trip,
+  "_id" | "name" | "region" | "imgUrl" | "startDate" | "endDate" | "startMonth" | "endMonth"
+> & {
+  hotspotCount: number;
+  participants: Pick<ParticipantView, "_id" | "userId" | "name" | "photoUrl">[];
+};
+
+export type TripListPage = {
+  trips: TripListItem[];
+  nextCursor: string | null;
+};
+
+export type TripStats = {
+  tripCount: number;
+  hotspotTotal: number;
+  countryCount: number;
 };
 
 export type CustomMarker = {
@@ -316,6 +336,8 @@ export type IntegrationToken = {
 export type TripInput = {
   name: string;
   region: string;
+  startDate?: string;
+  endDate?: string;
   startMonth: number;
   endMonth: number;
 };
@@ -323,6 +345,8 @@ export type TripInput = {
 export type TripUpdateInput = {
   name: string;
   region: string;
+  startDate?: string;
+  endDate?: string;
   startMonth: number;
   endMonth: number;
 };

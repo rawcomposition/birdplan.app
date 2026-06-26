@@ -25,6 +25,36 @@ export const fullMonths = [
   "December",
 ];
 
+export const formatMonthRange = (startMonth: number, endMonth: number): string =>
+  startMonth === endMonth ? fullMonths[startMonth - 1] : `${months[startMonth - 1]} – ${months[endMonth - 1]}`;
+
+export const formatTripDateRange = (
+  trip: Pick<Trip, "startDate" | "endDate" | "startMonth" | "endMonth">
+): string => {
+  if (!trip.startDate) return formatMonthRange(trip.startMonth, trip.endMonth);
+  const start = dayjs(trip.startDate);
+  const end = trip.endDate ? dayjs(trip.endDate) : start;
+  if (start.isSame(end, "day")) return start.format("MMM D, YYYY");
+  if (!start.isSame(end, "year")) return `${start.format("MMM D, YYYY")} – ${end.format("MMM D, YYYY")}`;
+  if (!start.isSame(end, "month")) return `${start.format("MMM D")} – ${end.format("MMM D, YYYY")}`;
+  return `${start.format("MMM D")} – ${end.format("D, YYYY")}`;
+};
+
+export const tripDurationDays = (trip: Pick<Trip, "startDate" | "endDate">): number | null => {
+  if (!trip.startDate) return null;
+  const start = dayjs(trip.startDate).startOf("day");
+  const end = (trip.endDate ? dayjs(trip.endDate) : start).startOf("day");
+  return end.diff(start, "day") + 1;
+};
+
+export const tripDaysUntilStart = (trip: Pick<Trip, "startDate" | "endDate">): number | null => {
+  if (!trip.startDate) return null;
+  const today = dayjs().startOf("day");
+  const end = (trip.endDate ? dayjs(trip.endDate) : dayjs(trip.startDate)).startOf("day");
+  if (end.isBefore(today)) return null;
+  return Math.max(0, dayjs(trip.startDate).startOf("day").diff(today, "day"));
+};
+
 export const englishCountries = [
   "US",
   "CA",

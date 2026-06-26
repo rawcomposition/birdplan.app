@@ -16,6 +16,14 @@ export const newInviteToken = () => ({
 
 export const isDuplicateKeyError = (err: unknown): boolean => (err as { code?: number })?.code === 11000;
 
+export const validateTripDates = (data: { startDate?: string; endDate?: string }): void => {
+  if (!data.startDate) throw new HTTPException(400, { message: "A start date is required" });
+  if (!data.endDate) throw new HTTPException(400, { message: "An end date is required" });
+  if (data.endDate < data.startDate) {
+    throw new HTTPException(400, { message: "End date must be on or after the start date" });
+  }
+};
+
 function getBearerToken(c: Context): string {
   const authHeader = c.req.header("authorization");
   if (!authHeader?.startsWith("Bearer ")) return "";
