@@ -1,13 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { IconNameT } from "lib/icons";
-import { cn } from "lib/utils";
 import Header from "components/Header";
 import Footer from "components/Footer";
-import Icon from "components/Icon";
+import BackLink from "components/BackLink";
+import Heading from "components/Heading";
 
 type Props = {
   title: string;
+  hat?: string;
   icon?: IconNameT;
   iconClassName?: string;
   subtitle?: React.ReactNode;
@@ -19,6 +19,7 @@ type Props = {
 
 export default function FormPage({
   title,
+  hat,
   icon,
   iconClassName,
   subtitle,
@@ -32,23 +33,16 @@ export default function FormPage({
       {documentTitle && <title>{documentTitle}</title>}
       {header ?? <Header />}
       <main className="flex-1 overflow-y-auto bg-gray-50">
-        <div className="max-w-xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-16">
-          {back && (
-            <Link
-              to={back.to}
-              className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800 mb-5"
-            >
-              <Icon name="angleLeft" className="text-xs" />
-              {back.label}
-            </Link>
-          )}
-          <div className="mb-6">
-            <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-gray-800">
-              {icon && <Icon name={icon} className={cn("text-xl text-gray-500", iconClassName)} />}
-              {title}
-            </h1>
-            {subtitle && <p className="mt-1.5 text-sm text-gray-500">{subtitle}</p>}
-          </div>
+        <div className="mx-auto w-full max-w-xl px-4 py-6 pb-16 sm:px-6 sm:py-8">
+          {back && <BackLink to={back.to} label={back.label} className="mb-5" />}
+          <Heading
+            hat={hat}
+            title={title}
+            icon={icon}
+            iconClassName={iconClassName}
+            subtitle={subtitle}
+            className="mb-6"
+          />
           {children}
         </div>
       </main>

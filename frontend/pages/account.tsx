@@ -1,5 +1,7 @@
 import React from "react";
 import Header from "components/Header";
+import Heading from "components/Heading";
+import BackLink from "components/BackLink";
 import Footer from "components/Footer";
 import { useUser } from "hooks/useUser";
 import { useModal } from "stores/modals";
@@ -11,7 +13,6 @@ import clsx from "clsx";
 import { useState } from "react";
 import { IconNameT } from "lib/icons";
 import EmailChangeForm from "components/EmailChangeForm";
-import { Link } from "react-router-dom";
 
 type TabItem = {
   id: string;
@@ -39,12 +40,8 @@ export default function Account() {
 
       <Header />
       <main className="max-w-4xl w-full mx-auto px-4 lg:px-0">
-        <Link to="/trips" className="text-gray-500 hover:text-gray-600 mt-6 inline-flex items-center">
-          ← Back to trips
-        </Link>
-        <h1 className="text-3xl font-bold text-gray-700 mb-8 mt-4">
-          <Icon name="user" className="text-2xl text-gray-600" /> My Account
-        </h1>
+        <BackLink to="/trips" label="Back to trips" className="mt-6" />
+        <Heading title="My Account" icon="user" iconClassName="text-gray-600" className="mb-8 mt-4" />
 
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-64 p-4 pl-0">

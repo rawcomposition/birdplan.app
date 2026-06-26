@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "components/Header";
+import Heading from "components/Heading";
 import TripNav from "components/TripNav";
 import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -64,7 +65,7 @@ export default function Itinerary() {
               <div className="mt-2 sm:mt-8 max-w-2xl w-full mx-auto p-4 md:p-0">
                 <div className="mb-8 sm:mb-10">
                   <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-bold text-gray-700">Trip Itinerary</h1>
+                    <Heading title="Trip Itinerary" />
                     {canEdit && hasStartDate && (
                       <Button
                         size="smPill"

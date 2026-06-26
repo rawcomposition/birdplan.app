@@ -1,12 +1,13 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import Header from "components/Header";
 import Button from "components/Button";
 import MonthSelect from "components/MonthSelect";
 import Icon from "components/Icon";
 import Field from "components/Field";
+import BackLink from "components/BackLink";
+import Heading from "components/Heading";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
 import Expander from "components/Expander";
@@ -127,16 +128,9 @@ export default function CreateTrip() {
         <div className="mx-auto h-full max-w-7xl">
           <div className="mx-auto h-full max-w-xl overflow-y-auto lg:mx-0">
             <div className="flex min-h-full flex-col px-5 py-8 sm:px-9 lg:pr-0">
-              <Link
-                to="/trips"
-                className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700"
-              >
-                <Icon name="angleLeft" className="text-xs" />
-                Back to trips
-              </Link>
+              <BackLink to="/trips" label="Back to trips" className="mb-6" />
 
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.14em] text-primary">New trip</p>
-              <h1 className="mb-7 text-3xl font-bold tracking-tight text-gray-800">Where are you headed?</h1>
+              <Heading hat="New trip" title="Where are you headed?" size="lg" className="mb-7" />
 
               <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-[22px]">
