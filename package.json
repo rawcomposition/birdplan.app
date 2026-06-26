@@ -17,6 +17,7 @@
     "dev:frontend": "npm run dev --workspace=frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "get-avicommons": "npm run get-avicommons --workspace=backend",
+    "get-feature-photo": "npm run get-feature-photo --workspace=backend --",
     "tz-sync-regions": "npm run tz-sync-regions --workspace=backend",
     "lint": "npm run lint --workspace=frontend",
     "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=shared"
