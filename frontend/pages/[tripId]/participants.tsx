@@ -1,11 +1,12 @@
 import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
-import Footer from "components/Footer";
 import Icon from "components/Icon";
 import Button from "components/Button";
 import Card from "components/Card";
-import Input from "components/Input";
+import Field from "components/Field";
+import { Input } from "components/ui/input";
+import FormPage from "components/FormPage";
 import NotFound from "components/NotFound";
 import ParticipantRow from "components/ParticipantRow";
 import { useTrip } from "hooks/useTrip";
@@ -28,81 +29,44 @@ export default function TripParticipants() {
   if (is404) return <NotFound />;
 
   return (
-    <div className="flex flex-col h-full">
-        <title>Participants | BirdPlan.app</title>
-
-      <Header
-        title={trip?.name || ""}
-        parent={{ title: "Trips", href: "/trips" }}
-      />
-      <main className="max-w-2xl w-full mx-auto pb-12">
-        {(returnTo || !isNew) && (
-          <Link
-            to={backHref}
-            className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
-          >
-            ← Back to {backLabel}
-          </Link>
+    <FormPage
+      title="Participants"
+      subtitle="Manage trip participants and life lists."
+      documentTitle="Participants | BirdPlan.app"
+      header={<Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />}
+      back={returnTo || !isNew ? { to: backHref, label: `Back to ${backLabel}` } : undefined}
+    >
+      <Card className="mb-4 px-4 sm:px-5">
+        {participants == null ? (
+          <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
+            <Icon name="loading" className="animate-spin" /> Loading participants...
+          </div>
+        ) : participants.length === 0 ? (
+          <p className="py-6 text-sm text-gray-500">No participants yet.</p>
+        ) : (
+          participants.map((p) => <ParticipantRow key={p._id} participant={p} />)
         )}
-        <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-2">
-            <Icon name="user" className="text-2xl text-lime-600" /> Participants
-          </h1>
-          <p className="text-gray-500 mb-8">
-            Manage trip participants and life lists.
-          </p>
+      </Card>
 
-          <Card className="px-4 sm:px-5 mb-4">
-            {participants == null ? (
-              <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-                <Icon name="loading" className="animate-spin" /> Loading
-                participants...
-              </div>
-            ) : participants.length === 0 ? (
-              <p className="py-6 text-sm text-gray-500">No participants yet.</p>
-            ) : (
-              participants.map((p) => (
-                <ParticipantRow key={p._id} participant={p} />
-              ))
-            )}
-          </Card>
+      {canEdit && (
+        <button
+          type="button"
+          onClick={() => open("addParticipant")}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-50/50"
+        >
+          <Icon name="plus" className="text-xs" /> Add a participant
+        </button>
+      )}
 
-          {canEdit && (
-            <button
-              type="button"
-              onClick={() => open("addParticipant")}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-3 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-50/50"
-            >
-              <Icon name="plus" className="text-xs" /> Add a participant
-            </button>
-          )}
+      <Field label="View-only link" className="mt-8">
+        <Input name="link" value={shareLink} readOnly ref={linkRef} onFocus={handleLinkFocus} />
+      </Field>
 
-          <div className="mt-8">
-            <h3 className="text-lg font-medium mb-2 text-gray-700">
-              View-only link
-            </h3>
-            <Input
-              type="text"
-              name="link"
-              value={shareLink}
-              readOnly
-              ref={linkRef}
-              onFocus={handleLinkFocus}
-            />
-          </div>
-
-          <div className="flex mt-8">
-            <Button
-              href={backHref}
-              color="primary"
-              className="inline-flex items-center ml-auto"
-            >
-              Done
-            </Button>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+      <div className="mt-8 flex">
+        <Button href={backHref} color="pillPrimary" size="pill" className="ml-auto">
+          Done
+        </Button>
+      </div>
+    </FormPage>
   );
 }

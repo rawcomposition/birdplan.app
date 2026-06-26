@@ -2,14 +2,12 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
-import Header from "components/Header";
 import Button from "components/Button";
 import Card from "components/Card";
-import Footer from "components/Footer";
+import FormPage from "components/FormPage";
 import Icon from "components/Icon";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
-import { Link } from "react-router-dom";
 import useMutation from "hooks/useMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
@@ -84,24 +82,13 @@ export default function ImportLifelist() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-        <title>World Life List | BirdPlan.app</title>
-
-      <Header />
-      <main className="max-w-2xl w-full mx-auto pb-12">
-        {!isOnboarding && (
-          <Link
-            to={redirectUrl}
-            className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
-          >
-            ← Back to {backLabel}
-          </Link>
-        )}
-        <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <Icon name="feather" className="text-2xl text-lime-600" /> World Life List
-          </h1>
-
+    <FormPage
+      title="World life list"
+      icon="feather"
+      iconClassName="text-lime-600"
+      documentTitle="World Life List | BirdPlan.app"
+      back={isOnboarding ? undefined : { to: redirectUrl, label: `Back to ${backLabel}` }}
+    >
           {hasList && (
             <Card className="p-5 mb-6">
               <div className="flex items-center justify-between gap-3">
@@ -173,15 +160,13 @@ export default function ImportLifelist() {
           <div className="flex">
             <Button
               href={redirectUrl}
-              color={isOnboarding ? "primary" : "gray"}
-              className="inline-flex items-center ml-auto"
+              color={isOnboarding ? "pillPrimary" : "pillOutlineGray"}
+              size="pill"
+              className="ml-auto inline-flex items-center"
             >
               {isOnboarding ? "Continue" : "Done"}
             </Button>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+    </FormPage>
   );
 }

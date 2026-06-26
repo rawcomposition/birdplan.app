@@ -1,7 +1,7 @@
 import React from "react";
 import RegionSelect from "components/RegionSelect";
 import Field from "components/Field";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import { RegionFieldsValue, requiresSubregion } from "lib/region";
 
 type Props = {
@@ -18,7 +18,7 @@ export default function RegionFields({ value, onChange }: Props) {
     <>
       {!value.isManualRegion && (
         <>
-          <Field label="Country Region">
+          <Field label="Country / region">
             <RegionSelect
               type="country"
               parent="world"
@@ -29,7 +29,7 @@ export default function RegionFields({ value, onChange }: Props) {
               menuPortalTarget={portalTarget()}
             />
           </Field>
-          <Field label="State/Province Region" isOptional={!requireSubregion}>
+          <Field label="State / Province" isOptional={!requireSubregion}>
             <RegionSelect
               type="subnational1"
               parent={value.country?.value || ""}
@@ -41,7 +41,7 @@ export default function RegionFields({ value, onChange }: Props) {
             />
           </Field>
           {value.states?.length === 1 && (
-            <Field label="County Region" isOptional>
+            <Field label="County" isOptional>
               <RegionSelect
                 type="subnational2"
                 parent={value.states[0].value}
@@ -56,9 +56,8 @@ export default function RegionFields({ value, onChange }: Props) {
         </>
       )}
       {value.isManualRegion && (
-        <Field label="ebird region code(s), comma separated">
+        <Field label="eBird region code(s), comma separated">
           <Input
-            type="text"
             name="manualRegion"
             placeholder="E.g. US-OH-001,US-OH-003"
             value={value.manualRegion}
@@ -69,9 +68,9 @@ export default function RegionFields({ value, onChange }: Props) {
       <button
         type="button"
         onClick={() => onChange((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
-        className="text-gray-600 text-sm text-left -mt-2"
+        className="-mt-2 text-left text-[13px] font-medium text-gray-500 hover:text-gray-700"
       >
-        {value.isManualRegion ? "Choose regions from dropdown" : "Or manually enter regions"}
+        {value.isManualRegion ? "Choose regions from a list" : "Or enter eBird region codes manually"}
       </button>
     </>
   );

@@ -2,6 +2,7 @@ import React from "react";
 import Select, { SelectProps } from "components/ReactSelectStyled";
 import { useQuery } from "@tanstack/react-query";
 import { EBIRD_BASE_URL } from "lib/config";
+import { formSelectStyles } from "lib/formStyles";
 
 type Props = Omit<SelectProps, "options" | "isLoading" | "isDisabled" | "instanceId" | "placeholder"> & {
   type: "country" | "subnational1" | "subnational2";
@@ -13,7 +14,7 @@ type Region = {
   name: string;
 };
 
-export default function RegionSelect({ type, parent, ...props }: Props) {
+export default function RegionSelect({ type, parent, styles = formSelectStyles, ...props }: Props) {
   const { data, isFetching } = useQuery<Region[]>({
     queryKey: [`${EBIRD_BASE_URL}/ref/region/list/${type}/${parent}`],
     enabled: !!type && !!parent,
@@ -35,6 +36,7 @@ export default function RegionSelect({ type, parent, ...props }: Props) {
       options={options}
       isLoading={isFetching}
       isDisabled={!isFetching && !options.length}
+      styles={styles}
       {...props}
     />
   );

@@ -2,12 +2,14 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { StylesConfig } from "react-select";
 import Header from "components/Header";
 import Button from "components/Button";
 import MonthSelect from "components/MonthSelect";
 import Icon from "components/Icon";
-import Input from "components/Input";
+import Field from "components/Field";
+import { Input } from "components/ui/input";
+import RangeField from "components/RangeField";
+import Expander from "components/Expander";
 import RegionSelect from "components/RegionSelect";
 import CreateTripHero from "components/CreateTripHero";
 import { Option } from "lib/types";
@@ -31,21 +33,6 @@ const monthOption = (month: number): Option => ({
 
 const defaultMonth = monthOption(dayjs().month() + 1);
 
-const labelClass = "mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-700";
-const controlClass =
-  "h-[50px] w-full rounded-[13px] border-[1.5px] border-gray-200 bg-white px-4 text-[15px] font-medium text-gray-800 placeholder:text-gray-400 shadow-none outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/15";
-
-const tallSelectStyles: StylesConfig<any> = {
-  control: (base, state) => ({
-    ...base,
-    minHeight: 50,
-    borderRadius: 13,
-    borderWidth: 1.5,
-    paddingLeft: 6,
-    boxShadow: state.isFocused ? "0 0 0 3px rgba(59,130,246,.15)" : "none",
-  }),
-};
-
 const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
 
 export default function CreateTrip() {
@@ -54,7 +41,6 @@ export default function CreateTrip() {
   const [endDate, setEndDate] = React.useState("");
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
-  const [showAdvanced, setShowAdvanced] = React.useState(false);
   const navigate = useNavigate();
   const { close } = useModal();
 
@@ -105,37 +91,29 @@ export default function CreateTrip() {
   const subregionBlock =
     !region.isManualRegion && region.country ? (
       <>
-        <div>
-          <label className={labelClass}>
-            State / Province{!subregionRequired && <span className="ml-1.5 normal-case text-gray-400">optional</span>}
-          </label>
+        <Field label="State / Province" isOptional={!subregionRequired}>
           <RegionSelect
             type="subnational1"
             parent={region.country.value}
             value={region.states}
             onChange={(states: any) => setRegion((v) => ({ ...v, states, counties: undefined }))}
             menuPortalTarget={portalTarget()}
-            styles={tallSelectStyles}
             isClearable={!subregionRequired}
             isMulti
           />
-        </div>
+        </Field>
         {region.states?.length === 1 && (
-          <div>
-            <label className={labelClass}>
-              County <span className="ml-1.5 normal-case text-gray-400">optional</span>
-            </label>
+          <Field label="County" isOptional>
             <RegionSelect
               type="subnational2"
               parent={region.states[0].value}
               value={region.counties}
               onChange={(counties: any) => setRegion((v) => ({ ...v, counties }))}
               menuPortalTarget={portalTarget()}
-              styles={tallSelectStyles}
               isClearable
               isMulti
             />
-          </div>
+          </Field>
         )}
       </>
     ) : null;
@@ -162,29 +140,19 @@ export default function CreateTrip() {
 
               <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-[22px]">
-                  <div>
-                    <label className={labelClass}>Trip name</label>
-                    <Input
-                      type="text"
-                      name="name"
-                      placeholder='E.g. "Galapagos Islands 2020"'
-                      autoFocus
-                      className={controlClass}
-                    />
-                  </div>
+                  <Field label="Trip name">
+                    <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
+                  </Field>
 
-                  <div>
-                    <label className={labelClass}>Country / region</label>
+                  <Field label="Country / region">
                     {region.isManualRegion ? (
                       <Input
-                        type="text"
                         name="manualRegion"
                         placeholder="E.g. US-OH-001,US-OH-003"
                         value={region.manualRegion}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setRegion((v) => ({ ...v, manualRegion: e.target.value }))
                         }
-                        className={controlClass}
                       />
                     ) : (
                       <RegionSelect
@@ -195,7 +163,6 @@ export default function CreateTrip() {
                           setRegion((v) => ({ ...v, country, states: undefined, counties: undefined }))
                         }
                         menuPortalTarget={portalTarget()}
-                        styles={tallSelectStyles}
                       />
                     )}
                     <button
@@ -205,22 +172,16 @@ export default function CreateTrip() {
                     >
                       {region.isManualRegion ? "Choose regions from a list" : "Or enter eBird region codes manually"}
                     </button>
-                  </div>
+                  </Field>
 
                   {subregionRequired && subregionBlock}
 
-                  <div>
-                    <label className={labelClass}>Dates</label>
-                    <div className="flex items-center gap-2.5">
-                      <Input
-                        type="date"
-                        name="startDate"
-                        value={startDate}
-                        onChange={handleStartDateChange}
-                        required
-                        className={`${controlClass} flex-1`}
-                      />
-                      <span className="text-sm font-medium text-gray-400">to</span>
+                  <RangeField
+                    label="Dates"
+                    from={
+                      <Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />
+                    }
+                    to={
                       <Input
                         type="date"
                         name="endDate"
@@ -228,65 +189,45 @@ export default function CreateTrip() {
                         onChange={handleEndDateChange}
                         min={startDate || undefined}
                         required
-                        className={`${controlClass} flex-1`}
                       />
-                    </div>
-                  </div>
+                    }
+                  />
 
-                  <div className="border-t border-gray-100 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => setShowAdvanced((prev) => !prev)}
-                      className="flex w-full items-center gap-2 py-3 text-[13px] font-bold text-gray-500 hover:text-gray-700"
-                    >
-                      <Icon
-                        name="angleDown"
-                        className={`text-xs transition-transform ${showAdvanced ? "" : "-rotate-90"}`}
-                      />
-                      Advanced — {subregionRequired ? "trip timeframe" : "state/province, trip timeframe"}
-                    </button>
-                    {showAdvanced && (
-                      <div className="mt-1 flex flex-col gap-[22px]">
-                        {!subregionRequired && subregionBlock}
-                        <div>
-                          <label className={labelClass}>Trip timeframe (months)</label>
-                          <div className="flex items-center gap-2.5">
-                            <MonthSelect
-                              onChange={setStartMonth}
-                              value={startMonth}
-                              instanceId="startMonth"
-                              className="grow"
-                              styles={tallSelectStyles}
-                              menuPortalTarget={portalTarget()}
-                            />
-                            <span className="text-sm font-medium text-gray-400">to</span>
-                            <MonthSelect
-                              onChange={setEndMonth}
-                              value={endMonth}
-                              instanceId="endMonth"
-                              className="grow"
-                              styles={tallSelectStyles}
-                              menuPortalTarget={portalTarget()}
-                            />
-                          </div>
-                          <p className="mt-2 text-xs text-gray-500">
-                            Used to determine your target species — a wider range may yield more accurate results.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <Expander label="Advanced">
+                    {!subregionRequired && subregionBlock}
+                    <RangeField
+                      label="Trip timeframe"
+                      help="Used to determine your target species — a wider range may yield more accurate results."
+                      from={
+                        <MonthSelect
+                          onChange={setStartMonth}
+                          value={startMonth}
+                          instanceId="startMonth"
+                          menuPortalTarget={portalTarget()}
+                        />
+                      }
+                      to={
+                        <MonthSelect
+                          onChange={setEndMonth}
+                          value={endMonth}
+                          instanceId="endMonth"
+                          menuPortalTarget={portalTarget()}
+                        />
+                      }
+                    />
+                  </Expander>
                 </div>
 
                 <div className="mt-auto flex justify-end gap-3 pt-8">
-                  <Button href="/trips" color="pillOutlineGray" className="px-6 py-3 text-sm">
+                  <Button href="/trips" color="pillOutlineGray" size="pill">
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     color="pillPrimary"
+                    size="pill"
                     disabled={mutation.isPending}
-                    className="inline-flex items-center gap-2 px-7 py-3 text-sm shadow-lg shadow-primary/30"
+                    className="inline-flex items-center gap-2 shadow-lg shadow-primary/30"
                   >
                     {mutation.isPending ? (
                       <>

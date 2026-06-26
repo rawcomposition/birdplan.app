@@ -24,6 +24,7 @@ const buttonVariants = cva("font-semibold rounded", {
     size: {
       lg: "text-lg py-2.5 px-4.5",
       md: "text-md py-2 px-5",
+      pill: "text-sm py-3 px-6",
       smPill: "text-[14px] py-1.5 px-4",
       sm: "text-[14px] py-1.5 px-2.5",
       xs: "text-[12px] py-0.5 px-1.5",

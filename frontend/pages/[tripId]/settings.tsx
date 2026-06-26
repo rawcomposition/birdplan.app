@@ -6,8 +6,10 @@ import MonthSelect from "components/MonthSelect";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
-import Input from "components/Input";
-import { useNavigate, Link } from "react-router-dom";
+import { Input } from "components/ui/input";
+import RangeField from "components/RangeField";
+import FormPage from "components/FormPage";
+import { useNavigate } from "react-router-dom";
 import { months } from "lib/helpers";
 import Button from "components/Button";
 import NotFound from "components/NotFound";
@@ -24,6 +26,8 @@ const monthOption = (month: number): Option => ({
   value: month.toString(),
   label: months[month - 1],
 });
+
+const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
 
 export default function TripSettings() {
   const { trip, is404, isOwner } = useTrip();
@@ -120,102 +124,64 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <title>Trip Settings | BirdPlan.app</title>
+    <FormPage
+      title="Trip settings"
+      documentTitle="Trip Settings | BirdPlan.app"
+      back={{ to: `/${trip._id}`, label: "Back to trip" }}
+    >
+      <form className="flex flex-col gap-[22px]" onSubmit={handleSubmit}>
+        <Field label="Trip name">
+          <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus defaultValue={trip.name} />
+        </Field>
 
-      <Header />
-      <main className="max-w-2xl w-full mx-auto pb-12">
-        <Link
-          to={`/${trip._id}`}
-          className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center"
-        >
-          ← Back to trip
-        </Link>
-        <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-8">⚙️ Trip Settings</h1>
-          <div className="flex gap-2 mb-2">
-            <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
-              <Field label="Name Your Trip">
-                <Input
-                  type="text"
-                  name="name"
-                  placeholder='E.g. "Galapagos Islands 2020"'
-                  autoFocus
-                  defaultValue={trip.name}
-                />
-              </Field>
-              <div>
-                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Dates</label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    type="date"
-                    name="startDate"
-                    value={startDate}
-                    onChange={handleStartDateChange}
-                    required
-                    className="grow"
-                  />
-                  <span className="text-gray-500 px-2">to</span>
-                  <Input
-                    type="date"
-                    name="endDate"
-                    value={endDate}
-                    onChange={handleEndDateChange}
-                    min={startDate || undefined}
-                    required
-                    className="grow"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Timeframe (months)</label>
-                <div className="flex gap-2 items-center">
-                  <MonthSelect
-                    onChange={setStartMonth}
-                    value={startMonth}
-                    instanceId="startMonth"
-                    className="grow"
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                  />
-                  <span className="text-gray-500 px-2">to</span>
-                  <MonthSelect
-                    onChange={setEndMonth}
-                    value={endMonth}
-                    instanceId="endMonth"
-                    className="grow"
-                    menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-600">
-                  Used to determine your target species — a wider range may yield more accurate results.
-                </p>
-              </div>
-              <RegionFields value={region} onChange={setRegion} />
-              <div className="flex justify-between">
-                <Button href="/trips" color="gray">
-                  Cancel
-                </Button>
-                <Button type="submit" color="primary" disabled={updateTripMutation.isPending}>
-                  {updateTripMutation.isPending ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-              {isOwner && (
-                <div className="mt-8">
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="text-red-500 hover:text-red-600 text-sm"
-                    disabled={deleteTripMutation.isPending}
-                  >
-                    {deleteTripMutation.isPending ? "Deleting..." : "Delete Trip"}
-                  </button>
-                </div>
-              )}
-            </form>
-          </div>
+        <RangeField
+          label="Dates"
+          from={<Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />}
+          to={
+            <Input
+              type="date"
+              name="endDate"
+              value={endDate}
+              onChange={handleEndDateChange}
+              min={startDate || undefined}
+              required
+            />
+          }
+        />
+
+        <RangeField
+          label="Trip timeframe (months)"
+          help="Used to determine your target species — a wider range may yield more accurate results."
+          from={
+            <MonthSelect onChange={setStartMonth} value={startMonth} instanceId="startMonth" menuPortalTarget={portalTarget()} />
+          }
+          to={<MonthSelect onChange={setEndMonth} value={endMonth} instanceId="endMonth" menuPortalTarget={portalTarget()} />}
+        />
+
+        <RegionFields value={region} onChange={setRegion} />
+
+        <div className="mt-2 flex justify-end gap-3">
+          <Button href={`/${trip._id}`} color="pillOutlineGray" size="pill">
+            Cancel
+          </Button>
+          <Button type="submit" color="pillPrimary" size="pill" disabled={updateTripMutation.isPending}>
+            {updateTripMutation.isPending ? "Saving..." : "Save changes"}
+          </Button>
         </div>
-      </main>
-      <Footer />
-    </div>
+
+        {isOwner && (
+          <div className="mt-6 border-t border-gray-100 pt-6">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="text-sm font-semibold text-red-500 hover:text-red-600"
+              disabled={deleteTripMutation.isPending}
+            >
+              {deleteTripMutation.isPending ? "Deleting..." : "Delete trip"}
+            </button>
+          </div>
+        )}
+      </form>
+    </FormPage>
   );
 }

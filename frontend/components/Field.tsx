@@ -1,23 +1,26 @@
 import React from "react";
+import { Label } from "components/ui/label";
+import { formLabelClass } from "lib/formStyles";
 
 type Props = {
-  label: string;
-  children: React.ReactNode;
+  label?: string;
   isOptional?: boolean;
+  help?: React.ReactNode;
+  className?: string;
+  children: React.ReactNode;
 };
 
-export default function Field({ label, isOptional, children }: Props) {
+export default function Field({ label, isOptional, help, className, children }: Props) {
   return (
-    <div>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium text-gray-700">
+    <div className={className}>
+      {label && (
+        <Label className={formLabelClass}>
           {label}
-          {isOptional && (
-            <span className="rounded-2xl bg-gray-200 text-gray-700 text-xs font-medium px-2 py-0.5 ml-2">optional</span>
-          )}
-        </span>
-        {children}
-      </label>
+          {isOptional && <span className="font-medium normal-case text-gray-400">optional</span>}
+        </Label>
+      )}
+      {children}
+      {help && <p className="mt-2 text-xs text-gray-500">{help}</p>}
     </div>
   );
 }
