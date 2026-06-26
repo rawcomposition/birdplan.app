@@ -16,12 +16,7 @@ import { months } from "lib/helpers";
 import useMutation from "hooks/useMutation";
 import RegionFields from "components/RegionFields";
 import { Link } from "react-router-dom";
-import {
-  RegionFieldsValue,
-  emptyRegionFieldsValue,
-  getRegionCode,
-  validateRegionFields,
-} from "lib/region";
+import { RegionFieldsValue, emptyRegionFieldsValue, getRegionCode, validateRegionFields } from "lib/region";
 
 const monthOption = (month: number): Option => ({
   value: month.toString(),
@@ -68,12 +63,15 @@ export default function CreateTrip() {
     if (!name) return toast.error("Please enter a name");
     const regionError = validateRegionFields(region);
     if (regionError) return toast.error(regionError);
+    if (!startDate) return toast.error("Please choose a start date");
+    if (!endDate) return toast.error("Please choose an end date");
+    if (endDate < startDate) return toast.error("End date must be on or after the start date");
 
     mutation.mutate({
       name,
       region: getRegionCode(region)!,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
+      startDate,
+      endDate,
       startMonth: Number(startMonth.value),
       endMonth: Number(endMonth.value),
     });
@@ -81,7 +79,7 @@ export default function CreateTrip() {
 
   return (
     <div className="flex flex-col h-full">
-        <title>Create Trip | BirdPlan.app</title>
+      <title>Create Trip | BirdPlan.app</title>
 
       <Header />
       <main className="max-w-lg w-full mx-auto pb-12">
@@ -105,6 +103,7 @@ export default function CreateTrip() {
                     name="startDate"
                     value={startDate}
                     onChange={handleStartDateChange}
+                    required
                     className="grow"
                   />
                   <span className="text-gray-500 px-2">to</span>
@@ -113,12 +112,11 @@ export default function CreateTrip() {
                     name="endDate"
                     value={endDate}
                     onChange={handleEndDateChange}
+                    min={startDate || undefined}
+                    required
                     className="grow"
                   />
                 </div>
-                <p className="mt-1 text-sm text-gray-500">
-                  Approximate dates are fine — you can refine them later.
-                </p>
               </div>
               <div>
                 <button
@@ -152,6 +150,9 @@ export default function CreateTrip() {
                         menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                       />
                     </div>
+                    <p className="mt-1 text-xs text-gray-600">
+                      Used to determine your target species — a wider range may yield more accurate results.
+                    </p>
                   </div>
                 )}
               </div>

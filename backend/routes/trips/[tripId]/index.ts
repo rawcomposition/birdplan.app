@@ -10,6 +10,7 @@ import {
   generateOpenBirdingCode,
   getBounds,
   isDuplicateKeyError,
+  validateTripDates,
 } from "lib/utils.js";
 import { connect, Trip, Participant, User, IntegrationToken } from "lib/db.js";
 import {
@@ -93,6 +94,7 @@ trip.patch("/", async (c) => {
   }
 
   const data = await c.req.json<TripUpdateInput>();
+  validateTripDates(data);
 
   const newData: Record<string, any> = {
     name: data.name,

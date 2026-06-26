@@ -28,7 +28,7 @@ export default function Trips() {
 
   const { data, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<TripListPage>({
-      queryKey: ["/trips", "list"],
+      queryKey: ["/trips"],
       enabled: !!user?._id,
       initialPageParam: null as string | null,
       queryFn: ({ pageParam }) =>
@@ -37,9 +37,8 @@ export default function Trips() {
     });
 
   const { data: stats } = useQuery<TripStats>({
-    queryKey: ["/trips", "stats"],
+    queryKey: ["/trips/stats"],
     enabled: !!user?._id,
-    queryFn: () => get(`${import.meta.env.VITE_API_URL}/trips/stats`, {}),
   });
 
   const trips = data?.pages.flatMap((page) => page.trips) ?? [];
@@ -63,7 +62,10 @@ export default function Trips() {
               {greeting()}
               {firstName && `, ${firstName}`}
             </p>
-            <h1 className="text-3xl font-bold text-gray-800">Your birding trips</h1>
+            <h1 className="text-3xl font-bold text-gray-800">
+              <span className="sm:hidden">Trips</span>
+              <span className="hidden sm:inline">Your birding trips</span>
+            </h1>
           </div>
           <Button color="pillPrimary" size="md" href="/create" className="shrink-0 pr-6">
             <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
@@ -85,8 +87,8 @@ export default function Trips() {
         )}
 
         {trips.length > 0 && (
-          <div className="flex flex-col items-start gap-5 lg:flex-row">
-            <div className="flex w-full min-w-0 flex-1 flex-col gap-4">
+          <div className="flex flex-col items-start gap-8 lg:flex-row">
+            <div className="flex w-full min-w-0 flex-1 flex-col gap-8">
               {trips.map((trip) => (
                 <TripCard key={trip._id} trip={trip} />
               ))}
@@ -104,7 +106,7 @@ export default function Trips() {
               )}
             </div>
 
-            <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-[340px]">
+            <aside className="flex w-full shrink-0 flex-col gap-8 lg:w-[340px]">
               <Card className="px-5 py-4">
                 <WidgetHeader title="By the numbers" />
                 {statRows.map(({ label, value }) => (

@@ -77,6 +77,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     method: "DELETE",
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
+      queryClient.invalidateQueries({ queryKey: ["/trips/stats"] });
       navigate("/trips");
     },
   });
@@ -87,6 +88,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     onSuccess: async () => {
       toast.success("Trip updated");
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
+      queryClient.invalidateQueries({ queryKey: ["/trips/stats"] });
       await queryClient.invalidateQueries({ queryKey: [`/trips/${trip._id}`] });
       navigate(`/${trip._id}`);
     },
@@ -99,11 +101,14 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     if (!name) return toast.error("Please enter a name");
     const regionError = validateRegionFields(region);
     if (regionError) return toast.error(regionError);
+    if (!startDate) return toast.error("Please choose a start date");
+    if (!endDate) return toast.error("Please choose an end date");
+    if (endDate < startDate) return toast.error("End date must be on or after the start date");
     updateTripMutation.mutate({
       name,
       region: getRegionCode(region)!,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
+      startDate,
+      endDate,
       startMonth: Number(startMonth.value),
       endMonth: Number(endMonth.value),
     });
@@ -116,7 +121,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
 
   return (
     <div className="flex flex-col h-full">
-        <title>Trip Settings | BirdPlan.app</title>
+      <title>Trip Settings | BirdPlan.app</title>
 
       <Header />
       <main className="max-w-2xl w-full mx-auto pb-12">
@@ -147,6 +152,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                     name="startDate"
                     value={startDate}
                     onChange={handleStartDateChange}
+                    required
                     className="grow"
                   />
                   <span className="text-gray-500 px-2">to</span>
@@ -155,12 +161,11 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                     name="endDate"
                     value={endDate}
                     onChange={handleEndDateChange}
+                    min={startDate || undefined}
+                    required
                     className="grow"
                   />
                 </div>
-                <p className="mt-1 text-sm text-gray-500">
-                  Approximate dates are fine — you can refine them later.
-                </p>
               </div>
               <div>
                 <label className="mb-1 block font-medium text-sm text-gray-700">Trip Timeframe (months)</label>
@@ -181,6 +186,9 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                     menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                   />
                 </div>
+                <p className="mt-1 text-xs text-gray-600">
+                  Used to determine your target species — a wider range may yield more accurate results.
+                </p>
               </div>
               <RegionFields value={region} onChange={setRegion} />
               <div className="flex justify-between">

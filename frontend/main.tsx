@@ -11,7 +11,7 @@ import { teardownSession, IDB_CACHE_KEY } from "lib/logout";
 import ErrorBoundary from "components/ErrorBoundary";
 import { router } from "router";
 
-const QUERY_CACHE_BUSTER = "birdplan-cache-v2";
+const QUERY_CACHE_BUSTER = "birdplan-cache-v3";
 
 const queryClient = new QueryClient({
   defaultOptions: {
