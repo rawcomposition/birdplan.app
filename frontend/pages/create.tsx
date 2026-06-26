@@ -26,6 +26,7 @@ import {
   requiresSubregion,
   validateRegionFields,
 } from "lib/region";
+import { Flow } from "lib/enums";
 
 const monthOption = (month: number): Option => ({
   value: month.toString(),
@@ -63,7 +64,7 @@ export default function CreateTrip() {
     url: "/trips",
     method: "POST",
     onSuccess: ({ id }) => {
-      navigate(`/${id}/lifelist?from=create`);
+      navigate(`/${id}/lifelist?from=${Flow.Create}`);
       close();
     },
   });

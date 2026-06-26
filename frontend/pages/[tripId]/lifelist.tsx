@@ -10,6 +10,7 @@ import NotFound from "components/NotFound";
 import LifelistEditor from "components/LifelistEditor";
 import { useTrip } from "hooks/useTrip";
 import useLifelistMode from "hooks/useLifelistMode";
+import { Flow } from "lib/enums";
 
 export default function TripLifelist() {
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ export default function TripLifelist() {
   const lifelistMode = useLifelistMode(trip);
 
   const from = searchParams.get("from");
-  const doneHref = from === "create" ? `/${trip?._id}/participants?new=1` : `/${trip?._id}`;
-  const doneLabel = from === "create" || from === "accept" ? "Continue" : "Done";
+  const doneHref = from === Flow.Create ? `/${trip?._id}/participants?from=${Flow.Create}` : `/${trip?._id}`;
+  const doneLabel = from === Flow.Create || from === Flow.Accept ? "Continue" : "Done";
 
   const handleDone = async () => {
     await lifelistMode.save();
@@ -54,7 +55,7 @@ export default function TripLifelist() {
           </Card>
 
           <div className="flex">
-            <Button onClick={handleDone} color="primary" className="inline-flex items-center ml-auto">
+            <Button onClick={handleDone} color="pillPrimary" size="pill" className="inline-flex items-center ml-auto">
               {doneLabel}
             </Button>
           </div>

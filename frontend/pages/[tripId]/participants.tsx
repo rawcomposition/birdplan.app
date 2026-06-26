@@ -12,6 +12,7 @@ import ParticipantRow from "components/ParticipantRow";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import { getReturnLabel } from "lib/helpers";
+import { Flow } from "lib/enums";
 
 export default function TripParticipants() {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,7 @@ export default function TripParticipants() {
   const linkRef = React.useRef<HTMLInputElement>(null);
 
   const returnTo = searchParams.get("returnTo");
-  const isNew = searchParams.get("new") === "1";
+  const isCreate = searchParams.get("from") === Flow.Create;
   const backHref = returnTo || `/${trip?._id}`;
   const backLabel = returnTo ? getReturnLabel(returnTo) : "trip";
   const shareLink = `${import.meta.env.VITE_URL}/${trip?._id}`;
@@ -34,7 +35,7 @@ export default function TripParticipants() {
       subtitle="Manage trip participants and life lists."
       documentTitle="Participants | BirdPlan.app"
       header={<Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />}
-      back={returnTo || !isNew ? { to: backHref, label: `Back to ${backLabel}` } : undefined}
+      back={returnTo || !isCreate ? { to: backHref, label: `Back to ${backLabel}` } : undefined}
     >
       <Card className="mb-4 rounded-2xl px-4 sm:px-5">
         {participants == null ? (
@@ -66,7 +67,7 @@ export default function TripParticipants() {
 
       <div className="mt-8 flex">
         <Button href={backHref} color="pillPrimary" size="pill" className="ml-auto">
-          Done
+          {isCreate ? "Continue" : "Done"}
         </Button>
       </div>
     </FormPage>
