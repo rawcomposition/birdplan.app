@@ -139,7 +139,18 @@ export default function CreateTrip() {
                     <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
                   </Field>
 
-                  <Field label="Country / region">
+                  <Field
+                    label="Country / region"
+                    rightButton={
+                      <Button
+                        color="link"
+                        onClick={() => setRegion((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
+                        className="text-xs"
+                      >
+                        {region.isManualRegion ? "Choose from list" : "Enter manually"}
+                      </Button>
+                    }
+                  >
                     {region.isManualRegion ? (
                       <Input
                         name="manualRegion"
@@ -160,16 +171,9 @@ export default function CreateTrip() {
                         menuPortalTarget={portalTarget()}
                       />
                     )}
-                    <button
-                      type="button"
-                      onClick={() => setRegion((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
-                      className="mt-2 text-[13px] font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      {region.isManualRegion ? "Choose regions from a list" : "Or enter eBird region codes manually"}
-                    </button>
                   </Field>
 
-                  {subregionRequired && subregionBlock}
+                  {subregionBlock}
 
                   <RangeField
                     label="Dates"
@@ -189,7 +193,6 @@ export default function CreateTrip() {
                   />
 
                   <Expander label="Advanced">
-                    {!subregionRequired && subregionBlock}
                     <RangeField
                       label="Trip timeframe"
                       help="Used to determine your target species — a wider range may yield more accurate results."

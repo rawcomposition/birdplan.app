@@ -1,6 +1,7 @@
 import React from "react";
 import RegionSelect from "components/RegionSelect";
 import Field from "components/Field";
+import Button from "components/Button";
 import { Input } from "components/ui/input";
 import { RegionFieldsValue, requiresSubregion } from "lib/region";
 
@@ -14,11 +15,21 @@ const portalTarget = () => (typeof document !== "undefined" ? document.body : nu
 export default function RegionFields({ value, onChange }: Props) {
   const requireSubregion = requiresSubregion(value.country?.value);
 
+  const toggleButton = (
+    <Button
+      color="link"
+      onClick={() => onChange((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
+      className="text-xs"
+    >
+      {value.isManualRegion ? "Choose from list" : "Enter manually"}
+    </Button>
+  );
+
   return (
     <>
       {!value.isManualRegion && (
         <>
-          <Field label="Country / region">
+          <Field label="Country / region" rightButton={toggleButton}>
             <RegionSelect
               type="country"
               parent="world"
@@ -56,7 +67,7 @@ export default function RegionFields({ value, onChange }: Props) {
         </>
       )}
       {value.isManualRegion && (
-        <Field label="eBird region code(s), comma separated">
+        <Field label="eBird region code(s), comma separated" rightButton={toggleButton}>
           <Input
             name="manualRegion"
             placeholder="E.g. US-OH-001,US-OH-003"
@@ -65,13 +76,6 @@ export default function RegionFields({ value, onChange }: Props) {
           />
         </Field>
       )}
-      <button
-        type="button"
-        onClick={() => onChange((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
-        className="-mt-2 text-left text-[13px] font-medium text-gray-500 hover:text-gray-700"
-      >
-        {value.isManualRegion ? "Choose regions from a list" : "Or enter eBird region codes manually"}
-      </button>
     </>
   );
 }

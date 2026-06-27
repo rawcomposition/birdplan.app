@@ -1,6 +1,6 @@
 import { StylesConfig } from "react-select";
 
-export const formLabelClass = "mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-700";
+export const formLabelClass = "text-[11px] font-bold uppercase tracking-[0.12em] text-gray-700";
 
 export const formSelectStyles: StylesConfig<any> = {
   control: (base, state) => ({
