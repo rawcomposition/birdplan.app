@@ -126,9 +126,9 @@ export default function CreateTrip() {
 
       <Header border />
       <main className="relative min-h-0 flex-1 overflow-hidden">
-        <div className="mx-auto h-full max-w-7xl">
-          <div className="mx-auto h-full max-w-2xl overflow-y-auto lg:mx-0">
-            <div className="flex min-h-full flex-col px-5 py-8 sm:px-9 lg:pr-0">
+        <div className="mx-auto h-full max-w-7xl overflow-y-auto">
+          <div className="mx-auto flex min-h-full max-w-2xl flex-col lg:mx-0">
+            <div className="flex flex-1 flex-col px-5 py-8 sm:px-9 lg:pr-0">
               <BackLink to="/trips" label="Back to trips" className="mb-6" />
 
               <Heading hat="New trip" title="Where are you headed?" className="mb-7" />
