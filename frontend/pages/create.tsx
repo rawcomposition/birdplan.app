@@ -3,20 +3,30 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Header from "components/Header";
 import Button from "components/Button";
-import Footer from "components/Footer";
 import MonthSelect from "components/MonthSelect";
 import Icon from "components/Icon";
 import Field from "components/Field";
-import Input from "components/Input";
+import BackLink from "components/BackLink";
+import Heading from "components/Heading";
+import { Input } from "components/ui/input";
+import RangeField from "components/RangeField";
+import Expander from "components/Expander";
+import RegionSelect from "components/RegionSelect";
+import CreateTripHero from "components/CreateTripHero";
 import { Option } from "lib/types";
 import { TripInput } from "@birdplan/shared";
 import { useModal } from "stores/modals";
 import dayjs from "dayjs";
 import { months } from "lib/helpers";
 import useMutation from "hooks/useMutation";
-import RegionFields from "components/RegionFields";
-import { Link } from "react-router-dom";
-import { RegionFieldsValue, emptyRegionFieldsValue, getRegionCode, validateRegionFields } from "lib/region";
+import {
+  RegionFieldsValue,
+  emptyRegionFieldsValue,
+  getRegionCode,
+  requiresSubregion,
+  validateRegionFields,
+} from "lib/region";
+import { Flow } from "lib/enums";
 
 const monthOption = (month: number): Option => ({
   value: month.toString(),
@@ -25,15 +35,18 @@ const monthOption = (month: number): Option => ({
 
 const defaultMonth = monthOption(dayjs().month() + 1);
 
+const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
+
 export default function CreateTrip() {
   const [region, setRegion] = React.useState<RegionFieldsValue>(emptyRegionFieldsValue);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
-  const [showAdvanced, setShowAdvanced] = React.useState(false);
   const navigate = useNavigate();
   const { close } = useModal();
+
+  const subregionRequired = requiresSubregion(region.country?.value);
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -51,7 +64,7 @@ export default function CreateTrip() {
     url: "/trips",
     method: "POST",
     onSuccess: ({ id }) => {
-      navigate(`/${id}/lifelist?from=create`);
+      navigate(`/${id}/lifelist?from=${Flow.Create}`);
       close();
     },
   });
@@ -77,106 +90,163 @@ export default function CreateTrip() {
     });
   };
 
+  const subregionBlock =
+    !region.isManualRegion && region.country ? (
+      <>
+        <Field label="State / Province" isOptional={!subregionRequired}>
+          <RegionSelect
+            type="subnational1"
+            parent={region.country.value}
+            value={region.states}
+            onChange={(states: any) => setRegion((v) => ({ ...v, states, counties: undefined }))}
+            menuPortalTarget={portalTarget()}
+            isClearable={!subregionRequired}
+            isMulti
+          />
+        </Field>
+        {region.states?.length === 1 && (
+          <Field label="County" isOptional>
+            <RegionSelect
+              type="subnational2"
+              parent={region.states[0].value}
+              value={region.counties}
+              onChange={(counties: any) => setRegion((v) => ({ ...v, counties }))}
+              menuPortalTarget={portalTarget()}
+              isClearable
+              isMulti
+            />
+          </Field>
+        )}
+      </>
+    ) : null;
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <title>Create Trip | BirdPlan.app</title>
 
-      <Header />
-      <main className="max-w-lg w-full mx-auto pb-12">
-        <Link to="/trips" className="text-gray-500 hover:text-gray-600 mt-6 ml-4 md:ml-0 inline-flex items-center">
-          ← Back to trips
-        </Link>
-        <div className="p-4 md:p-0 mt-12">
-          <h1 className="text-3xl font-bold text-gray-700 mb-8">
-            <Icon name="genericMarker" className="text-2xl text-[#fd1743] -mt-1" /> Create Trip
-          </h1>
-          <div className="flex gap-2 mb-2">
-            <form className="flex flex-col gap-5 w-full" onSubmit={handleSubmit}>
-              <Field label="Name Your Trip">
-                <Input type="text" name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
-              </Field>
-              <div>
-                <label className="mb-1 block font-medium text-sm text-gray-700">Trip Dates</label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    type="date"
-                    name="startDate"
-                    value={startDate}
-                    onChange={handleStartDateChange}
-                    required
-                    className="grow"
+      <Header border />
+      <main className="relative min-h-0 flex-1 overflow-hidden">
+        <div className="mx-auto h-full max-w-7xl overflow-y-auto">
+          <div className="mx-auto flex min-h-full max-w-2xl flex-col lg:mx-0">
+            <div className="flex flex-1 flex-col px-5 py-8 sm:px-9 lg:pr-0">
+              <BackLink to="/trips" label="Back to trips" className="mb-6" />
+
+              <Heading hat="New trip" title="Where are you headed?" className="mb-7" />
+
+              <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-[22px]">
+                  <Field label="Trip name">
+                    <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
+                  </Field>
+
+                  <Field
+                    label="Country / region"
+                    rightButton={
+                      <Button
+                        color="link"
+                        onClick={() => setRegion((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
+                        className="text-xs"
+                      >
+                        {region.isManualRegion ? "Choose from list" : "Enter manually"}
+                      </Button>
+                    }
+                  >
+                    {region.isManualRegion ? (
+                      <Input
+                        name="manualRegion"
+                        placeholder="E.g. US-OH-001,US-OH-003"
+                        value={region.manualRegion}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setRegion((v) => ({ ...v, manualRegion: e.target.value }))
+                        }
+                      />
+                    ) : (
+                      <RegionSelect
+                        type="country"
+                        parent="world"
+                        value={region.country}
+                        onChange={(country: any) =>
+                          setRegion((v) => ({ ...v, country, states: undefined, counties: undefined }))
+                        }
+                        menuPortalTarget={portalTarget()}
+                      />
+                    )}
+                  </Field>
+
+                  {subregionBlock}
+
+                  <RangeField
+                    label="Dates"
+                    from={
+                      <Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />
+                    }
+                    to={
+                      <Input
+                        type="date"
+                        name="endDate"
+                        value={endDate}
+                        onChange={handleEndDateChange}
+                        min={startDate || undefined}
+                        required
+                      />
+                    }
                   />
-                  <span className="text-gray-500 px-2">to</span>
-                  <Input
-                    type="date"
-                    name="endDate"
-                    value={endDate}
-                    onChange={handleEndDateChange}
-                    min={startDate || undefined}
-                    required
-                    className="grow"
-                  />
+
+                  <Expander label="Advanced">
+                    <RangeField
+                      label="Trip timeframe"
+                      help="Used to determine your target species — a wider range may yield more accurate results."
+                      from={
+                        <MonthSelect
+                          onChange={setStartMonth}
+                          value={startMonth}
+                          instanceId="startMonth"
+                          menuPortalTarget={portalTarget()}
+                        />
+                      }
+                      to={
+                        <MonthSelect
+                          onChange={setEndMonth}
+                          value={endMonth}
+                          instanceId="endMonth"
+                          menuPortalTarget={portalTarget()}
+                        />
+                      }
+                    />
+                  </Expander>
                 </div>
-              </div>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setShowAdvanced((prev) => !prev)}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-600"
-                >
-                  <Icon
-                    name="angleDown"
-                    className={`text-xs transition-transform ${showAdvanced ? "" : "-rotate-90"}`}
-                  />
-                  Advanced
-                </button>
-                {showAdvanced && (
-                  <div className="mt-3">
-                    <label className="mb-1 block font-medium text-sm text-gray-700">Trip Timeframe (months)</label>
-                    <div className="flex gap-2 items-center">
-                      <MonthSelect
-                        onChange={setStartMonth}
-                        value={startMonth}
-                        instanceId="startMonth"
-                        className="grow"
-                        menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                      />
-                      <span className="text-gray-500 px-2">to</span>
-                      <MonthSelect
-                        onChange={setEndMonth}
-                        value={endMonth}
-                        instanceId="endMonth"
-                        className="grow"
-                        menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                      />
-                    </div>
-                    <p className="mt-1 text-xs text-gray-600">
-                      Used to determine your target species — a wider range may yield more accurate results.
-                    </p>
-                  </div>
-                )}
-              </div>
-              <RegionFields value={region} onChange={setRegion} />
-              <div className="flex justify-between">
-                <Button href="/trips" color="gray">
-                  Cancel
-                </Button>
-                <Button type="submit" color="primary" disabled={mutation.isPending}>
-                  {mutation.isPending ? (
-                    <>
-                      <Icon name="loading" className="animate-spin text-md text-white" />
-                      <span className="ml-2">Saving...</span>
-                    </>
-                  ) : (
-                    "Continue"
-                  )}
-                </Button>
-              </div>
-            </form>
+
+                <div className="mt-auto flex justify-end gap-3 pt-8">
+                  <Button href="/trips" color="pillOutlineGray" size="pill">
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    color="pillPrimary"
+                    size="pill"
+                    disabled={mutation.isPending}
+                    className="inline-flex items-center gap-2"
+                  >
+                    {mutation.isPending ? (
+                      <>
+                        <Icon name="loading" className="animate-spin text-md text-white" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        Continue
+                        <Icon name="arrowRight" className="text-xs" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
+
+        <CreateTripHero />
       </main>
-      <Footer />
     </div>
   );
 }

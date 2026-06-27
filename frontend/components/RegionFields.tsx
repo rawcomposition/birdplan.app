@@ -1,7 +1,8 @@
 import React from "react";
 import RegionSelect from "components/RegionSelect";
 import Field from "components/Field";
-import Input from "components/Input";
+import Button from "components/Button";
+import { Input } from "components/ui/input";
 import { RegionFieldsValue, requiresSubregion } from "lib/region";
 
 type Props = {
@@ -14,11 +15,21 @@ const portalTarget = () => (typeof document !== "undefined" ? document.body : nu
 export default function RegionFields({ value, onChange }: Props) {
   const requireSubregion = requiresSubregion(value.country?.value);
 
+  const toggleButton = (
+    <Button
+      color="link"
+      onClick={() => onChange((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
+      className="text-xs"
+    >
+      {value.isManualRegion ? "Choose from list" : "Enter manually"}
+    </Button>
+  );
+
   return (
     <>
       {!value.isManualRegion && (
         <>
-          <Field label="Country Region">
+          <Field label="Country / region" rightButton={toggleButton}>
             <RegionSelect
               type="country"
               parent="world"
@@ -29,7 +40,7 @@ export default function RegionFields({ value, onChange }: Props) {
               menuPortalTarget={portalTarget()}
             />
           </Field>
-          <Field label="State/Province Region" isOptional={!requireSubregion}>
+          <Field label="State / Province" isOptional={!requireSubregion}>
             <RegionSelect
               type="subnational1"
               parent={value.country?.value || ""}
@@ -41,7 +52,7 @@ export default function RegionFields({ value, onChange }: Props) {
             />
           </Field>
           {value.states?.length === 1 && (
-            <Field label="County Region" isOptional>
+            <Field label="County" isOptional>
               <RegionSelect
                 type="subnational2"
                 parent={value.states[0].value}
@@ -56,9 +67,8 @@ export default function RegionFields({ value, onChange }: Props) {
         </>
       )}
       {value.isManualRegion && (
-        <Field label="ebird region code(s), comma separated">
+        <Field label="eBird region code(s), comma separated" rightButton={toggleButton}>
           <Input
-            type="text"
             name="manualRegion"
             placeholder="E.g. US-OH-001,US-OH-003"
             value={value.manualRegion}
@@ -66,13 +76,6 @@ export default function RegionFields({ value, onChange }: Props) {
           />
         </Field>
       )}
-      <button
-        type="button"
-        onClick={() => onChange((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
-        className="text-gray-600 text-sm text-left -mt-2"
-      >
-        {value.isManualRegion ? "Choose regions from dropdown" : "Or manually enter regions"}
-      </button>
     </>
   );
 }

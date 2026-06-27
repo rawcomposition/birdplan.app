@@ -308,7 +308,7 @@ export default function SpeciesDetail() {
       )}
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="targets" />
-      <main className="flex-1 relative bg-gray-50">
+      <main className="flex-1 relative bg-background">
         <ErrorBoundary>
           <div className="absolute inset-0 overflow-auto">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">

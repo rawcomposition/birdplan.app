@@ -108,7 +108,7 @@ export default function Trips() {
 
             <aside className="flex w-full shrink-0 flex-col gap-8 lg:w-[340px]">
               <Card className="px-5 py-4">
-                <WidgetHeader title="By the numbers" />
+                <WidgetHeader title="My stats" />
                 {statRows.map(({ label, value }) => (
                   <div
                     key={label}

@@ -28,9 +28,7 @@ export const fullMonths = [
 export const formatMonthRange = (startMonth: number, endMonth: number): string =>
   startMonth === endMonth ? fullMonths[startMonth - 1] : `${months[startMonth - 1]} – ${months[endMonth - 1]}`;
 
-export const formatTripDateRange = (
-  trip: Pick<Trip, "startDate" | "endDate" | "startMonth" | "endMonth">
-): string => {
+export const formatTripDateRange = (trip: Pick<Trip, "startDate" | "endDate" | "startMonth" | "endMonth">): string => {
   if (!trip.startDate) return formatMonthRange(trip.startMonth, trip.endMonth);
   const start = dayjs(trip.startDate);
   const end = trip.endDate ? dayjs(trip.endDate) : start;
@@ -238,7 +236,6 @@ const RESERVED_ROUTES = new Set([
   "whats-new",
   "reset-password",
   "forgot-password",
-  "my-rarest-lifers",
   "import-lifelist",
   "accept",
   "admin",

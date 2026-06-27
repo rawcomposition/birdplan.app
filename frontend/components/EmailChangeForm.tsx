@@ -79,7 +79,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             />
           </Field>
           <p className="text-sm text-gray-600">We&apos;ll send a 6-digit code to your new email to confirm the change.</p>
-          <Button type="submit" color="primary" disabled={requestMutation.isPending || !isDirty}>
+          <Button type="submit" color="pillPrimary" size="pill" disabled={requestMutation.isPending || !isDirty}>
             {requestMutation.isPending ? "Sending..." : "Send code"}
           </Button>
         </form>
@@ -100,7 +100,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             />
           </Field>
           <div className="flex items-center gap-3">
-            <Button type="submit" color="primary" disabled={updateMutation.isPending || code.length < 6}>
+            <Button type="submit" color="pillPrimary" size="pill" disabled={updateMutation.isPending || code.length < 6}>
               {updateMutation.isPending ? "Updating..." : "Update Email"}
             </Button>
             <button

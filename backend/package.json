@@ -6,6 +6,7 @@
     "build": "tsc && tsc-alias",
     "start": "node --require dotenv/config dist/backend/index.js",
     "get-avicommons": "tsx --require dotenv/config scripts/get-avicommons.ts",
+    "get-feature-photo": "tsx scripts/get-feature-photo.ts",
     "tz-sync-regions": "tsx --require dotenv/config scripts/tz-sync-regions.ts"
   },
   "dependencies": {

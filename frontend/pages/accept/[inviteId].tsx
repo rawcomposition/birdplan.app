@@ -10,6 +10,7 @@ import { AcceptInviteResponse, InviteInfo } from "@birdplan/shared";
 import useMutation from "hooks/useMutation";
 import { setSessionToken } from "lib/sessionToken";
 import { withReturnTo } from "lib/helpers";
+import { Flow } from "lib/enums";
 
 export default function Accept() {
   const { user, loading } = useUser();
@@ -38,7 +39,7 @@ export default function Accept() {
         setSessionToken(data.token);
         await queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
       }
-      const dest = `/${data.tripId}/lifelist?from=accept`;
+      const dest = `/${data.tripId}/lifelist?from=${Flow.Accept}`;
       if (!data.hasName) {
         navigate(withReturnTo("/onboarding", dest));
       } else if (!data.hasLifelist) {

@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import clsx from "clsx";
 import { AdminDashboard, AdminDashboardUser, AdminDashboardLog, GenerateMagicLinkResponse } from "@birdplan/shared";
 import Header from "components/Header";
+import Heading from "components/Heading";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
@@ -166,9 +167,7 @@ export default function Admin() {
 
       <Header />
       <main className="max-w-6xl w-full mx-auto px-4 lg:px-0 pb-12">
-        <h1 className="text-3xl font-bold text-gray-700 mb-8 mt-6">
-          <Icon name="user" className="text-2xl text-gray-600" /> Admin Dashboard
-        </h1>
+        <Heading title="Admin Dashboard" icon="user" iconClassName="text-gray-600" className="mb-8 mt-6" />
 
         {error && <Error message={error.message} />}
 

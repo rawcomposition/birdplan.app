@@ -105,7 +105,7 @@ export default function Contact() {
                 </Field>
 
                 <div className="flex justify-end">
-                  <Button type="submit" color="primary" disabled={mutation.isPending}>
+                  <Button type="submit" color="pillPrimary" size="pill" disabled={mutation.isPending}>
                     {mutation.isPending ? (
                       <>
                         <Icon name="loading" className="animate-spin text-md text-white" />

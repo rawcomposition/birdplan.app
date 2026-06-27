@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "components/Header";
+import Heading from "components/Heading";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import Button from "components/Button";
@@ -9,6 +10,7 @@ import NotFound from "components/NotFound";
 import LifelistEditor from "components/LifelistEditor";
 import { useTrip } from "hooks/useTrip";
 import useLifelistMode from "hooks/useLifelistMode";
+import { Flow } from "lib/enums";
 
 export default function TripLifelist() {
   const navigate = useNavigate();
@@ -17,8 +19,8 @@ export default function TripLifelist() {
   const lifelistMode = useLifelistMode(trip);
 
   const from = searchParams.get("from");
-  const doneHref = from === "create" ? `/${trip?._id}/participants?new=1` : `/${trip?._id}`;
-  const doneLabel = from === "create" || from === "accept" ? "Continue" : "Done";
+  const doneHref = from === Flow.Create ? `/${trip?._id}/participants?from=${Flow.Create}` : `/${trip?._id}`;
+  const doneLabel = from === Flow.Create || from === Flow.Accept ? "Continue" : "Done";
 
   const handleDone = async () => {
     await lifelistMode.save();
@@ -34,12 +36,15 @@ export default function TripLifelist() {
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />
       <main className="max-w-2xl w-full mx-auto pb-12">
         <div className="px-4 md:px-0 mt-8">
-          <h1 className="text-3xl font-bold text-gray-700 mb-2">
-            <Icon name="feather" className="text-2xl text-lime-600" /> Trip Life List
-          </h1>
-          <p className="text-gray-500 mb-8">Choose which life list to use for determining your trip targets.</p>
+          <Heading
+            title="Trip Life List"
+            icon="feather"
+            iconClassName="text-lime-600"
+            subtitle="Choose which life list to use for determining your trip targets."
+            className="mb-8"
+          />
 
-          <Card className="p-5 mb-6">
+          <Card className="rounded-2xl p-5 mb-6">
             {trip ? (
               <LifelistEditor trip={trip} mode={lifelistMode} embedded />
             ) : (
@@ -50,7 +55,7 @@ export default function TripLifelist() {
           </Card>
 
           <div className="flex">
-            <Button onClick={handleDone} color="primary" className="inline-flex items-center ml-auto">
+            <Button onClick={handleDone} color="pillPrimary" size="pill" className="inline-flex items-center ml-auto">
               {doneLabel}
             </Button>
           </div>
