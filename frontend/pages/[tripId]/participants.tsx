@@ -50,13 +50,14 @@ export default function TripParticipants() {
       </Card>
 
       {canEdit && (
-        <button
-          type="button"
+        <Button
+          color="grayOutline"
+          size="none"
           onClick={() => open("addParticipant")}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-sm font-semibold text-blue-600 transition-colors hover:border-blue-400 hover:bg-blue-50/50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm text-primary"
         >
           <Icon name="plus" className="text-xs" /> Add a participant
-        </button>
+        </Button>
       )}
 
       <Card className="mt-8 rounded-2xl p-5 sm:p-6">
