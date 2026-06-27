@@ -125,10 +125,10 @@ export default function CreateTrip() {
       <title>Create Trip | BirdPlan.app</title>
 
       <Header border />
-      <main className="relative min-h-0 flex-1 overflow-hidden">
-        <div className="mx-auto h-full max-w-7xl overflow-y-auto">
-          <div className="mx-auto flex min-h-full max-w-2xl flex-col lg:mx-0">
-            <div className="flex flex-1 flex-col px-5 py-8 sm:px-9 lg:pr-0">
+      <main className="relative min-h-0 flex-1 overflow-hidden lg:flex">
+        <div className="h-full overflow-y-auto lg:w-[37rem] lg:shrink-0 xl:w-[43rem]">
+          <div className="mx-auto flex min-h-full max-w-xl flex-col xl:max-w-2xl">
+            <div className="flex flex-1 flex-col px-5 py-8 sm:px-10">
               <BackLink to="/trips" label="Back to trips" className="mb-6" />
 
               <Heading hat="New trip" title="Where are you headed?" className="mb-7" />

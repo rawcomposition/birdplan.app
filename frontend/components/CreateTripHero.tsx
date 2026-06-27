@@ -7,10 +7,7 @@ export default function CreateTripHero() {
   if (!photo) return null;
 
   return (
-    <aside
-      className="absolute inset-y-0 right-0 hidden overflow-hidden lg:block"
-      style={{ left: "calc(max((100vw - 80rem) / 2, 0px) + 42rem + 3rem)" }}
-    >
+    <aside className="relative hidden flex-1 overflow-hidden lg:block">
       <img
         src={`/feature-photos/${photo.sourceId}.jpg`}
         alt=""
