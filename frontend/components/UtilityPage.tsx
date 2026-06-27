@@ -13,7 +13,7 @@ export default function UtilityPage({ heading, title, children }: PropTypes) {
   const documentTitle = title ?? (typeof heading === "string" ? heading : undefined);
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-col justify-center grow py-12 sm:px-6 px-4 md:min-h-[600px]">
+      <div className="flex flex-col justify-start sm:justify-center grow pt-16 pb-12 sm:py-12 sm:px-6 px-4 md:min-h-[600px]">
         {documentTitle && <title>{documentTitle}</title>}
         <div className="flex flex-col items-center">
           <Link to="/" aria-label="BirdPlan.app home">
