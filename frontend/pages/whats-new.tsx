@@ -12,6 +12,16 @@ export default function WhatsNew() {
       <main className="container px-4">
         <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+          <h2>June 26, 2026</h2>
+          <ul>
+            <li>
+              💅 <strong>A fresh look for several pages.</strong> We&apos;ve redesigned a number of pages for a cleaner,
+              more consistent experience, including the <strong>create trip</strong>, <strong>trip settings</strong>,{" "}
+              <strong>participants</strong>, <strong>account</strong>, <strong>import life list</strong>, and{" "}
+              <strong>trips</strong> pages.
+            </li>
+            <li>🐞 You can now select subregions for all countries when creating a trip.</li>
+          </ul>
           <h2>June 24, 2026</h2>
           <ul>
             <li>
