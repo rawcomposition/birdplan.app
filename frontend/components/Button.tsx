@@ -11,7 +11,8 @@ const buttonVariants = cva("font-semibold rounded", {
       red: "bg-red-600 hover:bg-red-700 text-white",
       grayOutline: "border border-input hover:bg-secondary transition-colors text-secondary-foreground",
       primary: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors",
-      pillPrimary: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors rounded-full",
+      pillPrimary:
+        "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors rounded-full shadow-lg shadow-primary/30",
       pillOutlineGray:
         "bg-transparent text-secondary-foreground border border-input hover:bg-gray-50 transition-colors rounded-full",
       pillWhite: "bg-white text-secondary-foreground hover:bg-gray-50 transition-colors rounded-full shadow-md",

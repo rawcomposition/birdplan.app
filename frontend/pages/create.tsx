@@ -225,7 +225,7 @@ export default function CreateTrip() {
                     color="pillPrimary"
                     size="pill"
                     disabled={mutation.isPending}
-                    className="inline-flex items-center gap-2 shadow-lg shadow-primary/30"
+                    className="inline-flex items-center gap-2"
                   >
                     {mutation.isPending ? (
                       <>
