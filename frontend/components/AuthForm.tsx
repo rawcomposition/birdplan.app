@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "components/Input";
 import Field from "components/Field";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Alert from "components/Alert";
 import useRequestCode from "hooks/useRequestCode";
 import useVerifyCode from "hooks/useVerifyCode";
@@ -126,8 +126,15 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
           </Field>
         )}
 
-        <Button type="submit" color="primary" className="w-full" disabled={disabled}>
-          {requestCode.isPending ? "Sending code..." : verifyCode.isPending ? "Verifying code..." : "Continue"}
+        <Button
+          variant="default"
+          type="submit"
+          className="w-full"
+          loading={pending}
+          loadingText={requestCode.isPending ? "Sending code..." : "Verifying code..."}
+          disabled={disabled}
+        >
+          Continue
         </Button>
 
         {step === "code" && (

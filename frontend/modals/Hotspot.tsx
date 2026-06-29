@@ -1,7 +1,7 @@
 import React from "react";
 import { Body } from "components/Modal";
 import { HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
@@ -9,7 +9,7 @@ import { isRegionEnglish, getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
-import clsx from "clsx";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
 import InputNotes from "components/InputNotes";
 import {
   DropdownMenu,
@@ -155,7 +155,7 @@ export default function Hotspot({ hotspot }: Props) {
         {canTranslate && (
           <div className="mt-0.5 text-[12px]">
             {!originalName && !translateMutation.isPending && (
-              <Button type="button" color="link" size="none" className="block" onClick={() => translateMutation.mutate({})}>
+              <Button variant="link" type="button" className="block" onClick={() => translateMutation.mutate({})}>
                 Translate
               </Button>
             )}
@@ -163,7 +163,7 @@ export default function Hotspot({ hotspot }: Props) {
             {originalName && (
               <div className="text-gray-500">
                 Original: {originalName} -{" "}
-                <Button type="button" color="link" size="none" onClick={() => resetMutation.mutate({})}>
+                <Button variant="link" type="button" onClick={() => resetMutation.mutate({})}>
                   Reset
                 </Button>
               </div>
@@ -174,19 +174,19 @@ export default function Hotspot({ hotspot }: Props) {
       <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
           <Button
+            variant="secondary"
+            size="sm"
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
-            color="gray"
-            size="sm"
           >
             <Icon name="feather" className="mr-1 mt-[-3px] text-success" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
+            variant="secondary"
+            size="sm"
             href={`https://ebird.org/hotspot/${id}`}
             target="_blank"
-            color="gray"
-            size="sm"
             className="inline-flex items-center"
           >
             <img src="/ebird.png" width={48} />
@@ -225,52 +225,45 @@ export default function Hotspot({ hotspot }: Props) {
         {isSaved && (
           <InputNotes key={id} value={notes} onBlur={(value) => saveNotesMutation.mutate({ notes: value })} />
         )}
-        <div className="-mx-4 sm:-mx-6 mb-3">
-          <nav className="mt-6 flex gap-4 bg-gray-100 px-6">
-            {tabs.map(({ label, id, title }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setTab(id)}
-                className={clsx(
-                  "text-sm font-medium text-gray-900 border-b-2 transition-colors pb-3 pt-3",
-                  tab === id ? "border-gray-500" : "border-transparent hover:border-gray-500"
-                )}
-                title={title}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
-        </div>
-        <div className="sm:-mx-1.5">
-          {tab === "needs" && (
-            <RecentSpeciesList
-              locId={id}
-              onSpeciesClick={(species) => {
-                setModalSpecies(species);
-                setTab("checklists");
-              }}
-            />
-          )}
-          {tab === "checklists" && (
-            <RecentChecklistList
-              hotspotId={id}
-              speciesCode={modalSpecies?.code}
-              speciesName={modalSpecies?.name}
-            />
-          )}
-          <div className={clsx(tab === "targets" ? "block" : "hidden")}>
-            <HotspotTargets
-              hotspotId={id}
-              onSpeciesClick={(species) => {
-                setModalSpecies(species);
-                setTab("checklists");
-              }}
-              onAddToTrip={handleSave}
-            />
+        <Tabs value={tab} onValueChange={(value) => setTab(value as string)}>
+          <div className="-mx-4 sm:-mx-6 mb-3">
+            <TabsList className="mt-6 bg-gray-100 px-6">
+              {tabs.map(({ label, id, title }) => (
+                <TabsTrigger key={id} value={id} title={title}>
+                  {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
           </div>
-        </div>
+          <div className="sm:-mx-1.5">
+            <TabsContent value="needs">
+              <RecentSpeciesList
+                locId={id}
+                onSpeciesClick={(species) => {
+                  setModalSpecies(species);
+                  setTab("checklists");
+                }}
+              />
+            </TabsContent>
+            <TabsContent value="checklists">
+              <RecentChecklistList
+                hotspotId={id}
+                speciesCode={modalSpecies?.code}
+                speciesName={modalSpecies?.name}
+              />
+            </TabsContent>
+            <TabsContent value="targets" keepMounted>
+              <HotspotTargets
+                hotspotId={id}
+                onSpeciesClick={(species) => {
+                  setModalSpecies(species);
+                  setTab("checklists");
+                }}
+                onAddToTrip={handleSave}
+              />
+            </TabsContent>
+          </div>
+        </Tabs>
       </Body>
     </>
   );

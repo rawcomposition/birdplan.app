@@ -6,8 +6,7 @@ import { CopyIcon, CheckIcon } from "lucide-react";
 import { GenerateMagicLinkResponse } from "@birdplan/shared";
 import { Header, Body } from "components/Modal";
 import { mutate } from "lib/http";
-import Button from "components/Button";
-import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 
 dayjs.extend(relativeTime);
 
@@ -28,7 +27,7 @@ function CopyLinkField({ url }: { url: string }) {
         onFocus={(e) => e.target.select()}
         className="min-w-0 flex-1 rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 font-mono text-xs text-gray-700"
       />
-      <Button color="primary" size="sm" onClick={copy} className="flex items-center gap-1.5 whitespace-nowrap">
+      <Button variant="default" size="sm" onClick={copy} className="flex items-center gap-1.5 whitespace-nowrap">
         {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
         {copied ? "Copied" : "Copy"}
       </Button>
@@ -94,8 +93,15 @@ export default function GenerateMagicLink({ link: initialLink, email }: Props) {
               onChange={(e) => setInput(e.target.value)}
               className="w-full rounded border border-gray-200 px-2.5 py-1.5 text-sm"
             />
-            <Button type="submit" color="primary" size="sm" disabled={generating || !input.trim()} className="w-full">
-              {generating ? <Icon name="loading" className="animate-spin" /> : "Generate link"}
+            <Button
+              variant="default"
+              size="sm"
+              type="submit"
+              loading={generating}
+              disabled={!input.trim()}
+              className="w-full"
+            >
+              Generate link
             </Button>
           </form>
         )}

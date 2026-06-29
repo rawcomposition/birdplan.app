@@ -1,6 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Icon from "components/Icon";
 import { parseLifelistCsv } from "lib/lifelistCsv";
 
@@ -48,7 +48,7 @@ export default function LifelistCard({ label, count, onImport, onRemove, disable
       <div className="flex shrink-0 items-center gap-3">
         <Button
           type="button"
-          color="link"
+          variant="link"
           size="none"
           onClick={() => fileRef.current?.click()}
           disabled={disabled}

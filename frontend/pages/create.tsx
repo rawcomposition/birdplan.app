@@ -2,7 +2,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Header from "components/Header";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import MonthSelect from "components/MonthSelect";
 import Icon from "components/Icon";
 import Field from "components/Field";
@@ -143,7 +143,7 @@ export default function CreateTrip() {
                     label="Country / region"
                     rightButton={
                       <Button
-                        color="link"
+                        variant="link"
                         onClick={() => setRegion((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
                         className="text-xs"
                       >
@@ -217,27 +217,19 @@ export default function CreateTrip() {
                 </div>
 
                 <div className="mt-auto flex justify-end gap-3 pt-8">
-                  <Button href="/trips" color="pillOutlineGray" size="pill">
+                  <Button href="/trips" variant="outline" shape="pill" size="pill">
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    color="pillPrimary"
+                    variant="default" shape="pill"
                     size="pill"
-                    disabled={mutation.isPending}
+                    loading={mutation.isPending}
+                    loadingText="Saving..."
                     className="inline-flex items-center gap-2"
                   >
-                    {mutation.isPending ? (
-                      <>
-                        <Icon name="loading" className="animate-spin text-md text-white" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        Continue
-                        <Icon name="arrowRight" className="text-xs" />
-                      </>
-                    )}
+                    Continue
+                    <Icon name="arrowRight" className="text-xs" />
                   </Button>
                 </div>
               </form>

@@ -5,7 +5,7 @@ import { Header, Body, Footer } from "components/Modal";
 import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { teardownSession } from "lib/logout";
 
 export default function DeleteAccount() {
@@ -66,12 +66,12 @@ export default function DeleteAccount() {
       </Body>
       <Footer>
         <div className="flex justify-between w-full">
-          <Button onClick={close} disabled={isDeleting} color="grayOutline">
+          <Button onClick={close} disabled={isDeleting} variant="outline">
             Cancel
           </Button>
           <Button
             onClick={handleDeleteAccount}
-            color="red"
+            variant="danger"
             size="md"
             className="disabled:bg-red-300 disabled:cursor-not-allowed"
             disabled={!isConfirmed || isDeleting}

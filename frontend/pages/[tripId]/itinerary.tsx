@@ -4,7 +4,7 @@ import Heading from "components/Heading";
 import TripNav from "components/TripNav";
 import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import Icon from "components/Icon";
@@ -69,7 +69,7 @@ export default function Itinerary() {
                     {canEdit && hasStartDate && (
                       <Button
                         size="smPill"
-                        color="pillOutlineGray"
+                        variant="outline" shape="pill"
                         className="flex items-center gap-2 print:hidden"
                         onClick={() => setEditing((prev) => !prev)}
                       >
@@ -90,7 +90,7 @@ export default function Itinerary() {
                     <p className="text-gray-600 mb-4">
                       Add a start date in trip settings to build your day-by-day itinerary.
                     </p>
-                    <Button href={`/${trip?._id}/settings`} color="primary">
+                    <Button href={`/${trip?._id}/settings`} variant="default">
                       Go to Trip Settings
                     </Button>
                   </div>
@@ -102,7 +102,7 @@ export default function Itinerary() {
                 )}
                 {trip?.itinerary?.map((day, index) => <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />)}
                 {isEditing && hasStartDate && (
-                  <Button color="primary" onClick={handleAddDay} className="mb-8">
+                  <Button variant="default" onClick={handleAddDay} className="mb-8">
                     Add Day
                   </Button>
                 )}

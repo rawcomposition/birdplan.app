@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Input from "components/Input";
 import Field from "components/Field";
 import Alert from "components/Alert";
@@ -79,8 +79,15 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             />
           </Field>
           <p className="text-sm text-gray-600">We&apos;ll send a 6-digit code to your new email to confirm the change.</p>
-          <Button type="submit" color="pillPrimary" size="pill" disabled={requestMutation.isPending || !isDirty}>
-            {requestMutation.isPending ? "Sending..." : "Send code"}
+          <Button
+            variant="default" shape="pill"
+            size="pill"
+            type="submit"
+            loading={requestMutation.isPending}
+            loadingText="Sending..."
+            disabled={!isDirty}
+          >
+            Send code
           </Button>
         </form>
       ) : (
@@ -100,8 +107,16 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             />
           </Field>
           <div className="flex items-center gap-3">
-            <Button type="submit" color="pillPrimary" size="pill" disabled={updateMutation.isPending || code.length < 6}>
-              {updateMutation.isPending ? "Updating..." : "Update Email"}
+            <Button
+              variant="default"
+              size="lg"
+              shape="pill"
+              type="submit"
+              loading={updateMutation.isPending}
+              loadingText="Updating..."
+              disabled={code.length < 6}
+            >
+              Update Email
             </Button>
             <button
               type="button"

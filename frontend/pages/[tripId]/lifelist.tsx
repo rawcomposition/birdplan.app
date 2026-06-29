@@ -4,7 +4,7 @@ import Header from "components/Header";
 import Heading from "components/Heading";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Card from "components/Card";
 import NotFound from "components/NotFound";
 import LifelistEditor from "components/LifelistEditor";
@@ -55,7 +55,7 @@ export default function TripLifelist() {
           </Card>
 
           <div className="flex">
-            <Button onClick={handleDone} color="pillPrimary" size="pill" className="inline-flex items-center ml-auto">
+            <Button onClick={handleDone} variant="default" shape="pill" size="pill" className="inline-flex items-center ml-auto">
               {doneLabel}
             </Button>
           </div>

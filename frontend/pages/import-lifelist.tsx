@@ -2,7 +2,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Card from "components/Card";
 import FormPage from "components/FormPage";
 import Icon from "components/Icon";
@@ -128,7 +128,7 @@ export default function ImportLifelist() {
               <Alert style="error" className="-mx-1 my-1">
                 <Icon name="xMarkCircle" className="text-xl" />
                 Failed to load eBird taxonomy
-                <Button color="link" onClick={() => refetch()}>
+                <Button variant="link" onClick={() => refetch()}>
                   Retry
                 </Button>
               </Alert>
@@ -160,7 +160,8 @@ export default function ImportLifelist() {
           <div className="flex">
             <Button
               href={redirectUrl}
-              color={isOnboarding ? "pillPrimary" : "pillOutlineGray"}
+              variant={isOnboarding ? "default" : "outline"}
+              shape="pill"
               size="pill"
               className="ml-auto inline-flex items-center"
             >

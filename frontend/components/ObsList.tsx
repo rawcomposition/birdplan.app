@@ -1,6 +1,6 @@
 import React from "react";
 import Icon from "components/Icon";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
@@ -95,7 +95,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
         <Alert style="error" className="-mx-1 my-1">
           <Icon name="xMarkCircle" className="text-xl" />
           Failed to load observations
-          <Button color="link" onClick={() => refetch()}>
+          <Button variant="link" onClick={() => refetch()}>
             Retry
           </Button>
         </Alert>

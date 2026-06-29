@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "components/Icon";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import clsx from "clsx";
 import { useTrip } from "hooks/useTrip";
@@ -74,7 +74,7 @@ export default function Header({ title, parent, border }: Props) {
       {canEdit && (
         <Button
           type="button"
-          color="pillOutlineAmber"
+          variant="outline-amber" shape="pill"
           className="py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
           onClick={handleShare}
         >

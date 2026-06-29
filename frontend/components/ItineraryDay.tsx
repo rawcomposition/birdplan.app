@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import { useModal } from "stores/modals";
@@ -192,10 +192,10 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
       )}
       {isEditing && (
         <div className="flex justify-between items-center gap-2 mt-3">
-          <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
+          <Button size="xs" variant="secondary" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
             + Add Location
           </Button>
-          <Button type="button" color="linkDanger" size="xs" onClick={handleRemoveDay}>
+          <Button type="button" variant="link-danger" size="xs" onClick={handleRemoveDay}>
             Remove day
           </Button>
         </div>

@@ -8,7 +8,7 @@ import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
 import Badge from "components/Badge";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Avatar from "components/Avatar";
 import { avatarFromParticipant } from "lib/avatar";
 import { Feather, Pencil, Mail, Trash2 } from "lucide-react";
@@ -105,7 +105,7 @@ export default function ParticipantRow({ participant: p }: Props) {
             {canChangeList && (
               <>
                 <span className="mx-1.5">–</span>
-                <Button type="button" onClick={manageList} color="link" size="none">
+                <Button type="button" onClick={manageList} variant="link" size="none">
                   change
                 </Button>
               </>

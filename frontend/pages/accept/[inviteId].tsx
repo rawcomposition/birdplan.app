@@ -1,7 +1,7 @@
 import React from "react";
 import UtilityPage from "components/UtilityPage";
 import AcceptError from "components/AcceptError";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Icon from "components/Icon";
 import { useUser } from "hooks/useUser";
 import { useNavigate, useParams } from "react-router-dom";
@@ -82,7 +82,7 @@ export default function Accept() {
           onRetry={() => refetchInvite()}
           retrying={inviteFetching}
         >
-          <Button color="primary" href="/">
+          <Button variant="default" href="/">
             Go to homepage
           </Button>
         </AcceptError>
@@ -92,7 +92,7 @@ export default function Accept() {
     if (!invite || invite.status !== "pending") {
       return (
         <AcceptError title="Invite already accepted" message="This invite has already been accepted.">
-          <Button color="primary" href={invite ? `/${invite.tripId}` : "/trips"}>
+          <Button variant="default" href={invite ? `/${invite.tripId}` : "/trips"}>
             Go to trip
           </Button>
         </AcceptError>
@@ -107,7 +107,7 @@ export default function Accept() {
           onRetry={accept}
           retrying={acceptMutation.isPending}
         >
-          <Button color="primary" href="/trips">
+          <Button variant="default" href="/trips">
             Go to my trips
           </Button>
         </AcceptError>
@@ -121,7 +121,7 @@ export default function Accept() {
             Accept as <span className="font-semibold text-gray-800">{invite.email}</span>.
           </p>
         )}
-        <Button color="primary" className="w-full" onClick={accept} disabled={acceptMutation.isPending}>
+        <Button variant="default" className="w-full" onClick={accept} disabled={acceptMutation.isPending}>
           {acceptMutation.isPending ? "Accepting..." : user ? `Accept as ${user.email}` : "Accept invitation"}
         </Button>
       </div>

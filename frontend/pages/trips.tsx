@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { TripListPage, TripStats } from "@birdplan/shared";
 import Header from "components/Header";
 import Footer from "components/Footer";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Notice from "components/Notice";
 import Error from "components/Error";
 import Card from "components/Card";
@@ -67,7 +67,7 @@ export default function Trips() {
               <span className="hidden sm:inline">Your birding trips</span>
             </h1>
           </div>
-          <Button color="pillPrimary" size="md" href="/create" className="shrink-0 pr-6">
+          <Button variant="default" shape="pill" size="md" href="/create" className="shrink-0 pr-6">
             <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
           </Button>
         </div>
@@ -95,7 +95,7 @@ export default function Trips() {
 
               {hasNextPage && (
                 <Button
-                  color="grayOutline"
+                  variant="outline"
                   size="md"
                   className="mt-2 self-center rounded-full"
                   disabled={isFetchingNextPage}

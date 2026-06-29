@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Icon from "components/Icon";
 import { useUser } from "hooks/useUser";
 import Footer from "components/Footer";
@@ -56,7 +56,7 @@ export default function BirdPlan() {
             target species, view recent species reports, and more!
           </p>
           <div className="flex flex-col md:flex-row gap-4">
-            <Button color="pillPrimary" size="lg" href={isLoggedIn ? "/trips" : "/signup"}>
+            <Button variant="default" shape="pill" size="lg" href={isLoggedIn ? "/trips" : "/signup"}>
               <span className="px-6">Get Started</span>
             </Button>
           </div>
@@ -100,7 +100,7 @@ export default function BirdPlan() {
               BirdPlan.app is free to use. Create an account to get started.
             </p>
             <div className="flex flex-col md:flex-row gap-4">
-              <Button color="pillPrimary" size="lg" href={isLoggedIn ? "/trips" : "/signup"}>
+              <Button variant="default" shape="pill" size="lg" href={isLoggedIn ? "/trips" : "/signup"}>
                 <span className="px-6">Get Started</span>
               </Button>
             </div>

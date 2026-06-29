@@ -4,7 +4,7 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Alert from "components/Alert";
 
 type Props = {
@@ -90,7 +90,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
         <Alert style="error" className="-mx-1 my-1">
           <Icon name="xMarkCircle" className="text-xl" />
           Failed to load recent species
-          <Button color="link" onClick={() => refetch()}>
+          <Button variant="link" onClick={() => refetch()}>
             Retry
           </Button>
         </Alert>

@@ -13,7 +13,7 @@ import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
 import Error from "components/Error";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
 import { mutate } from "lib/http";
 import { avatarFromUser } from "lib/avatar";
@@ -125,7 +125,7 @@ function NewUserMagicLink() {
   const { open } = useModal();
 
   return (
-    <Button color="primary" size="sm" onClick={() => open("generateMagicLink")}>
+    <Button variant="default" size="sm" onClick={() => open("generateMagicLink")}>
       Generate magic link
     </Button>
   );

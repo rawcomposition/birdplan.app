@@ -6,7 +6,7 @@ import { Header, Body, Footer } from "components/Modal";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Input from "components/Input";
 import LifelistField from "components/LifelistField";
 
@@ -116,17 +116,17 @@ export default function AddParticipant() {
             footer={tab === "invite" ? "They can change this once they accept the invite." : undefined}
           />
         ) : (
-          <Button type="button" color="link" size="none" onClick={() => setShowAttach(true)} className="mt-1 text-sm">
+          <Button type="button" variant="link" size="none" onClick={() => setShowAttach(true)} className="mt-1 text-sm">
             + Attach life list
           </Button>
         )}
       </Body>
       <Footer>
         <div className="flex justify-end gap-2 w-full">
-          <Button onClick={close} color="grayOutline" disabled={addMutation.isPending}>
+          <Button onClick={close} variant="outline" disabled={addMutation.isPending}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary" disabled={!canSubmit || addMutation.isPending}>
+          <Button onClick={handleSubmit} variant="default" disabled={!canSubmit || addMutation.isPending}>
             {addMutation.isPending ? "Saving..." : tab === "invite" ? "Send invite" : "Add participant"}
           </Button>
         </div>

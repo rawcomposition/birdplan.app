@@ -12,7 +12,7 @@ import RangeField from "components/RangeField";
 import FormPage from "components/FormPage";
 import { useNavigate } from "react-router-dom";
 import { months } from "lib/helpers";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
 import useResolvedRegion from "hooks/useResolvedRegion";
@@ -164,10 +164,10 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
         </Card>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button href={`/${trip._id}`} color="pillOutlineGray" size="pill">
+          <Button href={`/${trip._id}`} variant="outline" shape="pill" size="pill">
             Cancel
           </Button>
-          <Button type="submit" color="pillPrimary" size="pill" disabled={updateTripMutation.isPending}>
+          <Button type="submit" variant="default" shape="pill" size="pill" disabled={updateTripMutation.isPending}>
             {updateTripMutation.isPending ? "Saving..." : "Save changes"}
           </Button>
         </div>
