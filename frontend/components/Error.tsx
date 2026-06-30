@@ -1,4 +1,5 @@
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 
 type Props = {
   onReload?: () => void;
@@ -11,10 +12,10 @@ export default function Error({ onReload, message }: Props) {
       <h2 className="text-xl text-gray-600">{message || "Sorry! Something went wrong..."}</h2>
       {onReload && (
         <p className="my-2">
-          <button className="text-orange-700" onClick={onReload}>
-            <Icon name="refresh" className="text-lg inline mr-2" />
+          <Button variant="outline" shape="pill" className="inline-flex items-center gap-2" onClick={onReload}>
+            <Icon name="refresh" className="text-lg" />
             Try again
-          </button>
+          </Button>
         </p>
       )}
     </div>

@@ -97,7 +97,8 @@ export default function Trips() {
                 <Button
                   variant="outline"
                   size="md"
-                  className="mt-2 self-center rounded-full"
+                  shape="pill"
+                  className="mt-2 self-center"
                   disabled={isFetchingNextPage}
                   onClick={() => fetchNextPage()}
                 >

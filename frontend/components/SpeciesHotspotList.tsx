@@ -2,6 +2,7 @@ import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
 import Card from "components/Card";
+import SelectDropdown from "components/SelectDropdown";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
 
 export type HotspotItem = OpenBirdingHotspotRanking & {
@@ -34,7 +35,16 @@ export default function SpeciesHotspotList({
         <div className="flex items-center gap-2.5">
           <div className="text-base font-bold text-gray-800">Top hotspots</div>
           {tripRangeLabel && (
-            <MonthRangeDropdown mode={monthMode} onChange={setMonthMode} tripRangeLabel={tripRangeLabel} />
+            <SelectDropdown
+              compact
+              align="left"
+              value={monthMode}
+              onChange={setMonthMode}
+              options={[
+                { value: "all", label: "All Year" },
+                { value: "trip", label: tripRangeLabel },
+              ]}
+            />
           )}
         </div>
         {loading ? (
@@ -56,63 +66,6 @@ export default function SpeciesHotspotList({
         )}
       </div>
     </Card>
-  );
-}
-
-function MonthRangeDropdown({
-  mode,
-  onChange,
-  tripRangeLabel,
-}: {
-  mode: MonthMode;
-  onChange: (m: MonthMode) => void;
-  tripRangeLabel: string;
-}) {
-  const [open, setOpen] = React.useState(false);
-  const options: { value: MonthMode; label: string }[] = [
-    { value: "all", label: "All Year" },
-    { value: "trip", label: tripRangeLabel },
-  ];
-  const current = options.find((o) => o.value === mode) ?? options[0];
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap"
-      >
-        {current.label}
-        <Icon name="angleDown" className="text-[9px] text-gray-500" />
-      </button>
-      {open && (
-        <>
-          <div onClick={() => setOpen(false)} className="fixed inset-0 z-30" />
-          <div className="absolute top-full left-0 mt-1.5 z-40 min-w-[160px] bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-            {options.map((o) => {
-              const active = o.value === mode;
-              return (
-                <button
-                  key={o.value}
-                  type="button"
-                  onClick={() => {
-                    onChange(o.value);
-                    setOpen(false);
-                  }}
-                  className={clsx(
-                    "w-full px-3 py-2 text-left text-sm flex items-center justify-between",
-                    active ? "bg-sky-50 text-sky-700" : "text-gray-800 hover:bg-gray-50"
-                  )}
-                >
-                  <span>{o.label}</span>
-                  {active && <Icon name="check" className="text-xs" />}
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
-    </div>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 import { PersonStanding, Car, Bike } from "lucide-react";
 import { formatTime, formatDistance } from "lib/helpers";
 import {
@@ -125,13 +126,15 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
           {travelData && !travelData?.isDeleted && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon"
+              shape="pill"
+              className="sm:opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={() => removeTravelTimeMutation.mutate({ id })}
-              className="text-[16px] p-1 -mt-1.5 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <Icon name="xMarkBold" />
-            </button>
+            </Button>
           )}
         </div>
       ) : (

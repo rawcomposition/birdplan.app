@@ -118,9 +118,10 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             >
               Update Email
             </Button>
-            <button
+            <Button
+              variant="link"
               type="button"
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm"
               onClick={() => {
                 setStep("email");
                 setCode("");
@@ -128,7 +129,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
               }}
             >
               Use a different email
-            </button>
+            </Button>
           </div>
         </form>
       )}
