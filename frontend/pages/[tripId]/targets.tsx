@@ -286,15 +286,16 @@ export default function TripTargets() {
 
                 <div className="my-4 text-center pb-4">
                   {filteredTargets?.length > showCount && (
-                    <button
+                    <Button
+                      variant="link"
                       type="button"
-                      className="text-link font-bold text-sm"
+                      className="text-sm"
                       onClick={() => setPage(page + 1)}
                     >
                       Show{" "}
                       {Math.min(filteredTargets.length - showCount, PAGE_SIZE)}{" "}
                       more
-                    </button>
+                    </Button>
                   )}
                 </div>
                 {regionData?.citation && (

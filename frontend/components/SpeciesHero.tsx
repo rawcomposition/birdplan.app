@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 import { Map, Star, ExternalLink, Check } from "lucide-react";
 import Card from "components/Card";
 import MutualBadge from "components/MutualBadge";
@@ -75,10 +76,10 @@ export default function SpeciesHero({
           <div className="flex items-center gap-2 shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="grid h-9 w-9 place-items-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                render={<Button variant="outline-white" size="icon-lg" />}
                 aria-label="More actions"
               >
-                <Icon name="verticalDots" className="text-base" />
+                <Icon name="verticalDots" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
                 <DropdownMenuItem onClick={onShowMap}>

@@ -31,11 +31,11 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
       <Button
         onClick={isDirect ? undefined : () => setOpen(true)}
         target="_blank"
-        variant="secondary"
-        size="sm"
+        variant="outline-white"
+        size="toolbar"
         href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
       >
-        <Icon name="directions" className="mr-1 mt-[-3px] text-[#c2410d]" /> Directions
+        <Icon name="directions" className="text-[#c2410d]" /> Directions
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
         <a

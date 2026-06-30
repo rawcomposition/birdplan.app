@@ -74,8 +74,8 @@ export default function Header({ title, parent, border }: Props) {
       {canEdit && (
         <Button
           type="button"
-          variant="outline-amber" shape="pill"
-          className="py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
+          variant="outline" shape="pill"
+          className="border-amber-600 text-amber-600 hover:bg-amber-500/5 py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
           onClick={handleShare}
         >
           Share

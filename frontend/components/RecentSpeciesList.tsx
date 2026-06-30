@@ -70,9 +70,9 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
       )}
       <p className="text-sm mt-2 text-center">
         {recentSpecies.length > previewCount && !viewAll && (
-          <button className="text-sm text-blue-900 mt-2" onClick={() => setViewAll(true)}>
+          <Button variant="link" className="text-sm" onClick={() => setViewAll(true)}>
             View all {recentSpecies.length} reports
-          </button>
+          </Button>
         )}
       </p>
       {isLoading && (

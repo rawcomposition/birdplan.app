@@ -174,25 +174,24 @@ export default function Hotspot({ hotspot }: Props) {
       <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
           <Button
-            variant="secondary"
-            size="sm"
+            variant="outline-white"
+            size="toolbar"
             href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
             target="_blank"
           >
-            <Icon name="feather" className="mr-1 mt-[-3px] text-success" /> Targets
+            <Icon name="feather" className="text-success" /> Targets
           </Button>
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
-            variant="secondary"
-            size="sm"
+            variant="outline-white"
+            size="toolbar"
             href={`https://ebird.org/hotspot/${id}`}
             target="_blank"
-            className="inline-flex items-center"
           >
             <img src="/ebird.png" width={48} />
           </Button>
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center rounded bg-gray-100 px-2 py-[10px] text-[14px] text-gray-600">
+            <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
               <Icon name="verticalDots" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[170px]">

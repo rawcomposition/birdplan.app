@@ -68,9 +68,9 @@ export default function Itinerary() {
                     <Heading title="Trip Itinerary" />
                     {canEdit && hasStartDate && (
                       <Button
-                        size="smPill"
+                        size="sm"
                         variant="outline" shape="pill"
-                        className="flex items-center gap-2 print:hidden"
+                        className="px-4 flex items-center gap-2 print:hidden"
                         onClick={() => setEditing((prev) => !prev)}
                       >
                         {isEditing ? (

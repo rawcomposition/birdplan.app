@@ -143,9 +143,9 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
               <div className="space-y-3 text-left text-gray-500">
                 <p>
                   We sent a code to <span className="font-medium text-gray-700">{email}</span>.{" "}
-                  <button type="button" className="text-link font-medium" onClick={backToEmail}>
+                  <Button variant="link" type="button" onClick={backToEmail}>
                     Change email
-                  </button>
+                  </Button>
                 </p>
                 <ul className="list-disc space-y-1 pl-5">
                   <li>It can take 1–2 minutes to arrive.</li>
@@ -154,14 +154,15 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
                     {cooldown > 0 ? (
                       <span className="text-gray-400">Resend in {cooldown}s</span>
                     ) : (
-                      <button
+                      <Button
+                        variant="link"
                         type="button"
-                        className="text-link font-medium disabled:opacity-50"
+                        className="disabled:opacity-50"
                         onClick={() => sendCode(email.trim().toLowerCase())}
                         disabled={requestCode.isPending}
                       >
                         Resend code
-                      </button>
+                      </Button>
                     )}
                   </li>
                 </ul>
@@ -173,16 +174,16 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
                 </p>
               </div>
             ) : (
-              <button
+              <Button
+                variant="link"
                 type="button"
-                className="text-link font-medium"
                 onClick={() => {
                   setShowHelp(true);
                   if (email.trim()) reportNoCode.mutate({ email: email.trim().toLowerCase() });
                 }}
               >
                 Didn't receive the email?
-              </button>
+              </Button>
             )}
           </div>
         )}

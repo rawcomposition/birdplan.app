@@ -107,7 +107,7 @@ export default function Contact() {
                   <Button
                     type="submit"
                     variant="default" shape="pill"
-                    size="pill"
+                    size="xl"
                     loading={mutation.isPending}
                     loadingText="Sending..."
                   >

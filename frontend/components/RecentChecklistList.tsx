@@ -147,19 +147,20 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             </table>
           )}
           {!expanded && mergedChecklists.length > 10 && (
-            <button onClick={() => setExpanded(true)} className="block w-full text-sm text-center mt-2 text-blue-900">
+            <Button variant="link" onClick={() => setExpanded(true)} className="block w-full text-sm text-center mt-2">
               View more
-            </button>
+            </Button>
           )}
           {expanded && (
             <p className="text-sm mt-2 text-center">
-              <a
+              <Button
+                variant="link"
                 target="_blank"
-                className="text-sm text-blue-900 mt-2"
+                className="text-sm"
                 href={`https://ebird.org/hotspot/${hotspotId}/activity?yr=all&m=`}
               >
                 View more on eBird
-              </a>
+              </Button>
             </p>
           )}
           {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (

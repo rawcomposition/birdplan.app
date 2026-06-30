@@ -162,7 +162,7 @@ export default function ImportLifelist() {
               href={redirectUrl}
               variant={isOnboarding ? "default" : "outline"}
               shape="pill"
-              size="pill"
+              size="xl"
               className="ml-auto inline-flex items-center"
             >
               {isOnboarding ? "Continue" : "Done"}

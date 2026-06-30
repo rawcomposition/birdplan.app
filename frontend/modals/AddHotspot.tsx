@@ -6,6 +6,7 @@ import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "hooks/useTrip";
 import { eBirdHotspot, HotspotInput } from "@birdplan/shared";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 import clsx from "clsx";
 import useTripMutation from "hooks/useTripMutation";
 
@@ -73,16 +74,16 @@ export default function AddHotspot() {
             />
             {!showAllHotspots && (
               <p className="text-[12px] text-gray-700 -mt-3">
-                <button
+                <Button
+                  variant="link"
                   type="button"
-                  className="text-link font-bold"
                   onClick={() => {
                     setShowAllHotspots(true);
                     close();
                   }}
                 >
                   Or view hotspot map
-                </button>
+                </Button>
               </p>
             )}
             <div className="flex flex-col gap-2">

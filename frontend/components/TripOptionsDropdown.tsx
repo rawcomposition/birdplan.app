@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
+import { cn } from "lib/utils";
 import { Feather, Users, Settings, Download, Send } from "lucide-react";
 
 type Props = {
@@ -64,12 +66,9 @@ export default function TripOptionsDropdown({ className }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={
-          className ||
-          "ml-auto flex shrink-0 items-center justify-center gap-2 rounded px-1 py-1 text-[14px] font-medium text-gray-600 hover:bg-slate-300"
-        }
+        render={<Button variant="nav" size="icon" shape="pill" className={cn("ml-auto", className)} />}
       >
-        <Icon name="verticalDots" className="text-lg" />
+        <Icon name="verticalDots" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto min-w-[240px]">
         {filteredLinks.map(({ name, href, onClick, icon }) => {

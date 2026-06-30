@@ -67,7 +67,7 @@ export default function TripParticipants() {
       </Card>
 
       <div className="mt-8 flex">
-        <Button href={backHref} variant="default" shape="pill" size="pill" className="ml-auto">
+        <Button href={backHref} variant="default" shape="pill" size="xl" className="ml-auto">
           {isCreate ? "Continue" : "Done"}
         </Button>
       </div>

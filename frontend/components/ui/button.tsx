@@ -12,23 +12,24 @@ const buttonVariants = cva("font-semibold rounded", {
       default: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors",
       secondary: "bg-secondary text-secondary-foreground",
       outline: "border border-input text-secondary-foreground hover:bg-secondary transition-colors",
-      "outline-amber":
-        "border border-amber-600 bg-transparent text-amber-600 hover:bg-amber-500/5 transition-colors",
+      "outline-white":
+        "border border-gray-200 bg-white text-gray-700 rounded-full shadow-xs hover:bg-gray-50 transition-colors",
       ghost: "hover:bg-muted hover:text-foreground transition-colors",
+      nav: "font-medium text-gray-600 hover:bg-slate-300 transition-colors",
       danger: "bg-red-600 text-white hover:bg-red-700",
       link: "text-link font-medium",
-      "link-danger": "text-red-700 hover:text-red-800",
+      "link-danger": "text-sm font-medium text-red-600 hover:text-red-600",
     },
     size: {
+      xl: "text-sm py-3 px-6",
       lg: "text-lg py-2.5 px-4.5",
       md: "text-md py-2 px-5",
-      pill: "text-sm py-3 px-6",
-      smPill: "text-[14px] py-1.5 px-4",
       sm: "text-[14px] py-1.5 px-2.5",
       xs: "text-[12px] py-0.5 px-1.5",
+      toolbar: "inline-flex items-center gap-1.5 h-9 px-3.5 text-sm font-medium",
       none: "",
-      icon: "inline-flex size-8 items-center justify-center",
-      "icon-lg": "inline-flex size-9 items-center justify-center",
+      icon: "inline-flex size-8 items-center justify-center text-sm",
+      "icon-lg": "inline-flex size-9 items-center justify-center text-lg",
     },
     shape: {
       default: "",
@@ -70,7 +71,7 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
-  const effectiveSize = variant === "link" ? "none" : size
+  const effectiveSize = variant === "link" || variant === "link-danger" ? "none" : size
   const isDisabled = disabled || loading
   const classes = cn(
     buttonVariants({ variant, size: effectiveSize, shape }),

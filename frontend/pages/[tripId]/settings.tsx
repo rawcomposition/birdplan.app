@@ -132,58 +132,69 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     >
       <form onSubmit={handleSubmit}>
         <Card className="flex flex-col gap-[22px] rounded-2xl p-5 sm:p-6">
-        <Field label="Trip name">
-          <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus defaultValue={trip.name} />
-        </Field>
+          <Field label="Trip name">
+            <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus defaultValue={trip.name} />
+          </Field>
 
-        <RangeField
-          label="Dates"
-          from={<Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />}
-          to={
-            <Input
-              type="date"
-              name="endDate"
-              value={endDate}
-              onChange={handleEndDateChange}
-              min={startDate || undefined}
-              required
-            />
-          }
-        />
+          <RangeField
+            label="Dates"
+            from={<Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />}
+            to={
+              <Input
+                type="date"
+                name="endDate"
+                value={endDate}
+                onChange={handleEndDateChange}
+                min={startDate || undefined}
+                required
+              />
+            }
+          />
 
-        <RangeField
-          label="Trip timeframe (months)"
-          help="Used to determine your target species — a wider range may yield more accurate results."
-          from={
-            <MonthSelect onChange={setStartMonth} value={startMonth} instanceId="startMonth" menuPortalTarget={portalTarget()} />
-          }
-          to={<MonthSelect onChange={setEndMonth} value={endMonth} instanceId="endMonth" menuPortalTarget={portalTarget()} />}
-        />
+          <RangeField
+            label="Trip timeframe (months)"
+            help="Used to determine your target species — a wider range may yield more accurate results."
+            from={
+              <MonthSelect
+                onChange={setStartMonth}
+                value={startMonth}
+                instanceId="startMonth"
+                menuPortalTarget={portalTarget()}
+              />
+            }
+            to={
+              <MonthSelect
+                onChange={setEndMonth}
+                value={endMonth}
+                instanceId="endMonth"
+                menuPortalTarget={portalTarget()}
+              />
+            }
+          />
 
-        <RegionFields value={region} onChange={setRegion} />
+          <RegionFields value={region} onChange={setRegion} />
         </Card>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button href={`/${trip._id}`} variant="outline" shape="pill" size="pill">
+          {isOwner && (
+            <div className="border-t border-gray-100 mr-auto">
+              <Button
+                type="button"
+                variant="link-danger"
+                onClick={handleDelete}
+                disabled={deleteTripMutation.isPending}
+              >
+                {deleteTripMutation.isPending ? "Deleting..." : "Delete trip"}
+              </Button>
+            </div>
+          )}
+          <Button href={`/${trip._id}`} variant="outline" shape="pill" size="xl">
             Cancel
           </Button>
-          <Button type="submit" variant="default" shape="pill" size="pill" disabled={updateTripMutation.isPending}>
+          <Button type="submit" variant="default" shape="pill" size="xl" disabled={updateTripMutation.isPending}>
             {updateTripMutation.isPending ? "Saving..." : "Save changes"}
           </Button>
         </div>
-
-        {isOwner && (
-          <div className="mt-8 border-t border-gray-100 pt-6">
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="text-sm font-semibold text-red-500 hover:text-red-600"
-              disabled={deleteTripMutation.isPending}
-            >
-              {deleteTripMutation.isPending ? "Deleting..." : "Delete trip"}
-            </button>
-          </div>
-        )}
       </form>
     </FormPage>
   );

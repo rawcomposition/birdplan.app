@@ -108,7 +108,7 @@ function UserActions({ user }: { user: AdminDashboardUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
+        render={<Button variant="ghost" size="icon" shape="pill" />}
         disabled={generating}
         aria-label="User actions"
       >
