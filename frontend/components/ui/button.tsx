@@ -20,8 +20,8 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-s
       "link-danger": "inline text-sm font-medium text-red-600 hover:text-red-600",
     },
     size: {
-      xl: "text-sm py-3 px-6",
-      md: "text-md py-2 px-5",
+      xl: "text-base py-3 px-6",
+      md: "py-2 px-5",
       sm: "text-[14px] py-1.5 px-2.5",
       toolbar: "gap-1.5 h-9 px-3.5 text-sm font-medium",
       none: "",
