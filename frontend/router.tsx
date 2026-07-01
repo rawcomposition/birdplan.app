@@ -36,7 +36,6 @@ export const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/support", element: <Navigate to="/contact" replace /> },
       { path: "/whats-new", element: <WhatsNew /> },
-      { path: "/buttons", element: <Buttons /> },
       { path: "/onboarding", element: <Onboarding /> },
       { path: "/accept/:inviteId", element: <Accept /> },
       { path: "/magic/:token", element: <Magic /> },
