@@ -173,14 +173,21 @@ export default function Hotspot({ hotspot }: Props) {
       </div>
       <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
-          <Button
-            variant="outline-white"
-            size="toolbar"
-            href={`https://ebird.org/targets?r1=${id}&bmo=1&emo=12&r2=world&t2=life`}
-            target="_blank"
-          >
-            <Icon name="feather" className="text-success" /> Targets
-          </Button>
+          {canEdit && (
+            <Button
+              variant="outline-white"
+              size="toolbar"
+              onClick={handleSave}
+              aria-pressed={isSaved}
+              className={isSaved ? "border-yellow-300 bg-yellow-50 text-yellow-800 hover:bg-yellow-50" : undefined}
+            >
+              <Icon
+                name={isSaved ? "star" : "starOutline"}
+                className={isSaved ? "text-yellow-500" : "text-gray-400"}
+              />
+              {isSaved ? "Saved" : "Save"}
+            </Button>
+          )}
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
             variant="outline-white"
@@ -200,26 +207,11 @@ export default function Hotspot({ hotspot }: Props) {
               >
                 Illustrated Checklist
               </DropdownMenuItem>
-              {canEdit && isSaved && (
-                <DropdownMenuItem variant="destructive" onClick={handleSave}>
-                  Remove from trip
-                </DropdownMenuItem>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
         <HotspotFavs hotspotId={id} />
-
-        {canEdit && !isSaved && (
-          <button
-            type="button"
-            onClick={handleSave}
-            className="w-full text-left bg-sky-50 rounded-sm px-2 py-2 border text-sm font-bold border-sky-100 text-link mt-4 flex items-center gap-2"
-          >
-            <Icon name="plus" className="text-lg text-link" /> Add to trip
-          </button>
-        )}
 
         {isSaved && (
           <InputNotes key={id} value={notes} onBlur={(value) => saveNotesMutation.mutate({ notes: value })} />

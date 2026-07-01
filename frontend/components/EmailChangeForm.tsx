@@ -109,7 +109,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
           <div className="flex items-center gap-3">
             <Button
               variant="default"
-              size="lg"
+              size="xl"
               shape="pill"
               type="submit"
               loading={updateMutation.isPending}

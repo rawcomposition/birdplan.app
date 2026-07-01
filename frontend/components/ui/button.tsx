@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "lib/utils"
 import Icon from "components/Icon"
 
-const buttonVariants = cva("font-semibold rounded", {
+const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-semibold rounded", {
   variants: {
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors",
@@ -17,19 +17,17 @@ const buttonVariants = cva("font-semibold rounded", {
       ghost: "hover:bg-muted hover:text-foreground transition-colors",
       nav: "font-medium text-gray-600 hover:bg-slate-300 transition-colors",
       danger: "bg-red-600 text-white hover:bg-red-700",
-      link: "text-link font-medium",
-      "link-danger": "text-sm font-medium text-red-600 hover:text-red-600",
+      link: "inline text-link font-medium",
+      "link-danger": "inline text-sm font-medium text-red-600 hover:text-red-600",
     },
     size: {
       xl: "text-sm py-3 px-6",
-      lg: "text-lg py-2.5 px-4.5",
       md: "text-md py-2 px-5",
       sm: "text-[14px] py-1.5 px-2.5",
-      xs: "text-[12px] py-0.5 px-1.5",
-      toolbar: "inline-flex items-center gap-1.5 h-9 px-3.5 text-sm font-medium",
+      toolbar: "gap-1.5 h-9 px-3.5 text-sm font-medium",
       none: "",
-      icon: "inline-flex size-8 items-center justify-center text-sm",
-      "icon-lg": "inline-flex size-9 items-center justify-center text-lg",
+      icon: "size-8 text-sm",
+      "icon-lg": "size-9 text-lg",
     },
     shape: {
       default: "",
