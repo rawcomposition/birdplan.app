@@ -105,7 +105,7 @@ export default function ParticipantRow({ participant: p }: Props) {
             {canChangeList && (
               <>
                 <span className="mx-1.5">–</span>
-                <Button type="button" onClick={manageList} variant="link" size="none">
+                <Button type="button" onClick={manageList} variant="link">
                   change
                 </Button>
               </>

@@ -77,7 +77,7 @@ export default function Account() {
                 <p className="text-sm text-red-700 mb-4">
                   Permanently delete your account and all associated data. This action cannot be undone.
                 </p>
-                <Button variant="danger" size="md" onClick={() => open("deleteAccount")}>
+                <Button variant="danger" onClick={() => open("deleteAccount")}>
                   Delete Account
                 </Button>
               </div>

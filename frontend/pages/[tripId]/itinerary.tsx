@@ -52,9 +52,7 @@ export default function Itinerary() {
 
   return (
     <div className="flex flex-col h-full">
-      {trip && (
-          <title>{`${trip.name} | BirdPlan.app`}</title>
-      )}
+      {trip && <title>{`${trip.name} | BirdPlan.app`}</title>}
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="itinerary" />
@@ -68,16 +66,12 @@ export default function Itinerary() {
                     <Heading title="Trip Itinerary" />
                     {canEdit && hasStartDate && (
                       <Button
-                        size="sm"
                         variant="outline"
-                        className="px-4 flex items-center gap-2 print:hidden"
+                        size="sm"
+                        className="print:hidden"
                         onClick={() => setEditing((prev) => !prev)}
                       >
-                        {isEditing ? (
-                          <Icon name="check" className="w-4 h-4" />
-                        ) : (
-                          <Icon name="pencil" className="w-4 h-4" />
-                        )}
+                        {isEditing ? <Icon name="check" /> : <Icon name="pencil" />}
                         <span>{isEditing ? "Done" : "Edit"}</span>
                       </Button>
                     )}
@@ -100,7 +94,9 @@ export default function Itinerary() {
                     No itinerary has been set for this trip yet.
                   </div>
                 )}
-                {trip?.itinerary?.map((day, index) => <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />)}
+                {trip?.itinerary?.map((day, index) => (
+                  <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />
+                ))}
                 {isEditing && hasStartDate && (
                   <Button variant="default" onClick={handleAddDay} className="mb-8">
                     Add Day

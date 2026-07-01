@@ -161,7 +161,7 @@ export default function ImportLifelist() {
             <Button
               href={redirectUrl}
               variant={isOnboarding ? "default" : "outline"}
-              size="xl"
+              size="lg"
               className="ml-auto inline-flex items-center"
             >
               {isOnboarding ? "Continue" : "Done"}

@@ -116,7 +116,7 @@ export default function AddParticipant() {
             footer={tab === "invite" ? "They can change this once they accept the invite." : undefined}
           />
         ) : (
-          <Button type="button" variant="link" size="none" onClick={() => setShowAttach(true)} className="mt-1 text-sm">
+          <Button type="button" variant="link" onClick={() => setShowAttach(true)} className="mt-1 text-sm">
             + Attach life list
           </Button>
         )}

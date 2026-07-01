@@ -55,7 +55,7 @@ export default function TripLifelist() {
           </Card>
 
           <div className="flex">
-            <Button onClick={handleDone} variant="default" size="xl" className="inline-flex items-center ml-auto">
+            <Button onClick={handleDone} variant="default" size="lg" className="inline-flex items-center ml-auto">
               {doneLabel}
             </Button>
           </div>

@@ -27,7 +27,7 @@ function CopyLinkField({ url }: { url: string }) {
         onFocus={(e) => e.target.select()}
         className="min-w-0 flex-1 rounded border border-gray-200 bg-gray-50 px-2.5 py-1.5 font-mono text-xs text-gray-700"
       />
-      <Button variant="default" size="sm" onClick={copy} className="flex items-center gap-1.5 whitespace-nowrap">
+      <Button variant="default" size="xs" onClick={copy} className="flex items-center gap-1.5 whitespace-nowrap">
         {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
         {copied ? "Copied" : "Copy"}
       </Button>
@@ -95,7 +95,7 @@ export default function GenerateMagicLink({ link: initialLink, email }: Props) {
             />
             <Button
               variant="default"
-              size="sm"
+              size="xs"
               type="submit"
               loading={generating}
               disabled={!input.trim()}

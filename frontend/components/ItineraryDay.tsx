@@ -194,7 +194,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
       )}
       {isEditing && (
         <div className="flex justify-between items-center gap-2 mt-3">
-          <Button size="sm" variant="secondary" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
+          <Button size="xs" variant="secondary" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
             + Add Location
           </Button>
           <Button type="button" variant="link-danger" onClick={handleRemoveDay}>

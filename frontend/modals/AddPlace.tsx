@@ -101,7 +101,7 @@ export default function AddPlace() {
                   </div>
                 </div>
 
-                <Button type="button" variant="default" className="mt-2" size="md" onClick={handleAddMarker}>
+                <Button type="button" variant="default" className="mt-2" onClick={handleAddMarker}>
                   Add Place
                 </Button>
               </>

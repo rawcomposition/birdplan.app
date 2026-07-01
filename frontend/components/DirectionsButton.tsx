@@ -32,7 +32,7 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
         onClick={isDirect ? undefined : () => setOpen(true)}
         target="_blank"
         variant="outline-white"
-        size="toolbar"
+        size="sm"
         href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
       >
         <Icon name="directions" className="text-[#c2410d]" /> Directions

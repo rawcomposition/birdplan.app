@@ -126,7 +126,7 @@ function NewUserMagicLink() {
   const { open } = useModal();
 
   return (
-    <Button variant="default" size="sm" onClick={() => open("generateMagicLink")}>
+    <Button variant="default" size="xs" onClick={() => open("generateMagicLink")}>
       Generate magic link
     </Button>
   );

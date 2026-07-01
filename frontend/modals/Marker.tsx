@@ -229,10 +229,10 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
               </div>
             </div>
             <div className="flex gap-2 mt-2">
-              <Button type="button" variant="default" size="md" onClick={handleSave}>
+              <Button type="button" variant="default" onClick={handleSave}>
                 {isEditing ? "Save Changes" : "Add Marker"}
               </Button>
-              <Button type="button" variant="secondary" size="md" onClick={handleCancel}>
+              <Button type="button" variant="secondary" onClick={handleCancel}>
                 Cancel
               </Button>
             </div>

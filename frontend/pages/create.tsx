@@ -217,13 +217,13 @@ export default function CreateTrip() {
                 </div>
 
                 <div className="mt-auto flex justify-end gap-3 pt-8">
-                  <Button href="/trips" variant="outline" size="xl">
+                  <Button href="/trips" variant="outline" size="lg">
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     variant="default"
-                    size="xl"
+                    size="lg"
                     loading={mutation.isPending}
                     loadingText="Saving..."
                     className="inline-flex items-center gap-2"

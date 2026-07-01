@@ -52,7 +52,6 @@ export default function TripParticipants() {
       {canEdit && (
         <Button
           variant="outline"
-          size="none"
           onClick={() => open("addParticipant")}
           className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm text-primary"
         >
@@ -67,7 +66,7 @@ export default function TripParticipants() {
       </Card>
 
       <div className="mt-8 flex">
-        <Button href={backHref} variant="default" size="xl" className="ml-auto">
+        <Button href={backHref} variant="default" size="lg" className="ml-auto">
           {isCreate ? "Continue" : "Done"}
         </Button>
       </div>

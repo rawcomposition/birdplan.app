@@ -176,7 +176,7 @@ export default function Hotspot({ hotspot }: Props) {
           {canEdit && (
             <Button
               variant="outline-white"
-              size="toolbar"
+              size="sm"
               onClick={handleSave}
               aria-pressed={isSaved}
               className={isSaved ? "border-yellow-300 bg-yellow-50 text-yellow-800 hover:bg-yellow-50" : undefined}
@@ -191,7 +191,7 @@ export default function Hotspot({ hotspot }: Props) {
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
           <Button
             variant="outline-white"
-            size="toolbar"
+            size="sm"
             href={`https://ebird.org/hotspot/${id}`}
             target="_blank"
           >

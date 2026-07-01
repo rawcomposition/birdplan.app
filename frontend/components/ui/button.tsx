@@ -1,10 +1,10 @@
-import * as React from "react"
-import { Link } from "react-router-dom"
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "lib/utils"
-import Icon from "components/Icon"
+import { cn } from "lib/utils";
+import Icon from "components/Icon";
 
 const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-semibold rounded-full", {
   variants: {
@@ -20,30 +20,33 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-s
       "link-danger": "inline text-sm font-medium text-red-600 hover:text-red-600",
     },
     size: {
-      xl: "text-base py-3 px-6",
+      lg: "text-base py-3 px-6",
       md: "py-2 px-5",
-      sm: "text-[14px] py-1.5 px-2.5",
-      toolbar: "gap-1.5 h-9 px-3.5 text-sm font-medium",
+      sm: "gap-1.5 h-9 px-3.5 text-sm font-medium",
+      xs: "text-xs py-1.5 px-2.5 font-medium",
       none: "",
       icon: "size-8 text-sm",
       "icon-lg": "size-9 text-lg",
     },
   },
-  compoundVariants: [{ variant: "default", size: "xl", class: "shadow-lg shadow-primary/30" }],
+  compoundVariants: [{ variant: "default", size: "lg", class: "shadow-lg shadow-primary/30" }],
   defaultVariants: {
     variant: "default",
     size: "md",
   },
-})
+});
+
+type ButtonSize = Exclude<NonNullable<VariantProps<typeof buttonVariants>["size"]>, "none">;
 
 type ButtonProps = ButtonPrimitive.Props &
-  VariantProps<typeof buttonVariants> & {
-    href?: string
-    target?: React.HTMLAttributeAnchorTarget
-    rel?: string
-    loading?: boolean
-    loadingText?: React.ReactNode
-  }
+  Omit<VariantProps<typeof buttonVariants>, "size"> & {
+    size?: ButtonSize;
+    href?: string;
+    target?: React.HTMLAttributeAnchorTarget;
+    rel?: string;
+    loading?: boolean;
+    loadingText?: React.ReactNode;
+  };
 
 function Button({
   className,
@@ -59,13 +62,9 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
-  const effectiveSize = variant === "link" || variant === "link-danger" ? "none" : size
-  const isDisabled = disabled || loading
-  const classes = cn(
-    buttonVariants({ variant, size: effectiveSize }),
-    isDisabled && "opacity-60",
-    className
-  )
+  const effectiveSize = variant === "link" || variant === "link-danger" ? "none" : size;
+  const isDisabled = disabled || loading;
+  const classes = cn(buttonVariants({ variant, size: effectiveSize }), isDisabled && "opacity-60", className);
 
   const content = loading ? (
     <span className="inline-flex items-center justify-center gap-2">
@@ -74,7 +73,7 @@ function Button({
     </span>
   ) : (
     children
-  )
+  );
 
   if (href) {
     return /^(https?:|mailto:|tel:|om:)/.test(href) ? (
@@ -85,20 +84,14 @@ function Button({
       <Link to={href} className={classes} {...(props as Record<string, unknown>)}>
         {content}
       </Link>
-    )
+    );
   }
 
   return (
-    <ButtonPrimitive
-      data-slot="button"
-      type={type}
-      className={classes}
-      disabled={isDisabled}
-      {...props}
-    >
+    <ButtonPrimitive data-slot="button" type={type} className={classes} disabled={isDisabled} {...props}>
       {content}
     </ButtonPrimitive>
-  )
+  );
 }
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

@@ -72,7 +72,6 @@ export default function DeleteAccount() {
           <Button
             onClick={handleDeleteAccount}
             variant="danger"
-            size="md"
             className="disabled:bg-red-300 disabled:cursor-not-allowed"
             disabled={!isConfirmed || isDeleting}
           >
