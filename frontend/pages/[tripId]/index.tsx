@@ -6,13 +6,13 @@ import useFetchHotspots from "hooks/useFetchHotspots";
 import { getMarkerColorIndex } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
-import CloseButton from "components/CloseButton";
+import { Button } from "components/ui/button";
 import TripNav from "components/TripNav";
 import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
-import { Star, Utensils, MapPin } from "lucide-react";
+import { Star, Utensils, MapPin, XIcon } from "lucide-react";
 import NotFound from "components/NotFound";
 
 export default function Trip() {
@@ -142,7 +142,14 @@ export default function Trip() {
                         enter coordinates
                       </button>
                     </div>
-                    <CloseButton onClick={() => setIsAddingMarker(false)} />
+                    <Button
+                      variant="ghost"
+                      size="icon-lg"
+                      onClick={() => setIsAddingMarker(false)}
+                      aria-label="Close"
+                    >
+                      <XIcon className="size-5" />
+                    </Button>
                   </div>
                 )}
               </div>

@@ -7,7 +7,8 @@ import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import SpeciesCard from "components/SpeciesCard";
 import Card from "components/Card";
-import Button from "components/Button";
+import EmptyState from "components/EmptyState";
+import { Button } from "components/ui/button";
 import TripNav from "components/TripNav";
 import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -213,35 +214,31 @@ export default function TripTargets() {
                   </>
                 )}
                 {targetsError && (
-                  <Card className="p-4 text-center mt-4 space-y-2">
-                    <h3 className="text-lg font-medium text-gray-700">
-                      Error loading targets
-                    </h3>
-                    <Button color="link" onClick={() => refetchTargets()}>
-                      Try Again
-                    </Button>
-                  </Card>
+                  <EmptyState
+                    className="mt-4"
+                    title="Error loading targets"
+                    action={
+                      <Button variant="link" onClick={() => refetchTargets()}>
+                        Try Again
+                      </Button>
+                    }
+                  />
                 )}
                 {!!regionData?.items?.length && !truncatedTargets?.length && (
-                  <Card className="p-6 text-center mt-4">
-                    <h3 className="text-lg font-medium mb-2 text-gray-700">
-                      No targets found
-                    </h3>
-                    <p className="text-gray-500 text-sm">
-                      {showStarred || (showMutual && isGroup) || search
+                  <EmptyState
+                    className="mt-4"
+                    title="No targets found"
+                    description={
+                      showStarred || (showMutual && isGroup) || search
                         ? "Try clearing your filters."
-                        : "It looks like you have already seen all the species in this region."}
-                    </p>
-                  </Card>
+                        : "It looks like you have already seen all the species in this region."
+                    }
+                  />
                 )}
                 {!isLoadingTargets &&
                   !targetsError &&
                   !regionData?.items?.length && (
-                    <Card className="p-6 text-center mt-4 space-y-2">
-                      <h3 className="text-lg font-medium text-gray-700">
-                        No target data available for this region
-                      </h3>
-                    </Card>
+                    <EmptyState className="mt-4" title="No target data available for this region" />
                   )}
                 {!!truncatedTargets?.length && (
                   <Card className="overflow-hidden">
@@ -289,15 +286,16 @@ export default function TripTargets() {
 
                 <div className="my-4 text-center pb-4">
                   {filteredTargets?.length > showCount && (
-                    <button
+                    <Button
+                      variant="link"
                       type="button"
-                      className="text-link font-bold text-sm"
+                      className="text-sm"
                       onClick={() => setPage(page + 1)}
                     >
                       Show{" "}
                       {Math.min(filteredTargets.length - showCount, PAGE_SIZE)}{" "}
                       more
-                    </button>
+                    </Button>
                   )}
                 </div>
                 {regionData?.citation && (

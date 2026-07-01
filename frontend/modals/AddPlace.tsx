@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "components/Modal";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Field from "components/Field";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
@@ -101,7 +101,7 @@ export default function AddPlace() {
                   </div>
                 </div>
 
-                <Button type="button" color="primary" className="mt-2" size="md" onClick={handleAddMarker}>
+                <Button type="button" variant="default" className="mt-2" onClick={handleAddMarker}>
                   Add Place
                 </Button>
               </>

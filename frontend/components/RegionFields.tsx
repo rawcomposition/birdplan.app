@@ -1,7 +1,7 @@
 import React from "react";
 import RegionSelect from "components/RegionSelect";
 import Field from "components/Field";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import { RegionFieldsValue, requiresSubregion } from "lib/region";
 
@@ -17,7 +17,7 @@ export default function RegionFields({ value, onChange }: Props) {
 
   const toggleButton = (
     <Button
-      color="link"
+      variant="link"
       onClick={() => onChange((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
       className="text-xs"
     >

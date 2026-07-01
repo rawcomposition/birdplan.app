@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import SlideOver from "components/SlideOver";
 import { useTrip } from "hooks/useTrip";
 import MarkerWithIcon from "components/MarkerWithIcon";
@@ -29,13 +29,13 @@ export default function DirectionsButton({ lat, lng, hotspotId, markerId, google
   return (
     <>
       <Button
-        onClick={isDirect ? null : () => setOpen(true)}
+        onClick={isDirect ? undefined : () => setOpen(true)}
         target="_blank"
-        color="gray"
+        variant="outline-white"
         size="sm"
         href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
       >
-        <Icon name="directions" className="mr-1 mt-[-3px] text-[#c2410d]" /> Directions
+        <Icon name="directions" className="text-[#c2410d]" /> Directions
       </Button>
       <SlideOver open={open} onClose={() => setOpen(false)}>
         <a

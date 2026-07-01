@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 import { Download } from "lucide-react";
 
 type Props = {
@@ -30,10 +31,10 @@ export default function TargetsOptionsDropdown({ trip }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-xs hover:bg-gray-50"
+        render={<Button variant="outline-white" size="icon-lg" />}
         title="Options"
       >
-        <Icon name="verticalDots" className="text-lg" />
+        <Icon name="verticalDots" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
         {items.map(({ name, icon, onClick }) => (

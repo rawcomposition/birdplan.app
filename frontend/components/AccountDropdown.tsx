@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
 import { User, Feather, LogOut, Shield } from "lucide-react";
 import Avatar from "components/Avatar";
 import { avatarFromUser } from "lib/avatar";
@@ -36,7 +31,7 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           className || "rounded-full transition-all duration-200 hover:ring-2 hover:ring-gray-200 hover:ring-offset-2"
         }
       >
-        <Avatar user={avatarFromUser(user)} size={28} />
+        <Avatar user={avatarFromUser(user)} size={32} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side={dropUp ? "top" : "bottom"} className="w-auto min-w-[240px] p-0">
         <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">

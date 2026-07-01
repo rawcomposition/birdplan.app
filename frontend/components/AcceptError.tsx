@@ -1,6 +1,6 @@
 import React from "react";
 import Alert from "components/Alert";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 
 type Props = {
   title: string;
@@ -19,7 +19,7 @@ export default function AcceptError({ title, message, onRetry, retrying, childre
       </Alert>
       <div className="flex items-center gap-2">
         {onRetry && (
-          <Button color="grayOutline" onClick={onRetry} disabled={retrying}>
+          <Button variant="outline" onClick={onRetry} disabled={retrying}>
             {retrying ? "Trying again..." : "Try again"}
           </Button>
         )}

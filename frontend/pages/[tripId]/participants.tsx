@@ -2,7 +2,7 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Icon from "components/Icon";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Card from "components/Card";
 import Field from "components/Field";
 import { Input } from "components/ui/input";
@@ -51,8 +51,7 @@ export default function TripParticipants() {
 
       {canEdit && (
         <Button
-          color="grayOutline"
-          size="none"
+          variant="outline"
           onClick={() => open("addParticipant")}
           className="flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm text-primary"
         >
@@ -67,7 +66,7 @@ export default function TripParticipants() {
       </Card>
 
       <div className="mt-8 flex">
-        <Button href={backHref} color="pillPrimary" size="pill" className="ml-auto">
+        <Button href={backHref} variant="default" size="lg" className="ml-auto">
           {isCreate ? "Continue" : "Done"}
         </Button>
       </div>

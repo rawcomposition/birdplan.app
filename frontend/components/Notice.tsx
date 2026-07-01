@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import CloseButton from "components/CloseButton";
+import { Button } from "components/ui/button";
+import { XIcon } from "lucide-react";
 import { useUser } from "hooks/useUser";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -49,7 +50,14 @@ export default function Notice() {
           </Link>{" "}
           and targets for any upcoming trips.
         </p>
-        <CloseButton onClick={() => dismissMutation.mutate({ dismissedNoticeId: noticeId })} />
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          onClick={() => dismissMutation.mutate({ dismissedNoticeId: noticeId })}
+          aria-label="Close"
+        >
+          <XIcon className="size-5" />
+        </Button>
       </div>
     </div>
   );

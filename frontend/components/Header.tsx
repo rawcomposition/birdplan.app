@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "components/Icon";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import clsx from "clsx";
 import { useTrip } from "hooks/useTrip";
@@ -74,14 +74,14 @@ export default function Header({ title, parent, border }: Props) {
       {canEdit && (
         <Button
           type="button"
-          color="pillOutlineAmber"
-          className="py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
+          variant="outline"
+          className="border-amber-600 text-amber-600 hover:bg-amber-500/5 py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
           onClick={handleShare}
         >
           Share
         </Button>
       )}
-      <AccountDropdown className="ml-auto md:ml-0 sm:mr-8 mr-6 block" />
+      <AccountDropdown className="ml-auto md:ml-0 sm:mr-8 mr-6 flex items-center" />
     </header>
   );
 }

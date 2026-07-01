@@ -1,9 +1,8 @@
 import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import UtilityPage from "components/UtilityPage";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Alert from "components/Alert";
-import Icon from "components/Icon";
 import useRedeemMagicLink from "hooks/useRedeemMagicLink";
 import { withReturnTo } from "lib/helpers";
 
@@ -45,12 +44,13 @@ export default function Magic() {
             Click below to securely sign in to your account.
           </p>
           <Button
-            color="primary"
+            variant="default"
             className="w-full"
             onClick={handleContinue}
-            disabled={redeem.isPending || !token}
+            loading={redeem.isPending}
+            disabled={!token}
           >
-            {redeem.isPending ? <Icon name="loading" className="animate-spin" /> : "Continue"}
+            Continue
           </Button>
         </>
       )}

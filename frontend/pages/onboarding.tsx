@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import UtilityPage from "components/UtilityPage";
 import Input from "components/Input";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Field from "components/Field";
 import Icon from "components/Icon";
 import { useUser } from "hooks/useUser";
@@ -67,8 +67,15 @@ export default function Onboarding() {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           />
         </Field>
-        <Button type="submit" color="primary" className="w-full" disabled={nameMutation.isPending || !name.trim()}>
-          {nameMutation.isPending ? "Saving..." : "Continue"}
+        <Button
+          type="submit"
+          variant="default"
+          className="w-full"
+          loading={nameMutation.isPending}
+          loadingText="Saving..."
+          disabled={!name.trim()}
+        >
+          Continue
         </Button>
       </form>
     </UtilityPage>

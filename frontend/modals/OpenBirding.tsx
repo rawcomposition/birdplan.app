@@ -1,7 +1,7 @@
 import React from "react";
 import { Header, Body, Footer } from "components/Modal";
 import { useModal } from "stores/modals";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 
@@ -56,7 +56,7 @@ export default function OpenBirding() {
             href="https://apps.apple.com/us/app/openbirding/id6755897167"
             target="_blank"
             rel="noopener noreferrer"
-            color="link"
+            variant="link"
           >
             OpenBirding
           </Button>{" "}
@@ -75,7 +75,7 @@ export default function OpenBirding() {
             )}
           </div>
           {isExpired ? (
-            <Button color="link" onClick={() => generateCode.mutate(undefined)} className="text-sm">
+            <Button variant="link" onClick={() => generateCode.mutate(undefined)} className="text-sm">
               Code expired. Generate a new one?
             </Button>
           ) : timeLeft !== null && !generateCode.isPending ? (
@@ -86,9 +86,11 @@ export default function OpenBirding() {
         </div>
       </Body>
       <Footer>
-        <Button onClick={close} color="gray">
-          Done
-        </Button>
+        <div className="flex justify-end w-full">
+          <Button onClick={close} variant="secondary">
+            Done
+          </Button>
+        </div>
       </Footer>
     </>
   );

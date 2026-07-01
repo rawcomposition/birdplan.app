@@ -12,7 +12,7 @@ import RangeField from "components/RangeField";
 import FormPage from "components/FormPage";
 import { useNavigate } from "react-router-dom";
 import { months } from "lib/helpers";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
 import useResolvedRegion from "hooks/useResolvedRegion";
@@ -132,58 +132,69 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
     >
       <form onSubmit={handleSubmit}>
         <Card className="flex flex-col gap-[22px] rounded-2xl p-5 sm:p-6">
-        <Field label="Trip name">
-          <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus defaultValue={trip.name} />
-        </Field>
+          <Field label="Trip name">
+            <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus defaultValue={trip.name} />
+          </Field>
 
-        <RangeField
-          label="Dates"
-          from={<Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />}
-          to={
-            <Input
-              type="date"
-              name="endDate"
-              value={endDate}
-              onChange={handleEndDateChange}
-              min={startDate || undefined}
-              required
-            />
-          }
-        />
+          <RangeField
+            label="Dates"
+            from={<Input type="date" name="startDate" value={startDate} onChange={handleStartDateChange} required />}
+            to={
+              <Input
+                type="date"
+                name="endDate"
+                value={endDate}
+                onChange={handleEndDateChange}
+                min={startDate || undefined}
+                required
+              />
+            }
+          />
 
-        <RangeField
-          label="Trip timeframe (months)"
-          help="Used to determine your target species — a wider range may yield more accurate results."
-          from={
-            <MonthSelect onChange={setStartMonth} value={startMonth} instanceId="startMonth" menuPortalTarget={portalTarget()} />
-          }
-          to={<MonthSelect onChange={setEndMonth} value={endMonth} instanceId="endMonth" menuPortalTarget={portalTarget()} />}
-        />
+          <RangeField
+            label="Trip timeframe (months)"
+            help="Used to determine your target species — a wider range may yield more accurate results."
+            from={
+              <MonthSelect
+                onChange={setStartMonth}
+                value={startMonth}
+                instanceId="startMonth"
+                menuPortalTarget={portalTarget()}
+              />
+            }
+            to={
+              <MonthSelect
+                onChange={setEndMonth}
+                value={endMonth}
+                instanceId="endMonth"
+                menuPortalTarget={portalTarget()}
+              />
+            }
+          />
 
-        <RegionFields value={region} onChange={setRegion} />
+          <RegionFields value={region} onChange={setRegion} />
         </Card>
 
-        <div className="mt-6 flex justify-end gap-3">
-          <Button href={`/${trip._id}`} color="pillOutlineGray" size="pill">
+        <div className="mt-6 flex justify-end items-center gap-3">
+          {isOwner && (
+            <div className="border-t border-gray-100 mr-auto">
+              <Button
+                type="button"
+                variant="link-danger"
+                onClick={handleDelete}
+                disabled={deleteTripMutation.isPending}
+              >
+                {deleteTripMutation.isPending ? "Deleting..." : "Delete trip"}
+              </Button>
+            </div>
+          )}
+          <Button href={`/${trip._id}`} variant="outline" size="lg">
             Cancel
           </Button>
-          <Button type="submit" color="pillPrimary" size="pill" disabled={updateTripMutation.isPending}>
+          <Button type="submit" variant="default" size="lg" disabled={updateTripMutation.isPending}>
             {updateTripMutation.isPending ? "Saving..." : "Save changes"}
           </Button>
         </div>
-
-        {isOwner && (
-          <div className="mt-8 border-t border-gray-100 pt-6">
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="text-sm font-semibold text-red-500 hover:text-red-600"
-              disabled={deleteTripMutation.isPending}
-            >
-              {deleteTripMutation.isPending ? "Deleting..." : "Delete trip"}
-            </button>
-          </div>
-        )}
       </form>
     </FormPage>
   );

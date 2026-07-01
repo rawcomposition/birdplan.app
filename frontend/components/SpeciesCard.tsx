@@ -1,5 +1,6 @@
 import React from "react";
-import CloseButton from "components/CloseButton";
+import { Button } from "components/ui/button";
+import { XIcon } from "lucide-react";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 
@@ -29,7 +30,15 @@ export default function Trip({ name, code }: Props) {
         <h2 className="text-lg font-semibold inline-flex gap-1.5 items-center">
           {name}
         </h2>
-        <CloseButton onClick={() => setSelectedSpecies(undefined)} className="ml-auto" />
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          className="ml-auto"
+          onClick={() => setSelectedSpecies(undefined)}
+          aria-label="Close"
+        >
+          <XIcon className="size-5" />
+        </Button>
       </div>
       <p className="text-xs text-gray-500 mt-1.5">
         Showing reports over the last 30 days.{" "}

@@ -1,6 +1,6 @@
 import React from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 
 type Props = {
   value?: string;
@@ -42,20 +42,20 @@ export default function InputNotesSimple({ value, onBlur, className, canEdit, sh
         {!inEditMode && canEdit && (
           <Button
             type="button"
-            color="linkBold"
+            variant="link"
             onClick={() => {
               setShowInput(true);
               setTimeout(() => {
                 notsRef.current?.focus();
               }, 0);
             }}
-            className="text-[12px] px-3 py-1"
+            className="text-[12px] px-3 py-1 font-bold"
           >
             {notes ? "Edit" : "Add notes"}
           </Button>
         )}
         {showDone && inEditMode && (
-          <Button type="button" color="linkBold" onClick={() => setShowInput(false)} className="text-[12px] px-3 py-1">
+          <Button type="button" variant="link" onClick={() => setShowInput(false)} className="text-[12px] px-3 py-1 font-bold">
             Done
           </Button>
         )}

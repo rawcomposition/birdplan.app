@@ -3,6 +3,7 @@ import { Header, Body } from "components/Modal";
 import { Hotspot as HotspotT } from "@birdplan/shared";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
+import { Button } from "components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +38,7 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} />
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center rounded bg-gray-100 px-2 py-[10px] text-[14px] text-gray-600">
+            <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
               <Icon name="verticalDots" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[170px]">

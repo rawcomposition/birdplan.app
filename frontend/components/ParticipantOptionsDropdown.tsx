@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 
 export type ParticipantMenuItem = {
   name: string;
@@ -24,10 +25,10 @@ export default function ParticipantOptionsDropdown({ items }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+        render={<Button variant="ghost" size="icon" />}
         title="Options"
       >
-        <Icon name="verticalDots" className="text-lg" />
+        <Icon name="verticalDots" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto min-w-[200px]">
         {items.map(({ name, icon, onClick, danger }) => (

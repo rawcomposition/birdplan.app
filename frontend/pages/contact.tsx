@@ -5,8 +5,7 @@ import { useUser } from "hooks/useUser";
 import toast from "react-hot-toast";
 import Field from "components/Field";
 import Input from "components/Input";
-import Button from "components/Button";
-import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 import useMutation from "hooks/useMutation";
 import { Link } from "react-router-dom";
 
@@ -105,15 +104,14 @@ export default function Contact() {
                 </Field>
 
                 <div className="flex justify-end">
-                  <Button type="submit" color="pillPrimary" size="pill" disabled={mutation.isPending}>
-                    {mutation.isPending ? (
-                      <>
-                        <Icon name="loading" className="animate-spin text-md text-white" />
-                        <span className="ml-2">Sending...</span>
-                      </>
-                    ) : (
-                      "Send Message"
-                    )}
+                  <Button
+                    type="submit"
+                    variant="default"
+                    size="lg"
+                    loading={mutation.isPending}
+                    loadingText="Sending..."
+                  >
+                    Send Message
                   </Button>
                 </div>
               </form>

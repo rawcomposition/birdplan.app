@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import { useModal } from "stores/modals";
@@ -124,9 +124,14 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                     <TravelTime isLoading={isLoading} isEditing={isEditing} dayId={day.id} id={id} />
                   </li>
                 )}
-                <li className="flex items-start gap-2 text-sm text-gray-700 group relative p-3 bg-white rounded-lg shadow-sm">
-                  <button
-                    className="flex gap-2 text-left my-[-9px] py-3 -ml-4 pl-4 grow"
+                <li className="flex items-start gap-2 text-sm text-gray-700 relative p-3 bg-white rounded-lg shadow-sm">
+                  <div
+                    role="button"
+                    tabIndex={location ? 0 : undefined}
+                    aria-disabled={!location}
+                    className={`flex gap-2 text-left my-[-9px] py-3 -ml-4 pl-4 grow ${
+                      location ? "cursor-pointer" : ""
+                    }`}
                     onClick={
                       location
                         ? () =>
@@ -135,7 +140,6 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                               : open("viewMarker", { markerId: location.id })
                         : undefined
                     }
-                    disabled={!location}
                   >
                     {location ? (
                       <MarkerWithIcon
@@ -149,39 +153,37 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                     <span>
                       <div className="truncate font-medium mt-[2px]">{location?.name || "Unknown Location"}</div>
                       {location?.notes && (
-                        <span className="text-gray-700 text-sm relative group whitespace-pre-wrap">
-                          {location.notes}
-                        </span>
+                        <span className="text-gray-700 text-sm relative whitespace-pre-wrap">{location.notes}</span>
                       )}
                     </span>
-                  </button>
+                  </div>
                   {isEditing && (
-                    <div className="flex items-center gap-1.5 ml-auto">
+                    <div className="flex items-center ml-auto">
                       {index !== locations.length - 1 && (
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => moveLocationMutation.mutate({ id, direction: "down" })}
-                          className="text-[16px] p-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity -mt-px"
                         >
                           <Icon name="angleDownBold" />
-                        </button>
+                        </Button>
                       )}
                       {index !== 0 && (
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => moveLocationMutation.mutate({ id, direction: "up" })}
-                          className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <Icon name="angleDownBold" className="rotate-180" />
-                        </button>
+                        </Button>
                       )}
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => removeLocationMutation.mutate({ id })}
-                        className="text-[16px] p-1 -mt-1 text-gray-600 sm:opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Icon name="xMarkBold" />
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </li>
@@ -192,10 +194,10 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
       )}
       {isEditing && (
         <div className="flex justify-between items-center gap-2 mt-3">
-          <Button size="xs" color="gray" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
+          <Button size="xs" variant="secondary" onClick={() => open("addItineraryLocation", { dayId: day.id })}>
             + Add Location
           </Button>
-          <Button type="button" color="linkDanger" size="xs" onClick={handleRemoveDay}>
+          <Button type="button" variant="link-danger" onClick={handleRemoveDay}>
             Remove day
           </Button>
         </div>

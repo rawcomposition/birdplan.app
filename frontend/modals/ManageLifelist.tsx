@@ -9,7 +9,7 @@ import useMutation from "hooks/useMutation";
 import LifelistEditor from "components/LifelistEditor";
 import LifelistField from "components/LifelistField";
 import useLifelistMode from "hooks/useLifelistMode";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Input from "components/Input";
 import { withReturnTo } from "lib/helpers";
 
@@ -143,7 +143,7 @@ export default function ManageLifelist({ participantId }: Props) {
       </Body>
       <Footer>
         <div className="flex justify-end w-full">
-          <Button onClick={handleDone} color="primary">
+          <Button onClick={handleDone} variant="default">
             {hasPendingChange ? "Save" : "Done"}
           </Button>
         </div>

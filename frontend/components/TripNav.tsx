@@ -1,9 +1,11 @@
 import React from "react";
 import clsx from "clsx";
+import { cn } from "lib/utils";
 import { useTrip } from "hooks/useTrip";
 import { Link, useLocation } from "react-router-dom";
 import { useModal } from "stores/modals";
 import TripOptionsDropdown from "components/TripOptionsDropdown";
+import { buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
 
 const links = [
@@ -33,9 +35,10 @@ export default function TripNav({ active, border = true }: Props) {
           <Link
             to={`/${trip?._id}/${slug}`}
             key={slug}
-            className={clsx(
-              "flex items-center text-[14px] gap-2 font-medium justify-center rounded-full py-1 px-2.5",
-              active === slug ? "bg-sky-600 text-gray-100" : "hover:bg-slate-300 text-gray-600"
+            className={cn(
+              buttonVariants({ variant: "nav", size: "none" }),
+              "py-1 px-2.5 text-[14px]",
+              active === slug && "bg-sky-600 text-gray-100 hover:bg-sky-600"
             )}
           >
             <Icon name={icon as any} className="hidden! xs:inline!" />

@@ -1,5 +1,6 @@
 import React, { ReactNode, Component, ErrorInfo } from "react";
 import Icon from "components/Icon";
+import { Button } from "components/ui/button";
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -33,10 +34,14 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         <div className="max-w-sm text-center mx-auto mt-[20vh]">
           <h2 className="text-xl text-gray-600">Sorry! Something went wrong...</h2>
           <p className="my-6">
-            <button className="text-orange-700" onClick={this.handleReload}>
-              <Icon name="refresh" className="text-lg inline mr-2" />
+            <Button
+              variant="outline"
+              className="inline-flex items-center gap-2"
+              onClick={this.handleReload}
+            >
+              <Icon name="refresh" className="text-lg" />
               Reload Page
-            </button>
+            </Button>
           </p>
         </div>
       );

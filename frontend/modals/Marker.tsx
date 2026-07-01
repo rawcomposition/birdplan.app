@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "components/Modal";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Field from "components/Field";
 import Input from "components/Input";
 import { useModal } from "stores/modals";
@@ -142,7 +142,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
             <div className="flex gap-2 mb-2">
               <DirectionsButton lat={marker.lat} lng={marker.lng} markerId={marker.id} googleUrl={googleUrl} />
               <DropdownMenu>
-                <DropdownMenuTrigger className="inline-flex items-center rounded bg-gray-100 px-2 py-[10px] text-[14px] text-gray-600">
+                <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
                   <Icon name="verticalDots" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-[180px]">
@@ -229,10 +229,10 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
               </div>
             </div>
             <div className="flex gap-2 mt-2">
-              <Button type="button" color="primary" size="md" onClick={handleSave}>
+              <Button type="button" variant="default" onClick={handleSave}>
                 {isEditing ? "Save Changes" : "Add Marker"}
               </Button>
-              <Button type="button" color="gray" size="md" onClick={handleCancel}>
+              <Button type="button" variant="secondary" onClick={handleCancel}>
                 Cancel
               </Button>
             </div>

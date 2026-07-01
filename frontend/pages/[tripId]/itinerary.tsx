@@ -4,7 +4,7 @@ import Heading from "components/Heading";
 import TripNav from "components/TripNav";
 import { useUser } from "hooks/useUser";
 import ErrorBoundary from "components/ErrorBoundary";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import Icon from "components/Icon";
@@ -52,9 +52,7 @@ export default function Itinerary() {
 
   return (
     <div className="flex flex-col h-full">
-      {trip && (
-          <title>{`${trip.name} | BirdPlan.app`}</title>
-      )}
+      {trip && <title>{`${trip.name} | BirdPlan.app`}</title>}
 
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav active="itinerary" />
@@ -68,16 +66,12 @@ export default function Itinerary() {
                     <Heading title="Trip Itinerary" />
                     {canEdit && hasStartDate && (
                       <Button
-                        size="smPill"
-                        color="pillOutlineGray"
-                        className="flex items-center gap-2 print:hidden"
+                        variant="outline"
+                        size="sm"
+                        className="print:hidden"
                         onClick={() => setEditing((prev) => !prev)}
                       >
-                        {isEditing ? (
-                          <Icon name="check" className="w-4 h-4" />
-                        ) : (
-                          <Icon name="pencil" className="w-4 h-4" />
-                        )}
+                        {isEditing ? <Icon name="check" /> : <Icon name="pencil" />}
                         <span>{isEditing ? "Done" : "Edit"}</span>
                       </Button>
                     )}
@@ -90,7 +84,7 @@ export default function Itinerary() {
                     <p className="text-gray-600 mb-4">
                       Add a start date in trip settings to build your day-by-day itinerary.
                     </p>
-                    <Button href={`/${trip?._id}/settings`} color="primary">
+                    <Button href={`/${trip?._id}/settings`} variant="default">
                       Go to Trip Settings
                     </Button>
                   </div>
@@ -100,9 +94,11 @@ export default function Itinerary() {
                     No itinerary has been set for this trip yet.
                   </div>
                 )}
-                {trip?.itinerary?.map((day, index) => <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />)}
+                {trip?.itinerary?.map((day, index) => (
+                  <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />
+                ))}
                 {isEditing && hasStartDate && (
-                  <Button color="primary" onClick={handleAddDay} className="mb-8">
+                  <Button variant="default" onClick={handleAddDay} className="mb-8">
                     Add Day
                   </Button>
                 )}

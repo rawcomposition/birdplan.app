@@ -13,8 +13,9 @@ import Icon from "components/Icon";
 import Avatar from "components/Avatar";
 import Card from "components/Card";
 import Error from "components/Error";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
 import { mutate } from "lib/http";
 import { avatarFromUser } from "lib/avatar";
 import { useUser } from "hooks/useUser";
@@ -108,7 +109,7 @@ function UserActions({ user }: { user: AdminDashboardUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
+        render={<Button variant="ghost" size="icon" />}
         disabled={generating}
         aria-label="User actions"
       >
@@ -125,7 +126,7 @@ function NewUserMagicLink() {
   const { open } = useModal();
 
   return (
-    <Button color="primary" size="sm" onClick={() => open("generateMagicLink")}>
+    <Button variant="default" size="xs" onClick={() => open("generateMagicLink")}>
       Generate magic link
     </Button>
   );
@@ -133,7 +134,6 @@ function NewUserMagicLink() {
 
 export default function Admin() {
   const { user, loading } = useUser();
-  const [tab, setTab] = React.useState<"users" | "logs">("users");
   const [sortKey, setSortKey] = React.useState<SortKey>("lastActiveAt");
   const [sortDir, setSortDir] = React.useState<"asc" | "desc">("desc");
 
@@ -197,25 +197,17 @@ export default function Admin() {
                 </Card>
               </div>
 
-              <div className="mb-4 flex gap-1 border-b border-gray-200">
-                {(["users", "logs"] as const).map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => setTab(key)}
-                    className={clsx(
-                      "-mb-px border-b-2 px-4 py-2 text-sm font-medium capitalize",
-                      tab === key
-                        ? "border-gray-800 text-gray-800"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    )}
-                  >
-                    {key}
-                  </button>
-                ))}
-              </div>
+              <Tabs defaultValue="users">
+                <TabsList className="mb-4 border-b border-gray-200">
+                  <TabsTrigger value="users" className="px-4 capitalize">
+                    users
+                  </TabsTrigger>
+                  <TabsTrigger value="logs" className="px-4 capitalize">
+                    logs
+                  </TabsTrigger>
+                </TabsList>
 
-              {tab === "users" && (
-                <>
+                <TabsContent value="users">
                   <div className="mb-3 flex justify-end">
                     <NewUserMagicLink />
                   </div>
@@ -277,10 +269,9 @@ export default function Admin() {
                       </table>
                     </div>
                   </Card>
-                </>
-              )}
+                </TabsContent>
 
-              {tab === "logs" && (
+                <TabsContent value="logs">
                 <Card className="overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -306,7 +297,8 @@ export default function Admin() {
                     </table>
                   </div>
                 </Card>
-              )}
+                </TabsContent>
+              </Tabs>
             </>
           )
         )}

@@ -5,7 +5,7 @@ import { Header, Body, Footer } from "components/Modal";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
-import Button from "components/Button";
+import { Button } from "components/ui/button";
 import Input from "components/Input";
 
 type Props = {
@@ -61,10 +61,10 @@ export default function InviteAsEditor({ participantId, name }: Props) {
       </Body>
       <Footer>
         <div className="flex justify-end gap-2 w-full">
-          <Button onClick={close} color="grayOutline" disabled={mutation.isPending}>
+          <Button onClick={close} variant="outline" disabled={mutation.isPending}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary" disabled={!canSubmit || mutation.isPending}>
+          <Button onClick={handleSubmit} variant="default" disabled={!canSubmit || mutation.isPending}>
             {mutation.isPending ? "Sending..." : "Send invite"}
           </Button>
         </div>
