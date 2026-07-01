@@ -69,7 +69,7 @@ export default function Itinerary() {
                     {canEdit && hasStartDate && (
                       <Button
                         size="sm"
-                        variant="outline" shape="pill"
+                        variant="outline"
                         className="px-4 flex items-center gap-2 print:hidden"
                         onClick={() => setEditing((prev) => !prev)}
                       >

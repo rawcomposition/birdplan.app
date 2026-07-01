@@ -106,7 +106,7 @@ export default function Contact() {
                 <div className="flex justify-end">
                   <Button
                     type="submit"
-                    variant="default" shape="pill"
+                    variant="default"
                     size="xl"
                     loading={mutation.isPending}
                     loadingText="Sending..."

@@ -25,7 +25,7 @@ export default function ParticipantOptionsDropdown({ items }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="ghost" size="icon" shape="pill" />}
+        render={<Button variant="ghost" size="icon" />}
         title="Options"
       >
         <Icon name="verticalDots" />

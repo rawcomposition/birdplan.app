@@ -36,8 +36,8 @@ export default function TripNav({ active, border = true }: Props) {
             to={`/${trip?._id}/${slug}`}
             key={slug}
             className={cn(
-              buttonVariants({ variant: "nav", size: "none", shape: "pill" }),
-              "flex items-center justify-center gap-2 py-1 px-2.5 text-[14px]",
+              buttonVariants({ variant: "nav", size: "none" }),
+              "py-1 px-2.5 text-[14px]",
               active === slug && "bg-sky-600 text-gray-100 hover:bg-sky-600"
             )}
           >

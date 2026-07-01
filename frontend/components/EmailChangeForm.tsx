@@ -80,7 +80,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
           </Field>
           <p className="text-sm text-gray-600">We&apos;ll send a 6-digit code to your new email to confirm the change.</p>
           <Button
-            variant="default" shape="pill"
+            variant="default"
             size="xl"
             type="submit"
             loading={requestMutation.isPending}
@@ -110,7 +110,6 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             <Button
               variant="default"
               size="xl"
-              shape="pill"
               type="submit"
               loading={updateMutation.isPending}
               loadingText="Updating..."

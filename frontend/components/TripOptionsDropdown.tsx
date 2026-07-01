@@ -66,7 +66,7 @@ export default function TripOptionsDropdown({ className }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="nav" size="icon" shape="pill" className={cn("ml-auto", className)} />}
+        render={<Button variant="nav" size="icon" className={cn("ml-auto", className)} />}
       >
         <Icon name="verticalDots" />
       </DropdownMenuTrigger>

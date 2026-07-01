@@ -217,12 +217,12 @@ export default function CreateTrip() {
                 </div>
 
                 <div className="mt-auto flex justify-end gap-3 pt-8">
-                  <Button href="/trips" variant="outline" shape="pill" size="xl">
+                  <Button href="/trips" variant="outline" size="xl">
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    variant="default" shape="pill"
+                    variant="default"
                     size="xl"
                     loading={mutation.isPending}
                     loadingText="Saving..."

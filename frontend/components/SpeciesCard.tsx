@@ -33,7 +33,6 @@ export default function Trip({ name, code }: Props) {
         <Button
           variant="ghost"
           size="icon-lg"
-          shape="pill"
           className="ml-auto"
           onClick={() => setSelectedSpecies(undefined)}
           aria-label="Close"

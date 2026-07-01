@@ -145,7 +145,6 @@ export default function Trip() {
                     <Button
                       variant="ghost"
                       size="icon-lg"
-                      shape="pill"
                       onClick={() => setIsAddingMarker(false)}
                       aria-label="Close"
                     >

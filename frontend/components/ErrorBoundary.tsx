@@ -36,7 +36,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
           <p className="my-6">
             <Button
               variant="outline"
-              shape="pill"
               className="inline-flex items-center gap-2"
               onClick={this.handleReload}
             >

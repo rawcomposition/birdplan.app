@@ -6,14 +6,13 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "lib/utils"
 import Icon from "components/Icon"
 
-const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-semibold rounded", {
+const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-semibold rounded-full", {
   variants: {
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors",
       secondary: "bg-secondary text-secondary-foreground",
-      outline: "border border-input text-secondary-foreground hover:bg-secondary transition-colors",
-      "outline-white":
-        "border border-gray-200 bg-white text-gray-700 rounded-full shadow-xs hover:bg-gray-50 transition-colors",
+      outline: "border border-input text-secondary-foreground bg-transparent hover:bg-gray-50 transition-colors",
+      "outline-white": "border border-gray-200 bg-white text-gray-700 shadow-xs hover:bg-gray-50 transition-colors",
       ghost: "hover:bg-muted hover:text-foreground transition-colors",
       nav: "font-medium text-gray-600 hover:bg-slate-300 transition-colors",
       danger: "bg-red-600 text-white hover:bg-red-700",
@@ -29,19 +28,11 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-s
       icon: "size-8 text-sm",
       "icon-lg": "size-9 text-lg",
     },
-    shape: {
-      default: "",
-      pill: "rounded-full",
-    },
   },
-  compoundVariants: [
-    { variant: "default", shape: "pill", class: "shadow-lg shadow-primary/30" },
-    { variant: "outline", shape: "pill", class: "bg-transparent hover:bg-gray-50" },
-  ],
+  compoundVariants: [{ variant: "default", size: "xl", class: "shadow-lg shadow-primary/30" }],
   defaultVariants: {
     variant: "default",
     size: "md",
-    shape: "default",
   },
 })
 
@@ -58,7 +49,6 @@ function Button({
   className,
   variant,
   size,
-  shape,
   href,
   target,
   rel,
@@ -72,7 +62,7 @@ function Button({
   const effectiveSize = variant === "link" || variant === "link-danger" ? "none" : size
   const isDisabled = disabled || loading
   const classes = cn(
-    buttonVariants({ variant, size: effectiveSize, shape }),
+    buttonVariants({ variant, size: effectiveSize }),
     isDisabled && "opacity-60",
     className
   )

@@ -67,7 +67,7 @@ export default function Trips() {
               <span className="hidden sm:inline">Your birding trips</span>
             </h1>
           </div>
-          <Button variant="default" shape="pill" size="md" href="/create" className="shrink-0 pr-6">
+          <Button variant="default" size="md" href="/create" className="shrink-0 pr-6">
             <span className="text-xl font-bold leading-4">+</span>&nbsp;&nbsp;Create Trip
           </Button>
         </div>
@@ -97,7 +97,6 @@ export default function Trips() {
                 <Button
                   variant="outline"
                   size="md"
-                  shape="pill"
                   className="mt-2 self-center"
                   disabled={isFetchingNextPage}
                   onClick={() => fetchNextPage()}

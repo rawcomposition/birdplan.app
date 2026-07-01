@@ -188,10 +188,10 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
               </Button>
             </div>
           )}
-          <Button href={`/${trip._id}`} variant="outline" shape="pill" size="xl">
+          <Button href={`/${trip._id}`} variant="outline" size="xl">
             Cancel
           </Button>
-          <Button type="submit" variant="default" shape="pill" size="xl" disabled={updateTripMutation.isPending}>
+          <Button type="submit" variant="default" size="xl" disabled={updateTripMutation.isPending}>
             {updateTripMutation.isPending ? "Saving..." : "Save changes"}
           </Button>
         </div>

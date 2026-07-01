@@ -163,7 +163,6 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          shape="pill"
                           onClick={() => moveLocationMutation.mutate({ id, direction: "down" })}
                         >
                           <Icon name="angleDownBold" />
@@ -173,7 +172,6 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          shape="pill"
                           onClick={() => moveLocationMutation.mutate({ id, direction: "up" })}
                         >
                           <Icon name="angleDownBold" className="rotate-180" />
@@ -182,7 +180,6 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        shape="pill"
                         onClick={() => removeLocationMutation.mutate({ id })}
                       >
                         <Icon name="xMarkBold" />

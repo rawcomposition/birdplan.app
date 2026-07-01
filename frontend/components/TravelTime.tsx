@@ -129,7 +129,6 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
             <Button
               variant="ghost"
               size="icon"
-              shape="pill"
               className="sm:opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={() => removeTravelTimeMutation.mutate({ id })}
             >

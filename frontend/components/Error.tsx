@@ -12,7 +12,7 @@ export default function Error({ onReload, message }: Props) {
       <h2 className="text-xl text-gray-600">{message || "Sorry! Something went wrong..."}</h2>
       {onReload && (
         <p className="my-2">
-          <Button variant="outline" shape="pill" className="inline-flex items-center gap-2" onClick={onReload}>
+          <Button variant="outline" className="inline-flex items-center gap-2" onClick={onReload}>
             <Icon name="refresh" className="text-lg" />
             Try again
           </Button>

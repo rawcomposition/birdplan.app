@@ -15,15 +15,15 @@ export default function HomeHeader() {
           <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
         </Link>
         {isLoggedIn ? (
-          <Button variant="default" shape="pill" href="/trips" className="ml-auto">
+          <Button variant="default" href="/trips" className="ml-auto">
             My Trips
           </Button>
         ) : (
           <>
-            <Button variant="outline" shape="pill" href="/login" className="ml-auto">
+            <Button variant="outline" href="/login" className="ml-auto">
               Login
             </Button>
-            <Button variant="default" shape="pill" href="/signup" className="ml-4 hidden xs:flex">
+            <Button variant="default" href="/signup" className="ml-4 hidden xs:flex">
               Signup
             </Button>
           </>

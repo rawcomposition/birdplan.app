@@ -53,7 +53,6 @@ export default function Notice() {
         <Button
           variant="ghost"
           size="icon-lg"
-          shape="pill"
           onClick={() => dismissMutation.mutate({ dismissedNoticeId: noticeId })}
           aria-label="Close"
         >
