@@ -175,7 +175,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
           <RegionFields value={region} onChange={setRegion} />
         </Card>
 
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-end items-center gap-3">
           {isOwner && (
             <div className="border-t border-gray-100 mr-auto">
               <Button

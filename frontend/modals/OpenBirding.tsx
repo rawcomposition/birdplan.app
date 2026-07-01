@@ -86,9 +86,11 @@ export default function OpenBirding() {
         </div>
       </Body>
       <Footer>
-        <Button onClick={close} variant="secondary">
-          Done
-        </Button>
+        <div className="flex justify-end w-full">
+          <Button onClick={close} variant="secondary">
+            Done
+          </Button>
+        </div>
       </Footer>
     </>
   );

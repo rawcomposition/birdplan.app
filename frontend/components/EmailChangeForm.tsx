@@ -78,10 +78,11 @@ export default function EmailChangeForm({ currentEmail }: Props) {
               required
             />
           </Field>
-          <p className="text-sm text-gray-600">We&apos;ll send a 6-digit code to your new email to confirm the change.</p>
+          <p className="text-sm text-gray-600">
+            We&apos;ll send a 6-digit code to your new email to confirm the change.
+          </p>
           <Button
             variant="default"
-            size="lg"
             type="submit"
             loading={requestMutation.isPending}
             loadingText="Sending..."
