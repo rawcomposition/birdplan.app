@@ -9,7 +9,6 @@ import Trips from "pages/trips";
 import Account from "pages/account";
 import Create from "pages/create";
 import WhatsNew from "pages/whats-new";
-import Buttons from "pages/buttons";
 import Onboarding from "pages/onboarding";
 import ImportLifelist from "pages/import-lifelist";
 import Accept from "pages/accept/[inviteId]";
