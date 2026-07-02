@@ -1,5 +1,4 @@
 import React from "react";
-import clsx from "clsx";
 import { cn } from "lib/utils";
 import { useTrip } from "hooks/useTrip";
 import { Link, useLocation } from "react-router-dom";
@@ -14,22 +13,18 @@ const links = [
   { name: "Itinerary", slug: "itinerary", icon: "calendar" },
 ];
 
-type Props = {
-  active: string;
-  border?: boolean;
-};
-
-export default function TripNav({ active, border = true }: Props) {
+export default function TripNav() {
   const { trip } = useTrip();
   const { pathname } = useLocation();
   const { close } = useModal();
+  const active = pathname.split("/")[2] ?? "";
 
   React.useEffect(() => {
     close();
   }, [pathname]);
 
   return (
-    <div className={clsx("bg-white px-2 pb-2 pt-0.5 h-[55px]", border && "border-b border-gray-100")}>
+    <div className={cn("bg-white px-2 pb-2 pt-0.5 h-[55px]", active !== "" && "border-b border-gray-100")}>
       <div className="flex gap-1.5 items-center shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link

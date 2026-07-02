@@ -22,6 +22,7 @@ import TripParticipants from "pages/[tripId]/participants";
 import TripLifelist from "pages/[tripId]/lifelist";
 import NotFound from "components/NotFound";
 import RequireAuth from "components/RequireAuth";
+import TripLayout from "components/TripLayout";
 
 const Admin = lazy(() => import("pages/admin"));
 
@@ -38,10 +39,16 @@ export const router = createBrowserRouter([
       { path: "/onboarding", element: <Onboarding /> },
       { path: "/accept/:inviteId", element: <Accept /> },
       { path: "/magic/:token", element: <Magic /> },
-      { path: "/:tripId", element: <TripIndex /> },
-      { path: "/:tripId/targets", element: <TripTargets /> },
-      { path: "/:tripId/targets/:speciesCode", element: <TripSpecies /> },
-      { path: "/:tripId/itinerary", element: <TripItinerary /> },
+      {
+        path: "/:tripId",
+        element: <TripLayout />,
+        children: [
+          { index: true, element: <TripIndex /> },
+          { path: "targets", element: <TripTargets /> },
+          { path: "targets/:speciesCode", element: <TripSpecies /> },
+          { path: "itinerary", element: <TripItinerary /> },
+        ],
+      },
       {
         element: <RequireAuth />,
         children: [

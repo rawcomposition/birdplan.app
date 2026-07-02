@@ -4,10 +4,6 @@ import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
-import Header from "components/Header";
-import TripNav from "components/TripNav";
-import ErrorBoundary from "components/ErrorBoundary";
-import NotFound from "components/NotFound";
 import Icon from "components/Icon";
 import Alert from "components/Alert";
 import MapBox from "components/Mapbox";
@@ -17,7 +13,6 @@ import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
 import { useTrip } from "hooks/useTrip";
-import { useUser } from "hooks/useUser";
 import useTripLifelist from "hooks/useTripLifelist";
 import useMutualTargets from "hooks/useMutualTargets";
 import { useSpeciesImages } from "hooks/useSpeciesImages";
@@ -34,8 +29,7 @@ import type { OpenBirdingHotspotRankingResponse, User } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
   const { speciesCode = "" } = useParams();
-  const { user } = useUser();
-  const { trip, is404, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
+  const { trip, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { myLifelist } = useTripLifelist(trip);
   const { isMutual } = useMutualTargets(trip);
   const viewerListMode = trip?.viewer?.listMode ?? "world";
@@ -106,7 +100,7 @@ export default function SpeciesDetail() {
               lifelist: [...(old.lifelist || []), data.code],
               exceptions: (old.exceptions || []).filter((it) => it !== data.code),
             }
-          : old
+          : old,
       );
       return { prevData };
     },
@@ -165,9 +159,7 @@ export default function SpeciesDetail() {
   };
 
   const queryEnabled =
-    !!speciesCode &&
-    !!OPENBIRDING_API_URL &&
-    (scopedLocationIds ? scopedLocationIds.length > 0 : !!trip?.region);
+    !!speciesCode && !!OPENBIRDING_API_URL && (scopedLocationIds ? scopedLocationIds.length > 0 : !!trip?.region);
 
   const {
     data: rankings,
@@ -226,7 +218,7 @@ export default function SpeciesDetail() {
       if (!canMutate || !speciesCode || notes === persistedNotes) return;
       setNotesMutation.mutate({ code: speciesCode, notes });
     },
-    [canMutate, persistedNotes, setNotesMutation, speciesCode]
+    [canMutate, persistedNotes, setNotesMutation, speciesCode],
   );
 
   const debouncedSaveNotes = useDebounceCallback(saveNotes, 1500);
@@ -299,125 +291,114 @@ export default function SpeciesDetail() {
     }
   };
 
-  if (is404) return <NotFound />;
-
   return (
-    <div className="flex flex-col h-full" onClick={handleContainerClick}>
-      {trip && speciesName && (
-          <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>
-      )}
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
-      <TripNav active="targets" />
-      <main className="flex-1 relative bg-background">
-        <ErrorBoundary>
-          <div className="absolute inset-0 overflow-auto">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
-            <div className="mb-4">
-              <Link
-                to={`/${trip?._id}/targets`}
-                className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
-              >
-                <Icon name="arrowRight" className="text-xs rotate-180" />
-                Back to targets
-              </Link>
-            </div>
+    <>
+      {trip && speciesName && <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>}
+      <div className="absolute inset-0 overflow-auto" onClick={handleContainerClick}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
+          <div className="mb-4">
+            <Link
+              to={`/${trip?._id}/targets`}
+              className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
+            >
+              <Icon name="arrowRight" className="text-xs rotate-180" />
+              Back to targets
+            </Link>
+          </div>
 
-            {!target && regionData?.items && (
-              <Alert style="warning">Species not found in this region&apos;s targets.</Alert>
-            )}
+          {!target && regionData?.items && (
+            <Alert style="warning">Species not found in this region&apos;s targets.</Alert>
+          )}
 
-            <SpeciesHero
-              name={speciesName || speciesCode}
-              scientificName={target?.sciName}
-              photoUrl={getSpeciesImg(speciesCode, "900")?.url}
-              photoBy={getSpeciesImg(speciesCode)?.by}
-              ebirdUrl={`https://ebird.org/species/${speciesCode}`}
-              starred={isStarred}
-              mutual={isMutual(speciesCode)}
-              seen={isSeen}
-              canEdit={canMutate}
-              monthly={monthly}
-              startMonth={trip?.startMonth}
-              endMonth={trip?.endMonth}
-              onToggleStar={handleToggleStar}
-              onMarkSeen={handleMarkSeen}
-              onShowMap={handleShowMap}
+          <SpeciesHero
+            name={speciesName || speciesCode}
+            scientificName={target?.sciName}
+            photoUrl={getSpeciesImg(speciesCode, "900")?.url}
+            photoBy={getSpeciesImg(speciesCode)?.by}
+            ebirdUrl={`https://ebird.org/species/${speciesCode}`}
+            starred={isStarred}
+            mutual={isMutual(speciesCode)}
+            seen={isSeen}
+            canEdit={canMutate}
+            monthly={monthly}
+            startMonth={trip?.startMonth}
+            endMonth={trip?.endMonth}
+            onToggleStar={handleToggleStar}
+            onMarkSeen={handleMarkSeen}
+            onShowMap={handleShowMap}
+          />
+
+          <Card className="mt-4 px-4 py-3 focus-within:outline-solid focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
+            <label
+              htmlFor="species-notes"
+              className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Notes
+            </label>
+            <TextareaAutosize
+              id="species-notes"
+              placeholder="Add notes about this species..."
+              value={tempNotes}
+              onChange={handleNotesChange}
+              onBlur={handleNotesBlur}
+              readOnly={!canMutate}
+              minRows={1}
+              maxRows={10}
+              className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-hidden"
+            />
+          </Card>
+
+          <div className="mt-8 flex flex-col gap-4">
+            <SpeciesHotspotToolbar
+              scope={scope}
+              setScope={setScope}
+              sort={sort}
+              setSort={setSort}
+              minObservations={minObservations}
+              setMinObservations={setMinObservations}
+              recentDays={recentDays}
+              setRecentDays={setRecentDays}
             />
 
-            <Card className="mt-4 px-4 py-3 focus-within:outline-solid focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
-              <label
-                htmlFor="species-notes"
-                className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500"
-              >
-                Notes
-              </label>
-              <TextareaAutosize
-                id="species-notes"
-                placeholder="Add notes about this species..."
-                value={tempNotes}
-                onChange={handleNotesChange}
-                onBlur={handleNotesBlur}
-                readOnly={!canMutate}
-                minRows={1}
-                maxRows={10}
-                className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-hidden"
+            {scope === "saved" && !hasSavedHotspots && (
+              <Alert style="warning">You have not saved any hotspots for this trip.</Alert>
+            )}
+            {recentDays != null && scopedLocationIds?.length === 0 && (
+              <Alert style="warning">
+                No {scope === "saved" ? "saved hotspots" : "hotspots"} have had a sighting in the last {recentDays}{" "}
+                days.
+              </Alert>
+            )}
+            {rankingsError && <Alert style="error">Failed to load hotspot rankings.</Alert>}
+            {queryEnabled && loadingRankings && !rankings && (
+              <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
+            )}
+
+            {queryEnabled && !rankingsError && rankings && (
+              <SpeciesHotspotList
+                hotspots={filtered}
+                onSelect={handleHotspotClick}
+                monthMode={monthMode}
+                setMonthMode={setMonthMode}
+                tripRangeLabel={dateRangeLabel}
+                loading={fetchingRankings}
               />
-            </Card>
+            )}
 
-            <div className="mt-8 flex flex-col gap-4">
-              <SpeciesHotspotToolbar
-                scope={scope}
-                setScope={setScope}
-                sort={sort}
-                setSort={setSort}
-                minObservations={minObservations}
-                setMinObservations={setMinObservations}
-                recentDays={recentDays}
-                setRecentDays={setRecentDays}
-              />
-
-              {scope === "saved" && !hasSavedHotspots && (
-                <Alert style="warning">You have not saved any hotspots for this trip.</Alert>
-              )}
-              {recentDays != null && scopedLocationIds?.length === 0 && (
-                <Alert style="warning">
-                  No {scope === "saved" ? "saved hotspots" : "hotspots"} have had a sighting in the last {recentDays} days.
-                </Alert>
-              )}
-              {rankingsError && <Alert style="error">Failed to load hotspot rankings.</Alert>}
-              {queryEnabled && loadingRankings && !rankings && (
-                <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
-              )}
-
-              {queryEnabled && !rankingsError && rankings && (
-                <SpeciesHotspotList
-                  hotspots={filtered}
-                  onSelect={handleHotspotClick}
-                  monthMode={monthMode}
-                  setMonthMode={setMonthMode}
-                  tripRangeLabel={dateRangeLabel}
-                  loading={fetchingRankings}
-                />
-              )}
-
-              {rankings?.citation && (
-                <p className="text-gray-400 text-xs text-center pt-2">{rankings.citation}</p>
-              )}
-            </div>
-            </div>
+            {rankings?.citation && <p className="text-gray-400 text-xs text-center pt-2">{rankings.citation}</p>}
           </div>
-          {selectedSpecies && (
-            <div className="absolute inset-0 z-10 flex flex-col">
-              <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />
-              <div className="w-full grow relative">
-                {trip?.bounds && (
-                  <MapBox key={trip._id} onHotspotClick={obsClick} obsLayer={obsLayer} bounds={trip.bounds} />
-                )}
-              </div>
-            </div>
-          )}
-        </ErrorBoundary>
-      </main>
-    </div>
+        </div>
+      </div>
+      {selectedSpecies && (
+        <div className="absolute inset-0 z-10 flex flex-col" onClick={handleContainerClick}>
+          <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />
+          <div className="w-full grow relative">
+            {trip?.bounds && (
+              <MapBox key={trip._id} onHotspotClick={obsClick} obsLayer={obsLayer} bounds={trip.bounds} />
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
