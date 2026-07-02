@@ -46,7 +46,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
   return (
     <>
       {speciesCode && (
-        <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded">
+        <div className="text-sm -mx-1 my-1 bg-primary/10 text-primary-hover py-2.5 px-3 rounded">
           {speciesName}
           <br />
           {isLoadingTargets && <Icon name="loading" className="text-xl animate-spin" />}
@@ -59,7 +59,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                   <button
                     type="button"
                     aria-label="About this stat"
-                    className="block text-sky-800 leading-none"
+                    className="block text-primary-hover leading-none"
                     onMouseEnter={() => setShowDatasetTip(true)}
                     onMouseLeave={() => setShowDatasetTip(false)}
                     onFocus={() => setShowDatasetTip(true)}
@@ -81,7 +81,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             </>
           )}
           {!isLoadingTargets && successRate === null && (
-            <span className="text-sky-700/80">No frequency data available</span>
+            <span className="text-primary-hover/80">No frequency data available</span>
           )}
           {!!obsError && <span className="text-red-500">Failed to load recent reports</span>}
         </div>

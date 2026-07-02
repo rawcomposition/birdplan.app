@@ -42,6 +42,7 @@
   --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: var(--destructive);
+  --color-destructive-hover: var(--destructive-hover);
   --color-destructive-foreground: var(--destructive-foreground);
 
   --color-success: var(--success);
@@ -74,7 +75,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--border, currentcolor);
   }
 }
 
@@ -96,10 +97,11 @@
     --accent: hsl(220 14% 96%);
     --accent-foreground: hsl(221 39% 11%);
     --destructive: hsl(0 72% 51%);
+    --destructive-hover: hsl(0 74% 42%);
     --destructive-foreground: hsl(0 0% 100%);
     --success: hsl(104 100% 21%);
     --success-foreground: hsl(0 0% 100%);
-    --link: hsl(217 91% 60%);
+    --link: hsl(221 83% 53%);
     --border: hsl(220 13% 91%);
     --input: hsl(216 12% 84%);
     --ring: hsl(217 91% 60%);
@@ -117,7 +119,7 @@
   }
 
   a {
-    @apply text-blue-900;
+    @apply text-link;
   }
 
   button:not(:disabled),

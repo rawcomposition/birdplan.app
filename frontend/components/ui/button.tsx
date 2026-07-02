@@ -11,13 +11,13 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-s
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors",
       secondary: "bg-secondary text-secondary-foreground",
-      outline: "border border-input text-secondary-foreground bg-transparent hover:bg-gray-50 transition-colors",
-      "outline-white": "border border-gray-200 bg-white text-gray-700 shadow-xs hover:bg-gray-50 transition-colors",
+      outline: "border border-input text-secondary-foreground bg-transparent hover:bg-muted/50 transition-colors",
+      "outline-white": "border border-border bg-card text-secondary-foreground shadow-xs hover:bg-muted/50 transition-colors",
       ghost: "hover:bg-muted hover:text-foreground transition-colors",
-      nav: "font-medium text-gray-600 hover:bg-slate-300 transition-colors",
-      danger: "bg-red-600 text-white hover:bg-red-700",
+      nav: "font-medium text-secondary-foreground hover:bg-foreground/10 transition-colors",
+      danger: "bg-destructive text-destructive-foreground hover:bg-destructive-hover",
       link: "inline text-link font-medium",
-      "link-danger": "inline text-sm font-medium text-red-600 hover:text-red-600",
+      "link-danger": "inline text-sm font-medium text-destructive hover:text-destructive",
     },
     size: {
       lg: "text-base py-3 px-6",

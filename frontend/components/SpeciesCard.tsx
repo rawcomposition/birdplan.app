@@ -44,7 +44,7 @@ export default function Trip({ name, code }: Props) {
         Showing reports over the last 30 days.{" "}
         <a
           href={`https://ebird.org/map/${code}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
-          className="text-sky-700"
+          className="text-link"
           target="_blank"
         >
           View on eBird

@@ -65,7 +65,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
                 <a href={`https://ebird.org/checklist/${checklistId}#${speciesCode}`} target="_blank" rel="noreferrer">
                   {evidence === "N" && <Icon name="comment" className="text-gray-600 text-xs" />}
                   {evidence === "P" && <Icon name="camera" className="text-lime-700" />}
-                  {evidence === "A" && <Icon name="speaker" className="text-sky-700" />}
+                  {evidence === "A" && <Icon name="speaker" className="text-primary-hover" />}
                 </a>
               </td>
               <td className="text-right">

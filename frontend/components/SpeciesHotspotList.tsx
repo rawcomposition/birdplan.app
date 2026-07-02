@@ -76,7 +76,7 @@ function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number
       onClick={() => onSelect(h.id)}
       role="button"
       tabIndex={0}
-      className="px-5 py-3.5 border-b border-gray-100 last:border-b-0 hover:bg-sky-50/60 transition-colors cursor-pointer grid gap-4 items-center grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_220px_28px]"
+      className="px-5 py-3.5 border-b border-gray-100 last:border-b-0 hover:bg-primary/5 transition-colors cursor-pointer grid gap-4 items-center grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_220px_28px]"
     >
       <div className="text-gray-400 text-sm font-medium tabular-nums w-5 text-right hidden sm:block">{rank}.</div>
       <div className="min-w-0 sm:col-auto col-start-1 col-span-2">

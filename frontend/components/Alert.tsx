@@ -10,7 +10,7 @@ export default function Alert({ children, className, style }: Props) {
   const styleMap = {
     warning: "bg-amber-100 text-amber-800",
     error: "bg-red-100 text-red-800",
-    info: "bg-sky-100 text-sky-800",
+    info: "bg-primary/10 text-primary-hover",
     gray: "bg-neutral-100 text-neutral-800",
   };
   return (

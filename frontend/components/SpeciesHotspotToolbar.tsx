@@ -115,13 +115,13 @@ function MoreFiltersMenu({
         className={clsx(
           "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm whitespace-nowrap",
           activeCount > 0
-            ? "border-sky-300 bg-sky-50 text-sky-700"
+            ? "border-primary/30 bg-primary/10 text-primary-hover"
             : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
         )}
       >
         Filters
         {activeCount > 0 && (
-          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-sky-600 text-[10px] font-bold text-white">
+          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
             {activeCount}
           </span>
         )}
@@ -142,7 +142,7 @@ function MoreFiltersMenu({
                   setOpen(false);
                 }}
                 className={clsx(
-                  "text-[11px] font-semibold text-link hover:text-sky-700",
+                  "text-[11px] font-semibold text-link hover:opacity-80",
                   activeCount === 0 && "invisible"
                 )}
               >

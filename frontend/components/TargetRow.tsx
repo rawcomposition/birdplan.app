@@ -58,7 +58,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
 
   return (
     <tr
-      className="w-full relative cursor-pointer hover:bg-sky-50/50"
+      className="w-full relative cursor-pointer hover:bg-primary/5"
       onClick={handleRowClick}
       role="button"
       tabIndex={0}
