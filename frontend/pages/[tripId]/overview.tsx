@@ -7,6 +7,7 @@ import { Button } from "components/ui/button";
 import { Skeleton } from "components/ui/skeleton";
 import { Textarea } from "components/ui/textarea";
 import Avatar from "components/Avatar";
+import Stat from "components/Stat";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -112,7 +113,7 @@ export default function TripOverview() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               {countdown && (
-                <Badge className="absolute top-4 right-4 bg-white/90 text-foreground shadow-xs">{countdown}</Badge>
+                <Badge className="absolute top-4 right-4 bg-card/90 text-foreground shadow-xs">{countdown}</Badge>
               )}
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 text-white">
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{trip?.name}</h1>
@@ -124,18 +125,8 @@ export default function TripOverview() {
             </div>
 
             <div className={cn("mt-4 grid grid-cols-2 gap-3", stats.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3")}>
-              {stats.map(({ label, value, icon: StatIcon, href }) => (
-                <Link key={label} to={href}>
-                  <Card className="p-4 h-full transition-colors hover:border-primary/40">
-                    <StatIcon className="size-4 text-muted-foreground" />
-                    {value === null ? (
-                      <Skeleton className="mt-1 h-7 w-10" />
-                    ) : (
-                      <div className="mt-1 text-2xl font-bold tabular-nums">{value.toLocaleString()}</div>
-                    )}
-                    <div className="text-xs text-muted-foreground">{label}</div>
-                  </Card>
-                </Link>
+              {stats.map((stat) => (
+                <Stat key={stat.label} {...stat} />
               ))}
             </div>
 

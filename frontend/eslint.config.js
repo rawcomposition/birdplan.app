@@ -31,10 +31,8 @@ export default tseslint.config(
     ignores: [
       "pages/\\[tripId\\]/index.tsx",
       "pages/\\[tripId\\]/lifelist.tsx",
-      "pages/\\[tripId\\]/overview.tsx",
       "pages/\\[tripId\\]/participants.tsx",
       "pages/\\[tripId\\]/settings.tsx",
-      "pages/\\[tripId\\]/targets.tsx",
       "pages/\\[tripId\\]/targets/\\[speciesCode\\].tsx",
       "pages/accept/\\[inviteId\\].tsx",
       "pages/account.tsx",

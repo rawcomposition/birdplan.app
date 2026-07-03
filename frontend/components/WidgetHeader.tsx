@@ -7,8 +7,8 @@ type Props = {
 
 export default function WidgetHeader({ title, action }: Props) {
   return (
-    <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-      <h2 className="text-xs font-bold tracking-widest text-gray-800 uppercase">{title}</h2>
+    <div className="flex items-center justify-between border-b border-border/60 pb-3">
+      <h2 className="text-xs font-bold tracking-widest text-foreground uppercase">{title}</h2>
       {action && (
         <Link to={action.to} className="text-xs font-bold text-link">
           {action.label}
