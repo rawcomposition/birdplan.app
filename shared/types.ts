@@ -432,6 +432,32 @@ export type TripDatesInput = {
   endDate: string;
 };
 
+export type TripDocument = {
+  _id: string;
+  tripId: string;
+  name: string;
+  key: string;
+  size: number;
+  mimeType: string;
+  uploadedBy: string;
+  url?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type TripDocumentUploadUrlInput = {
+  name: string;
+  size: number;
+  mimeType: string;
+};
+
+export type TripDocumentCreateInput = {
+  key: string;
+  name: string;
+  size: number;
+  mimeType: string;
+};
+
 export type RemoveLocationInput = {
   id: string;
 };

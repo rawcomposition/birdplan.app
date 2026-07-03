@@ -69,6 +69,9 @@ export const useTrip = () => {
     queryKey: [`/trips/${id}`],
     enabled: !!id,
     refetchInterval: 1000 * 60 * 2,
+    retryOnMount: false,
+    retry: (failureCount, err) =>
+      !(err instanceof HttpError && (err.status === 404 || err.status === 403)) && failureCount < 1,
   });
 
   const { user } = useUser();

@@ -28,6 +28,7 @@ import markers from "./markers.js";
 import hotspots from "./hotspots.js";
 import itinerary from "./itinerary.js";
 import participants from "./participants.js";
+import documents from "./documents.js";
 // @ts-ignore - no type definitions available
 import tokml from "@maphubs/tokml";
 
@@ -38,6 +39,7 @@ trip.route("/markers", markers);
 trip.route("/hotspots", hotspots);
 trip.route("/itinerary", itinerary);
 trip.route("/participants", participants);
+trip.route("/documents", documents);
 
 trip.get("/", async (c) => {
   const session = await authenticateOptional(c);

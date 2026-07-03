@@ -8,6 +8,7 @@ import { Skeleton } from "components/ui/skeleton";
 import { Textarea } from "components/ui/textarea";
 import Avatar from "components/Avatar";
 import Stat from "components/Stat";
+import TripDocuments from "components/TripDocuments";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -150,6 +151,8 @@ export default function TripOverview() {
                 </CardContent>
               </Card>
             )}
+
+            <TripDocuments />
 
             {(isLoadingTargets || topTargets.length > 0) && (
               <Card className="mt-4">
