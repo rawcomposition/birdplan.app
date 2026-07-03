@@ -1,5 +1,5 @@
 import React from "react";
-import { Transition } from "@headlessui/react";
+import { cn } from "lib/utils";
 import Icon from "components/Icon";
 
 type Props = {
@@ -10,29 +10,21 @@ type Props = {
 
 export default function SlideOver({ open, onClose, children }: Props) {
   return (
-    <Transition.Root show={open} as={React.Fragment}>
-      <div className="absolute inset-0 z-10 overflow-hidden">
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="translate-x-full"
-          enterTo="translate-x-0"
-          leave="ease-in duration-200"
-          leaveFrom="translate-x-0"
-          leaveTo="translate-x-full"
-        >
-          <div className="relative transform bg-white text-left transition-all w-full h-full flex flex-col">
-            <button
-              type="button"
-              className="flex gap-2 items-center py-1 font-bold text-sm px-2 bg-gray-100 border-b w-full"
-              onClick={onClose}
-            >
-              <Icon name="angleLeft" /> Back
-            </button>
-            <div className="px-6 py-4 grow overflow-y-auto">{children}</div>
-          </div>
-        </Transition.Child>
-      </div>
-    </Transition.Root>
+    <div
+      inert={!open}
+      className={cn(
+        "absolute inset-0 z-10 flex h-full w-full flex-col bg-card transition-transform duration-300 ease-out",
+        open ? "translate-x-0" : "translate-x-full"
+      )}
+    >
+      <button
+        type="button"
+        className="flex w-full items-center gap-2 border-b bg-muted px-2 py-1 text-sm font-bold"
+        onClick={onClose}
+      >
+        <Icon name="angleLeft" /> Back
+      </button>
+      <div className="grow overflow-y-auto px-6 py-4">{children}</div>
+    </div>
   );
 }

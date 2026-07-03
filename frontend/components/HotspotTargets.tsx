@@ -7,7 +7,7 @@ import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
 import { computeFrequency, getMonthRange } from "lib/targets";
@@ -45,7 +45,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   if (isLoading) {
     return (
-      <Alert style="info" className="-mx-1 my-1">
+      <Alert variant="info" className="-mx-1 my-1">
         <Icon name="loading" className="text-xl animate-spin" />
         Loading targets...
       </Alert>
@@ -54,7 +54,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   if (isError) {
     return (
-      <Alert style="error" className="-mx-1 my-1">
+      <Alert variant="destructive" className="-mx-1 my-1">
         <Icon name="xMarkCircle" className="text-xl" />
         Failed to load targets
         <Button variant="link" onClick={() => refetch()}>
@@ -82,7 +82,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
         </div>
       )}
       {!sortedItems?.length && (
-        <Alert style="info" className="-mx-1 my-1">
+        <Alert variant="info" className="-mx-1 my-1">
           No targets found &gt; {HOTSPOT_TARGET_CUTOFF}%
         </Alert>
       )}

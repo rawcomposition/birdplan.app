@@ -4,7 +4,8 @@ import HomeHeader from "components/HomeHeader";
 import { useUser } from "hooks/useUser";
 import toast from "react-hot-toast";
 import Field from "components/Field";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
+import { Textarea } from "components/ui/textarea";
 import { Button } from "components/ui/button";
 import useMutation from "hooks/useMutation";
 import { Link } from "react-router-dom";
@@ -80,11 +81,11 @@ export default function Contact() {
               </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <Field label="Name">
-                  <Input type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
+                  <Input size="sm" type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
                 </Field>
 
                 <Field label="Email">
-                  <Input type="email" name="email" defaultValue={user?.email || ""} required />
+                  <Input size="sm" type="email" name="email" defaultValue={user?.email || ""} required />
                 </Field>
 
                 <Field label="Type of Message">
@@ -100,7 +101,7 @@ export default function Contact() {
                 </Field>
 
                 <Field label="Message">
-                  <Input isTextarea name="message" rows={10} required />
+                  <Textarea name="message" rows={10} required />
                 </Field>
 
                 <div className="flex justify-end">

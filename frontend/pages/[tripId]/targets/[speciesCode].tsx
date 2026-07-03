@@ -5,10 +5,10 @@ import TextareaAutosize from "react-textarea-autosize";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
 import Icon from "components/Icon";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import MapBox from "components/Mapbox";
 import SpeciesCard from "components/SpeciesCard";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
@@ -307,7 +307,7 @@ export default function SpeciesDetail() {
           </div>
 
           {!target && regionData?.items && (
-            <Alert style="warning">Species not found in this region&apos;s targets.</Alert>
+            <Alert variant="warning">Species not found in this region&apos;s targets.</Alert>
           )}
 
           <SpeciesHero
@@ -361,15 +361,15 @@ export default function SpeciesDetail() {
             />
 
             {scope === "saved" && !hasSavedHotspots && (
-              <Alert style="warning">You have not saved any hotspots for this trip.</Alert>
+              <Alert variant="warning">You have not saved any hotspots for this trip.</Alert>
             )}
             {recentDays != null && scopedLocationIds?.length === 0 && (
-              <Alert style="warning">
+              <Alert variant="warning">
                 No {scope === "saved" ? "saved hotspots" : "hotspots"} have had a sighting in the last {recentDays}{" "}
                 days.
               </Alert>
             )}
-            {rankingsError && <Alert style="error">Failed to load hotspot rankings.</Alert>}
+            {rankingsError && <Alert variant="destructive">Failed to load hotspot rankings.</Alert>}
             {queryEnabled && loadingRankings && !rankings && (
               <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
             )}

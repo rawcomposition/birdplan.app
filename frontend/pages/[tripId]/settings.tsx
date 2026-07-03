@@ -6,7 +6,7 @@ import MonthSelect from "components/MonthSelect";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
 import FormPage from "components/FormPage";

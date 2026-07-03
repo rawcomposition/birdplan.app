@@ -1,6 +1,6 @@
 import React from "react";
 import { GooglePlaceT } from "lib/types";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 
 type Props = {
   className?: string;
@@ -55,7 +55,7 @@ export default function PlaceSearch({ className, country, onChange, focus, ...pr
   if (!country) return null;
 
   return (
-    <Input
+    <Input size="sm"
       type="search"
       ref={inputRef}
       onKeyDown={handleKeyDown}

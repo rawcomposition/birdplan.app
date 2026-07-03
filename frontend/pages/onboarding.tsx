@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import UtilityPage from "components/UtilityPage";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import { Button } from "components/ui/button";
 import Field from "components/Field";
 import Icon from "components/Icon";
@@ -57,7 +57,7 @@ export default function Onboarding() {
       <p className="text-sm text-gray-500 text-center mb-6">What should we call you?</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Your name">
-          <Input
+          <Input size="sm"
             type="text"
             name="name"
             placeholder="Name"

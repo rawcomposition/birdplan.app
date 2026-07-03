@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import Field from "components/Field";
 import { Button } from "components/ui/button";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import useRequestCode from "hooks/useRequestCode";
 import useVerifyCode from "hooks/useVerifyCode";
 import useReportNoCode from "hooks/useReportNoCode";
@@ -89,14 +89,14 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
       {message && <p className="text-sm text-gray-500 text-center mb-6">{message}</p>}
 
       {error && (
-        <Alert style="error" className="mb-4">
+        <Alert variant="destructive" className="mb-4">
           {error}
         </Alert>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Email">
-          <Input
+          <Input size="sm"
             type="email"
             name="email"
             placeholder="Email"
@@ -110,7 +110,7 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
 
         {step === "code" && (
           <Field label="Verification code">
-            <Input
+            <Input size="sm"
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"

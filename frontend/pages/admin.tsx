@@ -11,7 +11,7 @@ import Heading from "components/Heading";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import Avatar from "components/Avatar";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import Error from "components/Error";
 import { Button } from "components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";

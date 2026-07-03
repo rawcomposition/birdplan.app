@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import SelectDropdown from "components/SelectDropdown";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
 

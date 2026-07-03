@@ -7,7 +7,7 @@ import Footer from "components/Footer";
 import { Button } from "components/ui/button";
 import Notice from "components/Notice";
 import Error from "components/Error";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import TripCard from "components/TripCard";
 import WidgetHeader from "components/WidgetHeader";
 import { useUser } from "hooks/useUser";

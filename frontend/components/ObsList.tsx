@@ -6,7 +6,7 @@ import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 
 type Props = {
   hotspotId: string;
@@ -85,14 +85,14 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
         )}
       </p>
       {isLoading && (
-        <Alert style="info" className="-mx-1 my-1">
+        <Alert variant="info" className="-mx-1 my-1">
           <Icon name="loading" className="text-xl animate-spin" />
           Loading observations...
         </Alert>
       )}
 
       {error && (
-        <Alert style="error" className="-mx-1 my-1">
+        <Alert variant="destructive" className="-mx-1 my-1">
           <Icon name="xMarkCircle" className="text-xl" />
           Failed to load observations
           <Button variant="link" onClick={() => refetch()}>

@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import Field from "components/Field";
 import { Input } from "components/ui/input";
 import FormPage from "components/FormPage";

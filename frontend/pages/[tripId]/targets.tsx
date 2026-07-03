@@ -5,7 +5,7 @@ import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import SpeciesCard from "components/SpeciesCard";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import EmptyState from "components/EmptyState";
 import { Button } from "components/ui/button";
 import useTargetView from "hooks/useTargetView";

@@ -5,7 +5,7 @@ import Heading from "components/Heading";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import NotFound from "components/NotFound";
 import LifelistEditor from "components/LifelistEditor";
 import { useTrip } from "hooks/useTrip";

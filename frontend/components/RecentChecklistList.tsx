@@ -11,7 +11,7 @@ import { RecentChecklist } from "lib/types";
 import Icon from "components/Icon";
 import ObsList from "components/ObsList";
 import SelectDropdown from "components/SelectDropdown";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 
 type Props = {
   hotspotId: string;
@@ -164,18 +164,18 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             </p>
           )}
           {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (
-            <Alert style="info" className="-mx-1 my-1">
+            <Alert variant="info" className="-mx-1 my-1">
               No recent checklists
             </Alert>
           )}
           {(isLoading || isLoadingSpecies) && (
-            <Alert style="gray" className="-mx-1 my-1">
+            <Alert variant="muted" className="-mx-1 my-1">
               {!reduceLoaders && <Icon name="loading" className="text-xl animate-spin" />}
               Loading recent checklists...
             </Alert>
           )}
           {error && (
-            <Alert style="error" className="-mx-1 my-1">
+            <Alert variant="destructive" className="-mx-1 my-1">
               <Icon name="xMarkCircle" className="text-xl" />
               Failed to load recent checklists
               <Button variant="link" onClick={() => refetch()}>

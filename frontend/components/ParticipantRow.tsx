@@ -7,7 +7,7 @@ import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
 import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
-import Badge from "components/Badge";
+import { Badge } from "components/ui/badge";
 import { Button } from "components/ui/button";
 import Avatar from "components/Avatar";
 import { avatarFromParticipant } from "lib/avatar";
@@ -93,9 +93,14 @@ export default function ParticipantRow({ participant: p }: Props) {
           <p className="truncate text-sm font-semibold text-gray-800">
             {label}
             {p.isMe && <span className="ml-1.5 text-xs font-normal text-gray-400">(you)</span>}
-            {p.isOwner && <Badge>Owner</Badge>}
+            {p.isOwner && (
+              <Badge variant="secondary" className="ml-2">
+                Owner
+              </Badge>
+            )}
             {isPending && (
-              <Badge color="amber" icon="envelope">
+              <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-700">
+                <Mail />
                 Pending
               </Badge>
             )}
