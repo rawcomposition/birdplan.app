@@ -78,8 +78,7 @@ export type Observation = {
   evidence: "N" | "P" | "A";
 };
 
-export type GooglePlaceT = {
-  id?: string;
+export type PlaceSearchResult = {
   name: string;
   lat: number;
   lng: number;
