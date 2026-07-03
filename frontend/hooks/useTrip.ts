@@ -4,6 +4,7 @@ import { Trip, ParticipantView } from "@birdplan/shared";
 import { useLocation } from "react-router-dom";
 import { useUser } from "hooks/useUser";
 import { useSessionToken } from "lib/sessionToken";
+import { HttpError } from "lib/http";
 import { formatMonthRange, getTripIdFromPath } from "lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 
@@ -62,6 +63,7 @@ export const useTrip = () => {
     data: trip,
     isFetching,
     isLoading,
+    error,
     refetch,
   } = useQuery<Trip>({
     queryKey: [`/trips/${id}`],
@@ -80,7 +82,8 @@ export const useTrip = () => {
   });
 
   const ui = useTripUiStore();
-  const is404 = !!token && !!id && !trip && !isLoading;
+  const errorStatus = error instanceof HttpError ? error.status : undefined;
+  const is404 = !!id && !trip && !isLoading && (errorStatus === 404 || errorStatus === 403);
 
   const dateRangeLabel = trip?.startMonth && trip?.endMonth ? formatMonthRange(trip.startMonth, trip.endMonth) : "";
 

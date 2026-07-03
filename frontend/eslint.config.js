@@ -25,5 +25,42 @@ export default tseslint.config(
       "@typescript-eslint/no-empty-object-type": "off",
       "no-empty": "off",
     },
+  },
+  {
+    files: ["pages/**/*.tsx"],
+    ignores: [
+      "pages/\\[tripId\\]/index.tsx",
+      "pages/\\[tripId\\]/lifelist.tsx",
+      "pages/\\[tripId\\]/overview.tsx",
+      "pages/\\[tripId\\]/participants.tsx",
+      "pages/\\[tripId\\]/settings.tsx",
+      "pages/\\[tripId\\]/targets.tsx",
+      "pages/\\[tripId\\]/targets/\\[speciesCode\\].tsx",
+      "pages/accept/\\[inviteId\\].tsx",
+      "pages/account.tsx",
+      "pages/admin.tsx",
+      "pages/contact.tsx",
+      "pages/import-lifelist.tsx",
+      "pages/index.tsx",
+      "pages/magic/\\[token\\].tsx",
+      "pages/onboarding.tsx",
+      "pages/trips.tsx",
+      "pages/whats-new.tsx",
+    ],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Literal[value=/(gray-[0-9]|slate-[0-9]|bg-white)/]",
+          message:
+            "Use semantic tokens (bg-card, text-muted-foreground, border-border) instead of raw palette classes. Legacy pages are grandfathered in eslint.config.js — remove a page from that list when you modernize it.",
+        },
+        {
+          selector: "TemplateElement[value.raw=/(gray-[0-9]|slate-[0-9]|bg-white)/]",
+          message:
+            "Use semantic tokens (bg-card, text-muted-foreground, border-border) instead of raw palette classes. Legacy pages are grandfathered in eslint.config.js — remove a page from that list when you modernize it.",
+        },
+      ],
+    },
   }
 );
