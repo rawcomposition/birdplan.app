@@ -1,7 +1,8 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
+import { Share2 } from "lucide-react";
 import useRealtimeStatus from "hooks/useRealtimeStatus";
 import clsx from "clsx";
 import { useTrip } from "hooks/useTrip";
@@ -22,16 +23,15 @@ type Props = {
 
 export default function Header({ title, parent, border }: Props) {
   const { isOnline } = useRealtimeStatus();
-  const { trip, canEdit } = useTrip();
-  const { close } = useModal();
+  const { canEdit } = useTrip();
+  const { close, open } = useModal();
   const { user } = useUser();
 
-  const navigate = useNavigate();
   const isSubPage = useLocation().pathname !== "/trips";
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (trip?._id) navigate(`/${trip._id}/participants`);
+    open("share");
   };
 
   return (
@@ -72,13 +72,9 @@ export default function Header({ title, parent, border }: Props) {
         )}
       </div>
       {canEdit && (
-        <Button
-          type="button"
-          variant="outline"
-          className="border-amber-600 text-amber-600 hover:bg-amber-500/5 py-1 px-4 font-normal hidden lg:inline-block ml-auto mr-8"
-          onClick={handleShare}
-        >
-          Share
+        <Button type="button" variant="outline-white" size="sm" className="ml-auto mr-3 sm:mr-4" onClick={handleShare}>
+          <Share2 className="size-4" />
+          <span className="hidden xs:inline">Share</span>
         </Button>
       )}
       <AccountDropdown className="ml-auto md:ml-0 sm:mr-8 mr-6 flex items-center" />

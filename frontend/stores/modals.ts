@@ -16,7 +16,8 @@ export type ModalId =
   | "addParticipant"
   | "inviteAsEditor"
   | "manageLifelist"
-  | "generateMagicLink";
+  | "generateMagicLink"
+  | "share";
 
 export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   hotspot: "right",
@@ -32,6 +33,7 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   inviteAsEditor: "center",
   manageLifelist: "center",
   generateMagicLink: "center",
+  share: "center",
 };
 
 type ModalState = {

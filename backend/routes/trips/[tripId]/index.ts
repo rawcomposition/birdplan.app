@@ -121,6 +121,34 @@ trip.patch("/", async (c) => {
   return c.json({});
 });
 
+trip.patch("/privacy", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { isPublic } = await c.req.json<{ isPublic: boolean }>();
+  if (typeof isPublic !== "boolean") {
+    throw new HTTPException(400, { message: "isPublic must be a boolean" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne({ _id: tripId }, { isPublic });
+
+  return c.json({});
+});
+
 trip.delete("/", async (c) => {
   const session = await authenticate(c);
 
