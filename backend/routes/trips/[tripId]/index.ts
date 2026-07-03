@@ -22,7 +22,7 @@ import {
 } from "lib/participants.js";
 import { uploadMapboxImageToStorage, imageUrl, deleteFromStorage } from "lib/storage.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
-import type { TripUpdateInput, TripDatesInput, OpenBirdingLocationResponse } from "@birdplan/shared";
+import type { TripUpdateInput, TripDatesInput, TripCustomArea, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
@@ -147,6 +147,64 @@ trip.patch("/privacy", async (c) => {
   }
 
   await Trip.updateOne({ _id: tripId }, { isPublic });
+
+  return c.json({});
+});
+
+trip.patch("/custom-area", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { customArea } = await c.req.json<{ customArea: TripCustomArea | null }>();
+  if (customArea !== null) {
+    const isLngLat = (point: unknown): point is [number, number] =>
+      Array.isArray(point) &&
+      point.length === 2 &&
+      typeof point[0] === "number" &&
+      typeof point[1] === "number" &&
+      point[0] >= -180 &&
+      point[0] <= 180 &&
+      point[1] >= -90 &&
+      point[1] <= 90;
+    const isH3Index = (cell: unknown): cell is string => typeof cell === "string" && /^[0-9a-f]{15}$/.test(cell);
+    const isValid =
+      !!customArea &&
+      typeof customArea === "object" &&
+      Array.isArray(customArea.polygon) &&
+      customArea.polygon.length >= 3 &&
+      customArea.polygon.length <= 500 &&
+      customArea.polygon.every(isLngLat) &&
+      Array.isArray(customArea.cells) &&
+      customArea.cells.length >= 1 &&
+      customArea.cells.length <= 3000 &&
+      customArea.cells.every(isH3Index);
+    if (!isValid) {
+      throw new HTTPException(400, {
+        message: "customArea must be null or contain a polygon of [lng, lat] points and 1-3000 H3 cell indexes",
+      });
+    }
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne(
+    { _id: tripId },
+    customArea === null
+      ? { $unset: { customArea: 1 } }
+      : { customArea: { polygon: customArea.polygon, cells: customArea.cells } }
+  );
 
   return c.json({});
 });

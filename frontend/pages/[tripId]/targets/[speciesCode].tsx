@@ -45,6 +45,7 @@ export default function SpeciesDetail() {
 
   const { data: regionData } = useDownloadTargets({
     region: trip?.region,
+    customArea: trip?.customArea,
     startMonth: trip?.startMonth,
     endMonth: trip?.endMonth,
     enabled: !!trip,

@@ -20,6 +20,7 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
+  customArea?: TripCustomArea | null;
   groupLifelist?: string[] | null;
   unionLifelist?: string[] | null;
   tripLifelist?: string[] | null;
@@ -430,6 +431,11 @@ export type ReorderLocationsInput = {
 export type TripDatesInput = {
   startDate: string;
   endDate: string;
+};
+
+export type TripCustomArea = {
+  polygon: [number, number][];
+  cells: string[];
 };
 
 export type TripDocumentCategory = "flights" | "lodging" | "transport" | "permits" | "maps" | "other";

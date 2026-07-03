@@ -59,6 +59,7 @@ export default function TripOverview() {
 
   const { data: regionData, isLoading: isLoadingTargets } = useDownloadTargets({
     region: trip?.region,
+    customArea: trip?.customArea,
     startMonth: trip?.startMonth,
     endMonth: trip?.endMonth,
     enabled: !!trip,

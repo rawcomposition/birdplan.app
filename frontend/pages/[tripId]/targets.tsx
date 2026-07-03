@@ -18,11 +18,19 @@ import FilterChip from "components/FilterChip";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
+import useTripMutation from "hooks/useTripMutation";
+import { Hexagon } from "lucide-react";
 const PAGE_SIZE = 100;
 
 export default function TripTargets() {
   const { open, close } = useModal();
-  const { trip, selectedSpecies } = useTrip();
+  const { trip, canEdit, selectedSpecies } = useTrip();
+
+  const removeAreaMutation = useTripMutation<{ customArea: null }>({
+    url: `/trips/${trip?._id}/custom-area`,
+    method: "PATCH",
+    updateCache: (old) => ({ ...old, customArea: null }),
+  });
   const { obs, obsLayer } = useFetchSpeciesObs({
     region: trip?.region,
     code: selectedSpecies?.code,
@@ -43,6 +51,7 @@ export default function TripTargets() {
     refetch: refetchTargets,
   } = useDownloadTargets({
     region: trip?.region,
+    customArea: trip?.customArea,
     startMonth: trip?.startMonth,
     endMonth: trip?.endMonth,
     enabled: !!trip,
@@ -142,6 +151,22 @@ export default function TripTargets() {
                     <TargetsOptionsDropdown trip={trip} />
                   </div>
                 </div>
+                {trip.customArea && (
+                  <p className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-secondary-foreground">
+                    <Hexagon className="size-3.5 text-primary" />
+                    Targets are for your custom map area (
+                    {trip.customArea.cells.length.toLocaleString()} cells)
+                    {canEdit && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={() => removeAreaMutation.mutate({ customArea: null })}
+                      >
+                        Use region instead
+                      </Button>
+                    )}
+                  </p>
+                )}
                 {!!regionData?.items?.length && (
                   <p className="mb-2 sm:mb-3 text-sm text-secondary-foreground">
                     Found <span className="font-semibold text-foreground tabular-nums">{filteredTargets?.length}</span>{" "}

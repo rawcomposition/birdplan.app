@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.0",
+    "h3-js": "^4.5.0",
     "idb-keyval": "^6.2.1",
     "lucide-react": "^1.21.0",
     "mapbox-gl": "^2.13.0",

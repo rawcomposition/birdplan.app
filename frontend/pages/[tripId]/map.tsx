@@ -9,13 +9,15 @@ import { useTrip } from "hooks/useTrip";
 import { Button } from "components/ui/button";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
-import { Star, Utensils, MapPin, XIcon } from "lucide-react";
+import { Star, Utensils, MapPin, XIcon, Hexagon } from "lucide-react";
+import AreaDraw, { CustomAreaLayer } from "components/AreaDraw";
 
 export default function Trip() {
   const { open } = useModal();
   const { trip, canEdit, setSelectedSpecies, showAllHotspots, setShowAllHotspots, showSatellite, setShowSatellite } =
     useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
+  const [isDrawingArea, setIsDrawingArea] = React.useState(false);
 
   const savedHotspots = trip?.hotspots || [];
   const { hotspots, hotspotLayer } = useFetchHotspots();
@@ -89,6 +91,15 @@ export default function Trip() {
             <Icon name="markerPlus" />
           </MapButton>
         )}
+        {canEdit && (
+          <MapButton
+            onClick={() => setIsDrawingArea((prev) => !prev)}
+            tooltip={isDrawingArea ? "Cancel drawing" : "Draw targets area"}
+            active={isDrawingArea}
+          >
+            <Hexagon className="size-[18px]" />
+          </MapButton>
+        )}
       </div>
       <div className="h-full grow flex sm:relative flex-col w-full">
         <div className="w-full grow relative">
@@ -101,9 +112,16 @@ export default function Trip() {
               hotspotLayer={showAllHotspots && hotspotLayer}
               bounds={trip.bounds}
               addingMarker={isAddingMarker}
+              drawing={isDrawingArea}
               onDisableAddingMarker={() => setIsAddingMarker(false)}
               showSatellite={showSatellite}
-            />
+            >
+              {isDrawingArea ? (
+                <AreaDraw onExit={() => setIsDrawingArea(false)} />
+              ) : (
+                trip.customArea && <CustomAreaLayer area={trip.customArea} />
+              )}
+            </MapBox>
           )}
           {isAddingMarker && (
             <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center justify-between">
