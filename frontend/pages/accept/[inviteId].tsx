@@ -56,10 +56,10 @@ export default function Accept() {
 
   const heading = invite ? (
     <>
-      <p className="text-base font-normal text-gray-500">
+      <p className="text-base font-normal text-muted-foreground">
         {invite.inviterName ? `${invite.inviterName} invited you to join` : "You've been invited to join"}
       </p>
-      <h2 className="mt-1 text-2xl font-extrabold text-gray-900">{invite.tripName}</h2>
+      <h2 className="mt-1 text-2xl font-extrabold text-foreground">{invite.tripName}</h2>
     </>
   ) : (
     "Accept Invite"
@@ -117,8 +117,8 @@ export default function Accept() {
     return (
       <div className="space-y-3">
         {!user && (
-          <p className="text-center text-gray-600">
-            Accept as <span className="font-semibold text-gray-800">{invite.email}</span>.
+          <p className="text-center text-secondary-foreground">
+            Accept as <span className="font-semibold text-foreground">{invite.email}</span>.
           </p>
         )}
         <Button variant="default" className="w-full" onClick={accept} disabled={acceptMutation.isPending}>

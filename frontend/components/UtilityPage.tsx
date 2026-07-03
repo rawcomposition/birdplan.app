@@ -20,14 +20,14 @@ export default function UtilityPage({ heading, title, children }: PropTypes) {
             <Logo className="w-[80px] mx-auto" />
           </Link>
           {typeof heading === "string" ? (
-            <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">{heading}</h2>
+            <h2 className="mt-6 text-center text-2xl font-extrabold text-foreground">{heading}</h2>
           ) : (
             <div className="mt-6 text-center">{heading}</div>
           )}
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow-sm sm:rounded-lg sm:px-10">{children}</div>
+          <div className="rounded-xl border bg-card py-8 px-4 shadow-xs sm:px-10">{children}</div>
         </div>
       </div>
       <Footer />

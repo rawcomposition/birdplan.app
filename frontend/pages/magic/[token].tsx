@@ -30,7 +30,7 @@ export default function Magic() {
           <Alert variant="destructive" className="mb-4">
             {error}
           </Alert>
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-muted-foreground text-center">
             Ask for a new link, or{" "}
             <Link to="/login" className="text-link font-medium">
               sign in with your email
@@ -40,7 +40,7 @@ export default function Magic() {
         </>
       ) : (
         <>
-          <p className="text-sm text-gray-500 text-center mb-6">
+          <p className="text-sm text-muted-foreground text-center mb-6">
             Click below to securely sign in to your account.
           </p>
           <Button
