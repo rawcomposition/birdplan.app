@@ -149,6 +149,34 @@ trip.patch("/privacy", async (c) => {
   return c.json({});
 });
 
+trip.patch("/description", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { description } = await c.req.json<{ description: string }>();
+  if (typeof description !== "string" || description.length > 5000) {
+    throw new HTTPException(400, { message: "description must be a string of at most 5000 characters" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne({ _id: tripId }, { description: description.trim() });
+
+  return c.json({});
+});
+
 trip.patch("/dates", async (c) => {
   const session = await authenticate(c);
 

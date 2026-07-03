@@ -8,6 +8,7 @@ import { buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
 
 const links = [
+  { name: "Overview", slug: "overview", icon: "house" },
   { name: "Map", slug: "", icon: "mapFlat" },
   { name: "Targets", slug: "targets", icon: "bullseye" },
   { name: "Itinerary", slug: "itinerary", icon: "calendar" },

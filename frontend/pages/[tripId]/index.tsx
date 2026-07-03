@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import MapBox from "components/Mapbox";
 import { useModal } from "stores/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
@@ -45,6 +46,8 @@ export default function Trip() {
       setShowAllHotspots(true);
     }
   }, [tripIsLoaded, tripIsNew]);
+
+  if (trip && !canEdit) return <Navigate to={`/${trip._id}/overview`} replace />;
 
   return (
     <>

@@ -21,6 +21,7 @@ const fields: Record<
   ownerName: String,
   isPublic: { type: Boolean, default: true },
   name: { type: String, required: true },
+  description: String,
   region: { type: String, required: true },
   bounds: {
     minX: { type: Number, required: true },

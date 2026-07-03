@@ -4,6 +4,7 @@ export type Trip = {
   ownerName: string;
   isPublic: boolean;
   name: string;
+  description?: string;
   region: string;
   bounds: {
     minX: number;

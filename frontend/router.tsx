@@ -18,6 +18,7 @@ import TripSettings from "pages/[tripId]/settings";
 import TripTargets from "pages/[tripId]/targets";
 import TripSpecies from "pages/[tripId]/targets/[speciesCode]";
 import TripItinerary from "pages/[tripId]/itinerary";
+import TripOverview from "pages/[tripId]/overview";
 import TripParticipants from "pages/[tripId]/participants";
 import TripLifelist from "pages/[tripId]/lifelist";
 import NotFound from "components/NotFound";
@@ -47,6 +48,7 @@ export const router = createBrowserRouter([
           { path: "targets", element: <TripTargets /> },
           { path: "targets/:speciesCode", element: <TripSpecies /> },
           { path: "itinerary", element: <TripItinerary /> },
+          { path: "overview", element: <TripOverview /> },
         ],
       },
       {
