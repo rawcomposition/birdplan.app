@@ -160,7 +160,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                   return (
                     <React.Fragment key={id}>
                       {index !== 0 && (
-                        <li className="print:hidden">
+                        <li>
                           <TravelTime isLoading={isLoading} isEditing={isEditing} dayId={day.id} id={id} />
                         </li>
                       )}
