@@ -22,6 +22,8 @@ import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
 import GenerateMagicLink from "modals/GenerateMagicLink";
 import Share from "modals/Share";
+import TripNotes from "modals/TripNotes";
+import EditDocument from "modals/EditDocument";
 
 type ModalConfig = {
   Component: React.ComponentType<any>;
@@ -43,6 +45,8 @@ const modals: Record<ModalId, ModalConfig> = {
   manageLifelist: { Component: ManageLifelist },
   generateMagicLink: { Component: GenerateMagicLink },
   share: { Component: Share },
+  tripNotes: { Component: TripNotes },
+  editDocument: { Component: EditDocument },
 };
 
 const ModalRoot = () => {

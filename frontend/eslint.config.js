@@ -29,7 +29,7 @@ export default tseslint.config(
   {
     files: ["pages/**/*.tsx"],
     ignores: [
-      "pages/\\[tripId\\]/index.tsx",
+      "pages/\\[tripId\\]/map.tsx",
       "pages/\\[tripId\\]/lifelist.tsx",
       "pages/\\[tripId\\]/participants.tsx",
       "pages/\\[tripId\\]/settings.tsx",

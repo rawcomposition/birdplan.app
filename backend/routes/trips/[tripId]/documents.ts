@@ -1,13 +1,22 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate, nanoId, sanitizeFileName } from "lib/utils.js";
+import { authenticate, authenticateOptional, nanoId, sanitizeFileName } from "lib/utils.js";
 import { connect, Trip, TripDocument } from "lib/db.js";
-import { isTripEditor } from "lib/participants.js";
+import { isTripEditor, isEditorInRoster, loadActiveRoster } from "lib/participants.js";
 import { createUploadUrl, deleteFromStorage, imageUrl } from "lib/storage.js";
-import type { TripDocumentUploadUrlInput, TripDocumentCreateInput } from "@birdplan/shared";
+import type {
+  TripDocumentUploadUrlInput,
+  TripDocumentCreateInput,
+  TripDocumentUpdateInput,
+  TripDocumentCategory,
+  TripDocumentVisibility,
+} from "@birdplan/shared";
 
 const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
 const MAX_DOCUMENTS_PER_TRIP = 50;
+
+const CATEGORIES: TripDocumentCategory[] = ["flights", "lodging", "transport", "permits", "maps", "other"];
+const VISIBILITIES: TripDocumentVisibility[] = ["private", "trip", "public"];
 
 const documents = new Hono();
 
@@ -24,10 +33,14 @@ const requireEditor = async (c: any): Promise<string> => {
   return session.userId;
 };
 
-const validateMeta = (name: unknown, size: unknown, mimeType: unknown) => {
+const validateName = (name: unknown) => {
   if (typeof name !== "string" || !name.trim() || name.length > 200) {
     throw new HTTPException(400, { message: "Invalid file name" });
   }
+};
+
+const validateMeta = (name: unknown, size: unknown, mimeType: unknown) => {
+  validateName(name);
   if (typeof size !== "number" || !Number.isFinite(size) || size <= 0) {
     throw new HTTPException(400, { message: "Invalid file size" });
   }
@@ -39,11 +52,31 @@ const validateMeta = (name: unknown, size: unknown, mimeType: unknown) => {
   }
 };
 
-documents.get("/", async (c) => {
-  const tripId = c.req.param("tripId");
-  await requireEditor(c);
+const findVisibleDocument = async (tripId: string, documentId: string, userId: string) => {
+  const doc = await TripDocument.findOne({ _id: documentId, tripId }).lean();
+  if (!doc || (doc.visibility === "private" && doc.uploadedBy !== userId)) {
+    throw new HTTPException(404, { message: "Document not found" });
+  }
+  return doc;
+};
 
-  const docs = await TripDocument.find({ tripId }).sort({ createdAt: 1 }).lean();
+documents.get("/", async (c) => {
+  const session = await authenticateOptional(c);
+  const tripId = c.req.param("tripId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+
+  await connect();
+  const [trip, roster] = await Promise.all([Trip.findById(tripId).lean(), loadActiveRoster(tripId)]);
+  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
+
+  const isEditor = isEditorInRoster(roster, session?.userId);
+  if (!isEditor && !trip.isPublic) throw new HTTPException(403, { message: "Forbidden" });
+
+  const filter = isEditor
+    ? { tripId, $or: [{ visibility: { $ne: "private" } }, { uploadedBy: session?.userId }] }
+    : { tripId, visibility: "public" };
+
+  const docs = await TripDocument.find(filter).sort({ createdAt: 1 }).lean();
   return c.json(docs.map((doc) => ({ ...doc, url: imageUrl(doc.key) })));
 });
 
@@ -93,13 +126,38 @@ documents.post("/", async (c) => {
   return c.json({ ...doc.toObject(), url: imageUrl(doc.key) });
 });
 
+documents.patch("/:documentId", async (c) => {
+  const tripId = c.req.param("tripId");
+  const documentId = c.req.param("documentId");
+  const userId = await requireEditor(c);
+
+  const data = await c.req.json<TripDocumentUpdateInput>();
+  validateName(data.name);
+  const category = data.category || null;
+  if (category !== null && !CATEGORIES.includes(category)) {
+    throw new HTTPException(400, { message: "Invalid category" });
+  }
+  if (!VISIBILITIES.includes(data.visibility)) {
+    throw new HTTPException(400, { message: "Invalid visibility" });
+  }
+
+  await findVisibleDocument(tripId!, documentId, userId);
+  const doc = await TripDocument.findOneAndUpdate(
+    { _id: documentId, tripId },
+    { name: data.name.trim(), category, visibility: data.visibility },
+    { new: true }
+  ).lean();
+  if (!doc) throw new HTTPException(404, { message: "Document not found" });
+
+  return c.json({ ...doc, url: imageUrl(doc.key) });
+});
+
 documents.delete("/:documentId", async (c) => {
   const tripId = c.req.param("tripId");
   const documentId = c.req.param("documentId");
-  await requireEditor(c);
+  const userId = await requireEditor(c);
 
-  const doc = await TripDocument.findOne({ _id: documentId, tripId }).lean();
-  if (!doc) throw new HTTPException(404, { message: "Document not found" });
+  const doc = await findVisibleDocument(tripId!, documentId, userId);
 
   await TripDocument.deleteOne({ _id: documentId });
   try {

@@ -1,37 +1,39 @@
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import dayjs from "dayjs";
 import { TripDocument } from "@birdplan/shared";
 import { Card, CardContent, CardHeader, CardTitle, CardAction } from "components/ui/card";
 import { Button } from "components/ui/button";
 import { Spinner } from "components/ui/spinner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "components/ui/dropdown-menu";
 import { useTrip } from "hooks/useTrip";
+import { useModal } from "stores/modals";
 import { mutate } from "lib/http";
-import { FileText, Upload, Trash2 } from "lucide-react";
+import { formatBytes, getDocumentCategory, getDocumentIcon, getDocumentVisibility } from "lib/documents";
+import { Upload, MoreHorizontal, PencilLine, Download, Trash2, FolderOpen } from "lucide-react";
 
 const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
 
-const formatBytes = (bytes: number) => {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
-
 export default function TripDocuments() {
   const { trip, canEdit } = useTrip();
+  const { open } = useModal();
   const queryClient = useQueryClient();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = React.useState(false);
-  const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
   const queryKey = [`/trips/${trip?._id}/documents`];
   const { data: documents } = useQuery<TripDocument[]>({
     queryKey,
-    enabled: !!trip && canEdit,
+    enabled: !!trip,
   });
 
-  if (!trip || !canEdit) return null;
+  if (!trip) return null;
+  if (!canEdit && !documents?.length) return null;
 
   const uploadFile = async (file: File) => {
     if (file.size > MAX_DOCUMENT_BYTES) return toast.error("Files can be up to 10 MB");
@@ -67,67 +69,107 @@ export default function TripDocuments() {
 
   const handleDelete = async (doc: TripDocument) => {
     if (!confirm(`Delete ${doc.name}?`)) return;
-    setDeletingId(doc._id);
     try {
       await mutate("DELETE", `/trips/${trip._id}/documents/${doc._id}`);
       queryClient.setQueryData<TripDocument[]>(queryKey, (old) => old?.filter((it) => it._id !== doc._id));
     } catch (error: any) {
       toast.error(error.message || "Failed to delete document");
-    } finally {
-      setDeletingId(null);
     }
   };
 
   return (
-    <Card className="mt-4">
+    <Card>
       <CardHeader className="pb-0">
-        <CardTitle>Documents</CardTitle>
-        <CardAction>
-          <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-            {isUploading ? <Spinner /> : <Upload className="size-4" />}
-            {isUploading ? "Uploading..." : "Upload"}
-          </Button>
-        </CardAction>
+        <CardTitle>
+          Documents
+          {!!documents?.length && (
+            <span className="ml-2 text-sm font-medium text-muted-foreground tabular-nums">{documents.length}</span>
+          )}
+        </CardTitle>
+        {canEdit && (
+          <CardAction>
+            <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+              {isUploading ? <Spinner /> : <Upload className="size-4" />}
+              {isUploading ? "Uploading..." : "Upload"}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className="pt-3">
         <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
         {documents?.length ? (
           <ul className="flex flex-col divide-y divide-border/60">
-            {documents.map((doc) => (
-              <li key={doc._id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                <FileText className="size-4 shrink-0 text-muted-foreground" />
-                <div className="min-w-0 flex-1">
-                  <a
-                    href={doc.url || undefined}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block truncate text-sm font-medium text-foreground hover:text-link"
-                  >
-                    {doc.name}
-                  </a>
-                  <p className="text-xs text-muted-foreground">
-                    {formatBytes(doc.size)}
-                    {doc.createdAt && <> · {dayjs(doc.createdAt).format("MMM D, YYYY")}</>}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={`Delete ${doc.name}`}
-                  onClick={() => handleDelete(doc)}
-                  disabled={deletingId === doc._id}
-                  className="text-muted-foreground hover:text-destructive"
-                >
-                  {deletingId === doc._id ? <Spinner /> : <Trash2 className="size-4" />}
-                </Button>
-              </li>
-            ))}
+            {documents.map((doc) => {
+              const DocIcon = getDocumentIcon(doc);
+              const category = getDocumentCategory(doc);
+              const visibility = getDocumentVisibility(doc.visibility);
+              return (
+                <li key={doc._id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <DocIcon className="size-4 text-secondary-foreground" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <a
+                      href={doc.url || undefined}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block truncate text-sm font-medium text-foreground hover:text-link"
+                    >
+                      {doc.name}
+                    </a>
+                    <p className="flex flex-wrap items-center gap-x-1 text-xs text-muted-foreground">
+                      <span className="whitespace-nowrap">
+                        {category && <>{category.label} · </>}
+                        {formatBytes(doc.size)}
+                      </span>
+                      {canEdit && (
+                        <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                          · <visibility.icon aria-label={visibility.label} className="size-3" />
+                          {visibility.label}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  {canEdit && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Options for ${doc.name}`}
+                            className="text-muted-foreground"
+                          />
+                        }
+                      >
+                        <MoreHorizontal className="size-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => open("editDocument", { document: doc })}>
+                          <PencilLine /> Edit details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          render={<a href={doc.url || undefined} target="_blank" rel="noreferrer" />}
+                        >
+                          <Download /> Download
+                        </DropdownMenuItem>
+                        <DropdownMenuItem variant="destructive" onClick={() => handleDelete(doc)}>
+                          <Trash2 /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Flight itineraries, lodging confirmations, permits — keep the group&apos;s paperwork in one place. Only
-            trip participants can see documents.
-          </p>
+          <div className="flex flex-col items-center gap-1.5 py-4 text-center">
+            <FolderOpen className="size-5 text-muted-foreground/60" />
+            <p className="text-sm text-muted-foreground">
+              Flight itineraries, lodging confirmations, permits — keep the group&apos;s paperwork in one place.
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

@@ -13,12 +13,12 @@ import Onboarding from "pages/onboarding";
 import ImportLifelist from "pages/import-lifelist";
 import Accept from "pages/accept/[inviteId]";
 import Magic from "pages/magic/[token]";
-import TripIndex from "pages/[tripId]/index";
+import TripOverview from "pages/[tripId]/index";
+import TripMap from "pages/[tripId]/map";
 import TripSettings from "pages/[tripId]/settings";
 import TripTargets from "pages/[tripId]/targets";
 import TripSpecies from "pages/[tripId]/targets/[speciesCode]";
 import TripItinerary from "pages/[tripId]/itinerary";
-import TripOverview from "pages/[tripId]/overview";
 import TripParticipants from "pages/[tripId]/participants";
 import TripLifelist from "pages/[tripId]/lifelist";
 import NotFound from "components/NotFound";
@@ -44,11 +44,12 @@ export const router = createBrowserRouter([
         path: "/:tripId",
         element: <TripLayout />,
         children: [
-          { index: true, element: <TripIndex /> },
+          { index: true, element: <TripOverview /> },
+          { path: "map", element: <TripMap /> },
           { path: "targets", element: <TripTargets /> },
           { path: "targets/:speciesCode", element: <TripSpecies /> },
           { path: "itinerary", element: <TripItinerary /> },
-          { path: "overview", element: <TripOverview /> },
+          { path: "overview", element: <Navigate to=".." replace /> },
         ],
       },
       {

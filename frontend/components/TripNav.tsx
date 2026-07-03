@@ -8,8 +8,8 @@ import { buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
 
 const links = [
-  { name: "Overview", slug: "overview", icon: "house" },
-  { name: "Map", slug: "", icon: "mapFlat" },
+  { name: "Overview", slug: "", icon: "house" },
+  { name: "Map", slug: "map", icon: "mapFlat" },
   { name: "Targets", slug: "targets", icon: "bullseye" },
   { name: "Itinerary", slug: "itinerary", icon: "calendar" },
 ];
@@ -25,11 +25,13 @@ export default function TripNav() {
   }, [pathname]);
 
   return (
-    <div className={cn("bg-white px-2 pb-2 pt-0.5 h-[55px] print:hidden", active !== "" && "border-b border-gray-100")}>
-      <div className="flex gap-1.5 items-center shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
+    <div
+      className={cn("bg-card px-2 pb-2 pt-0.5 h-[55px] print:hidden", active !== "map" && "border-b border-border/60")}
+    >
+      <div className="flex gap-1.5 items-center shrink-0 bg-muted justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link
-            to={`/${trip?._id}/${slug}`}
+            to={`/${trip?._id}${slug ? `/${slug}` : ""}`}
             key={slug}
             className={cn(
               buttonVariants({ variant: "nav", size: "none" }),

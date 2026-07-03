@@ -44,7 +44,6 @@ Reach for the building block before writing markup:
 - `FilterChip` — pill toggle, `tone` = primary | amber | emerald, `active` prop.
 - `SegmentedControl` — inline option switcher on a `bg-muted` track.
 - `SelectDropdown` — labeled value-picker pill ("Sort: Best").
-- `Stat` — icon + big number + label card, links somewhere.
 - `EmptyState` for all empty/none states; `Spinner` for all loading (never hand-rolled `animate-spin`).
 - Toolbars: h-9 pills with `gap-2`–`gap-3`, search left, filters right, `TargetsOptionsDropdown`-style kebab last.
 

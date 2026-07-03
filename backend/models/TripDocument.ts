@@ -9,6 +9,8 @@ const fields: Record<keyof Omit<TripDocument, "createdAt" | "updatedAt" | "url">
   key: { type: String, required: true },
   size: { type: Number, required: true },
   mimeType: { type: String, required: true },
+  category: { type: String, default: null },
+  visibility: { type: String, default: "trip" },
   uploadedBy: { type: String, required: true },
 };
 
