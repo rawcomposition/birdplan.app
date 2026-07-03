@@ -13,10 +13,10 @@ export default function TripLayout() {
   if (is404) return <NotFound />;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full print:h-auto">
       <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
       <TripNav />
-      <main className="flex flex-1 min-h-0 relative bg-background">
+      <main className="flex flex-1 min-h-0 relative bg-background print:min-h-0 print:block">
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>

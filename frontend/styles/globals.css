@@ -148,6 +148,15 @@
   }
 }
 
+@media print {
+  html,
+  body,
+  #root {
+    height: auto;
+    overflow: visible;
+  }
+}
+
 .mapboxAddMarkerMode .mapboxgl-canvas-container {
   @apply cursor-crosshair;
 }

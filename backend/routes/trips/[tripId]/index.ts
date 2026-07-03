@@ -22,7 +22,7 @@ import {
 } from "lib/participants.js";
 import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
-import type { TripUpdateInput, OpenBirdingLocationResponse } from "@birdplan/shared";
+import type { TripUpdateInput, TripDatesInput, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
@@ -145,6 +145,40 @@ trip.patch("/privacy", async (c) => {
   }
 
   await Trip.updateOne({ _id: tripId }, { isPublic });
+
+  return c.json({});
+});
+
+trip.patch("/dates", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { startDate, endDate } = await c.req.json<TripDatesInput>();
+  const isDate = (value: unknown) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+  if (!isDate(startDate) || !isDate(endDate)) {
+    throw new HTTPException(400, { message: "startDate and endDate must be YYYY-MM-DD dates" });
+  }
+  if (endDate < startDate) {
+    throw new HTTPException(400, { message: "endDate must be on or after startDate" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  const startMonth = Number(startDate.slice(5, 7));
+  const endMonth = Number(endDate.slice(5, 7));
+  await Trip.updateOne({ _id: tripId }, { startDate, endDate, startMonth, endMonth });
 
   return c.json({});
 });

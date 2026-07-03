@@ -24,7 +24,7 @@ export default function TripNav() {
   }, [pathname]);
 
   return (
-    <div className={cn("bg-white px-2 pb-2 pt-0.5 h-[55px]", active !== "" && "border-b border-gray-100")}>
+    <div className={cn("bg-white px-2 pb-2 pt-0.5 h-[55px] print:hidden", active !== "" && "border-b border-gray-100")}>
       <div className="flex gap-1.5 items-center shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link

@@ -36,7 +36,7 @@ export default function Header({ title, parent, border }: Props) {
 
   return (
     <header
-      className={clsx("bg-white h-[60px] shrink-0 flex items-center", border && "border-b border-gray-100")}
+      className={clsx("bg-white h-[60px] shrink-0 flex items-center print:hidden", border && "border-b border-gray-100")}
       onClick={close}
     >
       {!isOnline && (

@@ -422,6 +422,15 @@ export type MoveLocationInput = {
   direction: "up" | "down";
 };
 
+export type ReorderLocationsInput = {
+  ids: string[];
+};
+
+export type TripDatesInput = {
+  startDate: string;
+  endDate: string;
+};
+
 export type RemoveLocationInput = {
   id: string;
 };
