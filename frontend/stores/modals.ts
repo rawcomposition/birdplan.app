@@ -48,14 +48,20 @@ type ModalState = {
   close: () => void;
 };
 
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
 export const useModalStore = create<ModalState>((set) => ({
   modalId: null,
   modalProps: {},
   closing: false,
-  open: (id, props) => set({ modalId: id, modalProps: props || {}, closing: false }),
+  open: (id, props) => {
+    clearTimeout(closeTimer);
+    set({ modalId: id, modalProps: props || {}, closing: false });
+  },
   close: () => {
     set({ closing: true });
-    setTimeout(() => set({ modalId: null, closing: false }), 500);
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => set({ modalId: null, closing: false }), 500);
   },
 }));
 

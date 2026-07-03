@@ -43,7 +43,7 @@ export default function EditDocument({ document: doc }: Props) {
   return (
     <>
       <Header>Edit document</Header>
-      <Body className="flex flex-col gap-4">
+      <Body className="flex flex-col gap-4 pb-1">
         <Field label="Name">
           <Input size="sm" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
         </Field>
@@ -96,12 +96,14 @@ export default function EditDocument({ document: doc }: Props) {
         </Field>
       </Body>
       <Footer>
-        <Button onClick={handleSave} disabled={mutation.isPending}>
-          Save
-        </Button>
-        <Button variant="ghost" onClick={close} className="ml-2">
-          Cancel
-        </Button>
+        <div className="flex justify-end gap-2 w-full">
+          <Button variant="outline" onClick={close}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={mutation.isPending}>
+            Save
+          </Button>
+        </div>
       </Footer>
     </>
   );

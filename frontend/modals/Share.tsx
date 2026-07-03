@@ -6,6 +6,9 @@ import { Switch } from "components/ui/switch";
 import Field from "components/Field";
 import { useTrip } from "hooks/useTrip";
 import useTripMutation from "hooks/useTripMutation";
+import Avatar from "components/Avatar";
+import { Tooltip, TooltipTrigger, TooltipContent } from "components/ui/tooltip";
+import { avatarFromParticipant } from "lib/avatar";
 import toast from "react-hot-toast";
 import { Check, Copy, Globe, Lock, UserPlus } from "lucide-react";
 
@@ -40,10 +43,10 @@ export default function Share() {
       <Body className="flex flex-col gap-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <PrivacyIcon className="size-5 text-gray-500 mt-0.5 shrink-0" />
+            <PrivacyIcon className="size-5 text-muted-foreground mt-0.5 shrink-0" />
             <div>
-              <p className="font-medium text-gray-800">{isPublic ? "Public trip" : "Private trip"}</p>
-              <p className="text-sm text-gray-500">
+              <p className="font-medium text-foreground">{isPublic ? "Public trip" : "Private trip"}</p>
+              <p className="text-sm text-muted-foreground">
                 {isPublic ? "Anyone with the link can view this trip." : "Only participants can view this trip."}
               </p>
             </div>
@@ -63,9 +66,15 @@ export default function Share() {
               readOnly
               value={shareLink}
               onFocus={(e) => e.target.select()}
-              className="h-10 w-full min-w-0 rounded-lg border border-border bg-muted/50 px-3 text-sm text-gray-700 outline-none focus-visible:border-ring"
+              className="h-10 w-full min-w-0 rounded-lg border border-border bg-muted/50 px-3 text-sm text-secondary-foreground outline-none focus-visible:border-ring"
             />
-            <Button variant="outline-white" size="icon-lg" onClick={handleCopy} aria-label="Copy link">
+            <Button
+              variant="outline-white"
+              size="icon-lg"
+              onClick={handleCopy}
+              aria-label="Copy link"
+              className="shrink-0"
+            >
               {copied ? <Check className="size-4 text-success" /> : <Copy className="size-4" />}
             </Button>
           </div>
@@ -78,17 +87,41 @@ export default function Share() {
             </Button>
           }
         >
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-gray-500">
-              {participants?.length
-                ? `${participants.length} ${participants.length === 1 ? "person" : "people"} on this trip.`
-                : "It's just you so far."}{" "}
-              Invite others to plan together and compare targets.
+          <div className="flex items-center gap-3">
+            <div className="flex shrink-0 -space-x-2">
+              {participants?.slice(0, 5).map((p) => (
+                <Tooltip key={p._id}>
+                  <TooltipTrigger
+                    render={
+                      <span className="flex rounded-full ring-2 ring-card">
+                        <Avatar user={avatarFromParticipant(p)} size={32} />
+                      </span>
+                    }
+                  />
+                  <TooltipContent>{p.name || p.email}</TooltipContent>
+                </Tooltip>
+              ))}
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <button
+                      type="button"
+                      aria-label="Invite participant"
+                      onClick={() => open("addParticipant")}
+                      className="flex size-8 items-center justify-center rounded-full border border-dashed border-border bg-card text-muted-foreground ring-2 ring-card transition-colors hover:border-ring hover:text-foreground"
+                    />
+                  }
+                >
+                  <UserPlus className="size-4" />
+                </TooltipTrigger>
+                <TooltipContent>Invite someone</TooltipContent>
+              </Tooltip>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {participants?.length && participants.length > 1
+                ? `${participants.length} people on this trip.`
+                : "It's just you so far. Invite others to plan together and compare targets."}
             </p>
-            <Button variant="outline-white" size="sm" onClick={() => open("addParticipant")}>
-              <UserPlus className="size-4" />
-              Invite
-            </Button>
           </div>
         </Field>
       </Body>

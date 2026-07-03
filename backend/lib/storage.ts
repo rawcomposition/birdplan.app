@@ -36,6 +36,10 @@ export async function deleteFromStorage(key: string): Promise<void> {
   await client.send(new DeleteObjectCommand({ Bucket: S3_BUCKET!, Key: key }));
 }
 
+export function buildTripImageUrl(bounds: { minX: number; minY: number; maxX: number; maxY: number }): string {
+  return `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds.minX},${bounds.minY},${bounds.maxX},${bounds.maxY}]/1280x640@2x?access_token=${process.env.MAPBOX_SERVER_KEY}&padding=128`;
+}
+
 export async function uploadMapboxImageToStorage(mapboxImageUrl: string): Promise<string | null> {
   if (!client) {
     console.warn("S3 storage not configured, skipping image upload");

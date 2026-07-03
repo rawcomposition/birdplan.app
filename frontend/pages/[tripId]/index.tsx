@@ -8,6 +8,7 @@ import { Button } from "components/ui/button";
 import { Skeleton } from "components/ui/skeleton";
 import Avatar from "components/Avatar";
 import MarkerWithIcon from "components/MarkerWithIcon";
+import { Tooltip, TooltipTrigger, TooltipContent } from "components/ui/tooltip";
 import TripDocuments from "components/TripDocuments";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
@@ -125,13 +126,24 @@ export default function TripOverview() {
                   </p>
                 </div>
                 {!!participants?.length && (
-                  <div className="hidden sm:flex shrink-0 -space-x-2">
+                  <Link
+                    to={`/${trip?._id}/participants`}
+                    aria-label="View participants"
+                    className="hidden sm:flex shrink-0 -space-x-2"
+                  >
                     {participants.slice(0, 5).map((p) => (
-                      <span key={p._id} className="rounded-full ring-2 ring-white/90">
-                        <Avatar user={avatarFromParticipant(p)} size={30} />
-                      </span>
+                      <Tooltip key={p._id}>
+                        <TooltipTrigger
+                          render={
+                            <span className="flex rounded-full ring-2 ring-white/90">
+                              <Avatar user={avatarFromParticipant(p)} size={30} />
+                            </span>
+                          }
+                        />
+                        <TooltipContent>{p.name || p.email}</TooltipContent>
+                      </Tooltip>
                     ))}
-                  </div>
+                  </Link>
                 )}
               </div>
             </div>
@@ -231,11 +243,8 @@ export default function TripOverview() {
                                 {i + 1}
                               </span>
                               <span className="min-w-0 flex-1">
-                                <span className="flex items-baseline gap-2 text-sm font-medium text-foreground">
-                                  Day {i + 1}
-                                  {dayLabel(i) && (
-                                    <span className="text-xs font-normal text-muted-foreground">{dayLabel(i)}</span>
-                                  )}
+                                <span className="block truncate text-sm font-medium text-foreground">
+                                  {dayLabel(i) || `Day ${i + 1}`}
                                 </span>
                                 <span className="block truncate text-xs text-muted-foreground">
                                   {names.length ? names.join(" → ") : "No stops yet"}
@@ -284,7 +293,7 @@ export default function TripOverview() {
                         {isLoadingTargets
                           ? Array.from({ length: TARGET_ROWS }, (_, i) => (
                               <div key={i} className="flex items-center gap-3 py-2">
-                                <Skeleton className="size-10 rounded-md" />
+                                <Skeleton className="h-10 aspect-[4/3] rounded-md" />
                                 <div className="flex-1 space-y-1.5">
                                   <Skeleton className="h-3.5 w-40" />
                                   <Skeleton className="h-1 w-32" />
@@ -305,10 +314,10 @@ export default function TripOverview() {
                                       src={img.url}
                                       alt=""
                                       loading="lazy"
-                                      className="size-10 shrink-0 rounded-md object-cover"
+                                      className="h-10 aspect-[4/3] shrink-0 rounded-md object-cover"
                                     />
                                   ) : (
-                                    <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                                    <span className="flex h-10 aspect-[4/3] shrink-0 items-center justify-center rounded-md bg-muted">
                                       <Feather className="size-4 text-muted-foreground/50" />
                                     </span>
                                   )}

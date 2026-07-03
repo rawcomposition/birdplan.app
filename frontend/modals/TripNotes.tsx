@@ -25,7 +25,7 @@ export default function TripNotes() {
   return (
     <>
       <Header>Trip notes</Header>
-      <Body>
+      <Body className="pb-1">
         <Textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -35,10 +35,12 @@ export default function TripNotes() {
         />
       </Body>
       <Footer>
-        <Button onClick={handleSave}>Save notes</Button>
-        <Button variant="ghost" onClick={close} className="ml-2">
-          Cancel
-        </Button>
+        <div className="flex justify-end gap-2 w-full">
+          <Button variant="outline" onClick={close}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave}>Save notes</Button>
+        </div>
       </Footer>
     </>
   );

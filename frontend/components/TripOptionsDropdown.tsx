@@ -66,9 +66,10 @@ export default function TripOptionsDropdown({ className }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="nav" size="icon" className={cn("ml-auto", className)} />}
+        render={<Button variant="nav" className={cn("ml-auto gap-1 py-1 px-2 sm:px-2.5 text-[14px]", className)} />}
       >
         <Icon name="verticalDots" />
+        <span className="hidden sm:inline">More</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto min-w-[240px]">
         {filteredLinks.map(({ name, href, onClick, icon }) => {
