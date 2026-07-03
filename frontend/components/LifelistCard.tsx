@@ -2,6 +2,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { Button } from "components/ui/button";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { parseLifelistCsv } from "lib/lifelistCsv";
 
 type Props = {
@@ -39,7 +40,7 @@ export default function LifelistCard({ label, count, onImport, onRemove, disable
           disabled ? "bg-gray-400" : "bg-green-600"
         }`}
       >
-        <Icon name={disabled ? "loading" : "check"} className={disabled ? "animate-spin" : "text-sm"} />
+        {disabled ? <Spinner /> : <Icon name="check" className="text-sm" />}
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-gray-800">{label}</p>

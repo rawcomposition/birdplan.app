@@ -4,6 +4,7 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { Alert } from "components/ui/alert";
 
@@ -77,7 +78,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
       </p>
       {isLoading && (
         <Alert variant="info" className="-mx-1 my-1">
-          <Icon name="loading" className="text-xl animate-spin" />
+          <Spinner className="size-5" />
           Loading recent species...
         </Alert>
       )}

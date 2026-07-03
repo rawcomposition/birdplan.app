@@ -1,6 +1,7 @@
 import React from "react";
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
@@ -46,7 +47,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   if (isLoading) {
     return (
       <Alert variant="info" className="-mx-1 my-1">
-        <Icon name="loading" className="text-xl animate-spin" />
+        <Spinner className="size-5" />
         Loading targets...
       </Alert>
     );

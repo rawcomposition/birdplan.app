@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Card } from "components/ui/card";
 import SelectDropdown from "components/SelectDropdown";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
@@ -49,7 +50,7 @@ export default function SpeciesHotspotList({
         </div>
         {loading ? (
           <div className="flex items-center gap-1.5 text-xs text-gray-500 whitespace-nowrap">
-            <Icon name="loading" className="text-sm animate-spin" />
+            <Spinner className="size-3.5" />
             <span className="hidden sm:inline">Updating…</span>
           </div>
         ) : (

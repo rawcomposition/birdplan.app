@@ -4,7 +4,7 @@ import UtilityPage from "components/UtilityPage";
 import { Input } from "components/ui/input";
 import { Button } from "components/ui/button";
 import Field from "components/Field";
-import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { useUser } from "hooks/useUser";
 import useMutation from "hooks/useMutation";
 import { withReturnTo } from "lib/helpers";
@@ -32,7 +32,7 @@ export default function Onboarding() {
     return (
       <UtilityPage heading="Welcome">
         <div className="text-center">
-          <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+          <Spinner className="size-9 text-muted-foreground" />
         </div>
       </UtilityPage>
     );

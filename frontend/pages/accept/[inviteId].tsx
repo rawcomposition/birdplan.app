@@ -2,7 +2,7 @@ import React from "react";
 import UtilityPage from "components/UtilityPage";
 import AcceptError from "components/AcceptError";
 import { Button } from "components/ui/button";
-import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { useUser } from "hooks/useUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -69,7 +69,7 @@ export default function Accept() {
     if (loading || inviteLoading) {
       return (
         <div className="text-center">
-          <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+          <Spinner className="size-9 text-muted-foreground" />
         </div>
       );
     }

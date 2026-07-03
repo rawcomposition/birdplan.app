@@ -6,6 +6,7 @@ import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import FormPage from "components/FormPage";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
 import useMutation from "hooks/useMutation";
@@ -135,7 +136,7 @@ export default function ImportLifelist() {
             )}
             {isLoading ? (
               <div className="flex items-center justify-center h-20">
-                <Icon name="loading" className="animate-spin" />
+                <Spinner />
               </div>
             ) : (
               <AsyncSelect

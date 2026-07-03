@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Heading from "components/Heading";
 import Footer from "components/Footer";
-import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import NotFound from "components/NotFound";
@@ -49,7 +49,7 @@ export default function TripLifelist() {
               <LifelistEditor trip={trip} mode={lifelistMode} embedded />
             ) : (
               <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-                <Icon name="loading" className="animate-spin" /> Loading...
+                <Spinner /> Loading...
               </div>
             )}
           </Card>

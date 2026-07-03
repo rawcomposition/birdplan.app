@@ -9,6 +9,7 @@ import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useLocationTargets from "hooks/useLocationTargets";
 import { RecentChecklist } from "lib/types";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import ObsList from "components/ObsList";
 import SelectDropdown from "components/SelectDropdown";
 import { Alert } from "components/ui/alert";
@@ -49,7 +50,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
         <div className="text-sm -mx-1 my-1 bg-primary/10 text-primary-hover py-2.5 px-3 rounded">
           {speciesName}
           <br />
-          {isLoadingTargets && <Icon name="loading" className="text-xl animate-spin" />}
+          {isLoadingTargets && <Spinner className="size-5" />}
           {!isLoadingTargets && successRate !== null && (
             <>
               <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of {totalSamples.toLocaleString()}{" "}
@@ -170,7 +171,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
           )}
           {(isLoading || isLoadingSpecies) && (
             <Alert variant="muted" className="-mx-1 my-1">
-              {!reduceLoaders && <Icon name="loading" className="text-xl animate-spin" />}
+              {!reduceLoaders && <Spinner className="size-5" />}
               Loading recent checklists...
             </Alert>
           )}

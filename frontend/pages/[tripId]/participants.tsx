@@ -2,6 +2,7 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import Field from "components/Field";
@@ -40,7 +41,7 @@ export default function TripParticipants() {
       <Card className="mb-4 rounded-2xl px-4 sm:px-5">
         {participants == null ? (
           <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-            <Icon name="loading" className="animate-spin" /> Loading participants...
+            <Spinner /> Loading participants...
           </div>
         ) : participants.length === 0 ? (
           <p className="py-6 text-sm text-gray-500">No participants yet.</p>

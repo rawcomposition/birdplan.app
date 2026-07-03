@@ -4,7 +4,7 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "lib/utils";
-import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 
 const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-semibold rounded-full", {
   variants: {
@@ -68,7 +68,7 @@ function Button({
 
   const content = loading ? (
     <span className="inline-flex items-center justify-center gap-2">
-      <Icon name="loading" className="animate-spin" />
+      <Spinner />
       {loadingText}
     </span>
   ) : (

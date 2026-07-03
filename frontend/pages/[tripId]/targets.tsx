@@ -15,6 +15,7 @@ import TargetsOptionsDropdown from "components/TargetsOptionsDropdown";
 import TargetRow from "components/TargetRow";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import clsx from "clsx";
 const PAGE_SIZE = 100;
 
@@ -99,7 +100,7 @@ export default function TripTargets() {
           <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
             {isLoadingTargets && (
               <div className="flex items-center flex-col gap-2 my-8">
-                <Icon name="loading" className="animate-spin text-4xl text-blue-500" />
+                <Spinner className="size-9 text-primary" />
                 <p className="text-sm text-slate-600">Loading targets...</p>
               </div>
             )}

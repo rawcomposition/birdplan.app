@@ -1,5 +1,6 @@
 import React from "react";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
@@ -86,7 +87,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
       </p>
       {isLoading && (
         <Alert variant="info" className="-mx-1 my-1">
-          <Icon name="loading" className="text-xl animate-spin" />
+          <Spinner className="size-5" />
           Loading observations...
         </Alert>
       )}
