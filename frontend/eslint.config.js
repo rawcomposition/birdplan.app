@@ -36,11 +36,9 @@ export default tseslint.config(
       "pages/\\[tripId\\]/targets/\\[speciesCode\\].tsx",
       "pages/account.tsx",
       "pages/admin.tsx",
-      "pages/contact.tsx",
       "pages/import-lifelist.tsx",
       "pages/index.tsx",
       "pages/onboarding.tsx",
-      "pages/trips.tsx",
       "pages/whats-new.tsx",
     ],
     rules: {

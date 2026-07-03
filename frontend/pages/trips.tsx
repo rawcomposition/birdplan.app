@@ -58,11 +58,11 @@ export default function Trips() {
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-12 md:px-7">
         <div className="mt-6 mb-12 flex items-end justify-between gap-4">
           <div>
-            <p className="mb-2 text-sm font-medium text-gray-500">
+            <p className="mb-2 text-sm font-medium text-muted-foreground">
               {greeting()}
               {firstName && `, ${firstName}`}
             </p>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-foreground">
               <span className="sm:hidden">Trips</span>
               <span className="hidden sm:inline">Your birding trips</span>
             </h1>
@@ -75,10 +75,10 @@ export default function Trips() {
         <Notice />
 
         {error && <Error onReload={refetch} message="Error loading trips" />}
-        {isLoading && <p className="text-lg text-gray-500">Loading...</p>}
+        {isLoading && <p className="text-lg text-muted-foreground">Loading...</p>}
 
         {!isLoading && !error && trips.length === 0 && (
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-muted-foreground">
             You don&apos;t have any trips yet.{" "}
             <Link className="font-bold text-link" to="/create">
               Create one!
@@ -111,10 +111,10 @@ export default function Trips() {
                 {statRows.map(({ label, value }) => (
                   <div
                     key={label}
-                    className="flex items-baseline justify-between border-b border-gray-50 py-3 last:border-0"
+                    className="flex items-baseline justify-between border-b border-border/40 py-3 last:border-0"
                   >
-                    <span className="text-sm text-gray-500">{label}</span>
-                    <span className="text-xl font-bold text-gray-800">{value.toLocaleString()}</span>
+                    <span className="text-sm text-muted-foreground">{label}</span>
+                    <span className="text-xl font-bold text-foreground">{value.toLocaleString()}</span>
                   </div>
                 ))}
               </Card>
@@ -125,24 +125,24 @@ export default function Trips() {
                   <span className="text-5xl font-bold text-primary tabular-nums">
                     {lifelist.length.toLocaleString()}
                   </span>
-                  <span className="text-sm font-semibold text-gray-500">species</span>
+                  <span className="text-sm font-semibold text-muted-foreground">species</span>
                 </div>
                 {user?.lifelistUpdatedAt && (
-                  <p className="mt-2 text-xs text-gray-500">Updated {dayjs(user.lifelistUpdatedAt).fromNow()}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">Updated {dayjs(user.lifelistUpdatedAt).fromNow()}</p>
                 )}
               </Card>
 
               {recentNews.length > 0 && (
                 <Card className="px-5 py-4">
                   <WidgetHeader title="What's new" action={{ label: "All updates", to: "/whats-new" }} />
-                  <div className="flex flex-col divide-y divide-gray-100">
+                  <div className="flex flex-col divide-y divide-border/60">
                     {recentNews.map(({ date, title, description }) => (
                       <div key={title} className="py-4 last:pb-1">
                         <p className="text-[11px] font-bold tracking-wide text-success uppercase">
                           {dayjs(date).format("MMM D, YYYY")}
                         </p>
-                        <h3 className="mt-1.5 text-sm font-bold text-gray-800">{title}</h3>
-                        <p className="mt-1 text-sm leading-relaxed text-gray-500">{description}</p>
+                        <h3 className="mt-1.5 text-sm font-bold text-foreground">{title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
                       </div>
                     ))}
                   </div>
