@@ -14,6 +14,7 @@ import useTargetView from "hooks/useTargetView";
 import { useSpeciesImages } from "hooks/useSpeciesImages";
 import useTripMutation from "hooks/useTripMutation";
 import { avatarFromParticipant } from "lib/avatar";
+import { cn } from "lib/utils";
 import { Feather, MapPin, CalendarDays, Users, UserPlus, ArrowRight } from "lucide-react";
 
 const TEASER_COUNT = 6;
@@ -33,7 +34,7 @@ export default function TripOverview() {
 
   const { lifelist } = useTargetView(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
-  const topTargets = targetSpecies.slice(0, TEASER_COUNT);
+  const topTargets = [...targetSpecies].sort((a, b) => b.frequency - a.frequency).slice(0, TEASER_COUNT);
 
   const descriptionMutation = useTripMutation<{ description: string }>({
     url: `/trips/${trip?._id}/description`,
@@ -73,15 +74,27 @@ export default function TripOverview() {
       icon: Feather,
       href: `/${trip?._id}/targets`,
     },
-    { label: "Saved hotspots", value: trip?.hotspots?.length ?? 0, icon: MapPin, href: `/${trip?._id}` },
     {
-      label: "Days planned",
+      label: trip?.hotspots?.length === 1 ? "Saved hotspot" : "Saved hotspots",
+      value: trip?.hotspots?.length ?? 0,
+      icon: MapPin,
+      href: `/${trip?._id}`,
+    },
+    {
+      label: trip?.itinerary?.length === 1 ? "Day planned" : "Days planned",
       value: trip?.itinerary?.length ?? 0,
       icon: CalendarDays,
       href: `/${trip?._id}/itinerary`,
     },
     ...(participants
-      ? [{ label: "Participants", value: participants.length, icon: Users, href: `/${trip?._id}/participants` }]
+      ? [
+          {
+            label: participants.length === 1 ? "Participant" : "Participants",
+            value: participants.length,
+            icon: Users,
+            href: `/${trip?._id}/participants`,
+          },
+        ]
       : []),
   ];
 
@@ -110,7 +123,7 @@ export default function TripOverview() {
               </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className={cn("mt-4 grid grid-cols-2 gap-3", stats.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3")}>
               {stats.map(({ label, value, icon: StatIcon, href }) => (
                 <Link key={label} to={href}>
                   <Card className="p-4 h-full transition-colors hover:border-primary/40">
@@ -152,7 +165,7 @@ export default function TripOverview() {
                 <CardHeader className="pb-0">
                   <CardTitle>Top targets</CardTitle>
                   <CardAction>
-                    <Button href={`/${trip?._id}/targets`} variant="link" className="text-sm">
+                    <Button href={`/${trip?._id}/targets`} variant="link" className="text-sm whitespace-nowrap">
                       All targets <ArrowRight className="size-3.5" />
                     </Button>
                   </CardAction>
