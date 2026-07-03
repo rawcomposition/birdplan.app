@@ -1,67 +1,120 @@
 import React from "react";
-import { GooglePlaceT } from "lib/types";
-import Input from "components/Input";
+import { useQuery } from "@tanstack/react-query";
+import { Input } from "components/ui/input";
+import { Spinner } from "components/ui/spinner";
+import { PlaceSearchResult } from "lib/types";
+import useDebouncedValue from "hooks/useDebouncedValue";
+import { cn } from "lib/utils";
+
+const PHOTON_API_URL = "https://photon.komoot.io/api/";
+
+type PhotonFeature = {
+  properties: {
+    osm_id: number;
+    osm_type: string;
+    osm_value?: string;
+    name?: string;
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  geometry: { coordinates: [number, number] };
+};
 
 type Props = {
   className?: string;
-  country: string;
+  bias?: { lat: number; lng: number };
   focus?: boolean;
-  onChange: (value: GooglePlaceT) => void;
+  onChange: (value: PlaceSearchResult) => void;
 };
 
-export default function PlaceSearch({ className, country, onChange, focus, ...props }: Props) {
-  const inputRef = React.useRef(null);
-  const isInitalizedRef = React.useRef<boolean>(false);
+const formatContext = ({ street, city, state, country }: PhotonFeature["properties"]) =>
+  [street, city, state, country].filter(Boolean).join(", ");
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") e.preventDefault();
-  };
+export default function PlaceSearch({ className, bias, onChange, focus }: Props) {
+  const [search, setSearch] = React.useState("");
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const query = useDebouncedValue(search.trim());
 
-  React.useEffect(() => {
-    //@ts-expect-error window.google injected by Google Maps script
-    if (isInitalizedRef.current || !window.google) {
-      return;
-    }
-    const handlePlaceSelect = (googlePlaces: any) => {
-      const place = googlePlaces.getPlace();
-      onChange({
-        name: place.name,
-        lat: parseFloat(place.geometry.location.lat().toFixed(7)),
-        lng: parseFloat(place.geometry.location.lng().toFixed(7)),
-        id: place.place_id,
-        type: place.types?.[0],
-      });
-    };
-
-    const options = {
-      componentRestrictions: { country: country.toLowerCase() },
-      fields: ["place_id", "name", "geometry", "types"],
-    };
-    //@ts-expect-error window.google injected by Google Maps script
-    const googlePlaces = new window.google.maps.places.Autocomplete(inputRef.current, options);
-    googlePlaces.setFields(["place_id", "name", "geometry", "types"]);
-    googlePlaces.addListener("place_changed", () => {
-      handlePlaceSelect(googlePlaces);
-    });
-    isInitalizedRef.current = true;
+  const { data, isFetching } = useQuery<{ features: PhotonFeature[] }>({
+    queryKey: [PHOTON_API_URL, { q: query, limit: 6, lang: "en", ...(bias ? { lat: bias.lat, lon: bias.lng } : {}) }],
+    enabled: query.length >= 2,
+    staleTime: 5 * 60 * 1000,
   });
 
-  React.useEffect(() => {
-    if (focus && inputRef.current) {
-      (inputRef.current as HTMLInputElement).focus();
-    }
-  }, [focus]);
+  const seen = new Set<string>();
+  const results = (data?.features || []).filter((feature) => {
+    const { name, city, state } = feature.properties;
+    const key = [name, city, state].join("|");
+    if (!name || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
-  if (!country) return null;
+  const selectPlace = (feature: PhotonFeature) => {
+    const [lng, lat] = feature.geometry.coordinates;
+    onChange({
+      name: feature.properties.name || search,
+      lat: parseFloat(lat.toFixed(7)),
+      lng: parseFloat(lng.toFixed(7)),
+      type: feature.properties.osm_value,
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (results[activeIndex]) selectPlace(results[activeIndex]);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => Math.min(prev + 1, results.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => Math.max(prev - 1, 0));
+    }
+  };
 
   return (
-    <Input
-      type="search"
-      ref={inputRef}
-      onKeyDown={handleKeyDown}
-      placeholder="Search..."
-      className={className || ""}
-      {...props}
-    />
+    <div className="relative">
+      <Input
+        size="sm"
+        type="search"
+        autoFocus={focus}
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setActiveIndex(0);
+        }}
+        onKeyDown={handleKeyDown}
+        placeholder="Search for a place..."
+        className={className}
+      />
+      {isFetching && <Spinner className="absolute right-3 top-2.5 text-muted-foreground" />}
+      {query.length >= 2 && !!results.length && (
+        <ul className="absolute top-full z-50 mt-1 w-full overflow-hidden rounded-md border bg-card shadow-md">
+          {results.map((feature, index) => (
+            <li key={`${feature.properties.osm_type}${feature.properties.osm_id}`}>
+              <button
+                type="button"
+                onClick={() => selectPlace(feature)}
+                onMouseEnter={() => setActiveIndex(index)}
+                className={cn("w-full px-3 py-2 text-left", index === activeIndex && "bg-muted")}
+              >
+                <span className="block text-sm font-medium">{feature.properties.name}</span>
+                <span className="block truncate text-xs text-muted-foreground">
+                  {formatContext(feature.properties)}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {query.length >= 2 && !isFetching && !!data && !results.length && (
+        <p className="absolute top-full z-50 mt-1 w-full rounded-md border bg-card px-3 py-2 text-sm text-muted-foreground shadow-md">
+          No places found
+        </p>
+      )}
+    </div>
   );
 }

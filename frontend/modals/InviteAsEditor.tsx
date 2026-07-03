@@ -6,7 +6,7 @@ import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 import { Button } from "components/ui/button";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 
 type Props = {
   participantId: string;
@@ -44,7 +44,7 @@ export default function InviteAsEditor({ participantId, name }: Props) {
         <p className="mb-4 text-sm text-gray-500">Send {name || "this person"} an email to join as an editor.</p>
         <label className="block pb-2">
           <span className="block text-sm font-medium text-gray-700 mb-1.5">Email</span>
-          <Input
+          <Input size="sm"
             type="email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}

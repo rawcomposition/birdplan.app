@@ -8,6 +8,7 @@ import type {
   ItineraryDayInput,
   ItineraryNotesInput,
   MoveLocationInput,
+  ReorderLocationsInput,
   RemoveLocationInput,
   AddLocationInput,
   CalcTravelTimeInput,
@@ -81,6 +82,51 @@ itinerary.patch("/:dayId/move-location", async (c) => {
   const updatedDay = {
     ...day,
     locations: moveLocation(day.locations, data.id, data.direction),
+  };
+
+  const updatedDayWithTravel = await updateDayTravelTimes(trip as any, updatedDay as any);
+
+  await Trip.updateOne(
+    { _id: tripId, "itinerary.id": dayId },
+    {
+      $set: {
+        "itinerary.$.locations": updatedDayWithTravel.locations || [],
+      },
+    }
+  );
+
+  return c.json({});
+});
+
+itinerary.patch("/:dayId/reorder-locations", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId = c.req.param("tripId");
+  const dayId = c.req.param("dayId");
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+  if (!dayId) throw new HTTPException(400, { message: "Day ID is required" });
+
+  const data = await c.req.json<ReorderLocationsInput>();
+
+  await connect();
+  const [trip, isEditor] = await Promise.all([
+    Trip.findById(tripId).lean(),
+    isTripEditor(tripId, session.userId),
+  ]);
+  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
+
+  const day = trip.itinerary?.find((it) => it.id === dayId);
+  if (!day) throw new HTTPException(404, { message: "Day not found" });
+
+  const currentIds = (day.locations || []).map((it) => it.id);
+  const isSameSet =
+    data.ids?.length === currentIds.length && currentIds.every((id) => data.ids.includes(id));
+  if (!isSameSet) throw new HTTPException(400, { message: "ids must match the day's locations" });
+
+  const updatedDay = {
+    ...day,
+    locations: data.ids.map((id) => day.locations.find((it) => it.id === id)!),
   };
 
   const updatedDayWithTravel = await updateDayTravelTimes(trip as any, updatedDay as any);

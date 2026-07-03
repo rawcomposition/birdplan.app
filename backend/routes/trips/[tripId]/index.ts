@@ -12,7 +12,7 @@ import {
   isDuplicateKeyError,
   validateTripDates,
 } from "lib/utils.js";
-import { connect, Trip, Participant, User, IntegrationToken } from "lib/db.js";
+import { connect, Trip, Participant, User, IntegrationToken, TripDocument } from "lib/db.js";
 import {
   isTripEditor,
   isEditorInRoster,
@@ -20,14 +20,15 @@ import {
   loadUsersById,
   resolveTripLifelist,
 } from "lib/participants.js";
-import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
+import { uploadMapboxImageToStorage, imageUrl, deleteFromStorage } from "lib/storage.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
-import type { TripUpdateInput, OpenBirdingLocationResponse } from "@birdplan/shared";
+import type { TripUpdateInput, TripDatesInput, TripCustomArea, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
 import itinerary from "./itinerary.js";
 import participants from "./participants.js";
+import documents from "./documents.js";
 // @ts-ignore - no type definitions available
 import tokml from "@maphubs/tokml";
 
@@ -38,6 +39,7 @@ trip.route("/markers", markers);
 trip.route("/hotspots", hotspots);
 trip.route("/itinerary", itinerary);
 trip.route("/participants", participants);
+trip.route("/documents", documents);
 
 trip.get("/", async (c) => {
   const session = await authenticateOptional(c);
@@ -121,6 +123,154 @@ trip.patch("/", async (c) => {
   return c.json({});
 });
 
+trip.patch("/privacy", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { isPublic } = await c.req.json<{ isPublic: boolean }>();
+  if (typeof isPublic !== "boolean") {
+    throw new HTTPException(400, { message: "isPublic must be a boolean" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne({ _id: tripId }, { isPublic });
+
+  return c.json({});
+});
+
+trip.patch("/custom-area", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { customArea } = await c.req.json<{ customArea: TripCustomArea | null }>();
+  if (customArea !== null) {
+    const isLngLat = (point: unknown): point is [number, number] =>
+      Array.isArray(point) &&
+      point.length === 2 &&
+      typeof point[0] === "number" &&
+      typeof point[1] === "number" &&
+      point[0] >= -180 &&
+      point[0] <= 180 &&
+      point[1] >= -90 &&
+      point[1] <= 90;
+    const isH3Index = (cell: unknown): cell is string => typeof cell === "string" && /^[0-9a-f]{15}$/.test(cell);
+    const isValid =
+      !!customArea &&
+      typeof customArea === "object" &&
+      Array.isArray(customArea.polygon) &&
+      customArea.polygon.length >= 3 &&
+      customArea.polygon.length <= 500 &&
+      customArea.polygon.every(isLngLat) &&
+      Array.isArray(customArea.cells) &&
+      customArea.cells.length >= 1 &&
+      customArea.cells.length <= 3000 &&
+      customArea.cells.every(isH3Index);
+    if (!isValid) {
+      throw new HTTPException(400, {
+        message: "customArea must be null or contain a polygon of [lng, lat] points and 1-3000 H3 cell indexes",
+      });
+    }
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne(
+    { _id: tripId },
+    customArea === null
+      ? { $unset: { customArea: 1 } }
+      : { customArea: { polygon: customArea.polygon, cells: customArea.cells } }
+  );
+
+  return c.json({});
+});
+
+trip.patch("/description", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { description } = await c.req.json<{ description: string }>();
+  if (typeof description !== "string" || description.length > 5000) {
+    throw new HTTPException(400, { message: "description must be a string of at most 5000 characters" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  await Trip.updateOne({ _id: tripId }, { description: description.trim() });
+
+  return c.json({});
+});
+
+trip.patch("/dates", async (c) => {
+  const session = await authenticate(c);
+
+  const tripId: string | undefined = c.req.param("tripId");
+
+  if (!tripId) {
+    throw new HTTPException(400, { message: "Trip ID is required" });
+  }
+
+  const { startDate, endDate } = await c.req.json<TripDatesInput>();
+  const isDate = (value: unknown) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+  if (!isDate(startDate) || !isDate(endDate)) {
+    throw new HTTPException(400, { message: "startDate and endDate must be YYYY-MM-DD dates" });
+  }
+  if (endDate < startDate) {
+    throw new HTTPException(400, { message: "endDate must be on or after startDate" });
+  }
+
+  await connect();
+  const trip = await Trip.findById(tripId).lean();
+  if (!trip) {
+    throw new HTTPException(404, { message: "Trip not found" });
+  }
+  if (!(await isTripEditor(tripId, session.userId))) {
+    throw new HTTPException(403, { message: "Forbidden" });
+  }
+
+  const startMonth = Number(startDate.slice(5, 7));
+  const endMonth = Number(endDate.slice(5, 7));
+  await Trip.updateOne({ _id: tripId }, { startDate, endDate, startMonth, endMonth });
+
+  return c.json({});
+});
+
 trip.delete("/", async (c) => {
   const session = await authenticate(c);
 
@@ -139,11 +289,22 @@ trip.delete("/", async (c) => {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
+  const documents = await TripDocument.find({ tripId }).select("key").lean();
+
   await Promise.all([
     Trip.deleteOne({ _id: tripId }),
     Participant.deleteMany({ tripId }),
     IntegrationToken.deleteMany({ tripId }),
+    TripDocument.deleteMany({ tripId }),
   ]);
+
+  await Promise.all(
+    documents.map((doc) =>
+      deleteFromStorage(doc.key).catch((error) =>
+        console.error("Failed to delete document from storage", doc.key, error)
+      )
+    )
+  );
 
   return c.json({});
 });

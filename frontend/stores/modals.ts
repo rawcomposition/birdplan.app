@@ -16,7 +16,10 @@ export type ModalId =
   | "addParticipant"
   | "inviteAsEditor"
   | "manageLifelist"
-  | "generateMagicLink";
+  | "generateMagicLink"
+  | "share"
+  | "tripNotes"
+  | "editDocument";
 
 export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   hotspot: "right",
@@ -32,6 +35,9 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   inviteAsEditor: "center",
   manageLifelist: "center",
   generateMagicLink: "center",
+  share: "center",
+  tripNotes: "center",
+  editDocument: "center",
 };
 
 type ModalState = {
@@ -42,14 +48,20 @@ type ModalState = {
   close: () => void;
 };
 
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
 export const useModalStore = create<ModalState>((set) => ({
   modalId: null,
   modalProps: {},
   closing: false,
-  open: (id, props) => set({ modalId: id, modalProps: props || {}, closing: false }),
+  open: (id, props) => {
+    clearTimeout(closeTimer);
+    set({ modalId: id, modalProps: props || {}, closing: false });
+  },
   close: () => {
     set({ closing: true });
-    setTimeout(() => set({ modalId: null, closing: false }), 500);
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => set({ modalId: null, closing: false }), 500);
   },
 }));
 

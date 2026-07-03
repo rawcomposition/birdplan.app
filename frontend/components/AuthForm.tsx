@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import Field from "components/Field";
 import { Button } from "components/ui/button";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import useRequestCode from "hooks/useRequestCode";
 import useVerifyCode from "hooks/useVerifyCode";
 import useReportNoCode from "hooks/useReportNoCode";
@@ -85,11 +85,11 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
 
   return (
     <>
-      {heading && <h2 className="text-lg text-center font-bold text-gray-600 mb-1">{heading}</h2>}
-      {message && <p className="text-sm text-gray-500 text-center mb-6">{message}</p>}
+      {heading && <h2 className="text-lg text-center font-bold text-secondary-foreground mb-1">{heading}</h2>}
+      {message && <p className="text-sm text-muted-foreground text-center mb-6">{message}</p>}
 
       {error && (
-        <Alert style="error" className="mb-4">
+        <Alert variant="destructive" className="mb-4">
           {error}
         </Alert>
       )}
@@ -122,7 +122,7 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
               value={code}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value.replace(/\D/g, ""))}
             />
-            <span className="text-xs text-gray-400">We sent a code to your inbox</span>
+            <span className="text-xs text-muted-foreground">We sent a code to your inbox</span>
           </Field>
         )}
 
@@ -140,9 +140,9 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
         {step === "code" && (
           <div className="text-center text-sm">
             {showHelp ? (
-              <div className="space-y-3 text-left text-gray-500">
+              <div className="space-y-3 text-left text-muted-foreground">
                 <p>
-                  We sent a code to <span className="font-medium text-gray-700">{email}</span>.{" "}
+                  We sent a code to <span className="font-medium text-foreground">{email}</span>.{" "}
                   <Button variant="link" type="button" onClick={backToEmail}>
                     Change email
                   </Button>
@@ -152,7 +152,7 @@ export default function AuthForm({ heading, message, email: initialEmail, lockEm
                   <li>Check your spam or junk folder.</li>
                   <li>
                     {cooldown > 0 ? (
-                      <span className="text-gray-400">Resend in {cooldown}s</span>
+                      <span className="text-muted-foreground/70">Resend in {cooldown}s</span>
                     ) : (
                       <Button
                         variant="link"

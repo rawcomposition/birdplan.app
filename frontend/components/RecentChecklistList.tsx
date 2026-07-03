@@ -9,9 +9,10 @@ import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useLocationTargets from "hooks/useLocationTargets";
 import { RecentChecklist } from "lib/types";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import ObsList from "components/ObsList";
 import SelectDropdown from "components/SelectDropdown";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 
 type Props = {
   hotspotId: string;
@@ -46,10 +47,10 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
   return (
     <>
       {speciesCode && (
-        <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded">
+        <div className="text-sm -mx-1 my-1 bg-primary/10 text-primary-hover py-2.5 px-3 rounded">
           {speciesName}
           <br />
-          {isLoadingTargets && <Icon name="loading" className="text-xl animate-spin" />}
+          {isLoadingTargets && <Spinner className="size-5" />}
           {!isLoadingTargets && successRate !== null && (
             <>
               <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of {totalSamples.toLocaleString()}{" "}
@@ -59,7 +60,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                   <button
                     type="button"
                     aria-label="About this stat"
-                    className="block text-sky-800 leading-none"
+                    className="block text-primary-hover leading-none"
                     onMouseEnter={() => setShowDatasetTip(true)}
                     onMouseLeave={() => setShowDatasetTip(false)}
                     onFocus={() => setShowDatasetTip(true)}
@@ -81,7 +82,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             </>
           )}
           {!isLoadingTargets && successRate === null && (
-            <span className="text-sky-700/80">No frequency data available</span>
+            <span className="text-primary-hover/80">No frequency data available</span>
           )}
           {!!obsError && <span className="text-red-500">Failed to load recent reports</span>}
         </div>
@@ -164,18 +165,18 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             </p>
           )}
           {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (
-            <Alert style="info" className="-mx-1 my-1">
+            <Alert variant="info" className="-mx-1 my-1">
               No recent checklists
             </Alert>
           )}
           {(isLoading || isLoadingSpecies) && (
-            <Alert style="gray" className="-mx-1 my-1">
-              {!reduceLoaders && <Icon name="loading" className="text-xl animate-spin" />}
+            <Alert variant="muted" className="-mx-1 my-1">
+              {!reduceLoaders && <Spinner className="size-5" />}
               Loading recent checklists...
             </Alert>
           )}
           {error && (
-            <Alert style="error" className="-mx-1 my-1">
+            <Alert variant="destructive" className="-mx-1 my-1">
               <Icon name="xMarkCircle" className="text-xl" />
               Failed to load recent checklists
               <Button variant="link" onClick={() => refetch()}>

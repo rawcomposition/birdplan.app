@@ -4,8 +4,9 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 
 type Props = {
   locId: string;
@@ -76,18 +77,18 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
         )}
       </p>
       {isLoading && (
-        <Alert style="info" className="-mx-1 my-1">
-          <Icon name="loading" className="text-xl animate-spin" />
+        <Alert variant="info" className="-mx-1 my-1">
+          <Spinner className="size-5" />
           Loading recent species...
         </Alert>
       )}
       {!isLoading && recentSpecies.length === 0 && !error && (
-        <Alert style="info" className="-mx-1 my-1">
+        <Alert variant="info" className="-mx-1 my-1">
           No recent needs in the last 30 days
         </Alert>
       )}
       {error && (
-        <Alert style="error" className="-mx-1 my-1">
+        <Alert variant="destructive" className="-mx-1 my-1">
           <Icon name="xMarkCircle" className="text-xl" />
           Failed to load recent species
           <Button variant="link" onClick={() => refetch()}>

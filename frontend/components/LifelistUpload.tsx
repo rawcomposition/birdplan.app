@@ -1,6 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { parseLifelistCsv } from "lib/lifelistCsv";
 
 type Props = {
@@ -29,7 +30,7 @@ export default function LifelistUpload({ onImport, isPending, buttonLabel, varia
     return (
       <label
         className={`inline-flex items-center gap-2 rounded-[10px] px-4 py-2.5 text-sm font-semibold transition-colors ${
-          isPending ? "bg-gray-100 text-gray-400" : "cursor-pointer bg-sky-50 text-link hover:bg-sky-100"
+          isPending ? "bg-gray-100 text-gray-400" : "cursor-pointer bg-primary/10 text-link hover:bg-primary/15"
         }`}
       >
         <input
@@ -40,7 +41,7 @@ export default function LifelistUpload({ onImport, isPending, buttonLabel, varia
           className="sr-only"
           onChange={handleFileUpload}
         />
-        <Icon name={isPending ? "loading" : "feather"} className={isPending ? "animate-spin" : ""} />
+        {isPending ? <Spinner /> : <Icon name="feather" />}
         {isPending ? "Importing…" : buttonLabel}
       </label>
     );
@@ -63,7 +64,7 @@ export default function LifelistUpload({ onImport, isPending, buttonLabel, varia
         onChange={handleFileUpload}
       />
       <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
-        <Icon name={isPending ? "loading" : "feather"} className={`text-lg ${isPending ? "animate-spin" : ""}`} />
+        {isPending ? <Spinner className="size-4.5" /> : <Icon name="feather" className="text-lg" />}
       </span>
       {isPending ? (
         <span className="text-sm font-medium text-gray-600">Importing…</span>

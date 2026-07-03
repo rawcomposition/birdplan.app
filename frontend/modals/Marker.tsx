@@ -2,7 +2,7 @@ import React from "react";
 import { Header, Body } from "components/Modal";
 import { Button } from "components/ui/button";
 import Field from "components/Field";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import { nanoId } from "lib/helpers";
@@ -178,7 +178,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
         <div className="flex gap-2 mb-2">
           <div className="flex flex-col gap-5 w-full">
             <Field label="Name">
-              <Input
+              <Input size="sm"
                 type="text"
                 name="name"
                 value={name}
@@ -188,7 +188,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
             </Field>
             <div className="flex gap-2">
               <Field label="Latitude">
-                <Input
+                <Input size="sm"
                   type="string"
                   name="lat"
                   value={lat || ""}
@@ -205,7 +205,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
                 />
               </Field>
               <Field label="Longitude">
-                <Input
+                <Input size="sm"
                   type="string"
                   name="lng"
                   value={lng || ""}

@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "components/Modal";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import { useModal } from "stores/modals";
 import useFetchHotspots from "hooks/useFetchHotspots";
 import { useTrip } from "hooks/useTrip";
@@ -64,7 +64,7 @@ export default function AddHotspot() {
       <Body>
         <div className="flex gap-2 mb-2" onKeyDown={handleKeyDown}>
           <div className="flex flex-col gap-5 w-full">
-            <Input
+            <Input size="sm"
               type="search"
               name="query"
               placeholder="Search by name or ID"

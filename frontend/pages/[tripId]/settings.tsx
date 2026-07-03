@@ -6,7 +6,7 @@ import MonthSelect from "components/MonthSelect";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
 import FormPage from "components/FormPage";
@@ -17,7 +17,7 @@ import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
 import useResolvedRegion from "hooks/useResolvedRegion";
 import RegionFields from "components/RegionFields";
-import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRegionCode, validateRegionFields, RegionFieldsValue } from "lib/region";
 import { Trip } from "@birdplan/shared";
@@ -40,7 +40,7 @@ export default function TripSettings() {
       <div className="flex flex-col h-full">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <Icon name="loading" className="text-2xl text-gray-400 animate-spin" />
+          <Spinner className="size-6 text-muted-foreground" />
         </main>
         <Footer />
       </div>

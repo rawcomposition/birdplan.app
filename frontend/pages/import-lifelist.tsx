@@ -3,9 +3,10 @@ import toast from "react-hot-toast";
 import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "components/ui/button";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import FormPage from "components/FormPage";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
 import useMutation from "hooks/useMutation";
@@ -13,7 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
 import { getReturnLabel } from "lib/helpers";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
@@ -125,7 +126,7 @@ export default function ImportLifelist() {
               to all your trips.
             </p>
             {isError && (
-              <Alert style="error" className="-mx-1 my-1">
+              <Alert variant="destructive" className="-mx-1 my-1">
                 <Icon name="xMarkCircle" className="text-xl" />
                 Failed to load eBird taxonomy
                 <Button variant="link" onClick={() => refetch()}>
@@ -135,7 +136,7 @@ export default function ImportLifelist() {
             )}
             {isLoading ? (
               <div className="flex items-center justify-center h-20">
-                <Icon name="loading" className="animate-spin" />
+                <Spinner />
               </div>
             ) : (
               <AsyncSelect

@@ -1,12 +1,13 @@
 import React from "react";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 
 type Props = {
   hotspotId: string;
@@ -65,7 +66,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
                 <a href={`https://ebird.org/checklist/${checklistId}#${speciesCode}`} target="_blank" rel="noreferrer">
                   {evidence === "N" && <Icon name="comment" className="text-gray-600 text-xs" />}
                   {evidence === "P" && <Icon name="camera" className="text-lime-700" />}
-                  {evidence === "A" && <Icon name="speaker" className="text-sky-700" />}
+                  {evidence === "A" && <Icon name="speaker" className="text-primary-hover" />}
                 </a>
               </td>
               <td className="text-right">
@@ -85,14 +86,14 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
         )}
       </p>
       {isLoading && (
-        <Alert style="info" className="-mx-1 my-1">
-          <Icon name="loading" className="text-xl animate-spin" />
+        <Alert variant="info" className="-mx-1 my-1">
+          <Spinner className="size-5" />
           Loading observations...
         </Alert>
       )}
 
       {error && (
-        <Alert style="error" className="-mx-1 my-1">
+        <Alert variant="destructive" className="-mx-1 my-1">
           <Icon name="xMarkCircle" className="text-xl" />
           Failed to load observations
           <Button variant="link" onClick={() => refetch()}>

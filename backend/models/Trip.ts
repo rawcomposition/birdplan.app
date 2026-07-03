@@ -21,6 +21,7 @@ const fields: Record<
   ownerName: String,
   isPublic: { type: Boolean, default: true },
   name: { type: String, required: true },
+  description: String,
   region: { type: String, required: true },
   bounds: {
     minX: { type: Number, required: true },
@@ -91,6 +92,14 @@ const fields: Record<
   startMonth: { type: Number, required: true },
   endMonth: { type: Number, required: true },
   imgUrl: { type: String, default: null },
+  customArea: {
+    type: {
+      _id: false,
+      polygon: [[Number]],
+      cells: [String],
+    },
+    default: null,
+  },
   targetStars: [{ type: String, default: [] }],
   targetNotes: { type: Map, of: String, default: {} },
   shareCode: { type: String, unique: true, sparse: true },

@@ -46,9 +46,9 @@ const tabsTriggerVariants = cva(
     variants: {
       variant: {
         underline:
-          "gap-2 border-b-2 border-transparent py-3 text-gray-900 hover:border-gray-500 data-[active]:border-gray-500",
+          "gap-2 border-b-2 border-transparent py-3 text-foreground hover:border-muted-foreground data-[active]:border-primary",
         pills:
-          "gap-3 rounded px-4 py-2 text-left hover:bg-gray-100 data-[active]:bg-blue-50 data-[active]:text-blue-600",
+          "gap-3 rounded px-4 py-2 text-left hover:bg-muted data-[active]:bg-primary/10 data-[active]:text-primary-hover",
       },
     },
     defaultVariants: {

@@ -1,7 +1,9 @@
 import React from "react";
-import clsx from "clsx";
+import { cn } from "lib/utils";
 import Icon from "components/Icon";
 import SelectDropdown from "components/SelectDropdown";
+import SegmentedControl from "components/SegmentedControl";
+import FilterChip from "components/FilterChip";
 
 export type Scope = "saved" | "all";
 export type SortKey = "best" | "freq";
@@ -47,9 +49,16 @@ export default function SpeciesHotspotToolbar({
 }: Props) {
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      <ScopeToggle scope={scope} setScope={setScope} />
+      <SegmentedControl
+        value={scope}
+        onChange={setScope}
+        options={[
+          { value: "saved", label: "Saved", icon: <Icon name="star" className="text-xs" /> },
+          { value: "all", label: "All hotspots" },
+        ]}
+      />
       <div className="sm:ml-auto flex items-center gap-2.5 flex-wrap">
-        <SortDropdown value={sort} onChange={setSort} />
+        <SelectDropdown value={sort} onChange={setSort} options={SORT_OPTIONS} label="Sort" />
         <MoreFiltersMenu
           minObservations={minObservations}
           setMinObservations={setMinObservations}
@@ -59,38 +68,6 @@ export default function SpeciesHotspotToolbar({
       </div>
     </div>
   );
-}
-
-function ScopeToggle({ scope, setScope }: { scope: Scope; setScope: (s: Scope) => void }) {
-  const options: { value: Scope; label: string; icon?: React.ReactNode }[] = [
-    { value: "saved", label: "Saved", icon: <Icon name="star" className="text-xs" /> },
-    { value: "all", label: "All hotspots" },
-  ];
-  return (
-    <div className="inline-flex h-9 items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">
-      {options.map((opt) => {
-        const active = scope === opt.value;
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => setScope(opt.value)}
-            className={clsx(
-              "px-3 h-full text-xs font-medium rounded-md inline-flex items-center gap-1.5 whitespace-nowrap",
-              active ? "bg-white text-gray-800 shadow-xs" : "text-gray-600 hover:text-gray-800"
-            )}
-          >
-            {opt.icon}
-            {opt.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortKey) => void }) {
-  return <SelectDropdown value={value} onChange={onChange} options={SORT_OPTIONS} label="Sort" />;
 }
 
 function MoreFiltersMenu({
@@ -109,29 +86,20 @@ function MoreFiltersMenu({
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={clsx(
-          "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm whitespace-nowrap",
-          activeCount > 0
-            ? "border-sky-300 bg-sky-50 text-sky-700"
-            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-        )}
-      >
+      <FilterChip active={activeCount > 0} className="h-9 px-3 text-sm font-normal" onClick={() => setOpen((o) => !o)}>
         Filters
         {activeCount > 0 && (
-          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-sky-600 text-[10px] font-bold text-white">
+          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
             {activeCount}
           </span>
         )}
-      </button>
+      </FilterChip>
       {open && (
         <>
           <div onClick={() => setOpen(false)} className="fixed inset-0 z-30" />
-          <div className="absolute top-full right-0 mt-2 z-40 w-[300px] bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+          <div className="absolute top-full right-0 mt-2 z-40 w-[300px] bg-card border rounded-xl shadow-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold">
+              <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">
                 Last seen (days)
               </div>
               <button
@@ -141,56 +109,41 @@ function MoreFiltersMenu({
                   setRecentDays(null);
                   setOpen(false);
                 }}
-                className={clsx(
-                  "text-[11px] font-semibold text-link hover:text-sky-700",
-                  activeCount === 0 && "invisible"
-                )}
+                className={cn("text-[11px] font-semibold text-link hover:opacity-80", activeCount === 0 && "invisible")}
               >
                 Clear all
               </button>
             </div>
-            <div className="inline-flex bg-gray-100 p-0.5 rounded-lg border border-gray-200 mb-4">
-              {([
+            <SegmentedControl
+              className="mb-4 h-8"
+              value={recentDays}
+              onChange={setRecentDays}
+              options={[
                 { value: null, label: "Any" },
                 { value: 3, label: "3" },
                 { value: 7, label: "7" },
                 { value: 14, label: "14" },
                 { value: 30, label: "30" },
-              ] as const).map((opt) => {
-                const active = recentDays === opt.value;
-                return (
-                  <button
-                    key={String(opt.value)}
-                    type="button"
-                    onClick={() => setRecentDays(opt.value)}
-                    className={clsx(
-                      "px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap",
-                      active ? "bg-white text-gray-800 shadow-xs" : "text-gray-600 hover:text-gray-800"
-                    )}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-2">
+              ]}
+            />
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold mb-2">
               Minimum observations
             </div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-gray-200 rounded-lg text-xs text-gray-700">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-lg text-xs text-secondary-foreground">
               <span>Min</span>
               <button
                 type="button"
                 onClick={() => setMinObservations(prevStep(minObservations))}
-                className="w-6 h-6 rounded grid place-items-center text-gray-600 hover:bg-gray-100"
+                className="w-6 h-6 rounded grid place-items-center text-secondary-foreground hover:bg-muted"
                 aria-label="Decrease"
               >
                 −
               </button>
-              <span className="min-w-[22px] text-center font-bold text-gray-800">{minObservations}</span>
+              <span className="min-w-[22px] text-center font-bold text-foreground">{minObservations}</span>
               <button
                 type="button"
                 onClick={() => setMinObservations(nextStep(minObservations))}
-                className="w-6 h-6 rounded grid place-items-center text-gray-600 hover:bg-gray-100"
+                className="w-6 h-6 rounded grid place-items-center text-secondary-foreground hover:bg-muted"
                 aria-label="Increase"
               >
                 +

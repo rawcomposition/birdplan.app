@@ -16,9 +16,11 @@ type Props = {
   hotspotLayer?: any;
   obsLayer?: any;
   addingMarker?: boolean;
+  drawing?: boolean;
   showSatellite?: boolean;
   onHotspotClick?: (id: string) => void;
   onDisableAddingMarker?: () => void;
+  children?: React.ReactNode;
 };
 
 export default function Mapbox({
@@ -29,8 +31,10 @@ export default function Mapbox({
   hotspotLayer,
   obsLayer,
   addingMarker,
+  drawing,
   showSatellite,
   onDisableAddingMarker,
+  children,
 }: Props) {
   const { open, close } = useModal();
   const { selectedMarkerId, halo } = useTrip();
@@ -108,7 +112,7 @@ export default function Mapbox({
   if (!lat || !lng) return null;
 
   return (
-    <div className={clsx("relative w-full h-full", addingMarker && "mapboxAddMarkerMode")}>
+    <div className={clsx("relative w-full h-full", (addingMarker || drawing) && "mapboxAddMarkerMode")}>
       <Map
         initialViewState={{
           longitude: lng,
@@ -127,6 +131,7 @@ export default function Mapbox({
           e.target.getCanvas().style.cursor = "pointer";
         }}
         onClick={(e) => {
+          if (drawing) return;
           if (addingMarker) {
             const lat = Math.round(e.lngLat.lat * 1000000) / 1000000;
             const lng = Math.round(e.lngLat.lng * 1000000) / 1000000;
@@ -199,6 +204,7 @@ export default function Mapbox({
             <Layer {...obsLayerStyle} />
           </Source>
         )}
+        {children}
         {halo && (
           <Marker latitude={halo.lat} longitude={halo.lng}>
             <div className="w-9 h-9 rounded-full border-2 border-white/80 bg-white/70 flex items-center justify-center">

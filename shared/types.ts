@@ -4,6 +4,7 @@ export type Trip = {
   ownerName: string;
   isPublic: boolean;
   name: string;
+  description?: string;
   region: string;
   bounds: {
     minX: number;
@@ -19,6 +20,7 @@ export type Trip = {
   startMonth: number;
   endMonth: number;
   imgUrl: string | null;
+  customArea?: TripCustomArea | null;
   groupLifelist?: string[] | null;
   unionLifelist?: string[] | null;
   tripLifelist?: string[] | null;
@@ -420,6 +422,58 @@ export type ItineraryNotesInput = {
 export type MoveLocationInput = {
   id: string;
   direction: "up" | "down";
+};
+
+export type ReorderLocationsInput = {
+  ids: string[];
+};
+
+export type TripDatesInput = {
+  startDate: string;
+  endDate: string;
+};
+
+export type TripCustomArea = {
+  polygon: [number, number][];
+  cells: string[];
+};
+
+export type TripDocumentCategory = "flights" | "lodging" | "transport" | "permits" | "maps" | "other";
+
+export type TripDocumentVisibility = "private" | "trip" | "public";
+
+export type TripDocument = {
+  _id: string;
+  tripId: string;
+  name: string;
+  key: string;
+  size: number;
+  mimeType: string;
+  category?: TripDocumentCategory | null;
+  visibility: TripDocumentVisibility;
+  uploadedBy: string;
+  url?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type TripDocumentUploadUrlInput = {
+  name: string;
+  size: number;
+  mimeType: string;
+};
+
+export type TripDocumentCreateInput = {
+  key: string;
+  name: string;
+  size: number;
+  mimeType: string;
+};
+
+export type TripDocumentUpdateInput = {
+  name: string;
+  category?: TripDocumentCategory | null;
+  visibility: TripDocumentVisibility;
 };
 
 export type RemoveLocationInput = {

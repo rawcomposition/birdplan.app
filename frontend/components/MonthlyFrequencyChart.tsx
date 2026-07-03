@@ -66,7 +66,7 @@ export default function MonthlyFrequencyChart({
                     className={clsx(
                       "w-full h-full transition-colors",
                       isMini ? "rounded-[1px]" : "rounded-md",
-                      inRange ? (isHover ? "bg-sky-700" : "bg-sky-600") : isHover ? "bg-gray-600" : "bg-gray-300"
+                      inRange ? (isHover ? "bg-primary-hover" : "bg-primary") : isHover ? "bg-gray-600" : "bg-gray-300"
                     )}
                   />
                   {isHover && (
@@ -85,7 +85,7 @@ export default function MonthlyFrequencyChart({
                 <div
                   className={clsx(
                     "text-[10.5px] mt-1.5",
-                    inRange ? "text-sky-700 font-bold" : "text-gray-500 font-medium"
+                    inRange ? "text-primary-hover font-bold" : "text-gray-500 font-medium"
                   )}
                 >
                   {MONTH_INITIALS[i]}

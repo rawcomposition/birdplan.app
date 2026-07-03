@@ -8,7 +8,7 @@ import {
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
 import { Map, Star, ExternalLink, Check } from "lucide-react";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import MutualBadge from "components/MutualBadge";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 

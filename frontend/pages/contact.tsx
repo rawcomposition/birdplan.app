@@ -4,14 +4,17 @@ import HomeHeader from "components/HomeHeader";
 import { useUser } from "hooks/useUser";
 import toast from "react-hot-toast";
 import Field from "components/Field";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
+import { Textarea } from "components/ui/textarea";
 import { Button } from "components/ui/button";
 import useMutation from "hooks/useMutation";
 import { Link } from "react-router-dom";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "components/ui/select";
 
 export default function Contact() {
   const { user } = useUser();
   const [submitted, setSubmitted] = React.useState(false);
+  const [type, setType] = React.useState<string | null>(null);
 
   const mutation = useMutation({
     url: "/contact",
@@ -27,7 +30,6 @@ export default function Contact() {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
-    const type = formData.get("type") as string;
     const message = formData.get("message") as string;
 
     if (!name || !email || !type || !message) {
@@ -58,49 +60,52 @@ export default function Contact() {
       <HomeHeader />
       <main className="container px-4">
         <div className="max-w-2xl mx-auto py-12">
-          <h1 className="text-4xl text-gray-800 leading-normal font-bold mb-8">Contact</h1>
+          <h1 className="text-4xl text-foreground leading-normal font-bold mb-8">Contact</h1>
 
           {submitted ? (
-            <div className="bg-white p-8 rounded-lg shadow-sm">
-              <h2 className="text-2xl font-bold text-gray-700 mb-4">Thank you for your message!</h2>
-              <p className="text-gray-600 mb-4">
+            <div className="rounded-xl border bg-card p-8 shadow-xs">
+              <h2 className="text-2xl font-bold text-secondary-foreground mb-4">Thank you for your message!</h2>
+              <p className="text-secondary-foreground mb-4">
                 We&apos;ve received your request and will get back to you as soon as possible.
               </p>
               <Link
                 to={user?._id ? `/trips` : "/"}
-                className="text-gray-500 hover:text-gray-600 ml-4 md:ml-0 inline-flex items-center"
+                className="text-muted-foreground hover:text-foreground ml-4 md:ml-0 inline-flex items-center"
               >
                 {user?._id ? "← Back to trips" : "← Back to home"}
               </Link>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-sm">
-              <p className="text-gray-600 mb-4">
+            <div className="rounded-xl border bg-card p-8 shadow-xs">
+              <p className="text-secondary-foreground mb-4">
                 Do you have any questions, feedback, or bug reports? We would love to hear from you!
               </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <Field label="Name">
-                  <Input type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
+                  <Input size="sm" type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
                 </Field>
 
                 <Field label="Email">
-                  <Input type="email" name="email" defaultValue={user?.email || ""} required />
+                  <Input size="sm" type="email" name="email" defaultValue={user?.email || ""} required />
                 </Field>
 
                 <Field label="Type of Message">
-                  <select name="type" required className="input" defaultValue="">
-                    <option value="" disabled>
-                      Select
-                    </option>
-                    <option value="Feature Request">Feature Request</option>
-                    <option value="Bug Report">Bug Report</option>
-                    <option value="Help Request">Help Request</option>
-                    <option value="Other">Other</option>
-                  </select>
+                  <Select value={type} onValueChange={(value) => setType(value as string | null)}>
+                    <SelectTrigger className="w-full h-9">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["Feature Request", "Bug Report", "Help Request", "Other"].map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
 
                 <Field label="Message">
-                  <Input isTextarea name="message" rows={10} required />
+                  <Textarea name="message" rows={10} required />
                 </Field>
 
                 <div className="flex justify-end">

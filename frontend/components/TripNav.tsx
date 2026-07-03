@@ -1,5 +1,4 @@
 import React from "react";
-import clsx from "clsx";
 import { cn } from "lib/utils";
 import { useTrip } from "hooks/useTrip";
 import { Link, useLocation } from "react-router-dom";
@@ -9,36 +8,35 @@ import { buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
 
 const links = [
-  { name: "Map", slug: "", icon: "mapFlat" },
+  { name: "Overview", slug: "", icon: "house" },
+  { name: "Map", slug: "map", icon: "mapFlat" },
   { name: "Targets", slug: "targets", icon: "bullseye" },
   { name: "Itinerary", slug: "itinerary", icon: "calendar" },
 ];
 
-type Props = {
-  active: string;
-  border?: boolean;
-};
-
-export default function TripNav({ active, border = true }: Props) {
+export default function TripNav() {
   const { trip } = useTrip();
   const { pathname } = useLocation();
   const { close } = useModal();
+  const active = pathname.split("/")[2] ?? "";
 
   React.useEffect(() => {
     close();
   }, [pathname]);
 
   return (
-    <div className={clsx("bg-white px-2 pb-2 pt-0.5 h-[55px]", border && "border-b border-gray-100")}>
-      <div className="flex gap-1.5 items-center shrink-0 bg-slate-200/80 justify-start rounded-full px-2.5 py-2">
+    <div
+      className={cn("bg-card px-2 pb-2 pt-0.5 h-[55px] print:hidden", active !== "map" && "border-b border-border/60")}
+    >
+      <div className="flex gap-1.5 items-center shrink-0 bg-muted justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
           <Link
-            to={`/${trip?._id}/${slug}`}
+            to={`/${trip?._id}${slug ? `/${slug}` : ""}`}
             key={slug}
             className={cn(
               buttonVariants({ variant: "nav", size: "none" }),
               "py-1 px-2.5 text-[14px]",
-              active === slug && "bg-sky-600 text-gray-100 hover:bg-sky-600"
+              active === slug && "bg-primary text-primary-foreground hover:bg-primary"
             )}
           >
             <Icon name={icon as any} className="hidden! xs:inline!" />

@@ -4,7 +4,7 @@ import { rateLimiter } from "hono-rate-limiter";
 import trip from "./[tripId]/index.js";
 import { authenticate, getBounds, validateTripDates } from "lib/utils.js";
 import { connect, Trip, Participant, IntegrationToken, User } from "lib/db.js";
-import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
+import { uploadMapboxImageToStorage, buildTripImageUrl, imageUrl } from "lib/storage.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripInput, ParticipantView, TripStats, TripListItem, TripListPage } from "@birdplan/shared";
 
@@ -257,8 +257,7 @@ trips.post("/", async (c) => {
     throw new HTTPException(500, { message: "Failed to fetch region info" });
   }
 
-  const mapboxImgUrl = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/[${bounds?.minX},${bounds?.minY},${bounds?.maxX},${bounds?.maxY}]/300x185@2x?access_token=${process.env.MAPBOX_SERVER_KEY}&padding=30`;
-  const imgUrl = await uploadMapboxImageToStorage(mapboxImgUrl);
+  const imgUrl = await uploadMapboxImageToStorage(buildTripImageUrl(bounds));
 
   await connect();
   const user = await User.findOne({ _id: session.userId }).select("name").lean();

@@ -1,5 +1,5 @@
 import React from "react";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import Icon from "components/Icon";
 import { IconNameT } from "lib/icons";
 import { cn } from "lib/utils";

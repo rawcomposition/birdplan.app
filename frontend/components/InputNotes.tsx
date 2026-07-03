@@ -31,7 +31,7 @@ export default function InputNotes({ value, onBlur }: Props) {
         <div className="mt-6 -mx-2">
           <TextareaAutosize
             placeholder="Notes..."
-            className="mt-1 input"
+            className="mt-1 block w-full rounded-md border border-border bg-card px-3 py-2 text-base shadow-xs outline-primary outline-offset-0 focus:border-ring sm:text-sm"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             onBlur={(e) => onBlur(e.target.value)}
@@ -41,7 +41,7 @@ export default function InputNotes({ value, onBlur }: Props) {
           />
         </div>
       ) : (
-        <div className="mt-6 text-gray-700 text-sm relative group whitespace-pre-wrap">{notes || "No notes"}</div>
+        <div className="mt-6 text-secondary-foreground text-sm relative group whitespace-pre-wrap">{notes || "No notes"}</div>
       )}
       <div className="-mt-1 -ml-3">
         {showToggleBtn && (

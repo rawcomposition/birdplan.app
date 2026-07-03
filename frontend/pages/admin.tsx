@@ -10,8 +10,9 @@ import Header from "components/Header";
 import Heading from "components/Heading";
 import Footer from "components/Footer";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import Avatar from "components/Avatar";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import Error from "components/Error";
 import { Button } from "components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
@@ -113,7 +114,7 @@ function UserActions({ user }: { user: AdminDashboardUser }) {
         disabled={generating}
         aria-label="User actions"
       >
-        <Icon name={generating ? "loading" : "verticalDots"} className={clsx(generating && "animate-spin")} />
+        {generating ? <Spinner /> : <Icon name="verticalDots" />}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={generate}>Generate magic link</DropdownMenuItem>
@@ -173,7 +174,7 @@ export default function Admin() {
 
         {isLoading && !data ? (
           <div className="flex justify-center py-16">
-            <Icon name="loading" className="animate-spin text-4xl text-slate-400" />
+            <Spinner className="size-9 text-muted-foreground" />
           </div>
         ) : (
           data && (

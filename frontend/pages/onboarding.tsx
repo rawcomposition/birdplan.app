@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import UtilityPage from "components/UtilityPage";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import { Button } from "components/ui/button";
 import Field from "components/Field";
-import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { useUser } from "hooks/useUser";
 import useMutation from "hooks/useMutation";
 import { withReturnTo } from "lib/helpers";
@@ -32,7 +32,7 @@ export default function Onboarding() {
     return (
       <UtilityPage heading="Welcome">
         <div className="text-center">
-          <Icon name="loading" className="animate-spin text-4xl text-slate-500" />
+          <Spinner className="size-9 text-muted-foreground" />
         </div>
       </UtilityPage>
     );
@@ -57,7 +57,7 @@ export default function Onboarding() {
       <p className="text-sm text-gray-500 text-center mb-6">What should we call you?</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Your name">
-          <Input
+          <Input size="sm"
             type="text"
             name="name"
             placeholder="Name"

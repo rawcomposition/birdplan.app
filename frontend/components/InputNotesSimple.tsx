@@ -27,7 +27,7 @@ export default function InputNotesSimple({ value, onBlur, className, canEdit, sh
       {inEditMode ? (
         <TextareaAutosize
           placeholder="Notes..."
-          className="input"
+          className="block w-full rounded-md border border-border bg-card px-3 py-2 text-base shadow-xs outline-primary outline-offset-0 focus:border-ring sm:text-sm"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           onBlur={(e) => handleBlur(e.target.value)}
@@ -36,7 +36,7 @@ export default function InputNotesSimple({ value, onBlur, className, canEdit, sh
           ref={notsRef}
         />
       ) : (
-        <div className="text-gray-700 text-sm relative group whitespace-pre-wrap">{notes || ""}</div>
+        <div className="text-secondary-foreground text-sm relative group whitespace-pre-wrap">{notes || ""}</div>
       )}
       <div className="-mt-1 -ml-3">
         {!inEditMode && canEdit && (
