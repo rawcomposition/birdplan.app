@@ -63,8 +63,8 @@ export default function SpeciesHotspotToolbar({
 
 function ScopeToggle({ scope, setScope }: { scope: Scope; setScope: (s: Scope) => void }) {
   const options: { value: Scope; label: string; icon?: React.ReactNode }[] = [
-    { value: "saved", label: "Saved", icon: <Icon name="star" className="text-xs" /> },
     { value: "all", label: "All hotspots" },
+    { value: "saved", label: "Saved", icon: <Icon name="star" className="text-xs" /> },
   ];
   return (
     <div className="inline-flex h-9 items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">

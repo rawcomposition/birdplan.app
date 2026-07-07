@@ -14,7 +14,7 @@ import MapBox from "components/Mapbox";
 import SpeciesCard from "components/SpeciesCard";
 import Card from "components/Card";
 import SpeciesHero from "components/SpeciesHero";
-import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
+import SpeciesHotspotToolbar, { type SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
 import { useTrip } from "hooks/useTrip";
 import { useUser } from "hooks/useUser";
@@ -43,10 +43,9 @@ export default function SpeciesDetail() {
   const { open, close } = useModal();
   const queryClient = useQueryClient();
 
-  const [scope, setScope] = React.useState<Scope>("saved");
   const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
   const [nowMs] = React.useState(() => Date.now());
-  const { sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
+  const { scope, setScope, sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();
 
   const { data: regionData } = useDownloadTargets({
