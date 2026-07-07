@@ -78,6 +78,13 @@ export default function Contact() {
               <p className="text-gray-600 mb-4">
                 Do you have any questions, feedback, or bug reports? We would love to hear from you!
               </p>
+              <p className="text-gray-600 mb-6">
+                If you&apos;d like to help with maintenance costs, visit the{" "}
+                <Link to="/support" className="text-link font-medium">
+                  support page
+                </Link>
+                .
+              </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <Field label="Name">
                   <Input type="text" name="name" defaultValue={user?.name || ""} required autoFocus />
