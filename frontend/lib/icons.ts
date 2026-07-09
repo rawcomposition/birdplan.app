@@ -382,3 +382,34 @@ export const markerIcons = {
 export const iconNames = Object.keys(icons) as IconNameT[];
 export type IconNameT = keyof typeof icons;
 export type MarkerIconT = keyof typeof markerIcons;
+
+const placeTypeIcons: Record<string, MarkerIconT> = {
+  aerodrome: "airport",
+  terminal: "airport",
+  hotel: "bed",
+  motel: "bed",
+  hostel: "bed",
+  guest_house: "bed",
+  apartment: "bed",
+  chalet: "bed",
+  camp_site: "tent",
+  caravan_site: "tent",
+  restaurant: "utensils",
+  fast_food: "utensils",
+  food_court: "utensils",
+  cafe: "mug",
+  pub: "mug",
+  bar: "mug",
+  fuel: "fuel",
+  parking: "parking",
+  bus_station: "bus",
+  bus_stop: "bus",
+  marina: "boat",
+  nature_reserve: "mountain",
+  park: "mountain",
+  wood: "mountain",
+  forest: "mountain",
+};
+
+export const suggestMarkerIcon = (placeType?: string): MarkerIconT | undefined =>
+  placeType ? placeTypeIcons[placeType] : undefined;

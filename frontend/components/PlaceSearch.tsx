@@ -6,7 +6,8 @@ import { PlaceSearchResult } from "lib/types";
 import useDebouncedValue from "hooks/useDebouncedValue";
 import { cn } from "lib/utils";
 
-const PHOTON_API_URL = "https://photon.komoot.io/api/";
+const PHOTON_TAGS = ["aeroway", "tourism", "leisure", "natural", "amenity", "railway", "highway:bus_stop"];
+const PHOTON_API_URL = `https://photon.komoot.io/api/?${PHOTON_TAGS.map((tag) => `osm_tag=${tag}`).join("&")}`;
 
 type PhotonFeature = {
   properties: {
@@ -22,9 +23,11 @@ type PhotonFeature = {
   geometry: { coordinates: [number, number] };
 };
 
+type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
+
 type Props = {
   className?: string;
-  bias?: { lat: number; lng: number };
+  bounds?: Bounds;
   focus?: boolean;
   onChange: (value: PlaceSearchResult) => void;
 };
@@ -32,21 +35,31 @@ type Props = {
 const formatContext = ({ street, city, state, country }: PhotonFeature["properties"]) =>
   [street, city, state, country].filter(Boolean).join(", ");
 
-export default function PlaceSearch({ className, bias, onChange, focus }: Props) {
+const boundsToParams = ({ minX, minY, maxX, maxY }: Bounds) => {
+  const padX = Math.max((maxX - minX) * 0.4, 0.1);
+  const padY = Math.max((maxY - minY) * 0.4, 0.1);
+  return {
+    bbox: `${minX - padX},${minY - padY},${maxX + padX},${maxY + padY}`,
+    lat: (minY + maxY) / 2,
+    lon: (minX + maxX) / 2,
+  };
+};
+
+export default function PlaceSearch({ className, bounds, onChange, focus }: Props) {
   const [search, setSearch] = React.useState("");
   const [activeIndex, setActiveIndex] = React.useState(0);
   const query = useDebouncedValue(search.trim());
 
   const { data, isFetching } = useQuery<{ features: PhotonFeature[] }>({
-    queryKey: [PHOTON_API_URL, { q: query, limit: 6, lang: "en", ...(bias ? { lat: bias.lat, lon: bias.lng } : {}) }],
+    queryKey: [PHOTON_API_URL, { q: query, limit: 10, lang: "en", ...(bounds ? boundsToParams(bounds) : {}) }],
     enabled: query.length >= 2,
     staleTime: 5 * 60 * 1000,
   });
 
   const seen = new Set<string>();
   const results = (data?.features || []).filter((feature) => {
-    const { name, city, state } = feature.properties;
-    const key = [name, city, state].join("|");
+    const { name, street, city, state } = feature.properties;
+    const key = [name, street, city, state].join("|");
     if (!name || seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -59,6 +72,8 @@ export default function PlaceSearch({ className, bias, onChange, focus }: Props)
       lat: parseFloat(lat.toFixed(7)),
       lng: parseFloat(lng.toFixed(7)),
       type: feature.properties.osm_value,
+      osmType: feature.properties.osm_type,
+      osmId: feature.properties.osm_id,
     });
   };
 

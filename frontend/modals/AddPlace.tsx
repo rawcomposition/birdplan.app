@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import PlaceSearch from "components/PlaceSearch";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
-import { MarkerIconT, markerIcons } from "lib/icons";
+import { MarkerIconT, markerIcons, suggestMarkerIcon } from "lib/icons";
 import useTripMutation from "hooks/useTripMutation";
 
 export default function AddPlace() {
@@ -20,9 +20,12 @@ export default function AddPlace() {
   const [place, setPlace] = React.useState<PlaceSearchResult>();
   const { close } = useModal();
   const { trip } = useTrip();
-  const bias = trip?.bounds
-    ? { lat: (trip.bounds.minY + trip.bounds.maxY) / 2, lng: (trip.bounds.minX + trip.bounds.maxX) / 2 }
-    : undefined;
+
+  const handleSelectPlace = (result: PlaceSearchResult) => {
+    setPlace(result);
+    const suggested = suggestMarkerIcon(result.type);
+    if (suggested) setIcon(suggested);
+  };
 
   const addMarkerMutation = useTripMutation<CustomMarker>({
     url: `/trips/${trip?._id}/markers`,
@@ -43,6 +46,8 @@ export default function AddPlace() {
       icon,
       id: nanoId(6),
       placeType: place.type,
+      osmType: place.osmType,
+      osmId: place.osmId,
     });
     close();
   };
@@ -57,7 +62,7 @@ export default function AddPlace() {
           <div className="flex flex-col gap-5 w-full">
             {!place && (
               <Field label="Find a place">
-                <PlaceSearch onChange={setPlace} bias={bias} focus />
+                <PlaceSearch onChange={handleSelectPlace} bounds={trip?.bounds} focus />
                 <p className="text-xs text-gray-500 mt-1">
                   Search for an airport, restaurant, hotel, or any other place.
                 </p>

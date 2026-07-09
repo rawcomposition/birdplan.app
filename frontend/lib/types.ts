@@ -16,6 +16,8 @@ export type CustomMarker = {
   notes?: string;
   placeId?: string;
   placeType?: string;
+  osmType?: string;
+  osmId?: number;
 };
 
 export type KeyValue = {
@@ -83,4 +85,6 @@ export type PlaceSearchResult = {
   lat: number;
   lng: number;
   type?: string;
+  osmType?: string;
+  osmId?: number;
 };

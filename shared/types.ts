@@ -64,6 +64,8 @@ export type CustomMarker = {
   notes?: string;
   placeId?: string;
   placeType?: string;
+  osmType?: string;
+  osmId?: number;
 };
 
 export type Day = {

@@ -84,6 +84,8 @@ const fields: Record<
       icon: String,
       placeId: String,
       placeType: String,
+      osmType: String,
+      osmId: Number,
     },
   ],
   startDate: { type: String, default: null },
