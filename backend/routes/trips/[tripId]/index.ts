@@ -12,7 +12,7 @@ import {
   isDuplicateKeyError,
   validateTripDates,
 } from "lib/utils.js";
-import { connect, Trip, Participant, User, IntegrationToken } from "lib/db.js";
+import { connect, Trip, Participant, User, IntegrationToken, TripDocument } from "lib/db.js";
 import {
   isTripEditor,
   isEditorInRoster,
@@ -20,7 +20,7 @@ import {
   loadUsersById,
   resolveTripLifelist,
 } from "lib/participants.js";
-import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
+import { uploadMapboxImageToStorage, imageUrl, deleteFromStorage } from "lib/storage.js";
 import { OPENBIRDING_API_URL, SHARE_CODE_TTL_MINUTES } from "lib/config.js";
 import type { TripUpdateInput, TripDatesInput, OpenBirdingLocationResponse } from "@birdplan/shared";
 import targetStars from "./targets.js";
@@ -28,6 +28,7 @@ import markers from "./markers.js";
 import hotspots from "./hotspots.js";
 import itinerary from "./itinerary.js";
 import participants from "./participants.js";
+import documents from "./documents.js";
 // @ts-ignore - no type definitions available
 import tokml from "@maphubs/tokml";
 
@@ -38,6 +39,7 @@ trip.route("/markers", markers);
 trip.route("/hotspots", hotspots);
 trip.route("/itinerary", itinerary);
 trip.route("/participants", participants);
+trip.route("/documents", documents);
 
 trip.get("/", async (c) => {
   const session = await authenticateOptional(c);
@@ -229,11 +231,22 @@ trip.delete("/", async (c) => {
     throw new HTTPException(403, { message: "Forbidden" });
   }
 
+  const documents = await TripDocument.find({ tripId }).select("key").lean();
+
   await Promise.all([
     Trip.deleteOne({ _id: tripId }),
     Participant.deleteMany({ tripId }),
     IntegrationToken.deleteMany({ tripId }),
+    TripDocument.deleteMany({ tripId }),
   ]);
+
+  await Promise.all(
+    documents.map((doc) =>
+      deleteFromStorage(doc.key).catch((error) =>
+        console.error("Failed to delete document from storage", doc.key, error)
+      )
+    )
+  );
 
   return c.json({});
 });

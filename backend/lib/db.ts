@@ -7,6 +7,7 @@ import OtpCode from "models/OtpCode.js";
 import MagicLink from "models/MagicLink.js";
 import RateLimit from "models/RateLimit.js";
 import Log from "models/Log.js";
+import TripDocument from "models/TripDocument.js";
 import mongoose from "mongoose";
 
 let isConnected = false;
@@ -48,4 +49,4 @@ export async function connect() {
   }
 }
 
-export { Trip, User, Participant, IntegrationToken, Session, OtpCode, MagicLink, RateLimit, Log };
+export { Trip, User, Participant, IntegrationToken, Session, OtpCode, MagicLink, RateLimit, Log, TripDocument };

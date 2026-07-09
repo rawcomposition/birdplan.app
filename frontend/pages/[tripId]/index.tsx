@@ -9,6 +9,7 @@ import { Skeleton } from "components/ui/skeleton";
 import Avatar from "components/Avatar";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import { Tooltip, TooltipTrigger, TooltipContent } from "components/ui/tooltip";
+import TripDocuments from "components/TripDocuments";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useDownloadTargets from "hooks/useDownloadTargets";
@@ -425,6 +426,8 @@ export default function TripOverview() {
                     </CardContent>
                   </Card>
                 )}
+
+                <TripDocuments />
 
                 {canEdit && (
                   <Card>
