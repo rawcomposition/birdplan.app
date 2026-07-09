@@ -432,44 +432,6 @@ export type TripDatesInput = {
   endDate: string;
 };
 
-export type TripDocumentCategory = "flights" | "lodging" | "transport" | "permits" | "maps" | "other";
-
-export type TripDocumentVisibility = "private" | "trip" | "public";
-
-export type TripDocument = {
-  _id: string;
-  tripId: string;
-  name: string;
-  key: string;
-  size: number;
-  mimeType: string;
-  category?: TripDocumentCategory | null;
-  visibility: TripDocumentVisibility;
-  uploadedBy: string;
-  url?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-};
-
-export type TripDocumentUploadUrlInput = {
-  name: string;
-  size: number;
-  mimeType: string;
-};
-
-export type TripDocumentCreateInput = {
-  key: string;
-  name: string;
-  size: number;
-  mimeType: string;
-};
-
-export type TripDocumentUpdateInput = {
-  name: string;
-  category?: TripDocumentCategory | null;
-  visibility: TripDocumentVisibility;
-};
-
 export type RemoveLocationInput = {
   id: string;
 };

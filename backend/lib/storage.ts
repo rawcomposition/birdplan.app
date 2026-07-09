@@ -1,5 +1,4 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { nanoId } from "lib/utils.js";
 
 const { S3_KEY_ID, S3_SECRET, S3_ENDPOINT, S3_BUCKET, S3_PUBLIC_URL } = process.env;
@@ -22,13 +21,6 @@ const client = hasS3Config
 export function imageUrl(fileName?: string | null): string | null {
   if (!fileName || !publicUrl) return null;
   return `${publicUrl}/${fileName}`;
-}
-
-export async function createUploadUrl(key: string, contentType: string): Promise<string | null> {
-  if (!client) return null;
-  return getSignedUrl(client, new PutObjectCommand({ Bucket: S3_BUCKET!, Key: key, ContentType: contentType }), {
-    expiresIn: 600,
-  });
 }
 
 export async function deleteFromStorage(key: string): Promise<void> {
