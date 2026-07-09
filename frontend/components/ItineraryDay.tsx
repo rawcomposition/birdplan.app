@@ -1,6 +1,15 @@
 import React from "react";
-import { Button } from "components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "components/ui/card";
+import { Button, buttonVariants } from "components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "components/ui/card";
+import {
+  Combobox,
+  ComboboxTrigger,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+} from "components/ui/combobox";
 import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import { useModal } from "stores/modals";
@@ -8,10 +17,12 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
-import { GripVertical, Plus, Trash2, X } from "lucide-react";
+import { GripVertical, Plus, X } from "lucide-react";
 import useTripMutation from "hooks/useTripMutation";
 import { useMutationState } from "@tanstack/react-query";
 import { Day } from "@birdplan/shared";
+import { nanoId } from "lib/helpers";
+import { MarkerIconT } from "lib/icons";
 import { removeInvalidTravelData } from "lib/itinerary";
 import { cn } from "lib/utils";
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -23,9 +34,16 @@ type PropsT = {
   day: Day;
   dayIndex: number;
   isEditing: boolean;
+  dayIds: string[];
 };
 
-export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
+const densify = (itinerary: Day[] | undefined, dayIds: string[]): Day[] => {
+  const existing = itinerary || [];
+  const length = Math.max(existing.length, dayIds.length);
+  return Array.from({ length }, (_, i) => existing[i] || { id: dayIds[i], locations: [] });
+};
+
+export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: PropsT) {
   const { trip, isFetching: isFetchingTrip } = useTrip();
   const { open } = useModal();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -39,15 +57,6 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
     filters: { mutationKey: [`/trips/${trip?._id}/itinerary/${day.id}/calc-travel-time`] },
     select: (mutation) => mutation?.state.status === "pending",
   })?.some(Boolean);
-
-  const removeDayMutation = useTripMutation({
-    url: `/trips/${trip?._id}/itinerary/${day.id}`,
-    method: "DELETE",
-    updateCache: (old) => ({
-      ...old,
-      itinerary: old.itinerary?.filter((it) => it.id !== day.id) || [],
-    }),
-  });
 
   const removeLocationMutation = useTripMutation<{ id: string }>({
     url: `/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
@@ -82,19 +91,38 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
     }),
   });
 
-  const setNotesMutation = useTripMutation<{ notes: string }>({
+  const setNotesMutation = useTripMutation<{ notes: string; dayIds: string[] }, { itinerary: Day[] }>({
     url: `/trips/${trip?._id}/itinerary/${day.id}/set-notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
-      itinerary: old.itinerary?.map((it) => (it.id === day.id ? { ...it, notes: input.notes } : it)) || [],
+      itinerary: densify(old.itinerary, input.dayIds).map((it) =>
+        it.id === day.id ? { ...it, notes: input.notes } : it
+      ),
     }),
+    reconcile: (old, response) => ({ ...old, itinerary: response.itinerary }),
   });
 
-  const handleRemoveDay = () => {
-    if (day.locations.length && !confirm("Are you sure you want to remove this day?")) return;
-    removeDayMutation.mutate({});
-  };
+  const addLocationMutation = useTripMutation<
+    { type: "hotspot" | "marker"; locationId: string; id: string; dayIds: string[] },
+    { itinerary: Day[] }
+  >({
+    url: `/trips/${trip?._id}/itinerary/${day.id}/add-location`,
+    method: "POST",
+    mutationKey: [`/trips/${trip?._id}/itinerary/${day.id}/add-location`],
+    updateCache: (old, input) => ({
+      ...old,
+      itinerary: densify(old.itinerary, input.dayIds).map((it) =>
+        it.id === day.id
+          ? {
+              ...it,
+              locations: [...(it.locations || []), { type: input.type, locationId: input.locationId, id: input.id }],
+            }
+          : it
+      ),
+    }),
+    reconcile: (old, response) => ({ ...old, itinerary: response.itinerary }),
+  });
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
@@ -106,7 +134,6 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
   const isLoading =
     reorderMutation.isPending ||
     removeLocationMutation.isPending ||
-    removeDayMutation.isPending ||
     isCalculatingTravelTime ||
     isAddingLocation ||
     isFetchingTrip;
@@ -114,29 +141,29 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
   const date = trip?.startDate ? dayjs(trip.startDate).add(dayIndex, "day").format("dddd, MMMM D") : "";
   const { notes, locations } = day;
 
+  const [addOpen, setAddOpen] = React.useState(false);
+  const [addQuery, setAddQuery] = React.useState("");
+
+  const addedIds = new Set((locations || []).map((it) => it.locationId));
+  const addOptions: AddOption[] = [
+    ...(trip?.markers
+      .filter((it) => !addedIds.has(it.id))
+      .map((m) => ({ id: m.id, name: m.name, type: "marker" as const, icon: m.icon as MarkerIconT })) ?? []),
+    ...(trip?.hotspots
+      .filter((it) => !addedIds.has(it.id))
+      .map((h) => ({ id: h.id, name: h.name, type: "hotspot" as const, icon: "hotspot" as const })) ?? []),
+  ];
+
   return (
     <Card className="mb-6 print:break-inside-avoid print:shadow-none">
       <CardHeader className="pb-0">
         <CardTitle className="text-lg">Day {dayIndex + 1}</CardTitle>
         {date && <CardDescription>{date}</CardDescription>}
-        {isEditing && (
-          <CardAction>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Remove day"
-              className="text-muted-foreground hover:text-destructive"
-              onClick={handleRemoveDay}
-            >
-              <Trash2 className="size-4" />
-            </Button>
-          </CardAction>
-        )}
       </CardHeader>
       <CardContent className="pt-3">
         <InputNotesSimple
           value={notes}
-          onBlur={(value) => setNotesMutation.mutate({ notes: value })}
+          onBlur={(value) => setNotesMutation.mutate({ notes: value, dayIds })}
           className={cn(!!locations?.length && "mb-4")}
           canEdit={isEditing}
         />
@@ -217,7 +244,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
                                 variant="ghost"
                                 size="icon"
                                 aria-label="Remove location"
-                                className="self-center text-muted-foreground hover:text-destructive print:hidden"
+                                className="self-center print:hidden"
                                 onClick={() => removeLocationMutation.mutate({ id })}
                               >
                                 <X className="size-4" />
@@ -234,20 +261,53 @@ export default function ItineraryDay({ day, dayIndex, isEditing }: PropsT) {
           </DndContext>
         )}
         {isEditing && (
-          <Button
-            size="xs"
-            variant="secondary"
-            className={cn(!!locations?.length && "mt-3")}
-            onClick={() => open("addItineraryLocation", { dayId: day.id })}
+          <Combobox<AddOption>
+            items={addOptions}
+            itemToStringLabel={(option) => option.name}
+            autoHighlight
+            value={null}
+            open={addOpen}
+            onOpenChange={(next) => {
+              setAddOpen(next);
+              if (!next) setAddQuery("");
+            }}
+            inputValue={addQuery}
+            onInputValueChange={setAddQuery}
+            onValueChange={(option) => {
+              if (!option) return;
+              addLocationMutation.mutate({ type: option.type, locationId: option.id, id: nanoId(6), dayIds });
+              setAddOpen(false);
+            }}
           >
-            <Plus className="size-3.5" />
-            Add Location
-          </Button>
+            <ComboboxTrigger className={cn(buttonVariants({ variant: "secondary", size: "xs" }), "mt-3")}>
+              <Plus className="size-3.5" />
+              Add Location
+            </ComboboxTrigger>
+            <ComboboxContent className="w-96">
+              <ComboboxInput placeholder="Add a hotspot or marker..." />
+              <ComboboxList>
+                {(option: AddOption) => (
+                  <ComboboxItem key={option.id} value={option}>
+                    <MarkerWithIcon showStroke={false} icon={option.icon} className="inline-block shrink-0 scale-75" />
+                    <span className="truncate">{option.name}</span>
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+              <ComboboxEmpty>No locations to add</ComboboxEmpty>
+            </ComboboxContent>
+          </Combobox>
         )}
       </CardContent>
     </Card>
   );
 }
+
+type AddOption = {
+  id: string;
+  name: string;
+  type: "hotspot" | "marker";
+  icon: MarkerIconT | "hotspot";
+};
 
 type RowRenderProps = {
   handleProps: Record<string, any>;

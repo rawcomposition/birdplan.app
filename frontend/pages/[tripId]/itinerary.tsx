@@ -9,17 +9,22 @@ import EmptyState from "components/EmptyState";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import Icon from "components/Icon";
-import { Printer, Plus } from "lucide-react";
+import { Printer } from "lucide-react";
 import useTripMutation from "hooks/useTripMutation";
-import { nanoId } from "lib/helpers";
 import ItineraryDay from "components/ItineraryDay";
 
 export default function Itinerary() {
   const { trip, canEdit } = useTrip();
   const { close, modalId } = useModal();
-  const hasStartDate = !!trip?.startDate;
-  const hasDays = !!trip?.itinerary?.length;
-  const shouldDefaultEdit = !!(trip && !trip?.startDate) || !!(trip && !trip?.itinerary?.length);
+  const isDateRange = !!(trip?.startDate && trip?.endDate);
+  const dayCount = isDateRange ? dayjs(trip!.endDate).diff(dayjs(trip!.startDate), "day") + 1 : 0;
+  const persistedDays = trip?.itinerary || [];
+  const renderDays = isDateRange
+    ? Array.from({ length: dayCount }, (_, i) => persistedDays[i] || { id: `${trip!._id}-d${i}`, locations: [] })
+    : persistedDays;
+  const dayIds = renderDays.map((d) => d.id);
+  const hasDays = renderDays.length > 0;
+  const shouldDefaultEdit = !!(trip && !isDateRange) || !!(trip && !trip?.itinerary?.length);
   const [editing, setEditing] = React.useState(shouldDefaultEdit);
   const [prevShouldDefaultEdit, setPrevShouldDefaultEdit] = React.useState(shouldDefaultEdit);
   const [startDraft, setStartDraft] = React.useState("");
@@ -30,15 +35,6 @@ export default function Itinerary() {
     setPrevShouldDefaultEdit(shouldDefaultEdit);
     if (shouldDefaultEdit) setEditing(true);
   }
-
-  const addDayMutation = useTripMutation<{ id: string; locations: any[] }>({
-    url: `/trips/${trip?._id}/itinerary`,
-    method: "POST",
-    updateCache: (old, input) => ({
-      ...old,
-      itinerary: [...(old.itinerary || []), input],
-    }),
-  });
 
   const datesMutation = useTripMutation<{ startDate: string; endDate: string }>({
     url: `/trips/${trip?._id}/dates`,
@@ -51,10 +47,6 @@ export default function Itinerary() {
       endMonth: Number(input.endDate.slice(5, 7)),
     }),
   });
-
-  const handleAddDay = () => {
-    addDayMutation.mutate({ id: nanoId(6), locations: [] });
-  };
 
   const handleSetDates = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,7 +88,7 @@ export default function Itinerary() {
                       <span className="hidden xs:inline">Print</span>
                     </Button>
                   )}
-                  {canEdit && hasStartDate && (
+                  {canEdit && isDateRange && (
                     <Button variant="outline" size="sm" onClick={() => setEditing((prev) => !prev)}>
                       {isEditing ? <Icon name="check" /> : <Icon name="pencil" />}
                       <span>{isEditing ? "Done" : "Edit"}</span>
@@ -104,10 +96,10 @@ export default function Itinerary() {
                   )}
                 </div>
               </div>
-              {dateRange && <p className="text-sm text-muted-foreground -mt-1">{dateRange}</p>}
+              {dateRange && <p className="text-sm text-muted-foreground mt-1.5">{dateRange}</p>}
             </div>
 
-            {canEdit && !trip?.startDate && (
+            {canEdit && !isDateRange && (
               <Card className="mb-8">
                 <CardHeader>
                   <CardTitle className="text-lg">Set your trip dates</CardTitle>
@@ -155,15 +147,9 @@ export default function Itinerary() {
                 icon="calendar"
               />
             )}
-            {trip?.itinerary?.map((day, index) => (
-              <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} />
+            {renderDays.map((day, index) => (
+              <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} dayIds={dayIds} />
             ))}
-            {isEditing && hasStartDate && (
-              <Button variant="default" onClick={handleAddDay} className="mb-8">
-                <Plus className="size-4" />
-                Add Day {(trip?.itinerary?.length || 0) + 1}
-              </Button>
-            )}
           </div>
         </div>
       </div>

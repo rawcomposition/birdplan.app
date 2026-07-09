@@ -12,7 +12,6 @@ import { ModalId, MODAL_POSITIONS, useModal, useModalStore } from "stores/modals
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import Marker from "modals/Marker";
-import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
 import DeleteAccount from "modals/DeleteAccount";
@@ -35,7 +34,6 @@ const modals: Record<ModalId, ModalConfig> = {
   addPlace: { Component: AddPlace },
   addHotspot: { Component: AddHotspot },
   viewMarker: { Component: Marker },
-  addItineraryLocation: { Component: AddItineraryLocation },
   deleteAccount: { Component: DeleteAccount, maxHeight: "90vh" },
   openBirding: { Component: OpenBirding },
   addParticipant: { Component: AddParticipant },

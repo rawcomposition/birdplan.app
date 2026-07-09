@@ -9,7 +9,6 @@ export type ModalId =
   | "addMarker"
   | "addHotspot"
   | "viewMarker"
-  | "addItineraryLocation"
   | "addPlace"
   | "deleteAccount"
   | "openBirding"
@@ -26,7 +25,6 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   addPlace: "right",
   addHotspot: "right",
   viewMarker: "right",
-  addItineraryLocation: "right",
   deleteAccount: "center",
   openBirding: "center",
   addParticipant: "center",

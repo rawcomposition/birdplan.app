@@ -408,15 +408,9 @@ export type TranslateNameResponse = {
   translatedName: string;
 };
 
-export type ItineraryDayInput = {
-  id: string;
-  date: string;
-  notes?: string;
-  locations?: ItineraryLocation[];
-};
-
 export type ItineraryNotesInput = {
   notes: string;
+  dayIds?: string[];
 };
 
 export type MoveLocationInput = {
@@ -441,6 +435,7 @@ export type AddLocationInput = {
   type: "hotspot" | "marker";
   locationId: string;
   id: string;
+  dayIds?: string[];
 };
 
 export type CalcTravelTimeInput = {

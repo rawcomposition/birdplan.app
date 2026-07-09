@@ -4,18 +4,25 @@ import { mutate } from "lib/http";
 import { Trip } from "@birdplan/shared";
 import { useTrip } from "hooks/useTrip";
 
-type Options<TInput> = {
+type Options<TInput, TResponse> = {
   url: string;
   method: "POST" | "PUT" | "DELETE" | "PATCH";
   updateCache: (old: Trip, data: TInput) => Trip;
   mutationKey?: string[];
+  reconcile?: (old: Trip, response: TResponse, data: TInput) => Trip;
 };
 
-export default function useTripMutation<TInput>({ url, method, updateCache, mutationKey }: Options<TInput>) {
+export default function useTripMutation<TInput, TResponse = any>({
+  url,
+  method,
+  updateCache,
+  mutationKey,
+  reconcile,
+}: Options<TInput, TResponse>) {
   const { trip } = useTrip();
   const queryClient = useQueryClient();
 
-  return useMutation<any, Error, TInput>({
+  return useMutation<TResponse, Error, TInput>({
     mutationKey,
     mutationFn: async (input?: TInput) => {
       const res = await mutate(method, url, input);
@@ -33,7 +40,14 @@ export default function useTripMutation<TInput>({ url, method, updateCache, muta
 
       return { prevData };
     },
+    onSuccess: (response, input) => {
+      if (!reconcile || !trip?._id) return;
+      queryClient.setQueryData<Trip | undefined>([`/trips/${trip._id}`], (old) =>
+        old ? reconcile(old, response, input) : old
+      );
+    },
     onSettled: () => {
+      if (reconcile) return;
       queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
     },
     onError: (error, data, context: any) => {

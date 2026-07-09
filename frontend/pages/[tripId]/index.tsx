@@ -6,6 +6,7 @@ import { getMarkerColorIndex } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import { Button } from "components/ui/button";
+import { Card } from "components/ui/card";
 import MapButton from "components/MapButton";
 import Icon from "components/Icon";
 import { Star, Utensils, MapPin, XIcon } from "lucide-react";
@@ -45,6 +46,15 @@ export default function Trip() {
       setShowAllHotspots(true);
     }
   }, [tripIsLoaded, tripIsNew]);
+
+  React.useEffect(() => {
+    if (!isAddingMarker) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsAddingMarker(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isAddingMarker]);
 
   return (
     <>
@@ -103,8 +113,8 @@ export default function Trip() {
             />
           )}
           {isAddingMarker && (
-            <div className="flex absolute top-0 left-1/2 bg-white text-gray-600 text-sm px-4 py-2 -translate-x-1/2 rounded-b-lg w-full max-w-xs z-10 text-center justify-between">
-              <div>
+            <Card className="absolute top-3 left-1/2 z-10 flex -translate-x-1/2 flex-row items-center gap-2 px-5 py-3 text-sm shadow-md">
+              <div className="text-center">
                 Click anywhere on map to add marker
                 <br />
                 or{" "}
@@ -118,10 +128,10 @@ export default function Trip() {
                   enter coordinates
                 </button>
               </div>
-              <Button variant="ghost" size="icon-lg" onClick={() => setIsAddingMarker(false)} aria-label="Close">
-                <XIcon className="size-5" />
+              <Button variant="ghost" size="icon" onClick={() => setIsAddingMarker(false)} aria-label="Close">
+                <XIcon className="size-4" />
               </Button>
-            </div>
+            </Card>
           )}
         </div>
       </div>

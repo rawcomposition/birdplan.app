@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "components/ui/button";
+import { Card } from "components/ui/card";
 import { XIcon } from "lucide-react";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
@@ -25,7 +26,7 @@ export default function Trip({ name, code }: Props) {
   }, [modalId]);
 
   return (
-    <div className="sm:absolute sm:mt-0 sm:-translate-x-1/2 sm:rounded-b-lg sm:left-1/2 bg-white p-4 w-full sm:max-w-md z-10 shadow-sm">
+    <Card className="absolute top-3 left-1/2 z-10 w-[calc(100%-1rem)] max-w-md -translate-x-1/2 p-4 shadow-md">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold inline-flex gap-1.5 items-center">
           {name}
@@ -40,7 +41,7 @@ export default function Trip({ name, code }: Props) {
           <XIcon className="size-5" />
         </Button>
       </div>
-      <p className="text-xs text-gray-500 mt-1.5">
+      <p className="text-xs text-muted-foreground mt-1.5">
         Showing reports over the last 30 days.{" "}
         <a
           href={`https://ebird.org/map/${code}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
@@ -50,6 +51,6 @@ export default function Trip({ name, code }: Props) {
           View on eBird
         </a>
       </p>
-    </div>
+    </Card>
   );
 }

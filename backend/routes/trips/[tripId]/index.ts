@@ -27,6 +27,7 @@ import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
 import itinerary from "./itinerary.js";
+import { pruneItineraryToDates } from "lib/itinerary.js";
 import participants from "./participants.js";
 // @ts-ignore - no type definitions available
 import tokml from "@maphubs/tokml";
@@ -105,6 +106,9 @@ trip.patch("/", async (c) => {
     endMonth: data.endMonth,
   };
 
+  const pruned = pruneItineraryToDates(trip.itinerary, data.startDate, data.endDate);
+  if (pruned.length !== (trip.itinerary?.length || 0)) newData.itinerary = pruned;
+
   if (data.region !== trip.region) {
     const bounds = await getBounds(data.region);
     if (!bounds) {
@@ -178,7 +182,10 @@ trip.patch("/dates", async (c) => {
 
   const startMonth = Number(startDate.slice(5, 7));
   const endMonth = Number(endDate.slice(5, 7));
-  await Trip.updateOne({ _id: tripId }, { startDate, endDate, startMonth, endMonth });
+  const update: Record<string, unknown> = { startDate, endDate, startMonth, endMonth };
+  const pruned = pruneItineraryToDates(trip.itinerary, startDate, endDate);
+  if (pruned.length !== (trip.itinerary?.length || 0)) update.itinerary = pruned;
+  await Trip.updateOne({ _id: tripId }, update);
 
   return c.json({});
 });
