@@ -28,25 +28,24 @@ export default function TripOptionsDropdown({ className }: Props) {
   const viewer = trip?.viewer;
   const viewerMode = viewer?.listMode === "custom" ? "Custom" : "World";
 
+  if (!canEdit) return null;
+
   const links = [
     {
       name: `Life List (${viewerMode})`,
       onClick: viewer ? () => open("manageLifelist", { participantId: viewer.participantId }) : undefined,
       href: viewer ? undefined : `/${trip?._id}/participants`,
       icon: <Feather />,
-      hidden: !canEdit,
     },
     {
       name: `Participants${participants ? ` (${participants.length})` : ""}`,
       href: `/${trip?._id}/participants`,
       icon: <Users />,
-      hidden: !canEdit,
     },
     {
       name: "Trip Settings",
       href: `/${trip?._id}/settings`,
       icon: <Settings />,
-      hidden: !canEdit,
     },
     {
       name: "Export KML",
@@ -57,22 +56,20 @@ export default function TripOptionsDropdown({ className }: Props) {
       name: "Send to OpenBirding",
       onClick: () => open("openBirding"),
       icon: <Send />,
-      hidden: !canEdit,
     },
   ];
-
-  const filteredLinks = links.filter((it) => !it.hidden);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={<Button variant="nav" className={cn("ml-auto gap-1 py-1 px-2 sm:px-2.5 text-[14px]", className)} />}
       >
-        <Icon name="verticalDots" />
-        <span className="hidden sm:inline">More</span>
+        <Icon name="verticalDots" className="sm:hidden" />
+        <Settings className="hidden sm:inline size-4" />
+        <span className="hidden sm:inline">Manage</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto min-w-[240px]">
-        {filteredLinks.map(({ name, href, onClick, icon }) => {
+        {links.map(({ name, href, onClick, icon }) => {
           const render = onClick ? undefined : /^(https?:|mailto:|tel:|om:)/.test(href ?? "") ? (
             <a href={href ?? "#"} />
           ) : (
