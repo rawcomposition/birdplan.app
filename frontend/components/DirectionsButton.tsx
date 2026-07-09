@@ -1,6 +1,15 @@
 import React from "react";
-import { Button } from "components/ui/button";
-import SlideOver from "components/SlideOver";
+import { buttonVariants } from "components/ui/button";
+import {
+  Combobox,
+  ComboboxTrigger,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+  ComboboxSeparator,
+} from "components/ui/combobox";
 import { useTrip } from "hooks/useTrip";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import Icon from "components/Icon";
@@ -16,84 +25,100 @@ type Props = {
   googleUrl?: string;
 };
 
+type Origin = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  icon: MarkerIconT | "hotspot";
+};
+
 export default function DirectionsButton({ lat, lng, hotspotId, markerId, googleUrl }: Props) {
   const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
   const { trip } = useTrip();
 
-  const filteredHotspots = trip?.hotspots.filter((it) => it.id !== hotspotId) || [];
-  const filteredMarkers = trip?.markers.filter((it) => it.id !== markerId) || [];
   const hotspot = trip?.hotspots.find((it) => it.id === hotspotId);
 
-  const isDirect = filteredHotspots.length === 0 && filteredMarkers.length === 0;
+  const origins: Origin[] = [
+    ...(trip?.markers
+      .filter((it) => it.id !== markerId)
+      .map((m) => ({ id: m.id, name: m.name, lat: m.lat, lng: m.lng, icon: m.icon as MarkerIconT })) ?? []),
+    ...(trip?.hotspots
+      .filter((it) => it.id !== hotspotId)
+      .map((h) => ({ id: h.id, name: h.name, lat: h.lat, lng: h.lng, icon: "hotspot" as const })) ?? []),
+  ];
 
-  return (
-    <>
-      <Button
-        onClick={isDirect ? undefined : () => setOpen(true)}
+  const googleSearchUrl = googleUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+  if (origins.length === 0) {
+    return (
+      <a
+        href={googleSearchUrl}
         target="_blank"
-        variant="outline-white"
-        size="sm"
-        href={isDirect ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` : undefined}
+        className={buttonVariants({ variant: "outline-white", size: "sm" })}
       >
         <Icon name="directions" className="text-[#c2410d]" /> Directions
-      </Button>
-      <SlideOver open={open} onClose={() => setOpen(false)}>
+      </a>
+    );
+  }
+
+  return (
+    <Combobox<Origin>
+      items={origins}
+      itemToStringLabel={(origin) => origin.name}
+      autoHighlight
+      value={null}
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) setQuery("");
+      }}
+      inputValue={query}
+      onInputValueChange={setQuery}
+      onValueChange={(origin) => {
+        if (!origin) return;
+        window.open(
+          `https://www.google.com/maps/dir/?api=1&origin=${origin.lat},${origin.lng}&destination=${lat},${lng}`,
+          "_blank"
+        );
+        setOpen(false);
+      }}
+    >
+      <ComboboxTrigger className={buttonVariants({ variant: "outline-white", size: "sm" })}>
+        <Icon name="directions" className="text-[#c2410d]" /> Directions
+      </ComboboxTrigger>
+      <ComboboxContent>
         <a
-          href={googleUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
-          className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700"
+          href={googleSearchUrl}
           target="_blank"
+          className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-gray-700 hover:bg-accent"
         >
-          <GoogleMapsIcon className="text-lg ml-3.5 mr-1.5 shrink-0" />
-          View in Google Maps
+          <GoogleMapsIcon className="ml-0.5 shrink-0 text-lg" /> View in Google Maps
         </a>
         <a
           href={`om://map?v=1&ll=${lat},${lng}&n=${hotspot?.name || ""}`}
-          className="flex items-center gap-2 text-sm cursor-pointer pb-2 mb-2.5 text-gray-700 sm:hidden"
           target="_blank"
+          className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-gray-700 hover:bg-accent sm:hidden"
         >
-          <OrganicMapsIcon className="text-lg ml-3.5 mr-1.5 shrink-0" />
-          View in Organic Maps
+          <OrganicMapsIcon className="ml-0.5 shrink-0 text-lg" /> View in Organic Maps
         </a>
-        {(!!filteredHotspots?.length || !!filteredMarkers?.length) && (
-          <>
-            <h3 className="font-bold mb-1.5 -mt-1.5 text-sm">Directions from...</h3>
-            <ul className="flex flex-col pl-2 space-y-0.5">
-              {filteredMarkers.map((marker) => (
-                <li key={marker.id}>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&origin=${marker.lat},${marker.lng}&destination=${lat},${lng}`}
-                    className="flex items-center gap-2 text-sm cursor-pointer text-gray-700"
-                    target="_blank"
-                  >
-                    <MarkerWithIcon
-                      showStroke={false}
-                      icon={marker.icon as MarkerIconT}
-                      className="inline-block ml-1 scale-75 shrink-0"
-                    />
-                    <span className="truncate">{marker.name}</span>
-                  </a>
-                </li>
-              ))}
-              {filteredHotspots.map((hotspot) => (
-                <li key={hotspot.id}>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&origin=${hotspot.lat},${hotspot.lng}&destination=${lat},${lng}`}
-                    className="flex items-center gap-2 text-sm cursor-pointer py-0.5 text-gray-700"
-                    target="_blank"
-                  >
-                    <MarkerWithIcon
-                      showStroke={false}
-                      icon="hotspot"
-                      className="inline-block ml-1 scale-75 shrink-0"
-                    />
-                    <span className="truncate">{hotspot.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </SlideOver>
-    </>
+        <ComboboxSeparator />
+        <ComboboxInput placeholder="Directions from..." />
+        <ComboboxList>
+          {(origin: Origin) => (
+            <ComboboxItem key={origin.id} value={origin}>
+              <MarkerWithIcon
+                showStroke={false}
+                icon={origin.icon as MarkerIconT}
+                className="inline-block shrink-0 scale-75"
+              />
+              <span className="truncate">{origin.name}</span>
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+        <ComboboxEmpty>No matching locations</ComboboxEmpty>
+      </ComboboxContent>
+    </Combobox>
   );
 }
