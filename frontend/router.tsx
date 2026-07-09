@@ -13,8 +13,7 @@ import Onboarding from "pages/onboarding";
 import ImportLifelist from "pages/import-lifelist";
 import Accept from "pages/accept/[inviteId]";
 import Magic from "pages/magic/[token]";
-import TripOverview from "pages/[tripId]/index";
-import TripMap from "pages/[tripId]/map";
+import TripMap from "pages/[tripId]/index";
 import TripSettings from "pages/[tripId]/settings";
 import TripTargets from "pages/[tripId]/targets";
 import TripSpecies from "pages/[tripId]/targets/[speciesCode]";
@@ -44,12 +43,10 @@ export const router = createBrowserRouter([
         path: "/:tripId",
         element: <TripLayout />,
         children: [
-          { index: true, element: <TripOverview /> },
-          { path: "map", element: <TripMap /> },
+          { index: true, element: <TripMap /> },
           { path: "targets", element: <TripTargets /> },
           { path: "targets/:speciesCode", element: <TripSpecies /> },
           { path: "itinerary", element: <TripItinerary /> },
-          { path: "overview", element: <Navigate to=".." replace /> },
         ],
       },
       {

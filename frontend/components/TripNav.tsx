@@ -8,8 +8,7 @@ import { buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
 
 const links = [
-  { name: "Overview", slug: "", icon: "house" },
-  { name: "Map", slug: "map", icon: "mapFlat" },
+  { name: "Map", slug: "", icon: "mapFlat" },
   { name: "Targets", slug: "targets", icon: "bullseye" },
   { name: "Itinerary", slug: "itinerary", icon: "calendar" },
 ];
@@ -26,7 +25,7 @@ export default function TripNav() {
 
   return (
     <div
-      className={cn("bg-card px-2 pb-2 pt-0.5 h-[55px] print:hidden", active !== "map" && "border-b border-border/60")}
+      className={cn("bg-card px-2 pb-2 pt-0.5 h-[55px] print:hidden", active !== "" && "border-b border-border/60")}
     >
       <div className="flex gap-1.5 items-center shrink-0 bg-muted justify-start rounded-full px-2.5 py-2">
         {links.map(({ name, slug, icon }) => (
