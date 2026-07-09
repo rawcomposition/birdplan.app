@@ -20,8 +20,7 @@
     "get-feature-photo": "npm run get-feature-photo --workspace=backend --",
     "tz-sync-regions": "npm run tz-sync-regions --workspace=backend",
     "lint": "npm run lint --workspace=frontend",
-    "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=shared",
-    "backfill-trip-images": "npm run backfill-trip-images --workspace=backend"
+    "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=shared"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -7,8 +7,7 @@
     "start": "node --require dotenv/config dist/backend/index.js",
     "get-avicommons": "tsx --require dotenv/config scripts/get-avicommons.ts",
     "get-feature-photo": "tsx scripts/get-feature-photo.ts",
-    "tz-sync-regions": "tsx --require dotenv/config scripts/tz-sync-regions.ts",
-    "backfill-trip-images": "tsx --require dotenv/config scripts/backfill-trip-images.ts"
+    "tz-sync-regions": "tsx --require dotenv/config scripts/tz-sync-regions.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1075.0",
