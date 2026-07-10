@@ -11,6 +11,7 @@ import LifelistField from "components/LifelistField";
 import useLifelistMode from "hooks/useLifelistMode";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
+import Field from "components/Field";
 import { withReturnTo } from "lib/helpers";
 
 type Props = {
@@ -120,14 +121,14 @@ export default function ManageLifelist({ participantId }: Props) {
 
         {isNameOnly && canEdit && (
           <div className="space-y-5">
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-gray-700">Name</span>
-              <Input size="sm"
+            <Field label="Name">
+              <Input
+                size="sm"
                 type="text"
                 value={nameDraft}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameDraft(e.target.value)}
               />
-            </label>
+            </Field>
             {listSection}
           </div>
         )}

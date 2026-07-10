@@ -1,6 +1,7 @@
 import React from "react";
 import AsyncSelect from "react-select/async";
 import { Option } from "lib/types";
+import { reactSelectBaseStyles } from "lib/formStyles";
 
 export type SelectProps = {
   value?: Option | Option[];
@@ -18,34 +19,5 @@ export type SelectProps = {
 };
 
 export default function ReactSelectAsyncStyled(props: SelectProps) {
-  return (
-    <AsyncSelect
-      styles={{
-        singleValue: (base) => ({
-          ...base,
-          color: "#555",
-          fontWeight: "normal",
-          fontSize: "0.875rem",
-        }),
-        input: (base) => ({
-          ...base,
-          fontSize: "1rem",
-        }),
-        container: (base) => ({
-          ...base,
-          fontSize: "0.875rem",
-        }),
-        control: (base, state) => ({
-          ...base,
-          borderColor: state.isFocused ? "var(--ring)" : "var(--input)",
-          "&:hover": {
-            borderColor: state.isFocused ? "var(--ring)" : "#9ca3af",
-          },
-        }),
-        menu: (base) => ({ ...base, fontSize: "0.875rem" }),
-        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-      }}
-      {...props}
-    />
-  );
+  return <AsyncSelect styles={reactSelectBaseStyles} {...props} />;
 }

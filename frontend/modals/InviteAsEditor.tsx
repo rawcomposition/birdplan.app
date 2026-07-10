@@ -7,6 +7,7 @@ import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
+import Field from "components/Field";
 
 type Props = {
   participantId: string;
@@ -42,9 +43,9 @@ export default function InviteAsEditor({ participantId, name }: Props) {
       <Header>Invite as editor</Header>
       <Body className="min-h-0">
         <p className="mb-4 text-sm text-gray-500">Send {name || "this person"} an email to join as an editor.</p>
-        <label className="block pb-2">
-          <span className="block text-sm font-medium text-gray-700 mb-1.5">Email</span>
-          <Input size="sm"
+        <Field label="Email" className="pb-2">
+          <Input
+            size="sm"
             type="email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
@@ -57,7 +58,7 @@ export default function InviteAsEditor({ participantId, name }: Props) {
             placeholder="friend@example.com"
             autoFocus
           />
-        </label>
+        </Field>
       </Body>
       <Footer>
         <div className="flex justify-end gap-2 w-full">

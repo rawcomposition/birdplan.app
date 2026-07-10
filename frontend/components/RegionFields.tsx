@@ -40,29 +40,33 @@ export default function RegionFields({ value, onChange }: Props) {
               menuPortalTarget={portalTarget()}
             />
           </Field>
-          <Field label="State / Province" isOptional={!requireSubregion}>
-            <RegionSelect
-              type="subnational1"
-              parent={value.country?.value || ""}
-              onChange={(states: any) => onChange((v) => ({ ...v, states, counties: undefined }))}
-              value={value.states}
-              menuPortalTarget={portalTarget()}
-              isClearable={!requireSubregion}
-              isMulti
-            />
-          </Field>
-          {value.states?.length === 1 && (
-            <Field label="County" isOptional>
-              <RegionSelect
-                type="subnational2"
-                parent={value.states[0].value}
-                onChange={(counties: any) => onChange((v) => ({ ...v, counties }))}
-                value={value.counties}
-                menuPortalTarget={portalTarget()}
-                isClearable
-                isMulti
-              />
-            </Field>
+          {value.country && (
+            <>
+              <Field label="State / Province" isOptional={!requireSubregion}>
+                <RegionSelect
+                  type="subnational1"
+                  parent={value.country.value}
+                  onChange={(states: any) => onChange((v) => ({ ...v, states, counties: undefined }))}
+                  value={value.states}
+                  menuPortalTarget={portalTarget()}
+                  isClearable={!requireSubregion}
+                  isMulti
+                />
+              </Field>
+              {value.states?.length === 1 && (
+                <Field label="County" isOptional>
+                  <RegionSelect
+                    type="subnational2"
+                    parent={value.states[0].value}
+                    onChange={(counties: any) => onChange((v) => ({ ...v, counties }))}
+                    value={value.counties}
+                    menuPortalTarget={portalTarget()}
+                    isClearable
+                    isMulti
+                  />
+                </Field>
+              )}
+            </>
           )}
         </>
       )}

@@ -8,6 +8,7 @@ import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
+import Field from "components/Field";
 import LifelistField from "components/LifelistField";
 
 type Tab = "invite" | "named";
@@ -62,7 +63,7 @@ export default function AddParticipant() {
               onClick={() => setTab(t)}
               className={clsx(
                 "rounded-md px-3 py-1.5 font-medium transition-colors",
-                tab === t ? "bg-white text-gray-800 shadow-xs" : "text-gray-500 hover:text-gray-700"
+                tab === t ? "bg-white text-gray-800 shadow-xs" : "text-gray-500 hover:text-gray-700",
               )}
             >
               {t === "named" ? "Name Only" : "Editor"}
@@ -71,36 +72,32 @@ export default function AddParticipant() {
         </div>
 
         {tab === "invite" ? (
-          <div className="pb-2">
-            <label className="block mb-2">
-              <span className="block text-sm font-medium text-gray-700 mb-1.5">Email</span>
-              <Input size="sm"
-                type="email"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                placeholder="friend@example.com"
-                autoFocus
-              />
-            </label>
-          </div>
+          <Field label="Email" className="pb-2">
+            <Input
+              size="sm"
+              type="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+              placeholder="friend@example.com"
+              autoFocus
+            />
+          </Field>
         ) : (
-          <div className="pb-2">
-            <label className="block mb-2">
-              <span className="block text-sm font-medium text-gray-700 mb-1.5">Name</span>
-              <Input size="sm"
-                type="text"
-                value={name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                autoFocus
-              />
-            </label>
-          </div>
+          <Field label="Name" className="pb-2">
+            <Input
+              size="sm"
+              type="text"
+              value={name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+              autoFocus
+            />
+          </Field>
         )}
 
         {showAttach || parsed ? (
