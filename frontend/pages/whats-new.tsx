@@ -1,16 +1,12 @@
 import React from "react";
-import Footer from "components/Footer";
-import HomeHeader from "components/HomeHeader";
+import PublicPage from "components/PublicPage";
+import Heading from "components/Heading";
 import { Link } from "react-router-dom";
 
 export default function WhatsNew() {
   return (
-    <div className="flex flex-col h-full">
-      <title>What&apos;s New | BirdPlan.app</title>
-
-      <HomeHeader />
-      <main className="container px-4">
-        <h1 className="text-4xl text-gray-800 leading-normal font-bold mt-12">What&apos;s New</h1>
+    <PublicPage documentTitle="What's New | BirdPlan.app">
+      <Heading title="What's New" className="mt-12" />
         <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
           <h2>June 26, 2026</h2>
           <ul>
@@ -274,8 +270,6 @@ export default function WhatsNew() {
             <li>🐞 Fix error when accessing eBird hotspot data.</li>
           </ul>
         </div>
-      </main>
-      <Footer />
-    </div>
+    </PublicPage>
   );
 }

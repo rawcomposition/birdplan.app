@@ -1,8 +1,5 @@
 import React from "react";
-import Header from "components/Header";
-import Heading from "components/Heading";
-import BackLink from "components/BackLink";
-import Footer from "components/Footer";
+import DashboardPage from "components/DashboardPage";
 import { useUser } from "hooks/useUser";
 import { useModal } from "stores/modals";
 import Icon from "components/Icon";
@@ -33,15 +30,15 @@ export default function Account() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col h-full">
-      <title>My Account | BirdPlan.app</title>
-
-      <Header />
-      <main className="max-w-4xl w-full mx-auto px-4 lg:px-0">
-        <BackLink to="/trips" label="Back to trips" className="mt-6" />
-        <Heading title="My Account" icon="user" iconClassName="text-gray-600" className="mb-8 mt-4" />
-
-        <Tabs defaultValue="profile" orientation="vertical" className="flex flex-col md:flex-row">
+    <DashboardPage
+      documentTitle="My Account | BirdPlan.app"
+      maxWidth="4xl"
+      back={{ to: "/trips", label: "Back to trips" }}
+      title="My Account"
+      icon="user"
+      iconClassName="text-gray-600"
+    >
+      <Tabs defaultValue="profile" orientation="vertical" className="flex flex-col md:flex-row">
           <TabsList variant="pills" className="w-full md:w-64 flex-wrap md:flex-col gap-1 p-4 pl-0 mt-3">
             {tabs.map((tab) => (
               <TabsTrigger key={tab.id} value={tab.id} className="sm:w-full">
@@ -84,8 +81,6 @@ export default function Account() {
             </TabsContent>
           </div>
         </Tabs>
-      </main>
-      <Footer />
-    </div>
+    </DashboardPage>
   );
 }

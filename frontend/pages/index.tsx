@@ -2,8 +2,7 @@ import React from "react";
 import { Button } from "components/ui/button";
 import Icon from "components/Icon";
 import { useUser } from "hooks/useUser";
-import Footer from "components/Footer";
-import HomeHeader from "components/HomeHeader";
+import PublicPage from "components/PublicPage";
 
 const features = [
   {
@@ -42,12 +41,8 @@ export default function BirdPlan() {
   const { user } = useUser();
   const isLoggedIn = !!user?._id;
   return (
-    <div className="flex flex-col h-full">
-        <title>BirdPlan.app - Plan Your Next Birding Adventure</title>
-
-      <HomeHeader />
-      <main className="container px-4">
-        <div className="flex flex-col items-center justify-center py-8 md:py-12 lg:py-16">
+    <PublicPage documentTitle="BirdPlan.app - Plan Your Next Birding Adventure">
+      <div className="flex flex-col items-center justify-center py-8 md:py-12 lg:py-16">
           <h1 className="text-gray-800 sm:leading-normal lg:leading-normal font-bold text-center mb-8 text-3xl sm:text-5xl lg:text-7xl">
             The easiest way to plan your next birding trip
           </h1>
@@ -75,7 +70,7 @@ export default function BirdPlan() {
             </div>
           </div>
         </div>
-        <h1 className="text-4xl text-gray-800 leading-normal font-bold text-center">Features</h1>
+        <h1 className="text-4xl font-bold leading-normal text-foreground text-center">Features</h1>
         <div className="mx-auto mt-16 max-w-7xl px-6 sm:mt-20 md:mt-24 lg:px-8 mb-16 sm:mb-24 md:mb-32">
           <dl className="mx-auto grid max-w-2xl grid-cols-1 gap-x-6 gap-y-10 text-base leading-7 text-gray-600 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
             {features.map((feature) => (
@@ -106,8 +101,6 @@ export default function BirdPlan() {
             </div>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+    </PublicPage>
   );
 }

@@ -6,9 +6,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import clsx from "clsx";
 import { AdminDashboard, AdminDashboardUser, AdminDashboardLog, GenerateMagicLinkResponse } from "@birdplan/shared";
-import Header from "components/Header";
-import Heading from "components/Heading";
-import Footer from "components/Footer";
+import DashboardPage from "components/DashboardPage";
 import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import Avatar from "components/Avatar";
@@ -163,13 +161,13 @@ export default function Admin() {
   });
 
   return (
-    <div className="flex flex-col h-full">
-      <title>Admin | BirdPlan.app</title>
-
-      <Header />
-      <main className="max-w-6xl w-full mx-auto px-4 lg:px-0 pb-12">
-        <Heading title="Admin Dashboard" icon="user" iconClassName="text-gray-600" className="mb-8 mt-6" />
-
+    <DashboardPage
+      documentTitle="Admin | BirdPlan.app"
+      maxWidth="6xl"
+      title="Admin Dashboard"
+      icon="user"
+      iconClassName="text-gray-600"
+    >
         {error && (
           <EmptyState
             className="mt-4"
@@ -314,8 +312,6 @@ export default function Admin() {
             </>
           )
         )}
-      </main>
-      <Footer />
-    </div>
+    </DashboardPage>
   );
 }

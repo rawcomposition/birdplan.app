@@ -9,7 +9,7 @@ import Field from "components/Field";
 import { Card } from "components/ui/card";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
-import FormPage from "components/FormPage";
+import DashboardPage from "components/DashboardPage";
 import { useNavigate } from "react-router-dom";
 import { months } from "lib/helpers";
 import { Button } from "components/ui/button";
@@ -125,7 +125,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   };
 
   return (
-    <FormPage
+    <DashboardPage
       title="Trip settings"
       documentTitle="Trip Settings | BirdPlan.app"
       back={{ to: `/${trip._id}`, label: "Back to trip" }}
@@ -196,6 +196,6 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
           </Button>
         </div>
       </form>
-    </FormPage>
+    </DashboardPage>
   );
 }

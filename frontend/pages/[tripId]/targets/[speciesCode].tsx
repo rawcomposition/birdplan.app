@@ -1,14 +1,13 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
-import Icon from "components/Icon";
+import BackLink from "components/BackLink";
 import { Alert } from "components/ui/alert";
 import LoadError from "components/LoadError";
-import MapBox from "components/Mapbox";
-import SpeciesCard from "components/SpeciesCard";
+import SpeciesMapOverlay from "components/SpeciesMapOverlay";
 import { Card } from "components/ui/card";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
@@ -18,6 +17,7 @@ import useTripLifelist from "hooks/useTripLifelist";
 import useMutualTargets from "hooks/useMutualTargets";
 import { useSpeciesImages } from "hooks/useSpeciesImages";
 import { useModal } from "stores/modals";
+import useCloseOnOutsideClick from "hooks/useCloseOnOutsideClick";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useTripMutation from "hooks/useTripMutation";
@@ -30,12 +30,13 @@ import type { OpenBirdingHotspotRankingResponse, User } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
   const { speciesCode = "" } = useParams();
-  const { trip, canEdit, selectedSpecies, setSelectedSpecies, dateRangeLabel } = useTrip();
+  const { trip, canEdit, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { myLifelist } = useTripLifelist(trip);
   const { isMutual } = useMutualTargets(trip);
   const viewerListMode = trip?.viewer?.listMode ?? "world";
   const { getSpeciesImg } = useSpeciesImages();
-  const { open, close } = useModal();
+  const { open } = useModal();
+  const handleContainerClick = useCloseOnOutsideClick();
   const queryClient = useQueryClient();
 
   const [scope, setScope] = React.useState<Scope>("saved");
@@ -281,32 +282,12 @@ export default function SpeciesDetail() {
     });
   };
 
-  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (
-      !target.closest("button") &&
-      !target.closest("a") &&
-      !target.closest('[role="button"]') &&
-      !target.closest(".mapboxgl-canvas")
-    ) {
-      close();
-    }
-  };
-
   return (
     <>
       {trip && speciesName && <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>}
       <div className="absolute inset-0 overflow-auto" onClick={handleContainerClick}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
-          <div className="mb-4">
-            <Link
-              to={`/${trip?._id}/targets`}
-              className="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
-            >
-              <Icon name="arrowRight" className="text-xs rotate-180" />
-              Back to targets
-            </Link>
-          </div>
+          <BackLink to={`/${trip?._id}/targets`} label="Back to targets" className="mb-4" />
 
           {!target && regionData?.items && (
             <Alert variant="warning">Species not found in this region&apos;s targets.</Alert>
@@ -391,16 +372,7 @@ export default function SpeciesDetail() {
           </div>
         </div>
       </div>
-      {selectedSpecies && (
-        <div className="absolute inset-0 z-10 flex flex-col" onClick={handleContainerClick}>
-          <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />
-          <div className="w-full grow relative">
-            {trip?.bounds && (
-              <MapBox key={trip._id} onHotspotClick={obsClick} obsLayer={obsLayer} bounds={trip.bounds} />
-            )}
-          </div>
-        </div>
-      )}
+      <SpeciesMapOverlay onOutsideClick={handleContainerClick} onHotspotClick={obsClick} obsLayer={obsLayer} />
     </>
   );
 }

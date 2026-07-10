@@ -1,8 +1,6 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "components/Header";
-import Heading from "components/Heading";
-import Footer from "components/Footer";
+import DashboardPage from "components/DashboardPage";
 import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
@@ -30,38 +28,28 @@ export default function TripLifelist() {
   if (is404) return <NotFound />;
 
   return (
-    <div className="flex flex-col h-full">
-        <title>Trip Life List | BirdPlan.app</title>
-
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />
-      <main className="max-w-2xl w-full mx-auto pb-12">
-        <div className="px-4 md:px-0 mt-8">
-          <Heading
-            title="Trip Life List"
-            icon="feather"
-            iconClassName="text-lime-600"
-            subtitle="Choose which life list to use for determining your trip targets."
-            className="mb-8"
-          />
-
-          <Card className="rounded-2xl p-5 mb-6">
-            {trip ? (
-              <LifelistEditor trip={trip} mode={lifelistMode} embedded />
-            ) : (
-              <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-                <Spinner /> Loading...
-              </div>
-            )}
-          </Card>
-
-          <div className="flex">
-            <Button onClick={handleDone} variant="default" size="lg" className="inline-flex items-center ml-auto">
-              {doneLabel}
-            </Button>
+    <DashboardPage
+      documentTitle="Trip Life List | BirdPlan.app"
+      title="Trip Life List"
+      icon="feather"
+      iconClassName="text-lime-600"
+      subtitle="Choose which life list to use for determining your trip targets."
+    >
+      <Card className="rounded-2xl p-5 mb-6">
+        {trip ? (
+          <LifelistEditor trip={trip} mode={lifelistMode} embedded />
+        ) : (
+          <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
+            <Spinner /> Loading...
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+        )}
+      </Card>
+
+      <div className="flex">
+        <Button onClick={handleDone} variant="default" size="lg" className="inline-flex items-center ml-auto">
+          {doneLabel}
+        </Button>
+      </div>
+    </DashboardPage>
   );
 }

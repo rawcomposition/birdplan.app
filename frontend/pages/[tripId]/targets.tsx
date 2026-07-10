@@ -1,10 +1,10 @@
 import React from "react";
-import MapBox from "components/Mapbox";
 import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
+import useCloseOnOutsideClick from "hooks/useCloseOnOutsideClick";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
-import SpeciesCard from "components/SpeciesCard";
+import SpeciesMapOverlay from "components/SpeciesMapOverlay";
 import { Card } from "components/ui/card";
 import EmptyState from "components/EmptyState";
 import { Button } from "components/ui/button";
@@ -21,8 +21,9 @@ import { Spinner } from "components/ui/spinner";
 const PAGE_SIZE = 100;
 
 export default function TripTargets() {
-  const { open, close } = useModal();
+  const { open } = useModal();
   const { trip, selectedSpecies } = useTrip();
+  const handleContainerClick = useCloseOnOutsideClick();
   const { obs, obsLayer } = useFetchSpeciesObs({
     region: trip?.region,
     code: selectedSpecies?.code,
@@ -78,18 +79,6 @@ export default function TripTargets() {
         hotspot: observation,
         speciesName: selectedSpecies?.name,
       });
-    }
-  };
-
-  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (
-      !target.closest("button") &&
-      !target.closest("a") &&
-      !target.closest('[role="button"]') &&
-      !target.closest(".mapboxgl-canvas")
-    ) {
-      close();
     }
   };
 
@@ -232,21 +221,7 @@ export default function TripTargets() {
           </div>
         </div>
       </div>
-      {selectedSpecies && (
-        <div className="absolute inset-0 z-10 flex flex-col" onClick={handleContainerClick}>
-          <SpeciesCard name={selectedSpecies.name} code={selectedSpecies.code} />
-          <div className="w-full grow relative">
-            {trip?.bounds && (
-              <MapBox
-                key={trip._id}
-                onHotspotClick={obsClick}
-                obsLayer={selectedSpecies && obsLayer}
-                bounds={trip.bounds}
-              />
-            )}
-          </div>
-        </div>
-      )}
+      <SpeciesMapOverlay onOutsideClick={handleContainerClick} onHotspotClick={obsClick} obsLayer={obsLayer} />
     </>
   );
 }

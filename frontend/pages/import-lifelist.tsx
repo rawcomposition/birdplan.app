@@ -4,7 +4,7 @@ import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
-import FormPage from "components/FormPage";
+import DashboardPage from "components/DashboardPage";
 import { Spinner } from "components/ui/spinner";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
@@ -82,7 +82,7 @@ export default function ImportLifelist() {
   };
 
   return (
-    <FormPage
+    <DashboardPage
       title="World life list"
       icon="feather"
       iconClassName="text-lime-600"
@@ -161,6 +161,6 @@ export default function ImportLifelist() {
               {isOnboarding ? "Continue" : "Done"}
             </Button>
           </div>
-    </FormPage>
+    </DashboardPage>
   );
 }

@@ -4,17 +4,15 @@ import TripNav from "components/TripNav";
 import NotFound from "components/NotFound";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useTrip } from "hooks/useTrip";
-import { useUser } from "hooks/useUser";
 
 export default function TripLayout() {
-  const { trip, is404 } = useTrip();
-  const { user } = useUser();
+  const { is404 } = useTrip();
 
   if (is404) return <NotFound />;
 
   return (
     <div className="flex flex-col h-full print:h-auto">
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: user?._id ? "/trips" : "/" }} />
+      <Header />
       <TripNav />
       <main className="flex flex-1 min-h-0 relative bg-background print:min-h-0 print:block">
         <ErrorBoundary>

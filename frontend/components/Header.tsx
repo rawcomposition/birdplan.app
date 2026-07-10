@@ -13,21 +13,17 @@ import BreadcrumbArrow from "components/BreadcrumbArrow";
 import Logo from "components/Logo";
 
 type Props = {
-  title?: string;
   border?: boolean;
-  parent?: {
-    title: string;
-    href: string;
-  };
 };
 
-export default function Header({ title, parent, border }: Props) {
+export default function Header({ border }: Props) {
   const { isOnline } = useRealtimeStatus();
-  const { canEdit } = useTrip();
+  const { canEdit, trip } = useTrip();
   const { close, open } = useModal();
   const { user } = useUser();
 
   const isSubPage = useLocation().pathname !== "/trips";
+  const tripsHref = user?._id ? "/trips" : "/";
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -54,22 +50,18 @@ export default function Header({ title, parent, border }: Props) {
           <h1 className="text-center text-gray-700 font-logo text-2xl">BirdPlan.app</h1>
         </Link>
         {isSubPage && (
-          <Link to={user?._id ? "/trips" : "/"} className="md:hidden pl-3 pr-5 py-3">
+          <Link to={tripsHref} className="md:hidden pl-3 pr-5 py-3">
             <Icon name="angleLeft" className="text-gray-500 text-2xl flex items-center" />
           </Link>
         )}
         <div className="mr-auto gap-8 items-center flex min-w-0">
-          {title && (
+          {trip && (
             <nav className="flex items-center min-w-0">
-              {parent && (
-                <>
-                  <Link to={parent.href} className="text-gray-600 px-5 py-1.5 hidden md:flex items-center font-medium">
-                    {parent.title}
-                  </Link>
-                  <BreadcrumbArrow className="hidden md:block" />
-                </>
-              )}
-              <h1 className="text-gray-600 pr-5 md:pl-5 py-1.5 truncate font-medium">{title}</h1>
+              <Link to={tripsHref} className="text-gray-600 px-5 py-1.5 hidden md:flex items-center font-medium">
+                Trips
+              </Link>
+              <BreadcrumbArrow className="hidden md:block" />
+              <h1 className="text-gray-600 pr-5 md:pl-5 py-1.5 truncate font-medium">{trip.name}</h1>
             </nav>
           )}
         </div>

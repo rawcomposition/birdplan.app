@@ -1,6 +1,6 @@
 import React from "react";
-import Footer from "components/Footer";
-import HomeHeader from "components/HomeHeader";
+import PublicPage from "components/PublicPage";
+import Heading from "components/Heading";
 import { useUser } from "hooks/useUser";
 import toast from "react-hot-toast";
 import Field from "components/Field";
@@ -8,7 +8,7 @@ import { Input } from "components/ui/input";
 import { Textarea } from "components/ui/textarea";
 import { Button } from "components/ui/button";
 import useMutation from "hooks/useMutation";
-import { Link } from "react-router-dom";
+import BackLink from "components/BackLink";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "components/ui/select";
 
 export default function Contact() {
@@ -54,13 +54,9 @@ export default function Contact() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-        <title>Contact | BirdPlan.app</title>
-
-      <HomeHeader />
-      <main className="container px-4">
-        <div className="max-w-2xl mx-auto py-12">
-          <h1 className="text-4xl text-foreground leading-normal font-bold mb-8">Contact</h1>
+    <PublicPage documentTitle="Contact | BirdPlan.app">
+      <div className="max-w-2xl mx-auto py-12">
+        <Heading title="Contact" className="mb-8" />
 
           {submitted ? (
             <div className="rounded-xl border bg-card p-8 shadow-xs">
@@ -68,12 +64,11 @@ export default function Contact() {
               <p className="text-secondary-foreground mb-4">
                 We&apos;ve received your request and will get back to you as soon as possible.
               </p>
-              <Link
-                to={user?._id ? `/trips` : "/"}
-                className="text-muted-foreground hover:text-foreground ml-4 md:ml-0 inline-flex items-center"
-              >
-                {user?._id ? "← Back to trips" : "← Back to home"}
-              </Link>
+              <BackLink
+                to={user?._id ? "/trips" : "/"}
+                label={user?._id ? "Back to trips" : "Back to home"}
+                className="ml-4 md:ml-0"
+              />
             </div>
           ) : (
             <div className="rounded-xl border bg-card p-8 shadow-xs">
@@ -122,9 +117,7 @@ export default function Contact() {
               </form>
             </div>
           )}
-        </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </PublicPage>
   );
 }

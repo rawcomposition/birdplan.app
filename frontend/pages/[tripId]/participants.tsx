@@ -1,13 +1,12 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import Header from "components/Header";
 import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import Field from "components/Field";
 import { Input } from "components/ui/input";
-import FormPage from "components/FormPage";
+import DashboardPage from "components/DashboardPage";
 import NotFound from "components/NotFound";
 import ParticipantRow from "components/ParticipantRow";
 import { useTrip } from "hooks/useTrip";
@@ -31,11 +30,10 @@ export default function TripParticipants() {
   if (is404) return <NotFound />;
 
   return (
-    <FormPage
+    <DashboardPage
       title="Participants"
       subtitle="Manage trip participants and life lists."
       documentTitle="Participants | BirdPlan.app"
-      header={<Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />}
       back={returnTo || !isCreate ? { to: backHref, label: `Back to ${backLabel}` } : undefined}
     >
       <Card className="mb-4 rounded-2xl px-4 sm:px-5">
@@ -71,6 +69,6 @@ export default function TripParticipants() {
           {isCreate ? "Continue" : "Done"}
         </Button>
       </div>
-    </FormPage>
+    </DashboardPage>
   );
 }
