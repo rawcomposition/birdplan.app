@@ -63,7 +63,7 @@ export default function Support() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogTitle>Support BirdPlan.app</DialogTitle>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-[#f9f9f9]">
+          <div className="overflow-hidden rounded-lg border border-border bg-[#f9f9f9]">
             <iframe
               id="kofiframe"
               src="https://ko-fi.com/rawcomposition/?hidefeed=true&widget=true&embed=true&preview=true"

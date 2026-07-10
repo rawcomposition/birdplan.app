@@ -93,13 +93,13 @@ export default function ImportLifelist() {
             <Card className="rounded-2xl p-5 mb-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>
-                  <p className="text-3xl font-bold text-gray-800 tabular-nums">{lifelist.length.toLocaleString()}</p>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Species on your list</p>
+                  <p className="text-3xl font-bold text-foreground tabular-nums">{lifelist.length.toLocaleString()}</p>
                 </div>
                 {lifelistUpdatedAt && (
                   <div className="text-right">
-                    <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Last updated</p>
-                    <p className="text-sm text-gray-700">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
+                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Last updated</p>
+                    <p className="text-sm text-secondary-foreground">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
                   </div>
                 )}
               </div>
@@ -108,7 +108,7 @@ export default function ImportLifelist() {
 
           <Card className="p-5 mb-6">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <h3 className="text-lg font-medium text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
+              <h3 className="text-lg font-medium text-secondary-foreground">{hasList ? "Update your list" : "Import your list"}</h3>
               <EbirdDownloadLink className="shrink-0" world />
             </div>
             <LifelistUpload
@@ -119,8 +119,8 @@ export default function ImportLifelist() {
           </Card>
 
           <Card className="p-5 mb-6">
-            <h3 className="text-lg font-medium mb-1 text-gray-700">Exceptions</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-lg font-medium mb-1 text-secondary-foreground">Exceptions</h3>
+            <p className="text-sm text-secondary-foreground mb-3">
               Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies
               to all your trips.
             </p>

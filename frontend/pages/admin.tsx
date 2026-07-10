@@ -37,16 +37,16 @@ function LogRow({ log }: { log: AdminDashboardLog }) {
   const detail = [log.email, log.userId, ip].filter(Boolean).join(" · ");
   const data = log.data && Object.keys(log.data).length > 0 ? JSON.stringify(log.data) : null;
   return (
-    <tr className="hover:bg-gray-50 align-top">
+    <tr className="hover:bg-muted/50 align-top">
       <td className="px-4 py-3 whitespace-nowrap">
-        <span className="inline-block rounded bg-gray-100 px-2 py-0.5 font-mono text-xs text-gray-700">{log.type}</span>
+        <span className="inline-block rounded bg-muted px-2 py-0.5 font-mono text-xs text-secondary-foreground">{log.type}</span>
       </td>
-      <td className="px-4 py-3 text-gray-600">
+      <td className="px-4 py-3 text-secondary-foreground">
         {detail && <p className="truncate">{detail}</p>}
-        {data && <p className="font-mono text-xs text-gray-400 break-all">{data}</p>}
-        {!detail && !data && <span className="text-gray-400">—</span>}
+        {data && <p className="font-mono text-xs text-muted-foreground break-all">{data}</p>}
+        {!detail && !data && <span className="text-muted-foreground">—</span>}
       </td>
-      <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(log.createdAt)}</td>
+      <td className="px-4 py-3 whitespace-nowrap text-secondary-foreground">{formatDate(log.createdAt)}</td>
     </tr>
   );
 }
@@ -54,8 +54,8 @@ function LogRow({ log }: { log: AdminDashboardLog }) {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex flex-col">
-      <span className="text-2xl font-bold text-gray-800">{value.toLocaleString()}</span>
-      <span className="text-sm text-gray-500">{label}</span>
+      <span className="text-2xl font-bold text-foreground">{value.toLocaleString()}</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
     </div>
   );
 }
@@ -78,8 +78,8 @@ function SortHeader({
     <th className="px-4 py-3 text-left font-medium">
       <button
         className={clsx(
-          "inline-flex items-center gap-1 hover:text-gray-800",
-          isActive ? "text-gray-800" : "text-gray-500"
+          "inline-flex items-center gap-1 hover:text-foreground",
+          isActive ? "text-foreground" : "text-muted-foreground"
         )}
         onClick={() => onSort(sortKey)}
       >
@@ -167,7 +167,7 @@ export default function Admin() {
       maxWidth="6xl"
       title="Admin Dashboard"
       icon="user"
-      iconClassName="text-gray-600"
+      iconClassName="text-secondary-foreground"
     >
         {error && (
           <EmptyState className="mt-4" variant="destructive" title="Error loading dashboard" onRetry={() => refetch()} />
@@ -180,7 +180,7 @@ export default function Admin() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 <Card className="p-5">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-4">Users</h2>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-4">Users</h2>
                   <div className="grid grid-cols-3 gap-4">
                     <Stat label="Total" value={data.stats.users.total} />
                     <Stat label="Active 30 days" value={data.stats.users.active30d} />
@@ -188,7 +188,7 @@ export default function Admin() {
                   </div>
                 </Card>
                 <Card className="p-5">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-4">Trips</h2>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-4">Trips</h2>
                   <div className="grid grid-cols-3 gap-4">
                     <Stat label="Total" value={data.stats.trips.total} />
                     <Stat label="Created 30 days" value={data.stats.trips.created30d} />
@@ -198,7 +198,7 @@ export default function Admin() {
               </div>
 
               <Tabs defaultValue="users">
-                <TabsList className="mb-4 border-b border-gray-200">
+                <TabsList className="mb-4 border-b border-border">
                   <TabsTrigger value="users" className="px-4 capitalize">
                     users
                   </TabsTrigger>
@@ -214,7 +214,7 @@ export default function Admin() {
                   <Card className="overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
-                        <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
+                        <thead className="border-b border-border bg-muted text-muted-foreground">
                           <tr>
                             <th className="px-4 py-3 text-left font-medium">User</th>
                             <SortHeader
@@ -241,25 +241,25 @@ export default function Admin() {
                             <th className="px-4 py-3" />
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-border">
                           {sortedUsers.map((u) => (
-                            <tr key={u._id} className="hover:bg-gray-50">
+                            <tr key={u._id} className="hover:bg-muted/50">
                               <td className="px-4 py-3">
                                 <div className="flex items-center gap-3">
                                   <Avatar user={avatarFromUser(u)} size={32} />
                                   <div className="min-w-0">
-                                    <p className="font-medium text-gray-800 truncate">{u.name || "Unnamed"}</p>
-                                    {u.email && <p className="text-gray-500 truncate">{u.email}</p>}
+                                    <p className="font-medium text-foreground truncate">{u.name || "Unnamed"}</p>
+                                    {u.email && <p className="text-muted-foreground truncate">{u.email}</p>}
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-gray-600">
+                              <td className="px-4 py-3 whitespace-nowrap text-secondary-foreground">
                                 {formatDate(u.lastActiveAt)}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-gray-600">
+                              <td className="px-4 py-3 whitespace-nowrap text-secondary-foreground">
                                 {formatDate(u.lastAuthenticatedAt)}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(u.createdAt)}</td>
+                              <td className="px-4 py-3 whitespace-nowrap text-secondary-foreground">{formatDate(u.createdAt)}</td>
                               <td className="px-4 py-3 text-right">
                                 <UserActions user={u} />
                               </td>
@@ -275,20 +275,20 @@ export default function Admin() {
                 <Card className="overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="border-b border-gray-200 bg-gray-50 text-gray-500">
+                      <thead className="border-b border-border bg-muted text-muted-foreground">
                         <tr>
                           <th className="px-4 py-3 text-left font-medium">Type</th>
                           <th className="px-4 py-3 text-left font-medium">Details</th>
                           <th className="px-4 py-3 text-left font-medium">When</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-border">
                         {(data.logs || []).map((log) => (
                           <LogRow key={log._id} log={log} />
                         ))}
                         {(data.logs || []).length === 0 && (
                           <tr>
-                            <td colSpan={3} className="px-4 py-8 text-center text-gray-400">
+                            <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
                               No logs yet
                             </td>
                           </tr>

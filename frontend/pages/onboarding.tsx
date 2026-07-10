@@ -52,7 +52,7 @@ export default function Onboarding() {
 
   return (
     <UtilityPage heading="Welcome to BirdPlan" title="Welcome">
-      <p className="text-sm text-gray-500 text-center mb-6">What should we call you?</p>
+      <p className="text-sm text-muted-foreground text-center mb-6">What should we call you?</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Your name">
           <Input size="sm"

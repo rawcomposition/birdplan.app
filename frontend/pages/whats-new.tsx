@@ -7,7 +7,7 @@ export default function WhatsNew() {
   return (
     <PublicPage documentTitle="What's New | BirdPlan.app">
       <Heading title="What's New" className="mt-12" />
-      <div className="prose prose-h2:text-gray-800 prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+      <div className="prose prose-h2:text-foreground prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
         <h2>July 10, 2026</h2>
         <ul>
           <li>💅 Minor improvements to the interface to make it more consistent throughout and more intuitive.</li>

@@ -314,7 +314,7 @@ export default function SpeciesDetail() {
           <Card className="mt-4 px-4 py-3 focus-within:outline-solid focus-within:outline-2 focus-within:outline-blue-500 focus-within:outline-offset-0">
             <label
               htmlFor="species-notes"
-              className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500"
+              className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
             >
               Notes
             </label>
@@ -327,7 +327,7 @@ export default function SpeciesDetail() {
               readOnly={!canMutate}
               minRows={1}
               maxRows={10}
-              className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-gray-800 outline-hidden"
+              className="block w-full resize-none overflow-hidden border-none bg-transparent text-sm leading-6 text-foreground outline-hidden"
             />
           </Card>
 
@@ -370,7 +370,7 @@ export default function SpeciesDetail() {
               />
             )}
 
-            {rankings?.citation && <p className="text-gray-400 text-xs text-center pt-2">{rankings.citation}</p>}
+            {rankings?.citation && <p className="text-muted-foreground text-xs text-center pt-2">{rankings.citation}</p>}
           </div>
         </div>
       </div>
