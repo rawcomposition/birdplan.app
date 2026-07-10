@@ -11,7 +11,7 @@ import LoadingState from "components/LoadingState";
 import SpeciesMapOverlay from "components/SpeciesMapOverlay";
 import { Card } from "components/ui/card";
 import SpeciesHero from "components/SpeciesHero";
-import SpeciesHotspotToolbar, { type Scope, type SortKey } from "components/SpeciesHotspotToolbar";
+import SpeciesHotspotToolbar, { type SortKey } from "components/SpeciesHotspotToolbar";
 import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
 import { useTrip } from "hooks/useTrip";
 import useTripLifelist from "hooks/useTripLifelist";
@@ -40,10 +40,9 @@ export default function SpeciesDetail() {
   const handleContainerClick = useCloseOnOutsideClick();
   const queryClient = useQueryClient();
 
-  const [scope, setScope] = React.useState<Scope>("saved");
   const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
   const [nowMs] = React.useState(() => Date.now());
-  const { sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
+  const { scope, setScope, sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();
 
   const { data: regionData } = useDownloadTargets({
