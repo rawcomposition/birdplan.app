@@ -68,7 +68,7 @@ export default function TripCard({ trip }: Props) {
                 />
               ))}
               {extraAvatars > 0 && (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary ring-2 ring-white">
+                <div className="relative z-10 flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-[11px] font-bold text-primary ring-2 ring-white">
                   +{extraAvatars}
                 </div>
               )}
