@@ -4,7 +4,7 @@ import UtilityPage from "components/UtilityPage";
 import { Input } from "components/ui/input";
 import { Button } from "components/ui/button";
 import Field from "components/Field";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 import { useUser } from "hooks/useUser";
 import useMutation from "hooks/useMutation";
 import { withReturnTo } from "lib/helpers";
@@ -31,9 +31,7 @@ export default function Onboarding() {
   if (loading) {
     return (
       <UtilityPage heading="Welcome">
-        <div className="text-center">
-          <Spinner className="size-9" />
-        </div>
+        <LoadingState className="py-0" />
       </UtilityPage>
     );
   }

@@ -1,13 +1,12 @@
 import React from "react";
 import { useTrip } from "hooks/useTrip";
-import { Spinner } from "components/ui/spinner";
-import LoadError from "components/LoadError";
+import LoadingState from "components/LoadingState";
+import EmptyState from "components/EmptyState";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
-import { Alert } from "components/ui/alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
 import { computeFrequency, getMonthRange } from "lib/targets";
@@ -44,17 +43,11 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   }, [data, view, lifelist, allMonths, tripMonths]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center my-8">
-        <Spinner className="size-6" />
-      </div>
-    );
+    return <LoadingState inline />;
   }
 
   if (isError) {
-    return (
-      <LoadError message="Failed to load targets" onRetry={() => refetch()} />
-    );
+    return <EmptyState inline variant="destructive" title="Failed to load targets" onRetry={() => refetch()} />;
   }
 
   return (
@@ -74,11 +67,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           <TargetViewToggle trip={trip} compact align="left" />
         </div>
       )}
-      {!sortedItems?.length && (
-        <Alert variant="muted" className="-mx-1 my-1">
-          No targets found &gt; {HOTSPOT_TARGET_CUTOFF}%
-        </Alert>
-      )}
+      {!sortedItems?.length && <EmptyState inline title={`No targets found > ${HOTSPOT_TARGET_CUTOFF}%`} />}
       {sortedItems.map((it, index) => (
         <HotspotTargetRow
           key={it.code}

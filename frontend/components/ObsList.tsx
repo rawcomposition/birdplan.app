@@ -1,13 +1,13 @@
 import React from "react";
 import Icon from "components/Icon";
-import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
-import LoadError from "components/LoadError";
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
 
 type Props = {
   hotspotId: string;
@@ -85,15 +85,11 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
           </Button>
         )}
       </p>
-      {isLoading && (
-        <div className="flex items-center justify-center my-8">
-          <Spinner className="size-6" />
-        </div>
-      )}
-
-      {error && (
-        <LoadError message="Failed to load observations" onRetry={() => refetch()} />
-      )}
+      {error ? (
+        <EmptyState inline variant="destructive" title="Failed to load observations" onRetry={() => refetch()} />
+      ) : isLoading ? (
+        <LoadingState inline />
+      ) : null}
     </>
   );
 }

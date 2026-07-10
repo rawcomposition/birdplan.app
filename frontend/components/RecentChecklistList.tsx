@@ -12,8 +12,8 @@ import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import ObsList from "components/ObsList";
 import SelectDropdown from "components/SelectDropdown";
-import { Alert } from "components/ui/alert";
-import LoadError from "components/LoadError";
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
 
 type Props = {
   hotspotId: string;
@@ -164,19 +164,13 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
               </Button>
             </p>
           )}
-          {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (
-            <Alert variant="muted" className="-mx-1 my-1">
-              No recent checklists
-            </Alert>
-          )}
-          {(isLoading || isLoadingSpecies) && !reduceLoaders && (
-            <div className="flex items-center justify-center my-8">
-              <Spinner className="size-6" />
-            </div>
-          )}
-          {error && (
-            <LoadError message="Failed to load recent checklists" onRetry={() => refetch()} />
-          )}
+          {error ? (
+            <EmptyState inline variant="destructive" title="Failed to load recent checklists" onRetry={() => refetch()} />
+          ) : (isLoading || isLoadingSpecies) && !reduceLoaders ? (
+            <LoadingState inline />
+          ) : checklists.length === 0 && !isLoading && !isLoadingSpecies ? (
+            <EmptyState inline title="No recent checklists" />
+          ) : null}
         </>
       )}
     </>

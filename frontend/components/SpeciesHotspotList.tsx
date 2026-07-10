@@ -3,6 +3,7 @@ import clsx from "clsx";
 import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import { Card } from "components/ui/card";
+import EmptyState from "components/EmptyState";
 import SelectDropdown from "components/SelectDropdown";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
 
@@ -61,7 +62,7 @@ export default function SpeciesHotspotList({
       </div>
       <div className={clsx("transition-opacity duration-200", loading && "opacity-50")}>
         {hotspots.length === 0 ? (
-          <div className="px-6 py-16 text-center text-gray-500 text-sm">No hotspots match these filters.</div>
+          <EmptyState inline title="No hotspots match these filters." className="m-4" />
         ) : (
           hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
         )}

@@ -8,6 +8,7 @@ import { avatarFromUser } from "lib/avatar";
 import { Button } from "components/ui/button";
 import { IconNameT } from "lib/icons";
 import EmailChangeForm from "components/EmailChangeForm";
+import LoadingState from "components/LoadingState";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
 
 type TabItem = {
@@ -26,7 +27,7 @@ export default function Account() {
   const { user, loading } = useUser();
   const { open } = useModal();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingState />;
   if (!user) return null;
 
   return (

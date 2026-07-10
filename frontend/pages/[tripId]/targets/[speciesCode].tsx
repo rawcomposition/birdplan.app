@@ -6,7 +6,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
 import BackLink from "components/BackLink";
 import { Alert } from "components/ui/alert";
-import LoadError from "components/LoadError";
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
 import SpeciesMapOverlay from "components/SpeciesMapOverlay";
 import { Card } from "components/ui/card";
 import SpeciesHero from "components/SpeciesHero";
@@ -352,9 +353,11 @@ export default function SpeciesDetail() {
                 days.
               </Alert>
             )}
-            {rankingsError && <LoadError message="Failed to load hotspot rankings" onRetry={() => refetchRankings()} />}
+            {rankingsError && (
+              <EmptyState inline variant="destructive" title="Failed to load hotspot rankings" onRetry={() => refetchRankings()} />
+            )}
             {queryEnabled && loadingRankings && !rankings && (
-              <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
+              <LoadingState inline label="Loading hotspot rankings…" className="py-4" />
             )}
 
             {queryEnabled && !rankingsError && rankings && (

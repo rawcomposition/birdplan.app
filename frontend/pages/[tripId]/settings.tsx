@@ -17,7 +17,7 @@ import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
 import useResolvedRegion from "hooks/useResolvedRegion";
 import RegionFields from "components/RegionFields";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRegionCode, validateRegionFields, RegionFieldsValue } from "lib/region";
 import { Trip } from "@birdplan/shared";
@@ -39,8 +39,8 @@ export default function TripSettings() {
     return (
       <div className="flex flex-col h-full">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <Spinner className="size-9" />
+        <main className="flex-1 flex flex-col">
+          <LoadingState className="grow" />
         </main>
         <Footer />
       </div>

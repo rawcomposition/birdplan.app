@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useUser } from "hooks/useUser";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 import { withReturnTo } from "lib/helpers";
 
 const RequireAuth = () => {
@@ -9,11 +9,7 @@ const RequireAuth = () => {
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center py-20">
-        <Spinner className="size-9" />
-      </div>
-    );
+    return <LoadingState className="h-full" />;
   }
 
   if (!user) {

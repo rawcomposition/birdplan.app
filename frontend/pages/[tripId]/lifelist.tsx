@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardPage from "components/DashboardPage";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import NotFound from "components/NotFound";
@@ -39,9 +39,7 @@ export default function TripLifelist() {
         {trip ? (
           <LifelistEditor trip={trip} mode={lifelistMode} embedded />
         ) : (
-          <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-            <Spinner /> Loading...
-          </div>
+          <LoadingState inline label="Loading..." />
         )}
       </Card>
 

@@ -2,7 +2,7 @@ import React from "react";
 import UtilityPage from "components/UtilityPage";
 import AcceptError from "components/AcceptError";
 import { Button } from "components/ui/button";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 import { useUser } from "hooks/useUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -67,11 +67,7 @@ export default function Accept() {
 
   const renderBody = () => {
     if (loading || inviteLoading) {
-      return (
-        <div className="text-center">
-          <Spinner className="size-9" />
-        </div>
-      );
+      return <LoadingState className="py-0" />;
     }
 
     if (inviteIsError) {

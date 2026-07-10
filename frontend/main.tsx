@@ -10,6 +10,7 @@ import { get, setUnauthorizedHandler } from "lib/http";
 import { teardownSession, IDB_CACHE_KEY } from "lib/logout";
 import ErrorBoundary from "components/ErrorBoundary";
 import { router } from "router";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const QUERY_CACHE_BUSTER = "birdplan-cache-v3";
 
@@ -79,6 +80,7 @@ createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </ErrorBoundary>
+  </ErrorBoundary>,
 );

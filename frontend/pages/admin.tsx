@@ -9,6 +9,7 @@ import { AdminDashboard, AdminDashboardUser, AdminDashboardLog, GenerateMagicLin
 import DashboardPage from "components/DashboardPage";
 import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 import Avatar from "components/Avatar";
 import { Card } from "components/ui/card";
 import EmptyState from "components/EmptyState";
@@ -169,22 +170,11 @@ export default function Admin() {
       iconClassName="text-gray-600"
     >
         {error && (
-          <EmptyState
-            className="mt-4"
-            variant="destructive"
-            title="Error loading dashboard"
-            action={
-              <Button variant="outline-destructive" onClick={() => refetch()}>
-                Try again
-              </Button>
-            }
-          />
+          <EmptyState className="mt-4" variant="destructive" title="Error loading dashboard" onRetry={() => refetch()} />
         )}
 
         {isLoading && !data ? (
-          <div className="flex justify-center py-16">
-            <Spinner className="size-9" />
-          </div>
+          <LoadingState className="py-16" />
         ) : (
           data && (
             <>

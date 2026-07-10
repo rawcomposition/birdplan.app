@@ -5,7 +5,8 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import DashboardPage from "components/DashboardPage";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
+import EmptyState from "components/EmptyState";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
 import useMutation from "hooks/useMutation";
@@ -13,7 +14,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
 import { getReturnLabel } from "lib/helpers";
-import LoadError from "components/LoadError";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
@@ -125,12 +125,10 @@ export default function ImportLifelist() {
               to all your trips.
             </p>
             {isError && (
-              <LoadError message="Failed to load eBird taxonomy" onRetry={() => refetch()} />
+              <EmptyState inline variant="destructive" title="Failed to load eBird taxonomy" onRetry={() => refetch()} />
             )}
             {isLoading ? (
-              <div className="flex items-center justify-center h-20">
-                <Spinner />
-              </div>
+              <LoadingState className="h-20 py-0" spinnerClassName="size-4" />
             ) : (
               <AsyncSelect
                 value={exceptionsValue}

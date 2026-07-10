@@ -17,7 +17,7 @@ import SearchInput from "components/SearchInput";
 import FilterChip from "components/FilterChip";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import Icon from "components/Icon";
-import { Spinner } from "components/ui/spinner";
+import LoadingState from "components/LoadingState";
 const PAGE_SIZE = 100;
 
 export default function TripTargets() {
@@ -88,11 +88,7 @@ export default function TripTargets() {
       <div className="h-full overflow-auto w-full" onClick={handleContainerClick}>
         <div className="h-full grow flex sm:relative flex-col w-full">
           <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
-            {isLoadingTargets && (
-              <div className="flex items-center justify-center my-8">
-                <Spinner className="size-9" />
-              </div>
-            )}
+            {isLoadingTargets && <LoadingState className="py-8" />}
             {!isLoadingTargets && !!trip && (
               <>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">

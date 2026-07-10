@@ -4,10 +4,9 @@ import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
-import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
-import { Alert } from "components/ui/alert";
-import LoadError from "components/LoadError";
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
 
 type Props = {
   locId: string;
@@ -77,19 +76,13 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
           </Button>
         )}
       </p>
-      {isLoading && (
-        <div className="flex items-center justify-center my-8">
-          <Spinner className="size-6" />
-        </div>
-      )}
-      {!isLoading && recentSpecies.length === 0 && !error && (
-        <Alert variant="muted" className="-mx-1 my-1">
-          No recent needs in the last 30 days
-        </Alert>
-      )}
-      {error && (
-        <LoadError message="Failed to load recent species" onRetry={() => refetch()} />
-      )}
+      {error ? (
+        <EmptyState inline variant="destructive" title="Failed to load recent species" onRetry={() => refetch()} />
+      ) : isLoading ? (
+        <LoadingState inline />
+      ) : recentSpecies.length === 0 ? (
+        <EmptyState inline title="No recent needs in the last 30 days" />
+      ) : null}
     </>
   );
 }
