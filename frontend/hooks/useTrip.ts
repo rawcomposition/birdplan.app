@@ -6,7 +6,7 @@ import { useUser } from "hooks/useUser";
 import { useSessionToken } from "lib/sessionToken";
 import { HttpError } from "lib/http";
 import { formatMonthRange, getTripIdFromPath } from "lib/helpers";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type SelectedSpecies = {
   code: string;
@@ -58,6 +58,7 @@ export const useClearSelectedSpeciesOnNavigate = () => {
 export const useTrip = () => {
   const { pathname } = useLocation();
   const id = getTripIdFromPath(pathname);
+  const queryClient = useQueryClient();
 
   const {
     data: trip,
@@ -69,6 +70,7 @@ export const useTrip = () => {
     queryKey: [`/trips/${id}`],
     enabled: !!id,
     refetchInterval: 1000 * 60 * 2,
+    refetchOnMount: () => queryClient.isMutating() === 0,
     retryOnMount: false,
     retry: (failureCount, err) =>
       !(err instanceof HttpError && (err.status === 404 || err.status === 403)) && failureCount < 1,
