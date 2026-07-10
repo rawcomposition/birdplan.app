@@ -61,14 +61,12 @@ export default function InviteAsEditor({ participantId, name }: Props) {
         </Field>
       </Body>
       <Footer>
-        <div className="flex justify-end gap-2 w-full">
-          <Button onClick={close} variant="outline" disabled={mutation.isPending}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} variant="default" disabled={!canSubmit || mutation.isPending}>
-            {mutation.isPending ? "Sending..." : "Send invite"}
-          </Button>
-        </div>
+        <Button onClick={close} variant="outline" disabled={mutation.isPending}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} variant="default" disabled={!canSubmit || mutation.isPending}>
+          {mutation.isPending ? "Sending..." : "Send invite"}
+        </Button>
       </Footer>
     </>
   );

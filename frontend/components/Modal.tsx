@@ -69,12 +69,13 @@ const ModalRoot = () => {
   );
 };
 
-const Footer = ({ children }: { children: React.ReactNode }) => {
+const Footer = ({ children, align = "end" }: { children: React.ReactNode; align?: "end" | "between" }) => {
   const { position } = useModal();
   return (
     <footer
       className={clsx(
-        "flex items-center",
+        "flex items-center gap-2",
+        align === "between" ? "justify-between" : "justify-end",
         position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-white"
       )}
     >

@@ -143,11 +143,9 @@ export default function ManageLifelist({ participantId }: Props) {
         )}
       </Body>
       <Footer>
-        <div className="flex justify-end w-full">
-          <Button onClick={handleDone} variant="default">
-            {hasPendingChange ? "Save" : "Done"}
-          </Button>
-        </div>
+        <Button onClick={handleDone} variant="default">
+          {hasPendingChange ? "Save" : "Done"}
+        </Button>
       </Footer>
     </>
   );

@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
-import { Button } from "components/ui/button";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import { Map, Star, ExternalLink, Check } from "lucide-react";
 import { Card } from "components/ui/card";
 import MutualBadge from "components/MutualBadge";
@@ -75,12 +70,7 @@ export default function SpeciesHero({
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <DropdownMenu>
-              <DropdownMenuTrigger
-                render={<Button variant="outline-white" size="icon-lg" />}
-                aria-label="More actions"
-              >
-                <Icon name="verticalDots" />
-              </DropdownMenuTrigger>
+              <KebabMenuTrigger aria-label="More actions" />
               <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
                 <DropdownMenuItem onClick={onShowMap}>
                   <Map className="text-gray-500" />

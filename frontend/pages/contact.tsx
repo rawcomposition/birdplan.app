@@ -7,6 +7,7 @@ import Field from "components/Field";
 import { Input } from "components/ui/input";
 import { Textarea } from "components/ui/textarea";
 import { Button } from "components/ui/button";
+import { Card } from "components/ui/card";
 import useMutation from "hooks/useMutation";
 import BackLink from "components/BackLink";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "components/ui/select";
@@ -59,7 +60,7 @@ export default function Contact() {
         <Heading title="Contact" className="mb-8" />
 
           {submitted ? (
-            <div className="rounded-xl border bg-card p-8 shadow-xs">
+            <Card className="p-8">
               <h2 className="text-2xl font-bold text-secondary-foreground mb-4">Thank you for your message!</h2>
               <p className="text-secondary-foreground mb-4">
                 We&apos;ve received your request and will get back to you as soon as possible.
@@ -69,9 +70,9 @@ export default function Contact() {
                 label={user?._id ? "Back to trips" : "Back to home"}
                 className="ml-4 md:ml-0"
               />
-            </div>
+            </Card>
           ) : (
-            <div className="rounded-xl border bg-card p-8 shadow-xs">
+            <Card className="p-8">
               <p className="text-secondary-foreground mb-4">
                 Do you have any questions, feedback, or bug reports? We would love to hear from you!
               </p>
@@ -115,7 +116,7 @@ export default function Contact() {
                   </Button>
                 </div>
               </form>
-            </div>
+            </Card>
           )}
       </div>
     </PublicPage>

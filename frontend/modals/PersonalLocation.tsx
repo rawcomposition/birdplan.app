@@ -3,14 +3,8 @@ import { Header, Body } from "components/Modal";
 import { Hotspot as HotspotT } from "@birdplan/shared";
 import ObsList from "components/ObsList";
 import DirectionsButton from "components/DirectionsButton";
-import { Button } from "components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
-import Icon from "components/Icon";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import { useTrip } from "hooks/useTrip";
 
 type Props = {
@@ -38,9 +32,7 @@ export default function PersonalLocation({ hotspot, speciesCode }: Props) {
         <div className="flex gap-2 mb-2">
           <DirectionsButton lat={lat} lng={lng} />
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
-              <Icon name="verticalDots" />
-            </DropdownMenuTrigger>
+            <KebabMenuTrigger />
             <DropdownMenuContent align="end" className="w-[170px]">
               <DropdownMenuItem
                 render={

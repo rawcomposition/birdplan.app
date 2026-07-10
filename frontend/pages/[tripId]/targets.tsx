@@ -11,13 +11,16 @@ import { Button } from "components/ui/button";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
-import TargetsOptionsDropdown from "components/TargetsOptionsDropdown";
+import OptionsMenu from "components/OptionsMenu";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import TargetRow from "components/TargetRow";
 import SearchInput from "components/SearchInput";
 import FilterChip from "components/FilterChip";
 import useDownloadTargets from "hooks/useDownloadTargets";
+import useDownloadGroupLifelist from "hooks/useDownloadGroupLifelist";
 import Icon from "components/Icon";
 import LoadingState from "components/LoadingState";
+import { Download } from "lucide-react";
 const PAGE_SIZE = 100;
 
 export default function TripTargets() {
@@ -51,6 +54,7 @@ export default function TripTargets() {
 
   const { lifelist } = useTargetView(trip);
   const { isGroup, isMutual } = useMutualTargets(trip);
+  const { isGroup: isGroupList, download: downloadGroupList } = useDownloadGroupLifelist(trip);
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -123,7 +127,19 @@ export default function TripTargets() {
                       )}
                       <TargetViewToggle trip={trip} align="left" />
                     </div>
-                    <TargetsOptionsDropdown trip={trip} />
+                    <OptionsMenu
+                      items={[
+                        {
+                          name: "Download group life list",
+                          icon: <Download />,
+                          onClick: downloadGroupList,
+                          hidden: !isGroupList,
+                        },
+                      ]}
+                      className="min-w-[220px]"
+                    >
+                      <KebabMenuTrigger title="Options" />
+                    </OptionsMenu>
                   </div>
                 </div>
                 {!!regionData?.items?.length && (

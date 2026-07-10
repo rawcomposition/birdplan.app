@@ -14,13 +14,8 @@ import useTripMutation from "hooks/useTripMutation";
 import { CustomMarker, MarkerUpdateInput } from "@birdplan/shared";
 import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
-import Icon from "components/Icon";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import { getGooglePlaceUrl } from "lib/helpers";
 import EmptyState from "components/EmptyState";
 
@@ -149,9 +144,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
             <div className="flex gap-2 mb-2">
               <DirectionsButton lat={marker.lat} lng={marker.lng} markerId={marker.id} googleUrl={googleUrl} />
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
-                  <Icon name="verticalDots" />
-                </DropdownMenuTrigger>
+                <KebabMenuTrigger />
                 <DropdownMenuContent align="start" className="w-[180px]">
                   <DropdownMenuItem render={<a href={googleUrl} target="_blank" rel="noreferrer" />}>
                     View on Google Maps

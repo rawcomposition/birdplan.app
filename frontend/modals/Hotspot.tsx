@@ -11,12 +11,8 @@ import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
 import InputNotes from "components/InputNotes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
@@ -196,9 +192,7 @@ export default function Hotspot({ hotspot }: Props) {
             <img src="/ebird.png" width={48} />
           </Button>
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
-              <Icon name="verticalDots" />
-            </DropdownMenuTrigger>
+            <KebabMenuTrigger />
             <DropdownMenuContent align="end" className="w-[170px]">
               <DropdownMenuItem
                 render={<a href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`} target="_blank" rel="noreferrer" />}
