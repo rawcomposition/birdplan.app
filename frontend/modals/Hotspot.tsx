@@ -1,5 +1,5 @@
 import React from "react";
-import { Body } from "components/Modal";
+import { Header, Body } from "components/Modal";
 import { HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import toast from "react-hot-toast";
@@ -150,10 +150,10 @@ export default function Hotspot({ hotspot }: Props) {
 
   return (
     <>
-      <div className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50">
-        <h3 className="text-lg font-medium">{name}</h3>
+      <Header>{name}</Header>
+      <Body className="pb-10 sm:pb-4 relative">
         {canTranslate && (
-          <div className="mt-0.5 text-[12px]">
+          <div className="text-[12px] -mt-3 mb-4">
             {!originalName && !translateMutation.isPending && (
               <Button variant="link" type="button" className="block" onClick={() => translateMutation.mutate({})}>
                 Translate
@@ -170,8 +170,6 @@ export default function Hotspot({ hotspot }: Props) {
             )}
           </div>
         )}
-      </div>
-      <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
           {canEdit && (
             <Button

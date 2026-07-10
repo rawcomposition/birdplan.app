@@ -59,7 +59,9 @@ function RightSheet({ open, onClose, dismissable = true, children }: RoleProps) 
           onClick: () => dismissable && onClose(),
         }}
       >
-        <ErrorBoundary>{children}</ErrorBoundary>
+        <div className="grow overflow-y-auto">
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </div>
       </SheetContent>
     </Sheet>
   );

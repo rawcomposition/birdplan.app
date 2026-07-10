@@ -88,7 +88,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
   return position === "center" ? (
     <DialogTitle className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</DialogTitle>
   ) : (
-    <DialogTitle className="pl-4 sm:pl-6 pr-12 py-4 border-b text-lg font-semibold tracking-tight text-gray-900">
+    <DialogTitle className="pl-4 sm:pl-6 pr-14 pt-4 text-lg font-semibold tracking-tight text-gray-900">
       {children}
     </DialogTitle>
   );
@@ -105,7 +105,8 @@ const Body = ({
 }) => {
   const { position } = useModal();
   const padding = position === "center" ? "px-6 sm:px-7 pt-4" : "px-4 sm:px-6 pt-4";
-  return <div className={clsx(!noPadding && padding, className, "overflow-auto grow")}>{children}</div>;
+  const scroll = position === "center" && "overflow-auto grow";
+  return <div className={clsx(!noPadding && padding, className, scroll)}>{children}</div>;
 };
 
 export { ModalRoot, Footer, Header, Body };
