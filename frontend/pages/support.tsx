@@ -1,5 +1,5 @@
 import React from "react";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import Footer from "components/Footer";
 import Heading from "components/Heading";
 import HomeHeader from "components/HomeHeader";
