@@ -4,7 +4,9 @@ import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import { Card } from "components/ui/card";
 import EmptyState from "components/EmptyState";
+import FrequencyBar from "components/FrequencyBar";
 import SelectDropdown from "components/SelectDropdown";
+import { formatFrequency } from "lib/helpers";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
 
 export type HotspotItem = OpenBirdingHotspotRanking & {
@@ -72,7 +74,7 @@ export default function SpeciesHotspotList({
 }
 
 function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number; onSelect: (id: string) => void }) {
-  const freqDisplay = h.frequency > 1 ? Math.round(h.frequency) : h.frequency;
+  const freqDisplay = formatFrequency(h.frequency);
   return (
     <div
       onClick={() => onSelect(h.id)}
@@ -93,9 +95,7 @@ function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number
           <span className="text-[17px] font-bold text-gray-800 tabular-nums">{freqDisplay}%</span>
           <span className="text-[11px] text-gray-600 whitespace-nowrap">of {h.samples} checklists</span>
         </div>
-        <div className="w-full h-1 rounded-full bg-gray-100 overflow-hidden">
-          <div className="h-full bg-green-600 rounded-full" style={{ width: `${Math.min(100, h.frequency)}%` }} />
-        </div>
+        <FrequencyBar percent={h.frequency} />
       </div>
 
       <div

@@ -8,9 +8,8 @@ import { Button } from "components/ui/button";
 import Notice from "components/Notice";
 import EmptyState from "components/EmptyState";
 import LoadingState from "components/LoadingState";
-import { Card } from "components/ui/card";
 import TripCard from "components/TripCard";
-import WidgetHeader from "components/WidgetHeader";
+import WidgetCard from "components/WidgetCard";
 import { useUser } from "hooks/useUser";
 import { get } from "lib/http";
 import news from "data/news.json";
@@ -113,8 +112,7 @@ export default function Trips() {
           </div>
 
           <aside className="flex w-full shrink-0 flex-col gap-8 lg:w-[340px]">
-            <Card className="px-5 py-4">
-              <WidgetHeader title="My stats" />
+            <WidgetCard title="My stats">
               {statsError ? (
                 <EmptyState
                   inline
@@ -136,10 +134,9 @@ export default function Trips() {
                   </div>
                 ))
               )}
-            </Card>
+            </WidgetCard>
 
-            <Card className="px-5 py-4">
-              <WidgetHeader title="World life list" action={{ label: "Manage", to: "/import-lifelist" }} />
+            <WidgetCard title="World life list" action={{ label: "Manage", to: "/import-lifelist" }}>
               <div className="mt-4 flex items-baseline gap-2">
                 <span className="text-5xl font-bold text-primary tabular-nums">
                   {lifelist.length.toLocaleString()}
@@ -149,11 +146,10 @@ export default function Trips() {
               {user?.lifelistUpdatedAt && (
                 <p className="mt-2 text-xs text-muted-foreground">Updated {dayjs(user.lifelistUpdatedAt).fromNow()}</p>
               )}
-            </Card>
+            </WidgetCard>
 
             {recentNews.length > 0 && (
-              <Card className="px-5 py-4">
-                <WidgetHeader title="What's new" action={{ label: "All updates", to: "/whats-new" }} />
+              <WidgetCard title="What's new" action={{ label: "All updates", to: "/whats-new" }}>
                 <div className="flex flex-col divide-y divide-border/60">
                   {recentNews.map(({ date, title, description }) => (
                     <div key={title} className="py-4 last:pb-1">
@@ -165,7 +161,7 @@ export default function Trips() {
                     </div>
                   ))}
                 </div>
-              </Card>
+              </WidgetCard>
             )}
           </aside>
         </div>

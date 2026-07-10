@@ -1,6 +1,8 @@
 import React from "react";
 import FavButton from "components/FavButton";
+import FrequencyBar from "components/FrequencyBar";
 import { useTrip } from "hooks/useTrip";
+import { formatFrequency } from "lib/helpers";
 
 type Props = {
   hotspotId: string;
@@ -26,13 +28,11 @@ export default function HotspotFavs({ hotspotId }: Props) {
             <div className="flex flex-col gap-1 w-full col-span-2">
               <div>
                 <span className="text-gray-600 text-[15px] font-bold">
-                  {percent > 1 ? Math.round(percent) : percent}%{" "}
+                  {formatFrequency(percent)}%{" "}
                   <span className="text-gray-500 bg-gray-100 rounded-full px-1.5 py-0.5 text-[10px]">{range}</span>
                 </span>{" "}
               </div>
-              <div className="w-full bg-gray-200">
-                <div className="h-2 bg-success" style={{ width: `${percent}%` }} />
-              </div>
+              <FrequencyBar percent={percent} />
             </div>
           </div>
         </div>

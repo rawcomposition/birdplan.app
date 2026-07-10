@@ -5,7 +5,7 @@ import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import type { Target } from "@birdplan/shared";
-import { useSpeciesImages } from "hooks/useSpeciesImages";
+import SpeciesThumb from "components/SpeciesThumb";
 import useTripMutation from "hooks/useTripMutation";
 import MutualBadge from "components/MutualBadge";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,6 @@ type PropsT = Target & {
 export default function TargetRow({ index, code, name, frequency, obs, samples, isMutual }: PropsT) {
   const { trip, canEdit } = useTrip();
   const navigate = useNavigate();
-  const { getSpeciesImg } = useSpeciesImages();
   const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
   const isStarred = trip?.targetStars?.includes(code);
   const notes = trip?.targetNotes?.[code];
@@ -44,7 +43,6 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
   });
 
   const lastReport = recentSpecies?.find((species) => species.code === code);
-  const img = getSpeciesImg(code);
 
   const monthly =
     obs && samples ? obs.map((o, i) => (samples[i] > 0 ? Math.round((o / samples[i]) * 1000) / 10 : 0)) : null;
@@ -68,17 +66,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
         <div className="sm:hidden absolute top-1 left-2">
           {isStarred && <Icon name="star" className="text-yellow-500" />}
         </div>
-        {img ? (
-          <img
-            src={img.url}
-            alt={name}
-            className="w-16 aspect-4/3 min-w-14 rounded object-cover my-1 mx-1 sm:mx-0"
-            loading="lazy"
-            title={img?.by ? `Photo by ${img.by}` : ""}
-          />
-        ) : (
-          <div className="w-16 aspect-4/3 min-w-14 rounded bg-gray-200 my-1 mx-1 sm:mx-0" />
-        )}
+        <SpeciesThumb code={code} name={name} className="w-16 min-w-14 my-1 mx-1 sm:mx-0" />
       </td>
       <td>
         <div className="flex items-center gap-1.5 w-full mt-1 pl-2 sm:pl-0">
