@@ -13,7 +13,7 @@ import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import Avatar from "components/Avatar";
 import { Card } from "components/ui/card";
-import Error from "components/Error";
+import EmptyState from "components/EmptyState";
 import { Button } from "components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
@@ -138,7 +138,7 @@ export default function Admin() {
   const [sortKey, setSortKey] = React.useState<SortKey>("lastActiveAt");
   const [sortDir, setSortDir] = React.useState<"asc" | "desc">("desc");
 
-  const { data, isLoading, error } = useQuery<AdminDashboard>({
+  const { data, isLoading, error, refetch } = useQuery<AdminDashboard>({
     queryKey: ["/admin"],
     enabled: !!user?.isAdmin,
   });
@@ -170,7 +170,18 @@ export default function Admin() {
       <main className="max-w-6xl w-full mx-auto px-4 lg:px-0 pb-12">
         <Heading title="Admin Dashboard" icon="user" iconClassName="text-gray-600" className="mb-8 mt-6" />
 
-        {error && <Error message={error.message} />}
+        {error && (
+          <EmptyState
+            className="mt-4"
+            variant="destructive"
+            title="Error loading dashboard"
+            action={
+              <Button variant="outline-destructive" onClick={() => refetch()}>
+                Try again
+              </Button>
+            }
+          />
+        )}
 
         {isLoading && !data ? (
           <div className="flex justify-center py-16">

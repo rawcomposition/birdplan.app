@@ -10,13 +10,15 @@ type Props = {
   icon?: IconNameT;
   action?: React.ReactNode;
   className?: string;
+  variant?: "default" | "destructive";
 };
 
-export default function EmptyState({ title, description, icon, action, className }: Props) {
+export default function EmptyState({ title, description, icon, action, className, variant = "default" }: Props) {
+  const isDestructive = variant === "destructive";
   return (
     <Card className={cn("flex flex-col items-center gap-2 p-6 text-center", className)}>
-      {icon && <Icon name={icon} className="text-3xl text-gray-400" />}
-      <h3 className="text-lg font-medium text-gray-700">{title}</h3>
+      {icon && <Icon name={icon} className={cn("text-3xl", isDestructive ? "text-destructive/70" : "text-gray-400")} />}
+      <h3 className={cn("text-lg font-medium", isDestructive ? "text-destructive" : "text-gray-700")}>{title}</h3>
       {description && <p className="max-w-md text-sm text-gray-500">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </Card>

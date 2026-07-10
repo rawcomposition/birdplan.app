@@ -152,9 +152,10 @@ export default function TripTargets() {
             {targetsError && (
               <EmptyState
                 className="mt-4"
+                variant="destructive"
                 title="Error loading targets"
                 action={
-                  <Button variant="link" onClick={() => refetchTargets()}>
+                  <Button variant="outline-destructive" onClick={() => refetchTargets()}>
                     Try Again
                   </Button>
                 }

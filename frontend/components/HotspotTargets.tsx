@@ -1,8 +1,7 @@
 import React from "react";
 import { useTrip } from "hooks/useTrip";
-import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
-import { Button } from "components/ui/button";
+import LoadError from "components/LoadError";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
@@ -54,13 +53,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   if (isError) {
     return (
-      <Alert variant="destructive" className="-mx-1 my-1">
-        <Icon name="xMarkCircle" className="text-xl" />
-        Failed to load targets
-        <Button variant="link" onClick={() => refetch()}>
-          Retry
-        </Button>
-      </Alert>
+      <LoadError message="Failed to load targets" onRetry={() => refetch()} />
     );
   }
 

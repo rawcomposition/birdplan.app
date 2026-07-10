@@ -12,6 +12,7 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 font-s
       default: "bg-primary text-primary-foreground hover:bg-primary-hover transition-colors",
       secondary: "bg-secondary text-secondary-foreground",
       outline: "border border-input text-secondary-foreground bg-transparent hover:bg-muted/50 transition-colors",
+      "outline-destructive": "border border-destructive/30 text-destructive bg-transparent hover:bg-destructive/10 transition-colors",
       "outline-white": "border border-border bg-card text-secondary-foreground shadow-xs hover:bg-muted/50 transition-colors",
       ghost: "hover:bg-muted hover:text-foreground transition-colors",
       nav: "font-medium text-secondary-foreground hover:bg-foreground/10 transition-colors",

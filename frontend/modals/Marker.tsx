@@ -22,7 +22,7 @@ import {
 } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
-import Error from "components/Error";
+import EmptyState from "components/EmptyState";
 
 type Props = {
   markerId?: string;
@@ -124,7 +124,14 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
       <>
         <Header>Marker Not Found</Header>
         <Body>
-          <Error message="The marker could not be found in this trip." onReload={refetch} />
+          <EmptyState
+            title="The marker could not be found in this trip."
+            action={
+              <Button variant="outline" onClick={() => refetch()}>
+                Try again
+              </Button>
+            }
+          />
         </Body>
       </>
     );

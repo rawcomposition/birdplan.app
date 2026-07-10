@@ -5,7 +5,6 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import FormPage from "components/FormPage";
-import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
@@ -14,7 +13,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
 import { getReturnLabel } from "lib/helpers";
-import { Alert } from "components/ui/alert";
+import LoadError from "components/LoadError";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
@@ -126,13 +125,7 @@ export default function ImportLifelist() {
               to all your trips.
             </p>
             {isError && (
-              <Alert variant="destructive" className="-mx-1 my-1">
-                <Icon name="xMarkCircle" className="text-xl" />
-                Failed to load eBird taxonomy
-                <Button variant="link" onClick={() => refetch()}>
-                  Retry
-                </Button>
-              </Alert>
+              <LoadError message="Failed to load eBird taxonomy" onRetry={() => refetch()} />
             )}
             {isLoading ? (
               <div className="flex items-center justify-center h-20">

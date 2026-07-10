@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
 import Icon from "components/Icon";
 import { Alert } from "components/ui/alert";
+import LoadError from "components/LoadError";
 import MapBox from "components/Mapbox";
 import SpeciesCard from "components/SpeciesCard";
 import { Card } from "components/ui/card";
@@ -166,6 +167,7 @@ export default function SpeciesDetail() {
     isLoading: loadingRankings,
     isFetching: fetchingRankings,
     isError: rankingsError,
+    refetch: refetchRankings,
   } = useQuery<OpenBirdingHotspotRankingResponse>({
     queryKey: ["openbirding-best-hotspots", speciesCode, scope, queryBody],
     queryFn: async () => {
@@ -369,7 +371,7 @@ export default function SpeciesDetail() {
                 days.
               </Alert>
             )}
-            {rankingsError && <Alert variant="destructive">Failed to load hotspot rankings.</Alert>}
+            {rankingsError && <LoadError message="Failed to load hotspot rankings" onRetry={() => refetchRankings()} />}
             {queryEnabled && loadingRankings && !rankings && (
               <div className="text-gray-500 text-sm py-4">Loading hotspot rankings…</div>
             )}

@@ -7,6 +7,7 @@ import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import { Button } from "components/ui/button";
 import { Alert } from "components/ui/alert";
+import LoadError from "components/LoadError";
 
 type Props = {
   locId: string;
@@ -87,13 +88,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
         </Alert>
       )}
       {error && (
-        <Alert variant="destructive" className="-mx-1 my-1">
-          <Icon name="xMarkCircle" className="text-xl" />
-          Failed to load recent species
-          <Button variant="link" onClick={() => refetch()}>
-            Retry
-          </Button>
-        </Alert>
+        <LoadError message="Failed to load recent species" onRetry={() => refetch()} />
       )}
     </>
   );

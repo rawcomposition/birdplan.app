@@ -6,7 +6,8 @@ import Header from "components/Header";
 import Footer from "components/Footer";
 import { Button } from "components/ui/button";
 import Notice from "components/Notice";
-import Error from "components/Error";
+import EmptyState from "components/EmptyState";
+import { Spinner } from "components/ui/spinner";
 import { Card } from "components/ui/card";
 import TripCard from "components/TripCard";
 import WidgetHeader from "components/WidgetHeader";
@@ -74,8 +75,23 @@ export default function Trips() {
 
         <Notice />
 
-        {error && <Error onReload={refetch} message="Error loading trips" />}
-        {isLoading && <p className="text-lg text-muted-foreground">Loading...</p>}
+        {error && (
+          <EmptyState
+            className="mt-4"
+            variant="destructive"
+            title="Error loading trips"
+            action={
+              <Button variant="outline-destructive" onClick={() => refetch()}>
+                Try again
+              </Button>
+            }
+          />
+        )}
+        {isLoading && (
+          <div className="flex items-center justify-center py-20">
+            <Spinner className="size-9" />
+          </div>
+        )}
 
         {!isLoading && !error && trips.length === 0 && (
           <p className="text-lg text-muted-foreground">
