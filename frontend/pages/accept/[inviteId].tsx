@@ -69,7 +69,7 @@ export default function Accept() {
     if (loading || inviteLoading) {
       return (
         <div className="text-center">
-          <Spinner className="size-9 text-muted-foreground" />
+          <Spinner className="size-9" />
         </div>
       );
     }

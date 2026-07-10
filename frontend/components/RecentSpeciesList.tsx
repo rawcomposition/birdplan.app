@@ -77,13 +77,12 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
         )}
       </p>
       {isLoading && (
-        <Alert variant="info" className="-mx-1 my-1">
-          <Spinner className="size-5" />
-          Loading recent species...
-        </Alert>
+        <div className="flex items-center justify-center my-8">
+          <Spinner className="size-6" />
+        </div>
       )}
       {!isLoading && recentSpecies.length === 0 && !error && (
-        <Alert variant="info" className="-mx-1 my-1">
+        <Alert variant="muted" className="-mx-1 my-1">
           No recent needs in the last 30 days
         </Alert>
       )}

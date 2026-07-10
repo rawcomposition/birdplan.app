@@ -23,7 +23,7 @@ export default function Login() {
 
   return (
     <UtilityPage heading="Welcome">
-      <Alert variant="info" className="mb-4">
+      <Alert variant="muted" className="mb-4">
         <p>
           <strong>We’ve simplified sign-in.</strong> Google sign-in is no longer available, but you can still access
           your account by entering your email below.

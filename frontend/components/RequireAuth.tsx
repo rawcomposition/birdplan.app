@@ -11,7 +11,7 @@ const RequireAuth = () => {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center py-20">
-        <Spinner className="size-9 text-muted-foreground" />
+        <Spinner className="size-9" />
       </div>
     );
   }

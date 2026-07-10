@@ -100,9 +100,8 @@ export default function TripTargets() {
         <div className="h-full grow flex sm:relative flex-col w-full">
           <div className="h-full w-full mx-auto max-w-6xl px-2 sm:px-6 py-2 sm:py-4">
             {isLoadingTargets && (
-              <div className="flex items-center flex-col gap-2 my-8">
-                <Spinner className="size-9 text-primary" />
-                <p className="text-sm text-muted-foreground">Loading targets...</p>
+              <div className="flex items-center justify-center my-8">
+                <Spinner className="size-9" />
               </div>
             )}
             {!isLoadingTargets && !!trip && (

@@ -46,10 +46,9 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   if (isLoading) {
     return (
-      <Alert variant="info" className="-mx-1 my-1">
-        <Spinner className="size-5" />
-        Loading targets...
-      </Alert>
+      <div className="flex items-center justify-center my-8">
+        <Spinner className="size-6" />
+      </div>
     );
   }
 
@@ -83,7 +82,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
         </div>
       )}
       {!sortedItems?.length && (
-        <Alert variant="info" className="-mx-1 my-1">
+        <Alert variant="muted" className="-mx-1 my-1">
           No targets found &gt; {HOTSPOT_TARGET_CUTOFF}%
         </Alert>
       )}

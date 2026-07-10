@@ -165,15 +165,14 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
             </p>
           )}
           {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (
-            <Alert variant="info" className="-mx-1 my-1">
+            <Alert variant="muted" className="-mx-1 my-1">
               No recent checklists
             </Alert>
           )}
-          {(isLoading || isLoadingSpecies) && (
-            <Alert variant="muted" className="-mx-1 my-1">
-              {!reduceLoaders && <Spinner className="size-5" />}
-              Loading recent checklists...
-            </Alert>
+          {(isLoading || isLoadingSpecies) && !reduceLoaders && (
+            <div className="flex items-center justify-center my-8">
+              <Spinner className="size-6" />
+            </div>
           )}
           {error && (
             <Alert variant="destructive" className="-mx-1 my-1">

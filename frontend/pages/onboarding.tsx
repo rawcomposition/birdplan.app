@@ -32,7 +32,7 @@ export default function Onboarding() {
     return (
       <UtilityPage heading="Welcome">
         <div className="text-center">
-          <Spinner className="size-9 text-muted-foreground" />
+          <Spinner className="size-9" />
         </div>
       </UtilityPage>
     );

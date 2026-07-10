@@ -40,7 +40,7 @@ export default function TripSettings() {
       <div className="flex flex-col h-full">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <Spinner className="size-6 text-muted-foreground" />
+          <Spinner className="size-9" />
         </main>
         <Footer />
       </div>

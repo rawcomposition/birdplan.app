@@ -174,7 +174,7 @@ export default function Admin() {
 
         {isLoading && !data ? (
           <div className="flex justify-center py-16">
-            <Spinner className="size-9 text-muted-foreground" />
+            <Spinner className="size-9" />
           </div>
         ) : (
           data && (

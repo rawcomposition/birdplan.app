@@ -68,7 +68,7 @@ function Button({
 
   const content = loading ? (
     <span className="inline-flex items-center justify-center gap-2">
-      <Spinner />
+      <Spinner className="text-current" />
       {loadingText}
     </span>
   ) : (

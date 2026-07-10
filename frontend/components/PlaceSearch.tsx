@@ -105,7 +105,7 @@ export default function PlaceSearch({ className, bounds, onChange, focus }: Prop
         placeholder="Search for a place..."
         className={className}
       />
-      {isFetching && <Spinner className="absolute right-3 top-2.5 text-muted-foreground" />}
+      {isFetching && <Spinner className="absolute right-3 top-2.5" />}
       {query.length >= 2 && !!results.length && (
         <ul className="absolute top-full z-50 mt-1 w-full overflow-hidden rounded-md border bg-card shadow-md">
           {results.map((feature, index) => (

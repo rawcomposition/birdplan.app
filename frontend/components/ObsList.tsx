@@ -86,10 +86,9 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
         )}
       </p>
       {isLoading && (
-        <Alert variant="info" className="-mx-1 my-1">
-          <Spinner className="size-5" />
-          Loading observations...
-        </Alert>
+        <div className="flex items-center justify-center my-8">
+          <Spinner className="size-6" />
+        </div>
       )}
 
       {error && (
