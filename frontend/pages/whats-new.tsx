@@ -11,6 +11,13 @@ export default function WhatsNew() {
         <h2>July 10, 2026</h2>
         <ul>
           <li>💅 Minor improvements to the interface to make it more consistent throughout and more intuitive.</li>
+          <li>
+            🛠️ Searching for a custom place to add now uses{" "}
+            <a href="https://www.openstreetmap.org" target="_blank" rel="noreferrer">
+              OpenStreetMap
+            </a>{" "}
+            data instead of Google.
+          </li>
         </ul>
         <h2>June 26, 2026</h2>
         <ul>
