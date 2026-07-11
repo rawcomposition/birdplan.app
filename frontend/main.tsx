@@ -10,6 +10,7 @@ import { get, setUnauthorizedHandler } from "lib/http";
 import { teardownSession, IDB_CACHE_KEY } from "lib/logout";
 import ErrorBoundary from "components/ErrorBoundary";
 import { router } from "router";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const QUERY_CACHE_BUSTER = "birdplan-cache-v3";
 
@@ -18,7 +19,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       gcTime: 24 * 24 * 60 * 60 * 1000,
-      staleTime: 0,
+      staleTime: 5 * 60 * 1000,
       queryFn: async ({ queryKey, meta }) => {
         const url = queryKey[0] as string;
         const isApiRoute = url.startsWith("/") && !url.startsWith(import.meta.env.VITE_OPENBIRDING_API_URL || "");
@@ -79,6 +80,7 @@ createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </ErrorBoundary>
+  </ErrorBoundary>,
 );

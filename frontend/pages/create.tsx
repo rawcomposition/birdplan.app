@@ -11,7 +11,7 @@ import Heading from "components/Heading";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
 import Expander from "components/Expander";
-import RegionSelect from "components/RegionSelect";
+import RegionFields from "components/RegionFields";
 import CreateTripHero from "components/CreateTripHero";
 import { Option } from "lib/types";
 import { TripInput } from "@birdplan/shared";
@@ -19,13 +19,7 @@ import { useModal } from "stores/modals";
 import dayjs from "dayjs";
 import { months } from "lib/helpers";
 import useMutation from "hooks/useMutation";
-import {
-  RegionFieldsValue,
-  emptyRegionFieldsValue,
-  getRegionCode,
-  requiresSubregion,
-  validateRegionFields,
-} from "lib/region";
+import { RegionFieldsValue, emptyRegionFieldsValue, getRegionCode, validateRegionFields } from "lib/region";
 import { Flow } from "lib/enums";
 
 const monthOption = (month: number): Option => ({
@@ -45,8 +39,6 @@ export default function CreateTrip() {
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
   const navigate = useNavigate();
   const { close } = useModal();
-
-  const subregionRequired = requiresSubregion(region.country?.value);
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -90,36 +82,6 @@ export default function CreateTrip() {
     });
   };
 
-  const subregionBlock =
-    !region.isManualRegion && region.country ? (
-      <>
-        <Field label="State / Province" isOptional={!subregionRequired}>
-          <RegionSelect
-            type="subnational1"
-            parent={region.country.value}
-            value={region.states}
-            onChange={(states: any) => setRegion((v) => ({ ...v, states, counties: undefined }))}
-            menuPortalTarget={portalTarget()}
-            isClearable={!subregionRequired}
-            isMulti
-          />
-        </Field>
-        {region.states?.length === 1 && (
-          <Field label="County" isOptional>
-            <RegionSelect
-              type="subnational2"
-              parent={region.states[0].value}
-              value={region.counties}
-              onChange={(counties: any) => setRegion((v) => ({ ...v, counties }))}
-              menuPortalTarget={portalTarget()}
-              isClearable
-              isMulti
-            />
-          </Field>
-        )}
-      </>
-    ) : null;
-
   return (
     <div className="flex h-full flex-col">
       <title>Create Trip | BirdPlan.app</title>
@@ -139,41 +101,7 @@ export default function CreateTrip() {
                     <Input name="name" placeholder='E.g. "Galapagos Islands 2020"' autoFocus />
                   </Field>
 
-                  <Field
-                    label="Country / region"
-                    rightButton={
-                      <Button
-                        variant="link"
-                        onClick={() => setRegion((v) => ({ ...v, isManualRegion: !v.isManualRegion }))}
-                        className="text-xs"
-                      >
-                        {region.isManualRegion ? "Choose from list" : "Enter manually"}
-                      </Button>
-                    }
-                  >
-                    {region.isManualRegion ? (
-                      <Input
-                        name="manualRegion"
-                        placeholder="E.g. US-OH-001,US-OH-003"
-                        value={region.manualRegion}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setRegion((v) => ({ ...v, manualRegion: e.target.value }))
-                        }
-                      />
-                    ) : (
-                      <RegionSelect
-                        type="country"
-                        parent="world"
-                        value={region.country}
-                        onChange={(country: any) =>
-                          setRegion((v) => ({ ...v, country, states: undefined, counties: undefined }))
-                        }
-                        menuPortalTarget={portalTarget()}
-                      />
-                    )}
-                  </Field>
-
-                  {subregionBlock}
+                  <RegionFields value={region} onChange={setRegion} />
 
                   <RangeField
                     label="Dates"

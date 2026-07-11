@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Logo from "components/Logo";
 import Footer from "components/Footer";
+import { Card } from "components/ui/card";
 
 type PropTypes = {
   heading: React.ReactNode;
@@ -20,14 +21,14 @@ export default function UtilityPage({ heading, title, children }: PropTypes) {
             <Logo className="w-[80px] mx-auto" />
           </Link>
           {typeof heading === "string" ? (
-            <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">{heading}</h2>
+            <h2 className="mt-6 text-center text-2xl font-extrabold text-foreground">{heading}</h2>
           ) : (
             <div className="mt-6 text-center">{heading}</div>
           )}
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow-sm sm:rounded-lg sm:px-10">{children}</div>
+          <Card className="py-8 px-4 sm:px-10">{children}</Card>
         </div>
       </div>
       <Footer />

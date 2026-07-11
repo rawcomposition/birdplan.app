@@ -1,12 +1,13 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import Header from "components/Header";
 import Icon from "components/Icon";
+import LoadingState from "components/LoadingState";
+import EmptyState from "components/EmptyState";
 import { Button } from "components/ui/button";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import Field from "components/Field";
 import { Input } from "components/ui/input";
-import FormPage from "components/FormPage";
+import DashboardPage from "components/DashboardPage";
 import NotFound from "components/NotFound";
 import ParticipantRow from "components/ParticipantRow";
 import { useTrip } from "hooks/useTrip";
@@ -30,20 +31,17 @@ export default function TripParticipants() {
   if (is404) return <NotFound />;
 
   return (
-    <FormPage
+    <DashboardPage
       title="Participants"
       subtitle="Manage trip participants and life lists."
       documentTitle="Participants | BirdPlan.app"
-      header={<Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />}
       back={returnTo || !isCreate ? { to: backHref, label: `Back to ${backLabel}` } : undefined}
     >
       <Card className="mb-4 rounded-2xl px-4 sm:px-5">
         {participants == null ? (
-          <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-            <Icon name="loading" className="animate-spin" /> Loading participants...
-          </div>
+          <LoadingState inline label="Loading participants..." />
         ) : participants.length === 0 ? (
-          <p className="py-6 text-sm text-gray-500">No participants yet.</p>
+          <EmptyState inline title="No participants yet." />
         ) : (
           participants.map((p) => <ParticipantRow key={p._id} participant={p} />)
         )}
@@ -70,6 +68,6 @@ export default function TripParticipants() {
           {isCreate ? "Continue" : "Done"}
         </Button>
       </div>
-    </FormPage>
+    </DashboardPage>
   );
 }

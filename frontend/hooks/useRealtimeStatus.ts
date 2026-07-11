@@ -1,18 +1,12 @@
 import React from "react";
+import { onlineManager } from "@tanstack/react-query";
 
 export default function useRealtimeStatus() {
-  const [isOnline, setIsOnline] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  const isOnline = React.useSyncExternalStore(
+    (callback) => onlineManager.subscribe(callback),
+    () => onlineManager.isOnline(),
+    () => true
+  );
 
   return { isOnline };
 }

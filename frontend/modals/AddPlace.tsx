@@ -5,23 +5,27 @@ import Field from "components/Field";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import { nanoId } from "lib/helpers";
-import { CustomMarker, GooglePlaceT } from "lib/types";
+import { CustomMarker, PlaceSearchResult } from "lib/types";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import PlaceSearch from "components/PlaceSearch";
 import Icon from "components/Icon";
 import { getGooglePlaceUrl } from "lib/helpers";
-import { MarkerIconT, markerIcons } from "lib/icons";
+import { MarkerIconT, markerIcons, suggestMarkerIcon } from "lib/icons";
 import useTripMutation from "hooks/useTripMutation";
 
 export default function AddPlace() {
   const [icon, setIcon] = React.useState<MarkerIconT>();
-  const [place, setPlace] = React.useState<GooglePlaceT>();
+  const [place, setPlace] = React.useState<PlaceSearchResult>();
   const { close } = useModal();
   const { trip } = useTrip();
-  const firstRegion = trip?.region?.split(",")?.[0];
-  const countryCode = firstRegion?.split("-")?.[0];
+
+  const handleSelectPlace = (result: PlaceSearchResult) => {
+    setPlace(result);
+    const suggested = suggestMarkerIcon(result.type);
+    if (suggested) setIcon(suggested);
+  };
 
   const addMarkerMutation = useTripMutation<CustomMarker>({
     url: `/trips/${trip?._id}/markers`,
@@ -40,14 +44,15 @@ export default function AddPlace() {
       lng: place.lng,
       name: place.name,
       icon,
-      id: place.id || nanoId(6),
-      placeId: place.id,
+      id: nanoId(6),
       placeType: place.type,
+      osmType: place.osmType,
+      osmId: place.osmId,
     });
     close();
   };
 
-  const googleUrl = place && getGooglePlaceUrl(place.lat, place.lng, place.id);
+  const googleUrl = place && getGooglePlaceUrl(place.lat, place.lng);
 
   return (
     <>
@@ -57,7 +62,7 @@ export default function AddPlace() {
           <div className="flex flex-col gap-5 w-full">
             {!place && (
               <Field label="Find a place">
-                <PlaceSearch onChange={setPlace} country={countryCode || ""} focus />
+                <PlaceSearch onChange={handleSelectPlace} bounds={trip?.bounds} focus />
                 <p className="text-xs text-gray-500 mt-1">
                   Search for an airport, restaurant, hotel, or any other place.
                 </p>

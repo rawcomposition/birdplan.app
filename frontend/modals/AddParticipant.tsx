@@ -1,13 +1,14 @@
 import React from "react";
 import toast from "react-hot-toast";
-import clsx from "clsx";
 import { useQueryClient } from "@tanstack/react-query";
 import { Header, Body, Footer } from "components/Modal";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import useMutation from "hooks/useMutation";
 import { Button } from "components/ui/button";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
+import Field from "components/Field";
+import SegmentedControl from "components/SegmentedControl";
 import LifelistField from "components/LifelistField";
 
 type Tab = "invite" | "named";
@@ -54,53 +55,43 @@ export default function AddParticipant() {
     <>
       <Header>Add a participant</Header>
       <Body className="min-h-0 pb-5">
-        <div className="mb-5 inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 text-sm">
-          {(["named", "invite"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={clsx(
-                "rounded-md px-3 py-1.5 font-medium transition-colors",
-                tab === t ? "bg-white text-gray-800 shadow-xs" : "text-gray-500 hover:text-gray-700"
-              )}
-            >
-              {t === "named" ? "Name Only" : "Editor"}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          className="mb-5"
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: "named", label: "Name Only" },
+            { value: "invite", label: "Editor" },
+          ]}
+        />
 
         {tab === "invite" ? (
-          <div className="pb-2">
-            <label className="block mb-2">
-              <span className="block text-sm font-medium text-gray-700 mb-1.5">Email</span>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                placeholder="friend@example.com"
-                autoFocus
-              />
-            </label>
-          </div>
+          <Field label="Email" className="pb-2">
+            <Input
+              size="sm"
+              type="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+              placeholder="friend@example.com"
+              autoFocus
+            />
+          </Field>
         ) : (
-          <div className="pb-2">
-            <label className="block mb-2">
-              <span className="block text-sm font-medium text-gray-700 mb-1.5">Name</span>
-              <Input
-                type="text"
-                value={name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                autoFocus
-              />
-            </label>
-          </div>
+          <Field label="Name" className="pb-2">
+            <Input
+              size="sm"
+              type="text"
+              value={name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+              autoFocus
+            />
+          </Field>
         )}
 
         {showAttach || parsed ? (
@@ -122,14 +113,12 @@ export default function AddParticipant() {
         )}
       </Body>
       <Footer>
-        <div className="flex justify-end gap-2 w-full">
-          <Button onClick={close} variant="outline" disabled={addMutation.isPending}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} variant="default" disabled={!canSubmit || addMutation.isPending}>
-            {addMutation.isPending ? "Saving..." : tab === "invite" ? "Send invite" : "Add participant"}
-          </Button>
-        </div>
+        <Button onClick={close} variant="outline" disabled={addMutation.isPending}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} variant="default" disabled={!canSubmit || addMutation.isPending}>
+          {addMutation.isPending ? "Saving..." : tab === "invite" ? "Send invite" : "Add participant"}
+        </Button>
       </Footer>
     </>
   );

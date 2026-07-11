@@ -4,6 +4,7 @@ import Header from "components/Header";
 import Footer from "components/Footer";
 import BackLink from "components/BackLink";
 import Heading from "components/Heading";
+import PageContainer, { PageWidth } from "components/PageContainer";
 
 type Props = {
   title: string;
@@ -14,10 +15,11 @@ type Props = {
   back?: { to: string; label: string };
   documentTitle?: string;
   header?: React.ReactNode;
+  maxWidth?: PageWidth;
   children: React.ReactNode;
 };
 
-export default function FormPage({
+export default function DashboardPage({
   title,
   hat,
   icon,
@@ -26,6 +28,7 @@ export default function FormPage({
   back,
   documentTitle,
   header,
+  maxWidth = "2xl",
   children,
 }: Props) {
   return (
@@ -33,7 +36,7 @@ export default function FormPage({
       {documentTitle && <title>{documentTitle}</title>}
       {header ?? <Header />}
       <main className="flex-1 overflow-y-auto bg-background">
-        <div className="mx-auto w-full max-w-2xl px-4 py-6 pb-16 sm:px-6 sm:py-8">
+        <PageContainer width={maxWidth}>
           {back && <BackLink to={back.to} label={back.label} className="mb-5" />}
           <Heading
             hat={hat}
@@ -44,7 +47,7 @@ export default function FormPage({
             className="mb-6"
           />
           {children}
-        </div>
+        </PageContainer>
       </main>
       <Footer />
     </div>

@@ -12,7 +12,6 @@ import { ModalId, MODAL_POSITIONS, useModal, useModalStore } from "stores/modals
 import Hotspot from "modals/Hotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import Marker from "modals/Marker";
-import AddItineraryLocation from "modals/AddItineraryLocation";
 import AddHotspot from "modals/AddHotspot";
 import AddPlace from "modals/AddPlace";
 import DeleteAccount from "modals/DeleteAccount";
@@ -21,6 +20,7 @@ import AddParticipant from "modals/AddParticipant";
 import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
 import GenerateMagicLink from "modals/GenerateMagicLink";
+import Share from "modals/Share";
 
 type ModalConfig = {
   Component: React.ComponentType<any>;
@@ -34,13 +34,13 @@ const modals: Record<ModalId, ModalConfig> = {
   addPlace: { Component: AddPlace },
   addHotspot: { Component: AddHotspot },
   viewMarker: { Component: Marker },
-  addItineraryLocation: { Component: AddItineraryLocation },
   deleteAccount: { Component: DeleteAccount, maxHeight: "90vh" },
   openBirding: { Component: OpenBirding },
   addParticipant: { Component: AddParticipant },
   inviteAsEditor: { Component: InviteAsEditor },
   manageLifelist: { Component: ManageLifelist },
   generateMagicLink: { Component: GenerateMagicLink },
+  share: { Component: Share },
 };
 
 const ModalRoot = () => {
@@ -69,12 +69,13 @@ const ModalRoot = () => {
   );
 };
 
-const Footer = ({ children }: { children: React.ReactNode }) => {
+const Footer = ({ children, align = "end" }: { children: React.ReactNode; align?: "end" | "between" }) => {
   const { position } = useModal();
   return (
     <footer
       className={clsx(
-        "flex items-center",
+        "flex items-center gap-2",
+        align === "between" ? "justify-between" : "justify-end",
         position === "center" ? "px-6 sm:px-7 pt-3 pb-6 bg-white" : "p-4 border-t bg-white"
       )}
     >
@@ -88,7 +89,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
   return position === "center" ? (
     <DialogTitle className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</DialogTitle>
   ) : (
-    <DialogTitle className="pl-4 sm:pl-6 pr-12 py-4 border-b text-lg font-semibold tracking-tight text-gray-900">
+    <DialogTitle className="pl-4 sm:pl-6 pr-14 pt-4 text-lg font-semibold tracking-tight text-gray-900">
       {children}
     </DialogTitle>
   );
@@ -105,7 +106,8 @@ const Body = ({
 }) => {
   const { position } = useModal();
   const padding = position === "center" ? "px-6 sm:px-7 pt-4" : "px-4 sm:px-6 pt-4";
-  return <div className={clsx(!noPadding && padding, className, "overflow-auto grow")}>{children}</div>;
+  const scroll = position === "center" && "overflow-auto grow";
+  return <div className={clsx(!noPadding && padding, className, scroll)}>{children}</div>;
 };
 
 export { ModalRoot, Footer, Header, Body };

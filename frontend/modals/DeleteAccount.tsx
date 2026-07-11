@@ -64,20 +64,18 @@ export default function DeleteAccount() {
           </div>
         </div>
       </Body>
-      <Footer>
-        <div className="flex justify-between w-full">
-          <Button onClick={close} disabled={isDeleting} variant="outline">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDeleteAccount}
-            variant="danger"
-            className="disabled:bg-red-300 disabled:cursor-not-allowed"
-            disabled={!isConfirmed || isDeleting}
-          >
-            {isDeleting ? "Deleting..." : "Delete Account Permanently"}
-          </Button>
-        </div>
+      <Footer align="between">
+        <Button onClick={close} disabled={isDeleting} variant="outline">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleDeleteAccount}
+          variant="danger"
+          className="disabled:bg-red-300 disabled:cursor-not-allowed"
+          disabled={!isConfirmed || isDeleting}
+        >
+          {isDeleting ? "Deleting..." : "Delete Account Permanently"}
+        </Button>
       </Footer>
     </>
   );

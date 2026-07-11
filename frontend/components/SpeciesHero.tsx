@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
 import Icon from "components/Icon";
-import { Button } from "components/ui/button";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import { Map, Star, ExternalLink, Check } from "lucide-react";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import MutualBadge from "components/MutualBadge";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
 
@@ -62,7 +57,7 @@ export default function SpeciesHero({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 leading-tight">{name}</h1>
-              {starred && <Icon name="star" className="text-yellow-500 text-lg" />}
+              {starred && <Icon name="star" className="text-star text-lg" />}
               {mutual && <MutualBadge size="md" />}
               {seen && (
                 <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
@@ -75,12 +70,7 @@ export default function SpeciesHero({
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <DropdownMenu>
-              <DropdownMenuTrigger
-                render={<Button variant="outline-white" size="icon-lg" />}
-                aria-label="More actions"
-              >
-                <Icon name="verticalDots" />
-              </DropdownMenuTrigger>
+              <KebabMenuTrigger aria-label="More actions" />
               <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
                 <DropdownMenuItem onClick={onShowMap}>
                   <Map className="text-gray-500" />
@@ -99,7 +89,7 @@ export default function SpeciesHero({
                   View on eBird
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onMarkSeen} disabled={!canEdit || seen}>
-                  <Check className={seen ? "text-green-600" : "text-gray-500"} />
+                  <Check className={seen ? "text-success" : "text-gray-500"} />
                   {seen ? "Marked as seen" : "Mark as seen"}
                 </DropdownMenuItem>
               </DropdownMenuContent>

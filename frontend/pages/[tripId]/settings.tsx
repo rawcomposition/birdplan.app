@@ -6,10 +6,10 @@ import MonthSelect from "components/MonthSelect";
 import Footer from "components/Footer";
 import { Option } from "lib/types";
 import Field from "components/Field";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import { Input } from "components/ui/input";
 import RangeField from "components/RangeField";
-import FormPage from "components/FormPage";
+import DashboardPage from "components/DashboardPage";
 import { useNavigate } from "react-router-dom";
 import { months } from "lib/helpers";
 import { Button } from "components/ui/button";
@@ -17,7 +17,7 @@ import NotFound from "components/NotFound";
 import useMutation from "hooks/useMutation";
 import useResolvedRegion from "hooks/useResolvedRegion";
 import RegionFields from "components/RegionFields";
-import Icon from "components/Icon";
+import LoadingState from "components/LoadingState";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRegionCode, validateRegionFields, RegionFieldsValue } from "lib/region";
 import { Trip } from "@birdplan/shared";
@@ -39,8 +39,8 @@ export default function TripSettings() {
     return (
       <div className="flex flex-col h-full">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <Icon name="loading" className="text-2xl text-gray-400 animate-spin" />
+        <main className="flex-1 flex flex-col">
+          <LoadingState className="grow" />
         </main>
         <Footer />
       </div>
@@ -125,7 +125,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
   };
 
   return (
-    <FormPage
+    <DashboardPage
       title="Trip settings"
       documentTitle="Trip Settings | BirdPlan.app"
       back={{ to: `/${trip._id}`, label: "Back to trip" }}
@@ -177,7 +177,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
 
         <div className="mt-6 flex justify-end items-center gap-3">
           {isOwner && (
-            <div className="border-t border-gray-100 mr-auto">
+            <div className="border-t border-border mr-auto">
               <Button
                 type="button"
                 variant="link-danger"
@@ -196,6 +196,6 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
           </Button>
         </div>
       </form>
-    </FormPage>
+    </DashboardPage>
   );
 }

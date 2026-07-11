@@ -1,11 +1,9 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "components/Header";
-import Heading from "components/Heading";
-import Footer from "components/Footer";
-import Icon from "components/Icon";
+import DashboardPage from "components/DashboardPage";
+import LoadingState from "components/LoadingState";
 import { Button } from "components/ui/button";
-import Card from "components/Card";
+import { Card } from "components/ui/card";
 import NotFound from "components/NotFound";
 import LifelistEditor from "components/LifelistEditor";
 import { useTrip } from "hooks/useTrip";
@@ -30,38 +28,26 @@ export default function TripLifelist() {
   if (is404) return <NotFound />;
 
   return (
-    <div className="flex flex-col h-full">
-        <title>Trip Life List | BirdPlan.app</title>
+    <DashboardPage
+      documentTitle="Trip Life List | BirdPlan.app"
+      title="Trip Life List"
+      icon="feather"
+      iconClassName="text-success"
+      subtitle="Choose which life list to use for determining your trip targets."
+    >
+      <Card className="rounded-2xl p-5 mb-6">
+        {trip ? (
+          <LifelistEditor trip={trip} mode={lifelistMode} embedded />
+        ) : (
+          <LoadingState inline label="Loading..." />
+        )}
+      </Card>
 
-      <Header title={trip?.name || ""} parent={{ title: "Trips", href: "/trips" }} />
-      <main className="max-w-2xl w-full mx-auto pb-12">
-        <div className="px-4 md:px-0 mt-8">
-          <Heading
-            title="Trip Life List"
-            icon="feather"
-            iconClassName="text-lime-600"
-            subtitle="Choose which life list to use for determining your trip targets."
-            className="mb-8"
-          />
-
-          <Card className="rounded-2xl p-5 mb-6">
-            {trip ? (
-              <LifelistEditor trip={trip} mode={lifelistMode} embedded />
-            ) : (
-              <div className="flex items-center gap-2 py-6 text-sm text-gray-500">
-                <Icon name="loading" className="animate-spin" /> Loading...
-              </div>
-            )}
-          </Card>
-
-          <div className="flex">
-            <Button onClick={handleDone} variant="default" size="lg" className="inline-flex items-center ml-auto">
-              {doneLabel}
-            </Button>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+      <div className="flex">
+        <Button onClick={handleDone} variant="default" size="lg" className="inline-flex items-center ml-auto">
+          {doneLabel}
+        </Button>
+      </div>
+    </DashboardPage>
   );
 }

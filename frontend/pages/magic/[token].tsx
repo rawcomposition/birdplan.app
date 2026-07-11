@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import UtilityPage from "components/UtilityPage";
 import { Button } from "components/ui/button";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import useRedeemMagicLink from "hooks/useRedeemMagicLink";
 import { withReturnTo } from "lib/helpers";
 
@@ -27,10 +27,10 @@ export default function Magic() {
     <UtilityPage heading="Sign in to BirdPlan">
       {error ? (
         <>
-          <Alert style="error" className="mb-4">
+          <Alert variant="destructive" className="mb-4">
             {error}
           </Alert>
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-muted-foreground text-center">
             Ask for a new link, or{" "}
             <Link to="/login" className="text-link font-medium">
               sign in with your email
@@ -40,7 +40,7 @@ export default function Magic() {
         </>
       ) : (
         <>
-          <p className="text-sm text-gray-500 text-center mb-6">
+          <p className="text-sm text-muted-foreground text-center mb-6">
             Click below to securely sign in to your account.
           </p>
           <Button

@@ -5,7 +5,8 @@ import { dateTimeToRelative } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
-import Alert from "components/Alert";
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
 
 type Props = {
   locId: string;
@@ -28,7 +29,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
     <>
       {recentSpecies.length > 0 && (
         <table className="w-full text-[13px] mt-2">
-          <thead className="text-neutral-600 font-bold">
+          <thead className="text-secondary-foreground font-bold">
             <tr>
               <th className="text-left pl-1.5 py-1">Species</th>
               <th className="text-left">Time ago</th>
@@ -38,7 +39,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
           </thead>
           <tbody>
             {filteredObs.map(({ code, name, date, count, checklistId }) => (
-              <tr key={`${code}-${checklistId}`} className="even:bg-neutral-50">
+              <tr key={`${code}-${checklistId}`} className="even:bg-muted/50">
                 <td className="pl-1.5 py-[5px] relative">
                   {favCodes.includes(code) && (
                     <Icon name="heartSolid" className="text-pink-700 absolute top-[12px] left-[-9px] text-[8px]" />
@@ -75,26 +76,13 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
           </Button>
         )}
       </p>
-      {isLoading && (
-        <Alert style="info" className="-mx-1 my-1">
-          <Icon name="loading" className="text-xl animate-spin" />
-          Loading recent species...
-        </Alert>
-      )}
-      {!isLoading && recentSpecies.length === 0 && !error && (
-        <Alert style="info" className="-mx-1 my-1">
-          No recent needs in the last 30 days
-        </Alert>
-      )}
-      {error && (
-        <Alert style="error" className="-mx-1 my-1">
-          <Icon name="xMarkCircle" className="text-xl" />
-          Failed to load recent species
-          <Button variant="link" onClick={() => refetch()}>
-            Retry
-          </Button>
-        </Alert>
-      )}
+      {error ? (
+        <EmptyState inline variant="destructive" title="Failed to load recent species" onRetry={() => refetch()} />
+      ) : isLoading ? (
+        <LoadingState inline />
+      ) : recentSpecies.length === 0 ? (
+        <EmptyState inline title="No recent needs in the last 30 days" />
+      ) : null}
     </>
   );
 }

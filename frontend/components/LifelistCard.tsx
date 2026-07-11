@@ -2,6 +2,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { Button } from "components/ui/button";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import { parseLifelistCsv } from "lib/lifelistCsv";
 
 type Props = {
@@ -36,10 +37,10 @@ export default function LifelistCard({ label, count, onImport, onRemove, disable
       <input ref={fileRef} type="file" accept=".csv" className="sr-only" onChange={handlePick} />
       <span
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white ${
-          disabled ? "bg-gray-400" : "bg-green-600"
+          disabled ? "bg-gray-400" : "bg-success"
         }`}
       >
-        <Icon name={disabled ? "loading" : "check"} className={disabled ? "animate-spin" : "text-sm"} />
+        {disabled ? <Spinner /> : <Icon name="check" className="text-sm" />}
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-gray-800">{label}</p>

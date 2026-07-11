@@ -25,5 +25,23 @@ export default tseslint.config(
       "@typescript-eslint/no-empty-object-type": "off",
       "no-empty": "off",
     },
+  },
+  {
+    files: ["pages/**/*.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Literal[value=/((gray|slate|zinc|neutral|stone)-[0-9]|bg-white)/]",
+          message:
+            "Use semantic tokens (bg-card, text-muted-foreground, border-border) instead of raw palette classes.",
+        },
+        {
+          selector: "TemplateElement[value.raw=/((gray|slate|zinc|neutral|stone)-[0-9]|bg-white)/]",
+          message:
+            "Use semantic tokens (bg-card, text-muted-foreground, border-border) instead of raw palette classes.",
+        },
+      ],
+    },
   }
 );

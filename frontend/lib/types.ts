@@ -16,6 +16,8 @@ export type CustomMarker = {
   notes?: string;
   placeId?: string;
   placeType?: string;
+  osmType?: string;
+  osmId?: number;
 };
 
 export type KeyValue = {
@@ -78,10 +80,11 @@ export type Observation = {
   evidence: "N" | "P" | "A";
 };
 
-export type GooglePlaceT = {
-  id?: string;
+export type PlaceSearchResult = {
   name: string;
   lat: number;
   lng: number;
   type?: string;
+  osmType?: string;
+  osmId?: number;
 };

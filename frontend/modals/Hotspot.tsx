@@ -1,5 +1,5 @@
 import React from "react";
-import { Body } from "components/Modal";
+import { Header, Body } from "components/Modal";
 import { HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import toast from "react-hot-toast";
@@ -11,12 +11,8 @@ import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
 import InputNotes from "components/InputNotes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import Icon from "components/Icon";
@@ -150,10 +146,10 @@ export default function Hotspot({ hotspot }: Props) {
 
   return (
     <>
-      <div className="pl-4 sm:pl-6 pr-12 py-4 border-b bg-gray-50">
-        <h3 className="text-lg font-medium">{name}</h3>
+      <Header>{name}</Header>
+      <Body className="pb-10 sm:pb-4 relative">
         {canTranslate && (
-          <div className="mt-0.5 text-[12px]">
+          <div className="text-[12px] -mt-3 mb-4">
             {!originalName && !translateMutation.isPending && (
               <Button variant="link" type="button" className="block" onClick={() => translateMutation.mutate({})}>
                 Translate
@@ -170,8 +166,6 @@ export default function Hotspot({ hotspot }: Props) {
             )}
           </div>
         )}
-      </div>
-      <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
           {canEdit && (
             <Button
@@ -198,9 +192,7 @@ export default function Hotspot({ hotspot }: Props) {
             <img src="/ebird.png" width={48} />
           </Button>
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
-              <Icon name="verticalDots" />
-            </DropdownMenuTrigger>
+            <KebabMenuTrigger />
             <DropdownMenuContent align="end" className="w-[170px]">
               <DropdownMenuItem
                 render={<a href={`https://ebird.org/hotspot/${id}/media?yr=all&m=`} target="_blank" rel="noreferrer" />}

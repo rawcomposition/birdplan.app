@@ -2,6 +2,29 @@ import { mostFrequentValue } from "lib/utils.js";
 import { getTravelTime } from "lib/mapbox.js";
 import type { ItineraryLocation, Day, Trip } from "@birdplan/shared";
 
+export const densifyItinerary = (itinerary: Day[] | undefined, dayIds?: string[]): Day[] => {
+  const existing = itinerary || [];
+  if (!dayIds?.length) return existing;
+  const length = Math.max(existing.length, dayIds.length);
+  return Array.from({ length }, (_, index) => existing[index] || { id: dayIds[index], locations: [] });
+};
+
+export const dayCountForDates = (startDate?: string | null, endDate?: string | null): number => {
+  if (!startDate || !endDate) return 0;
+  return Math.round((Date.parse(endDate) - Date.parse(startDate)) / 86_400_000) + 1;
+};
+
+export const pruneItineraryToDates = (
+  itinerary: Day[] | undefined,
+  startDate?: string | null,
+  endDate?: string | null
+): Day[] => {
+  const existing = itinerary || [];
+  const count = dayCountForDates(startDate, endDate);
+  if (!count) return existing;
+  return existing.slice(0, count);
+};
+
 export const updateDayTravelTimes = async (trip: Trip, day: Day): Promise<Day> => {
   if (!trip) throw new Error("Trip is required for updating travel times");
   if (!day) throw new Error("Day is required for updating travel times");

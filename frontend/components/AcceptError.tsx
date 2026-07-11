@@ -1,5 +1,5 @@
 import React from "react";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import { Button } from "components/ui/button";
 
 type Props = {
@@ -14,7 +14,7 @@ export default function AcceptError({ title, message, onRetry, retrying, childre
   return (
     <div className="flex flex-col items-center gap-6">
       <h2 className="text-xl font-bold text-gray-700">{title}</h2>
-      <Alert style="error" className="w-full justify-center text-center">
+      <Alert variant="destructive" className="w-full justify-center text-center">
         {message || "Something went wrong."}
       </Alert>
       <div className="flex items-center gap-2">

@@ -6,8 +6,10 @@ import { ParticipantView } from "@birdplan/shared";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useMutation from "hooks/useMutation";
-import ParticipantOptionsDropdown, { ParticipantMenuItem } from "components/ParticipantOptionsDropdown";
-import Badge from "components/Badge";
+import OptionsMenu, { OptionItem } from "components/OptionsMenu";
+import { DropdownMenuTrigger } from "components/ui/dropdown-menu";
+import Icon from "components/Icon";
+import { Badge } from "components/ui/badge";
 import { Button } from "components/ui/button";
 import Avatar from "components/Avatar";
 import { avatarFromParticipant } from "lib/avatar";
@@ -62,7 +64,7 @@ export default function ParticipantRow({ participant: p }: Props) {
   const label = p.name || p.email || "Unknown";
   const canRemove = !p.isOwner && (p.isMe || canEdit);
 
-  const items: ParticipantMenuItem[] = [];
+  const items: OptionItem[] = [];
   if (isSelf) {
     items.push({ name: "Change life list", icon: <Feather />, onClick: manageList });
   } else if (isNameOnly && canEdit) {
@@ -93,9 +95,14 @@ export default function ParticipantRow({ participant: p }: Props) {
           <p className="truncate text-sm font-semibold text-gray-800">
             {label}
             {p.isMe && <span className="ml-1.5 text-xs font-normal text-gray-400">(you)</span>}
-            {p.isOwner && <Badge>Owner</Badge>}
+            {p.isOwner && (
+              <Badge variant="secondary" className="ml-2">
+                Owner
+              </Badge>
+            )}
             {isPending && (
-              <Badge color="amber" icon="envelope">
+              <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-700">
+                <Mail />
                 Pending
               </Badge>
             )}
@@ -113,7 +120,11 @@ export default function ParticipantRow({ participant: p }: Props) {
           </p>
         </div>
 
-        <ParticipantOptionsDropdown items={items} />
+        <OptionsMenu items={items} className="min-w-[200px]">
+          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />} title="Options">
+            <Icon name="verticalDots" />
+          </DropdownMenuTrigger>
+        </OptionsMenu>
       </div>
     </div>
   );

@@ -3,9 +3,10 @@ import toast from "react-hot-toast";
 import { useUser } from "hooks/useUser";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "components/ui/button";
-import Card from "components/Card";
-import FormPage from "components/FormPage";
-import Icon from "components/Icon";
+import { Card } from "components/ui/card";
+import DashboardPage from "components/DashboardPage";
+import LoadingState from "components/LoadingState";
+import EmptyState from "components/EmptyState";
 import LifelistUpload from "components/LifelistUpload";
 import EbirdDownloadLink from "components/EbirdDownloadLink";
 import useMutation from "hooks/useMutation";
@@ -13,7 +14,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
 import { Option } from "lib/types";
 import { getReturnLabel } from "lib/helpers";
-import Alert from "components/Alert";
 
 export default function ImportLifelist() {
   const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
@@ -71,7 +71,7 @@ export default function ImportLifelist() {
           label: taxon?.name || `Unknown (${code})`,
           value: taxon?.code ?? code,
         };
-      })
+      }),
     );
   }
 
@@ -82,91 +82,87 @@ export default function ImportLifelist() {
   };
 
   return (
-    <FormPage
+    <DashboardPage
       title="World life list"
       icon="feather"
-      iconClassName="text-lime-600"
+      iconClassName="text-success"
       documentTitle="World Life List | BirdPlan.app"
       back={isOnboarding ? undefined : { to: redirectUrl, label: `Back to ${backLabel}` }}
     >
-          {hasList && (
-            <Card className="rounded-2xl p-5 mb-6">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Species on your list</p>
-                  <p className="text-3xl font-bold text-gray-800 tabular-nums">{lifelist.length.toLocaleString()}</p>
-                </div>
-                {lifelistUpdatedAt && (
-                  <div className="text-right">
-                    <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">Last updated</p>
-                    <p className="text-sm text-gray-700">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
-                  </div>
-                )}
-              </div>
-            </Card>
-          )}
-
-          <Card className="p-5 mb-6">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h3 className="text-lg font-medium text-gray-700">{hasList ? "Update your list" : "Import your list"}</h3>
-              <EbirdDownloadLink className="shrink-0" world />
+      {hasList && (
+        <Card className="rounded-2xl p-5 mb-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                Species on your list
+              </p>
+              <p className="text-3xl font-bold text-foreground tabular-nums">{lifelist.length.toLocaleString()}</p>
             </div>
-            <LifelistUpload
-              onImport={(sciNames) => importMutation.mutate({ sciNames })}
-              isPending={importMutation.isPending}
-              buttonLabel={hasList ? "Choose a new CSV file" : "Choose a CSV file"}
-            />
-          </Card>
-
-          <Card className="p-5 mb-6">
-            <h3 className="text-lg font-medium mb-1 text-gray-700">Exceptions</h3>
-            <p className="text-sm text-gray-600 mb-3">
-              Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies
-              to all your trips.
-            </p>
-            {isError && (
-              <Alert style="error" className="-mx-1 my-1">
-                <Icon name="xMarkCircle" className="text-xl" />
-                Failed to load eBird taxonomy
-                <Button variant="link" onClick={() => refetch()}>
-                  Retry
-                </Button>
-              </Alert>
-            )}
-            {isLoading ? (
-              <div className="flex items-center justify-center h-20">
-                <Icon name="loading" className="animate-spin" />
+            {lifelistUpdatedAt && (
+              <div className="text-right">
+                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Last updated</p>
+                <p className="text-sm text-secondary-foreground">{new Date(lifelistUpdatedAt).toLocaleDateString()}</p>
               </div>
-            ) : (
-              <AsyncSelect
-                value={exceptionsValue}
-                loadOptions={taxonomySearch}
-                noOptionsMessage={({ inputValue }) =>
-                  inputValue.length > 0 ? "No species found" : "Search for a species..."
-                }
-                menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                isMulti
-                isLoading={isLoading}
-                onChange={(newValue: Option[]) => {
-                  setExceptionsValue(newValue);
-                  setExceptionsMutation.mutate({
-                    exceptions: newValue.map((it) => it.value),
-                  });
-                }}
-              />
             )}
-          </Card>
-
-          <div className="flex">
-            <Button
-              href={redirectUrl}
-              variant={isOnboarding ? "default" : "outline"}
-              size="lg"
-              className="ml-auto inline-flex items-center"
-            >
-              {isOnboarding ? "Continue" : "Done"}
-            </Button>
           </div>
-    </FormPage>
+        </Card>
+      )}
+
+      <Card className="p-5 mb-6">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h3 className="text-lg font-medium text-secondary-foreground">
+            {hasList ? "Update your list" : "Import your list"}
+          </h3>
+          <EbirdDownloadLink className="shrink-0" world />
+        </div>
+        <LifelistUpload
+          onImport={(sciNames) => importMutation.mutate({ sciNames })}
+          isPending={importMutation.isPending}
+          buttonLabel={hasList ? "Choose a new CSV file" : "Choose a CSV file"}
+        />
+      </Card>
+
+      <Card className="p-5 mb-6">
+        <h3 className="text-lg font-medium mb-1 text-secondary-foreground">Exceptions</h3>
+        <p className="text-sm text-secondary-foreground mb-3">
+          Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies to
+          all your trips.
+        </p>
+        {isError && (
+          <EmptyState inline variant="destructive" title="Failed to load eBird taxonomy" onRetry={() => refetch()} />
+        )}
+        {isLoading ? (
+          <LoadingState className="h-20 py-0" spinnerClassName="size-4" />
+        ) : (
+          <AsyncSelect
+            value={exceptionsValue}
+            loadOptions={taxonomySearch}
+            noOptionsMessage={({ inputValue }) =>
+              inputValue.length > 0 ? "No species found" : "Search for a species..."
+            }
+            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+            isMulti
+            isLoading={isLoading}
+            onChange={(newValue: Option[]) => {
+              setExceptionsValue(newValue);
+              setExceptionsMutation.mutate({
+                exceptions: newValue.map((it) => it.value),
+              });
+            }}
+          />
+        )}
+      </Card>
+
+      <div className="flex">
+        <Button
+          href={redirectUrl}
+          variant={isOnboarding ? "default" : "outline"}
+          size="lg"
+          className="ml-auto inline-flex items-center"
+        >
+          {isOnboarding ? "Continue" : "Done"}
+        </Button>
+      </div>
+    </DashboardPage>
   );
 }

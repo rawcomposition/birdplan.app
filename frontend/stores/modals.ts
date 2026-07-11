@@ -9,14 +9,14 @@ export type ModalId =
   | "addMarker"
   | "addHotspot"
   | "viewMarker"
-  | "addItineraryLocation"
   | "addPlace"
   | "deleteAccount"
   | "openBirding"
   | "addParticipant"
   | "inviteAsEditor"
   | "manageLifelist"
-  | "generateMagicLink";
+  | "generateMagicLink"
+  | "share";
 
 export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   hotspot: "right",
@@ -25,13 +25,13 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   addPlace: "right",
   addHotspot: "right",
   viewMarker: "right",
-  addItineraryLocation: "right",
   deleteAccount: "center",
   openBirding: "center",
   addParticipant: "center",
   inviteAsEditor: "center",
   manageLifelist: "center",
   generateMagicLink: "center",
+  share: "center",
 };
 
 type ModalState = {
@@ -42,14 +42,20 @@ type ModalState = {
   close: () => void;
 };
 
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
 export const useModalStore = create<ModalState>((set) => ({
   modalId: null,
   modalProps: {},
   closing: false,
-  open: (id, props) => set({ modalId: id, modalProps: props || {}, closing: false }),
+  open: (id, props) => {
+    clearTimeout(closeTimer);
+    set({ modalId: id, modalProps: props || {}, closing: false });
+  },
   close: () => {
     set({ closing: true });
-    setTimeout(() => set({ modalId: null, closing: false }), 500);
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => set({ modalId: null, closing: false }), 500);
   },
 }));
 

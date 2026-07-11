@@ -42,10 +42,16 @@
   --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: var(--destructive);
+  --color-destructive-hover: var(--destructive-hover);
   --color-destructive-foreground: var(--destructive-foreground);
 
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-star: var(--star);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -74,7 +80,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--border, currentcolor);
   }
 }
 
@@ -96,10 +102,14 @@
     --accent: hsl(220 14% 96%);
     --accent-foreground: hsl(221 39% 11%);
     --destructive: hsl(0 72% 51%);
+    --destructive-hover: hsl(0 74% 42%);
     --destructive-foreground: hsl(0 0% 100%);
     --success: hsl(104 100% 21%);
     --success-foreground: hsl(0 0% 100%);
-    --link: hsl(217 91% 60%);
+    --warning: hsl(38 92% 50%);
+    --warning-foreground: hsl(0 0% 100%);
+    --star: hsl(48 96% 53%);
+    --link: hsl(221 83% 53%);
     --border: hsl(220 13% 91%);
     --input: hsl(216 12% 84%);
     --ring: hsl(217 91% 60%);
@@ -117,7 +127,7 @@
   }
 
   a {
-    @apply text-blue-900;
+    @apply text-link;
   }
 
   button:not(:disabled),
@@ -137,12 +147,17 @@
     transition: transform 0.2s ease-in-out;
   }
 
-  .input {
-    @apply py-2 px-3 border border-gray-300 focus:ring-slate-500 focus:border-slate-500 outline-blue-500 block w-full shadow-xs sm:text-sm rounded-md outline-offset-0 bg-white;
-  }
-
   input[type="search"] {
     -webkit-appearance: none !important;
+  }
+}
+
+@media print {
+  html,
+  body,
+  #root {
+    height: auto;
+    overflow: visible;
   }
 }
 

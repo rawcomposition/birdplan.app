@@ -2,7 +2,7 @@ import React from "react";
 import { Header, Body } from "components/Modal";
 import { Button } from "components/ui/button";
 import Field from "components/Field";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import { nanoId } from "lib/helpers";
@@ -14,15 +14,10 @@ import useTripMutation from "hooks/useTripMutation";
 import { CustomMarker, MarkerUpdateInput } from "@birdplan/shared";
 import DirectionsButton from "components/DirectionsButton";
 import InputNotes from "components/InputNotes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
-import Icon from "components/Icon";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
+import KebabMenuTrigger from "components/KebabMenuTrigger";
 import { getGooglePlaceUrl } from "lib/helpers";
-import Error from "components/Error";
+import EmptyState from "components/EmptyState";
 
 type Props = {
   markerId?: string;
@@ -124,7 +119,14 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
       <>
         <Header>Marker Not Found</Header>
         <Body>
-          <Error message="The marker could not be found in this trip." onReload={refetch} />
+          <EmptyState
+            title="The marker could not be found in this trip."
+            action={
+              <Button variant="outline" onClick={() => refetch()}>
+                Try again
+              </Button>
+            }
+          />
         </Body>
       </>
     );
@@ -142,9 +144,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
             <div className="flex gap-2 mb-2">
               <DirectionsButton lat={marker.lat} lng={marker.lng} markerId={marker.id} googleUrl={googleUrl} />
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="outline-white" size="icon-lg" />}>
-                  <Icon name="verticalDots" />
-                </DropdownMenuTrigger>
+                <KebabMenuTrigger />
                 <DropdownMenuContent align="start" className="w-[180px]">
                   <DropdownMenuItem render={<a href={googleUrl} target="_blank" rel="noreferrer" />}>
                     View on Google Maps
@@ -178,7 +178,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
         <div className="flex gap-2 mb-2">
           <div className="flex flex-col gap-5 w-full">
             <Field label="Name">
-              <Input
+              <Input size="sm"
                 type="text"
                 name="name"
                 value={name}
@@ -188,7 +188,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
             </Field>
             <div className="flex gap-2">
               <Field label="Latitude">
-                <Input
+                <Input size="sm"
                   type="string"
                   name="lat"
                   value={lat || ""}
@@ -205,7 +205,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
                 />
               </Field>
               <Field label="Longitude">
-                <Input
+                <Input size="sm"
                   type="string"
                   name="lng"
                   value={lng || ""}

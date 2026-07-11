@@ -9,9 +9,11 @@ import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useLocationTargets from "hooks/useLocationTargets";
 import { RecentChecklist } from "lib/types";
 import Icon from "components/Icon";
+import { Spinner } from "components/ui/spinner";
 import ObsList from "components/ObsList";
 import SelectDropdown from "components/SelectDropdown";
-import Alert from "components/Alert";
+import EmptyState from "components/EmptyState";
+import LoadingState from "components/LoadingState";
 
 type Props = {
   hotspotId: string;
@@ -46,20 +48,19 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
   return (
     <>
       {speciesCode && (
-        <div className="text-sm -mx-1 my-1 bg-sky-100 text-sky-800 py-2.5 px-3 rounded">
-          {speciesName}
-          <br />
-          {isLoadingTargets && <Icon name="loading" className="text-xl animate-spin" />}
+        <div className="text-sm -mx-1 my-1 bg-gray-50 border border-gray-100 py-2.5 px-3 rounded">
+          <div className="font-semibold text-gray-800">{speciesName}</div>
+          {isLoadingTargets && <Spinner className="size-5 mt-1" />}
           {!isLoadingTargets && successRate !== null && (
-            <>
-              <strong className="text-xl">{Math.round(successRate * 100)}%</strong> of {totalSamples.toLocaleString()}{" "}
-              checklists
+            <div className="mt-0.5 text-gray-600">
+              <strong className="text-xl text-success">{Math.round(successRate * 100)}%</strong> of{" "}
+              {totalSamples.toLocaleString()} checklists
               {datasetAsOf && (
                 <span className="relative inline-block ml-1.5">
                   <button
                     type="button"
                     aria-label="About this stat"
-                    className="block text-sky-800 leading-none"
+                    className="block text-gray-400 leading-none"
                     onMouseEnter={() => setShowDatasetTip(true)}
                     onMouseLeave={() => setShowDatasetTip(false)}
                     onFocus={() => setShowDatasetTip(true)}
@@ -78,12 +79,12 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                   )}
                 </span>
               )}
-            </>
+            </div>
           )}
           {!isLoadingTargets && successRate === null && (
-            <span className="text-sky-700/80">No frequency data available</span>
+            <div className="mt-0.5 text-gray-500">No frequency data available</div>
           )}
-          {!!obsError && <span className="text-red-500">Failed to load recent reports</span>}
+          {!!obsError && <div className="mt-1 text-gray-500">Recent reports unavailable</div>}
         </div>
       )}
       {speciesCode && (
@@ -104,7 +105,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
         <>
           {checklists.length > 0 && (
             <table className="w-full text-[13px] mt-2">
-              <thead className="text-neutral-600 font-bold">
+              <thead className="text-secondary-foreground font-bold">
                 <tr>
                   <th className="text-left pl-1.5">Time ago</th>
                   {speciesCode && <th className="text-center">{speciesName}</th>}
@@ -127,7 +128,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                     checklist?.loc.countryCode ||
                     "";
                   return (
-                    <tr key={subId} className="even:bg-neutral-50">
+                    <tr key={subId} className="even:bg-muted/50">
                       <td className="pl-1.5 py-[5px]">
                         <time dateTime={timestamp} title={`${obsDt} ${time}`}>
                           {dateTimeToRelative(`${obsDt} ${time}`, region)}
@@ -163,26 +164,13 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
               </Button>
             </p>
           )}
-          {!isLoading && !isLoadingSpecies && checklists.length === 0 && !error && (
-            <Alert style="info" className="-mx-1 my-1">
-              No recent checklists
-            </Alert>
-          )}
-          {(isLoading || isLoadingSpecies) && (
-            <Alert style="gray" className="-mx-1 my-1">
-              {!reduceLoaders && <Icon name="loading" className="text-xl animate-spin" />}
-              Loading recent checklists...
-            </Alert>
-          )}
-          {error && (
-            <Alert style="error" className="-mx-1 my-1">
-              <Icon name="xMarkCircle" className="text-xl" />
-              Failed to load recent checklists
-              <Button variant="link" onClick={() => refetch()}>
-                Retry
-              </Button>
-            </Alert>
-          )}
+          {error ? (
+            <EmptyState inline variant="destructive" title="Failed to load recent checklists" onRetry={() => refetch()} />
+          ) : (isLoading || isLoadingSpecies) && !reduceLoaders ? (
+            <LoadingState inline />
+          ) : checklists.length === 0 && !isLoading && !isLoadingSpecies ? (
+            <EmptyState inline title="No recent checklists" />
+          ) : null}
         </>
       )}
     </>

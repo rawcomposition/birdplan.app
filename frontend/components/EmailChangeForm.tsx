@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "components/ui/button";
-import Input from "components/Input";
+import { Input } from "components/ui/input";
 import Field from "components/Field";
-import Alert from "components/Alert";
+import { Alert } from "components/ui/alert";
 import useMutation from "hooks/useMutation";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -62,14 +62,14 @@ export default function EmailChangeForm({ currentEmail }: Props) {
   return (
     <div className="max-w-md">
       {error && (
-        <Alert style="error" className="mb-4">
+        <Alert variant="destructive" className="mb-4">
           {error}
         </Alert>
       )}
       {step === "email" ? (
         <form onSubmit={handleRequest} className="space-y-4">
           <Field label="New Email">
-            <Input
+            <Input size="sm"
               type="email"
               name="email"
               value={email}
@@ -94,7 +94,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
       ) : (
         <form onSubmit={handleUpdate} className="space-y-4">
           <Field label={`Enter the code sent to ${email}`}>
-            <Input
+            <Input size="sm"
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"

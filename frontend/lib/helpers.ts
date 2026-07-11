@@ -25,6 +25,8 @@ export const fullMonths = [
   "December",
 ];
 
+export const formatFrequency = (percent: number): number => (percent > 1 ? Math.round(percent) : percent);
+
 export const formatMonthRange = (startMonth: number, endMonth: number): string =>
   startMonth === endMonth ? fullMonths[startMonth - 1] : `${months[startMonth - 1]} – ${months[endMonth - 1]}`;
 

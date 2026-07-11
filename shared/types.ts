@@ -64,6 +64,8 @@ export type CustomMarker = {
   notes?: string;
   placeId?: string;
   placeType?: string;
+  osmType?: string;
+  osmId?: number;
 };
 
 export type Day = {
@@ -406,20 +408,23 @@ export type TranslateNameResponse = {
   translatedName: string;
 };
 
-export type ItineraryDayInput = {
-  id: string;
-  date: string;
-  notes?: string;
-  locations?: ItineraryLocation[];
-};
-
 export type ItineraryNotesInput = {
   notes: string;
+  dayIds?: string[];
 };
 
 export type MoveLocationInput = {
   id: string;
   direction: "up" | "down";
+};
+
+export type ReorderLocationsInput = {
+  ids: string[];
+};
+
+export type TripDatesInput = {
+  startDate: string;
+  endDate: string;
 };
 
 export type RemoveLocationInput = {
@@ -430,6 +435,7 @@ export type AddLocationInput = {
   type: "hotspot" | "marker";
   locationId: string;
   id: string;
+  dayIds?: string[];
 };
 
 export type CalcTravelTimeInput = {

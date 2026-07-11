@@ -1,7 +1,9 @@
 import React from "react";
 import FavButton from "components/FavButton";
+import FrequencyBar from "components/FrequencyBar";
 import MutualBadge from "components/MutualBadge";
-import { useSpeciesImages } from "hooks/useSpeciesImages";
+import SpeciesThumb from "components/SpeciesThumb";
+import { formatFrequency } from "lib/helpers";
 
 type Props = {
   code: string;
@@ -25,22 +27,9 @@ export default function HotspotTargetRow({
   isMutual,
   onClick,
 }: Props) {
-  const { getSpeciesImg } = useSpeciesImages();
-  const img = React.useMemo(() => getSpeciesImg(code), [code, getSpeciesImg]);
-
   return (
     <div className="[&+&]:border-t [&+&]:border-gray-100 py-3 text-[13px] mx-1 flex gap-3 items-center">
-      {img ? (
-        <img
-          src={img.url}
-          alt={name}
-          className="w-16 aspect-4/3 rounded object-cover shrink-0"
-          loading="lazy"
-          title={img.by ? `Photo by ${img.by}` : ""}
-        />
-      ) : (
-        <div className="w-16 aspect-4/3 rounded bg-gray-200 shrink-0" />
-      )}
+      <SpeciesThumb code={code} name={name} className="w-16 shrink-0" />
       <div className="flex-1 min-w-0 flex flex-col justify-center gap-2.5">
         <div className="flex items-center gap-1.5">
           <button
@@ -57,13 +46,9 @@ export default function HotspotTargetRow({
               <FavButton hotspotId={hotspotId} code={code} name={name} range={range} percent={frequency} />
             </span>
           )}
-          <span className="text-gray-600 text-[13px] font-medium ml-auto shrink-0">
-            {frequency > 1 ? Math.round(frequency) : frequency}%
-          </span>
+          <span className="text-gray-600 text-[13px] font-medium ml-auto shrink-0">{formatFrequency(frequency)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full">
-          <div className="h-[5px] bg-emerald-600/90 rounded-full" style={{ width: `${frequency}%` }} />
-        </div>
+        <FrequencyBar percent={frequency} />
       </div>
     </div>
   );

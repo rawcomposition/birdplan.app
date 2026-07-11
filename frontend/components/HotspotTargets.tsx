@@ -1,13 +1,12 @@
 import React from "react";
 import { useTrip } from "hooks/useTrip";
-import Icon from "components/Icon";
-import { Button } from "components/ui/button";
+import LoadingState from "components/LoadingState";
+import EmptyState from "components/EmptyState";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
-import Alert from "components/Alert";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
 import { computeFrequency, getMonthRange } from "lib/targets";
@@ -44,24 +43,11 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   }, [data, view, lifelist, allMonths, tripMonths]);
 
   if (isLoading) {
-    return (
-      <Alert style="info" className="-mx-1 my-1">
-        <Icon name="loading" className="text-xl animate-spin" />
-        Loading targets...
-      </Alert>
-    );
+    return <LoadingState inline />;
   }
 
   if (isError) {
-    return (
-      <Alert style="error" className="-mx-1 my-1">
-        <Icon name="xMarkCircle" className="text-xl" />
-        Failed to load targets
-        <Button variant="link" onClick={() => refetch()}>
-          Retry
-        </Button>
-      </Alert>
-    );
+    return <EmptyState inline variant="destructive" title="Failed to load targets" onRetry={() => refetch()} />;
   }
 
   return (
@@ -81,11 +67,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           <TargetViewToggle trip={trip} compact align="left" />
         </div>
       )}
-      {!sortedItems?.length && (
-        <Alert style="info" className="-mx-1 my-1">
-          No targets found &gt; {HOTSPOT_TARGET_CUTOFF}%
-        </Alert>
-      )}
+      {!sortedItems?.length && <EmptyState inline title={`No targets found > ${HOTSPOT_TARGET_CUTOFF}%`} />}
       {sortedItems.map((it, index) => (
         <HotspotTargetRow
           key={it.code}
