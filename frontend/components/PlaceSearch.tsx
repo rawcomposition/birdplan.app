@@ -35,15 +35,11 @@ type Props = {
 const formatContext = ({ street, city, state, country }: PhotonFeature["properties"]) =>
   [street, city, state, country].filter(Boolean).join(", ");
 
-const boundsToParams = ({ minX, minY, maxX, maxY }: Bounds) => {
-  const padX = Math.max((maxX - minX) * 0.4, 0.1);
-  const padY = Math.max((maxY - minY) * 0.4, 0.1);
-  return {
-    bbox: `${minX - padX},${minY - padY},${maxX + padX},${maxY + padY}`,
-    lat: (minY + maxY) / 2,
-    lon: (minX + maxX) / 2,
-  };
-};
+const boundsToParams = ({ minX, minY, maxX, maxY }: Bounds) => ({
+  bbox: `${minX},${minY},${maxX},${maxY}`,
+  lat: (minY + maxY) / 2,
+  lon: (minX + maxX) / 2,
+});
 
 export default function PlaceSearch({ className, bounds, onChange, focus }: Props) {
   const [search, setSearch] = React.useState("");
