@@ -124,10 +124,19 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
     reconcile: (old, response) => ({ ...old, itinerary: response.itinerary }),
   });
 
+  const serverLocations = day.locations || [];
+
+  const [order, setOrder] = React.useState<string[] | null>(null);
+
+  const orderValid =
+    !!order && order.length === serverLocations.length && serverLocations.every((loc) => order.includes(loc.id));
+  const locations = orderValid ? order!.map((id) => serverLocations.find((loc) => loc.id === id)!) : serverLocations;
+
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
     const ids = locations.map((it) => it.id);
     const newIds = arrayMove(ids, ids.indexOf(String(active.id)), ids.indexOf(String(over.id)));
+    setOrder(newIds);
     reorderMutation.mutate({ ids: newIds });
   };
 
@@ -138,8 +147,11 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
     isAddingLocation ||
     isFetchingTrip;
 
+  const isStructuralPending = isAddingLocation || removeLocationMutation.isPending;
+  const dragDisabled = !isEditing || isStructuralPending;
+
   const date = trip?.startDate ? dayjs(trip.startDate).add(dayIndex, "day").format("dddd, MMMM D") : "";
-  const { notes, locations } = day;
+  const { notes } = day;
 
   const [addOpen, setAddOpen] = React.useState(false);
   const [addQuery, setAddQuery] = React.useState("");
@@ -177,7 +189,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
             <SortableContext
               items={locations.map((it) => it.id)}
               strategy={verticalListSortingStrategy}
-              disabled={!isEditing}
+              disabled={dragDisabled}
             >
               <ul className="flex flex-col">
                 {locations.map(({ locationId, type, id }, index) => {
@@ -191,7 +203,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
                           <TravelTime isLoading={isLoading} isEditing={isEditing} dayId={day.id} id={id} />
                         </li>
                       )}
-                      <SortableLocationRow id={id} disabled={!isEditing}>
+                      <SortableLocationRow id={id} disabled={dragDisabled}>
                         {({ handleProps, setActivatorNodeRef }) => (
                           <>
                             {isEditing && (
@@ -326,6 +338,7 @@ function SortableLocationRow({
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
     id,
     disabled,
+    animateLayoutChanges: () => false,
   });
 
   return (
