@@ -52,7 +52,7 @@ export default function SelectDropdown<T extends string>({
       <DropdownMenuContent align={align === "right" ? "end" : "start"} className="min-w-[200px]">
         <DropdownMenuRadioGroup value={value} onValueChange={(next) => onChange(next as T)}>
           {options.map((option) => (
-            <DropdownMenuRadioItem key={option.value} value={option.value}>
+            <DropdownMenuRadioItem key={option.value} value={option.value} closeOnClick>
               {option.label}
             </DropdownMenuRadioItem>
           ))}
