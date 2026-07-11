@@ -45,7 +45,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
   return (
     <>
       <table className="w-full text-[13px] mt-2">
-        <thead className="text-neutral-600 font-bold">
+        <thead className="text-secondary-foreground font-bold">
           <tr>
             <th className="text-left pl-1.5">Time ago</th>
             <th className="text-left">#</th>
@@ -55,7 +55,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
         </thead>
         <tbody>
           {filteredObs.map(({ date, count, evidence, checklistId, region }, index) => (
-            <tr key={`${hotspotId}-${speciesCode}-${index}`} className="even:bg-neutral-50">
+            <tr key={`${hotspotId}-${speciesCode}-${index}`} className="even:bg-muted/50">
               <td className="pl-1.5 py-[5px]">
                 <time dateTime={date} title={dayjs(date).format("MMMM D, YYYY")}>
                   {dateTimeToRelative(date, region)}
@@ -65,7 +65,7 @@ export default function ObsList({ hotspotId, speciesCode }: Props) {
               <td className="text-center">
                 <a href={`https://ebird.org/checklist/${checklistId}#${speciesCode}`} target="_blank" rel="noreferrer">
                   {evidence === "N" && <Icon name="comment" className="text-gray-600 text-xs" />}
-                  {evidence === "P" && <Icon name="camera" className="text-lime-700" />}
+                  {evidence === "P" && <Icon name="camera" className="text-success" />}
                   {evidence === "A" && <Icon name="speaker" className="text-primary-hover" />}
                 </a>
               </td>

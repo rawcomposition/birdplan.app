@@ -53,7 +53,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
           {isLoadingTargets && <Spinner className="size-5 mt-1" />}
           {!isLoadingTargets && successRate !== null && (
             <div className="mt-0.5 text-gray-600">
-              <strong className="text-xl text-green-700">{Math.round(successRate * 100)}%</strong> of{" "}
+              <strong className="text-xl text-success">{Math.round(successRate * 100)}%</strong> of{" "}
               {totalSamples.toLocaleString()} checklists
               {datasetAsOf && (
                 <span className="relative inline-block ml-1.5">
@@ -105,7 +105,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
         <>
           {checklists.length > 0 && (
             <table className="w-full text-[13px] mt-2">
-              <thead className="text-neutral-600 font-bold">
+              <thead className="text-secondary-foreground font-bold">
                 <tr>
                   <th className="text-left pl-1.5">Time ago</th>
                   {speciesCode && <th className="text-center">{speciesName}</th>}
@@ -128,7 +128,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
                     checklist?.loc.countryCode ||
                     "";
                   return (
-                    <tr key={subId} className="even:bg-neutral-50">
+                    <tr key={subId} className="even:bg-muted/50">
                       <td className="pl-1.5 py-[5px]">
                         <time dateTime={timestamp} title={`${obsDt} ${time}`}>
                           {dateTimeToRelative(`${obsDt} ${time}`, region)}

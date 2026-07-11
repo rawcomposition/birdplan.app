@@ -37,7 +37,7 @@ export default function LifelistCard({ label, count, onImport, onRemove, disable
       <input ref={fileRef} type="file" accept=".csv" className="sr-only" onChange={handlePick} />
       <span
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white ${
-          disabled ? "bg-gray-400" : "bg-green-600"
+          disabled ? "bg-gray-400" : "bg-success"
         }`}
       >
         {disabled ? <Spinner /> : <Icon name="check" className="text-sm" />}

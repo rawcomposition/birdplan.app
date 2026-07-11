@@ -32,7 +32,7 @@ export default function TripLifelist() {
       documentTitle="Trip Life List | BirdPlan.app"
       title="Trip Life List"
       icon="feather"
-      iconClassName="text-lime-600"
+      iconClassName="text-success"
       subtitle="Choose which life list to use for determining your trip targets."
     >
       <Card className="rounded-2xl p-5 mb-6">

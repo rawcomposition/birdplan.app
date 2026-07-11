@@ -34,7 +34,7 @@ export default function Header({ border }: Props) {
     <>
       {!isOnline && (
         <div className="bg-gray-800 text-gray-100 text-xs py-1 flex items-center justify-center gap-1.5 shrink-0 print:hidden">
-          <span className="size-1.5 rounded-full bg-amber-400" />
+          <span className="size-1.5 rounded-full bg-warning" />
           You're offline
         </div>
       )}

@@ -20,9 +20,9 @@ export default function MutualBadge({ size = "sm", variant = "badge" }: Props) {
             className={cn(
               "inline-flex shrink-0 cursor-default items-center justify-center",
               iconOnly
-                ? cn("text-emerald-600", size === "md" ? "text-[15px]" : "text-[13px]")
+                ? cn("text-success", size === "md" ? "text-[15px]" : "text-[13px]")
                 : cn(
-                    "rounded-full bg-emerald-600 text-white shadow-xs ring-1 ring-emerald-700/20",
+                    "rounded-full bg-success text-white shadow-xs ring-1 ring-success/20",
                     size === "md" ? "h-6 w-6 text-[12px]" : "h-5 w-5 text-[11px]"
                   )
             )}

@@ -103,7 +103,7 @@ function SpeciesHotspotRow({ h, rank, onSelect }: { h: HotspotItem; rank: number
         title={h.saved ? "Saved hotspot" : undefined}
         aria-label={h.saved ? "Saved hotspot" : undefined}
       >
-        {h.saved && <Icon name="star" className="text-yellow-500 text-base" />}
+        {h.saved && <Icon name="star" className="text-star text-base" />}
       </div>
     </div>
   );
@@ -114,8 +114,8 @@ function LastSeen({ value }: { value?: string }) {
   const lower = value.toLowerCase();
   const isRecent = lower === "today" || lower === "yesterday";
   const isOld = value.includes("> 30");
-  const dot = isRecent ? "bg-green-600" : "bg-yellow-500";
-  const text = isRecent ? "text-green-700" : isOld ? "text-gray-500" : "text-gray-700";
+  const dot = isRecent ? "bg-success" : "bg-warning";
+  const text = isRecent ? "text-success" : isOld ? "text-gray-500" : "text-gray-700";
   return (
     <span className={clsx("inline-flex items-center gap-1.5 whitespace-nowrap", text)}>
       {!isOld && <span className={clsx("w-1.5 h-1.5 rounded-full", dot)} />}

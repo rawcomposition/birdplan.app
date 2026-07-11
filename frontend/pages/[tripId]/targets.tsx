@@ -107,7 +107,7 @@ export default function TripTargets() {
                       <FilterChip tone="amber" active={showStarred} onClick={() => setShowStarred(!showStarred)}>
                         <Icon
                           name={showStarred ? "star" : "starOutline"}
-                          className={showStarred ? "text-yellow-500" : "text-muted-foreground"}
+                          className={showStarred ? "text-star" : "text-muted-foreground"}
                         />
                         Starred
                       </FilterChip>
@@ -120,7 +120,7 @@ export default function TripTargets() {
                         >
                           <Icon
                             name={showMutual ? "userFriends" : "userFriendsOutline"}
-                            className={showMutual ? "text-emerald-600" : "text-muted-foreground"}
+                            className={showMutual ? "text-success" : "text-muted-foreground"}
                           />
                           Mutual
                         </FilterChip>

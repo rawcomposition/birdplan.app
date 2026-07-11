@@ -29,7 +29,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
     <>
       {recentSpecies.length > 0 && (
         <table className="w-full text-[13px] mt-2">
-          <thead className="text-neutral-600 font-bold">
+          <thead className="text-secondary-foreground font-bold">
             <tr>
               <th className="text-left pl-1.5 py-1">Species</th>
               <th className="text-left">Time ago</th>
@@ -39,7 +39,7 @@ export default function RecentSpeciesList({ locId, onSpeciesClick }: Props) {
           </thead>
           <tbody>
             {filteredObs.map(({ code, name, date, count, checklistId }) => (
-              <tr key={`${code}-${checklistId}`} className="even:bg-neutral-50">
+              <tr key={`${code}-${checklistId}`} className="even:bg-muted/50">
                 <td className="pl-1.5 py-[5px] relative">
                   {favCodes.includes(code) && (
                     <Icon name="heartSolid" className="text-pink-700 absolute top-[12px] left-[-9px] text-[8px]" />

@@ -78,7 +78,7 @@ export default function BirdPlan() {
                 <dt className="inline font-semibold text-foreground">
                   <Icon
                     name={feature.icon as any}
-                    className="absolute left-1 top-1 text-2xl text-blue-600"
+                    className="absolute left-1 top-1 text-2xl text-primary"
                     aria-hidden="true"
                   />
                   {feature.name}

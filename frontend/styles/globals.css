@@ -48,6 +48,11 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
 
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-star: var(--star);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
@@ -101,6 +106,9 @@
     --destructive-foreground: hsl(0 0% 100%);
     --success: hsl(104 100% 21%);
     --success-foreground: hsl(0 0% 100%);
+    --warning: hsl(38 92% 50%);
+    --warning-foreground: hsl(0 0% 100%);
+    --star: hsl(48 96% 53%);
     --link: hsl(221 83% 53%);
     --border: hsl(220 13% 91%);
     --input: hsl(216 12% 84%);

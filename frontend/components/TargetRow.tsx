@@ -64,7 +64,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
       <td className="text-gray-500 px-4 hidden sm:table-cell">{index + 1}.</td>
       <td className="relative">
         <div className="sm:hidden absolute top-1 left-2">
-          {isStarred && <Icon name="star" className="text-yellow-500" />}
+          {isStarred && <Icon name="star" className="text-star" />}
         </div>
         <SpeciesThumb code={code} name={name} className="w-16 min-w-14 my-1 mx-1 sm:mx-0" />
       </td>
@@ -112,7 +112,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
               disabled={!canEdit}
               aria-label="Remove star"
             >
-              <Icon name="star" className="text-yellow-500 text-lg" />
+              <Icon name="star" className="text-star text-lg" />
             </button>
           ) : (
             <button
