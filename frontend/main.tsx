@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       gcTime: 24 * 24 * 60 * 60 * 1000,
-      staleTime: 0,
+      staleTime: 5 * 60 * 1000,
       queryFn: async ({ queryKey, meta }) => {
         const url = queryKey[0] as string;
         const isApiRoute = url.startsWith("/") && !url.startsWith(import.meta.env.VITE_OPENBIRDING_API_URL || "");
