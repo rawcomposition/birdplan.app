@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authenticate, isDuplicateKeyError } from "lib/utils.js";
-import { connect, User, Trip, Participant, Session, OtpCode } from "lib/db.js";
+import { connect, User, Trip, Participant, Session, OtpCode, IntegrationToken, MagicLink } from "lib/db.js";
 import { issueOtp, verifyOtp } from "lib/otp.js";
 import { invalidateOtherSessions } from "lib/session.js";
 import { enforceRateLimit } from "lib/rateLimit.js";
@@ -28,6 +28,8 @@ account.delete("/", async (c) => {
     Participant.deleteMany({ userId }),
     Participant.deleteMany({ tripId: { $in: tripIds } }),
     Trip.deleteMany({ ownerId: userId }),
+    IntegrationToken.deleteMany({ tripId: { $in: tripIds } }),
+    MagicLink.deleteMany({ userId }),
     Session.deleteMany({ userId }),
     user?.email ? OtpCode.deleteMany({ email: user.email }) : Promise.resolve(),
   ]);
