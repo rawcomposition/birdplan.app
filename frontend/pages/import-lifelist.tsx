@@ -147,6 +147,7 @@ export default function ImportLifelist() {
               <LifelistUpload
                 onImport={(sciNames) => importMutation.mutate({ sciNames })}
                 isPending={importMutation.isPending}
+                world
               />
             </div>
           </li>
