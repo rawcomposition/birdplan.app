@@ -7,7 +7,7 @@ import { parseLifelistCsv } from "lib/lifelistCsv";
 type Props = {
   onImport: (sciNames: string[], fileName: string) => void;
   isPending?: boolean;
-  buttonLabel: string;
+  buttonLabel?: string;
   variant?: "dropzone" | "compact";
 };
 
@@ -70,8 +70,8 @@ export default function LifelistUpload({ onImport, isPending, buttonLabel, varia
         <span className="text-sm font-medium text-gray-600">Importing…</span>
       ) : (
         <>
-          <span className="text-sm font-medium text-gray-700">{buttonLabel}</span>
-          <span className="text-xs text-gray-400">eBird .csv export</span>
+          <span className="text-sm font-medium text-gray-700">Drop or choose file</span>
+          <span className="text-xs text-gray-400">CSV files only</span>
         </>
       )}
     </label>

@@ -8,7 +8,8 @@ import DashboardPage from "components/DashboardPage";
 import LoadingState from "components/LoadingState";
 import EmptyState from "components/EmptyState";
 import LifelistUpload from "components/LifelistUpload";
-import EbirdDownloadLink from "components/EbirdDownloadLink";
+import Icon from "components/Icon";
+import { EBIRD_WORLD_LIFELIST_URL } from "components/EbirdDownloadLink";
 import useMutation from "hooks/useMutation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsyncSelect from "components/ReactSelectAsyncStyled";
@@ -109,17 +110,47 @@ export default function ImportLifelist() {
       )}
 
       <Card className="p-5 mb-6">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="text-lg font-medium text-secondary-foreground">
-            {hasList ? "Update your list" : "Import your list"}
-          </h3>
-          <EbirdDownloadLink className="shrink-0" world />
-        </div>
-        <LifelistUpload
-          onImport={(sciNames) => importMutation.mutate({ sciNames })}
-          isPending={importMutation.isPending}
-          buttonLabel={hasList ? "Choose a new CSV file" : "Choose a CSV file"}
-        />
+        <h3 className="mb-4 text-lg font-medium text-secondary-foreground">
+          {hasList ? "Update your list" : "Import your list"}
+        </h3>
+        <ol className="space-y-5">
+          <li className="flex gap-3">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-link">
+              1
+            </span>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-secondary-foreground">Download your life list from eBird</p>
+              <p className="mb-2.5 text-xs text-muted-foreground">
+                Sign in if prompted. The CSV will download automatically.
+              </p>
+              <Button
+                href={EBIRD_WORLD_LIFELIST_URL}
+                target="_blank"
+                rel="noreferrer"
+                variant="outline"
+                size="sm"
+                className="rounded-lg"
+              >
+                <Icon name="download" />
+                Download from eBird
+              </Button>
+            </div>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-link">
+              2
+            </span>
+            <div className="flex-1">
+              <p className="mb-2.5 text-sm font-medium text-secondary-foreground">
+                Upload the CSV file you just downloaded
+              </p>
+              <LifelistUpload
+                onImport={(sciNames) => importMutation.mutate({ sciNames })}
+                isPending={importMutation.isPending}
+              />
+            </div>
+          </li>
+        </ol>
       </Card>
 
       <Card className="p-5 mb-6">
