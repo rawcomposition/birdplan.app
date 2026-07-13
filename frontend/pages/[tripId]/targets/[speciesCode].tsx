@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
 import BackLink from "components/BackLink";
 import { Alert } from "components/ui/alert";
@@ -16,29 +16,24 @@ import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components
 import { useTrip } from "hooks/useTrip";
 import useTripLifelist from "hooks/useTripLifelist";
 import useMutualTargets from "hooks/useMutualTargets";
-import { useSpeciesImages } from "hooks/useSpeciesImages";
 import { useModal } from "stores/modals";
 import useCloseOnOutsideClick from "hooks/useCloseOnOutsideClick";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useTripMutation from "hooks/useTripMutation";
-import useMutation from "hooks/useMutation";
 import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
 import { getMonthRange } from "lib/targets";
 import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
-import type { OpenBirdingHotspotRankingResponse, User } from "@birdplan/shared";
+import type { OpenBirdingHotspotRankingResponse } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
   const { speciesCode = "" } = useParams();
   const { trip, canEdit, setSelectedSpecies, dateRangeLabel } = useTrip();
   const { myLifelist } = useTripLifelist(trip);
   const { isMutual } = useMutualTargets(trip);
-  const viewerListMode = trip?.viewer?.listMode ?? "world";
-  const { getSpeciesImg } = useSpeciesImages();
   const { open } = useModal();
   const handleContainerClick = useCloseOnOutsideClick();
-  const queryClient = useQueryClient();
 
   const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
   const [nowMs] = React.useState(() => Date.now());
@@ -58,63 +53,12 @@ export default function SpeciesDetail() {
   const isStarred = !!trip?.targetStars?.includes(speciesCode);
   const isSeen = myLifelist.includes(speciesCode);
 
-  const addStarMutation = useTripMutation<{ code: string }>({
-    url: `/trips/${trip?._id}/targets/add-star`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      targetStars: [...(old.targetStars ?? []), input.code],
-    }),
-  });
-
-  const removeStarMutation = useTripMutation<{ code: string }>({
-    url: `/trips/${trip?._id}/targets/remove-star`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
-    }),
-  });
-
   const setNotesMutation = useTripMutation<{ code: string; notes: string }>({
     url: `/trips/${trip?._id}/targets/set-notes`,
     method: "PATCH",
     updateCache: (old, input) => ({
       ...old,
       targetNotes: { ...(old.targetNotes || {}), [input.code]: input.notes },
-    }),
-  });
-
-  const worldSeenMutation = useMutation({
-    url: `/profile/lifelist/add`,
-    method: "POST",
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
-      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
-    },
-    onMutate: async (data: any) => {
-      await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
-      const prevData = queryClient.getQueryData(["/auth/me"]);
-      queryClient.setQueryData<User | undefined>(["/auth/me"], (old) =>
-        old
-          ? {
-              ...old,
-              lifelist: [...(old.lifelist || []), data.code],
-              exceptions: (old.exceptions || []).filter((it) => it !== data.code),
-            }
-          : old,
-      );
-      return { prevData };
-    },
-    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData(["/auth/me"], ctx?.prevData),
-  });
-
-  const customSeenMutation = useTripMutation<{ code: string }>({
-    url: `/trips/${trip?._id}/participants/${trip?.viewer?.participantId}/seen`,
-    method: "POST",
-    updateCache: (old, input) => ({
-      ...old,
-      viewerLifelist: [...(old.viewerLifelist || []), input.code],
     }),
   });
 
@@ -246,20 +190,6 @@ export default function SpeciesDetail() {
         })
       : Array(12).fill(0);
 
-  const handleToggleStar = () => {
-    if (!canMutate) return;
-    if (isStarred) removeStarMutation.mutate({ code: speciesCode });
-    else addStarMutation.mutate({ code: speciesCode });
-  };
-
-  const handleMarkSeen = () => {
-    if (!canMutate || isSeen) return;
-    const listLabel = viewerListMode === "custom" ? "your custom list for this trip" : "your life list";
-    if (!confirm(`Are you sure you want to add ${speciesName} to ${listLabel}?`)) return;
-    if (viewerListMode === "custom") customSeenMutation.mutate({ code: speciesCode });
-    else worldSeenMutation.mutate({ code: speciesCode });
-  };
-
   const handleHotspotClick = (id: string) => {
     const hotspot = trip?.hotspots?.find((it) => it.id === id);
     const ranked = rankings?.items?.find((it) => it.id === id);
@@ -295,19 +225,12 @@ export default function SpeciesDetail() {
 
           <SpeciesHero
             name={speciesName || speciesCode}
+            code={speciesCode}
             scientificName={target?.sciName}
-            photoUrl={getSpeciesImg(speciesCode, "900")?.url}
-            photoBy={getSpeciesImg(speciesCode)?.by}
-            ebirdUrl={`https://ebird.org/species/${speciesCode}`}
             starred={isStarred}
             mutual={isMutual(speciesCode)}
             seen={isSeen}
-            canEdit={canMutate}
             monthly={monthly}
-            startMonth={trip?.startMonth}
-            endMonth={trip?.endMonth}
-            onToggleStar={handleToggleStar}
-            onMarkSeen={handleMarkSeen}
             onShowMap={handleShowMap}
           />
 
@@ -353,7 +276,12 @@ export default function SpeciesDetail() {
               </Alert>
             )}
             {rankingsError && (
-              <EmptyState inline variant="destructive" title="Failed to load hotspot rankings" onRetry={() => refetchRankings()} />
+              <EmptyState
+                inline
+                variant="destructive"
+                title="Failed to load hotspot rankings"
+                onRetry={() => refetchRankings()}
+              />
             )}
             {queryEnabled && loadingRankings && !rankings && (
               <LoadingState inline label="Loading hotspot rankings…" className="py-4" />
@@ -370,7 +298,9 @@ export default function SpeciesDetail() {
               />
             )}
 
-            {rankings?.citation && <p className="text-muted-foreground text-xs text-center pt-2">{rankings.citation}</p>}
+            {rankings?.citation && (
+              <p className="text-muted-foreground text-xs text-center pt-2">{rankings.citation}</p>
+            )}
           </div>
         </div>
       </div>

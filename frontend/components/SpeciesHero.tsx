@@ -6,50 +6,110 @@ import { Map, Star, ExternalLink, Check } from "lucide-react";
 import { Card } from "components/ui/card";
 import MutualBadge from "components/MutualBadge";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
+import useTripLifelist from "hooks/useTripLifelist";
+import { useSpeciesImages } from "hooks/useSpeciesImages";
+import { useTrip } from "hooks/useTrip";
+import { useQueryClient } from "@tanstack/react-query";
+import useMutation from "hooks/useMutation";
+import useTripMutation from "hooks/useTripMutation";
+import type { User } from "@birdplan/shared";
 
 type Props = {
   name: string;
   scientificName?: string;
-  photoUrl?: string;
-  photoBy?: string;
-  ebirdUrl: string;
+  code: string;
   starred: boolean;
   mutual: boolean;
   seen: boolean;
-  canEdit: boolean;
   monthly: number[];
-  startMonth?: number;
-  endMonth?: number;
-  onToggleStar: () => void;
-  onMarkSeen: () => void;
   onShowMap: () => void;
 };
 
-export default function SpeciesHero({
-  name,
-  scientificName,
-  photoUrl,
-  photoBy,
-  ebirdUrl,
-  starred,
-  mutual,
-  seen,
-  canEdit,
-  monthly,
-  startMonth,
-  endMonth,
-  onToggleStar,
-  onMarkSeen,
-  onShowMap,
-}: Props) {
+export default function SpeciesHero({ name, scientificName, code, starred, mutual, seen, monthly, onShowMap }: Props) {
+  const { trip, canEdit } = useTrip();
+  const { getSpeciesImg } = useSpeciesImages();
+  const photo = getSpeciesImg(code, "900");
+  const queryClient = useQueryClient();
+  const { myLifelist } = useTripLifelist(trip);
+
+  const canMutate = canEdit && !!code;
+  const viewerListMode = trip?.viewer?.listMode ?? "world";
+  const isStarred = !!trip?.targetStars?.includes(code);
+  const isSeen = myLifelist.includes(code);
+
+  const worldSeenMutation = useMutation({
+    url: `/profile/lifelist/add`,
+    method: "POST",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
+      queryClient.invalidateQueries({ queryKey: [`/trips/${trip?._id}`] });
+    },
+    onMutate: async (data: any) => {
+      await queryClient.cancelQueries({ queryKey: ["/auth/me"] });
+      const prevData = queryClient.getQueryData(["/auth/me"]);
+      queryClient.setQueryData<User | undefined>(["/auth/me"], (old) =>
+        old
+          ? {
+              ...old,
+              lifelist: [...(old.lifelist || []), data.code],
+              exceptions: (old.exceptions || []).filter((it) => it !== data.code),
+            }
+          : old,
+      );
+      return { prevData };
+    },
+    onError: (_e: any, _d: any, ctx: any) => queryClient.setQueryData(["/auth/me"], ctx?.prevData),
+  });
+
+  const customSeenMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/participants/${trip?.viewer?.participantId}/seen`,
+    method: "POST",
+    updateCache: (old, input) => ({
+      ...old,
+      viewerLifelist: [...(old.viewerLifelist || []), input.code],
+    }),
+  });
+
+  const addStarMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/targets/add-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: [...(old.targetStars ?? []), input.code],
+    }),
+  });
+
+  const removeStarMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/targets/remove-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
+    }),
+  });
+
+  const handleToggleStar = () => {
+    if (!canMutate) return;
+    if (isStarred) removeStarMutation.mutate({ code });
+    else addStarMutation.mutate({ code });
+  };
+
+  const handleMarkSeen = () => {
+    if (!canMutate || isSeen) return;
+    const listLabel = viewerListMode === "custom" ? "your custom list for this trip" : "your life list";
+    if (!confirm(`Are you sure you want to add ${name} to ${listLabel}?`)) return;
+    if (viewerListMode === "custom") customSeenMutation.mutate({ code });
+    else worldSeenMutation.mutate({ code });
+  };
+
   return (
     <Card className="overflow-hidden flex flex-col sm:flex-row">
       <div
         className="bg-gray-100 sm:w-[360px] sm:shrink-0 aspect-4/3 sm:self-start bg-cover bg-center"
-        style={photoUrl ? { backgroundImage: `url(${photoUrl})` } : undefined}
-        title={photoBy ? `Photo by ${photoBy}` : undefined}
+        style={photo?.url ? { backgroundImage: `url(${photo.url})` } : undefined}
+        title={photo?.by ? `Photo by ${photo.by}` : undefined}
       >
-        {!photoUrl && <div className="w-full h-full bg-gray-200" />}
+        {!photo?.url && <div className="w-full h-full bg-gray-200" />}
       </div>
 
       <div className="flex-1 p-5 sm:px-6 sm:py-5 flex flex-col gap-4 min-w-0">
@@ -76,7 +136,7 @@ export default function SpeciesHero({
                   <Map className="text-gray-500" />
                   View Map
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onToggleStar} disabled={!canEdit}>
+                <DropdownMenuItem onClick={handleToggleStar} disabled={!canEdit}>
                   <Star
                     className={starred ? undefined : "text-gray-500"}
                     fill={starred ? "rgb(234 179 8)" : "none"}
@@ -84,11 +144,13 @@ export default function SpeciesHero({
                   />
                   {starred ? "Remove star" : "Star species"}
                 </DropdownMenuItem>
-                <DropdownMenuItem render={<a href={ebirdUrl} target="_blank" rel="noopener noreferrer" />}>
+                <DropdownMenuItem
+                  render={<a href={`https://ebird.org/species/${code}`} target="_blank" rel="noopener noreferrer" />}
+                >
                   <ExternalLink className="text-gray-500" />
                   View on eBird
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onMarkSeen} disabled={!canEdit || seen}>
+                <DropdownMenuItem onClick={handleMarkSeen} disabled={!canEdit || seen}>
                   <Check className={seen ? "text-success" : "text-gray-500"} />
                   {seen ? "Marked as seen" : "Mark as seen"}
                 </DropdownMenuItem>
@@ -99,8 +161,8 @@ export default function SpeciesHero({
 
         <MonthlyFrequencyChart
           monthly={monthly}
-          startMonth={startMonth}
-          endMonth={endMonth}
+          startMonth={trip?.startMonth}
+          endMonth={trip?.endMonth}
           className="mt-10 sm:mt-auto"
         />
       </div>
