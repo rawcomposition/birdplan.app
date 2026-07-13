@@ -132,10 +132,6 @@ export default function SpeciesHero({ name, scientificName, code, starred, mutua
             <DropdownMenu>
               <KebabMenuTrigger aria-label="More actions" />
               <DropdownMenuContent align="end" className="w-auto min-w-[220px]">
-                <DropdownMenuItem onClick={onShowMap}>
-                  <Map className="text-gray-500" />
-                  View Map
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleToggleStar} disabled={!canEdit}>
                   <Star
                     className={starred ? undefined : "text-gray-500"}
@@ -144,11 +140,31 @@ export default function SpeciesHero({ name, scientificName, code, starred, mutua
                   />
                   {starred ? "Remove star" : "Star species"}
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={onShowMap}>
+                  <Map className="text-gray-500" />
+                  Recent Reports Map
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   render={<a href={`https://ebird.org/species/${code}`} target="_blank" rel="noopener noreferrer" />}
                 >
                   <ExternalLink className="text-gray-500" />
-                  View on eBird
+                  Species Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  render={
+                    <a
+                      href={
+                        trip?.bounds
+                          ? `https://ebird.org/map/${code}?env.minX=${trip.bounds.minX}&env.minY=${trip.bounds.minY}&env.maxX=${trip.bounds.maxX}&env.maxY=${trip.bounds.maxY}`
+                          : `https://ebird.org/map/${code}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
+                >
+                  <ExternalLink className="text-gray-500" />
+                  eBird Map
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleMarkSeen} disabled={!canEdit || seen}>
                   <Check className={seen ? "text-success" : "text-gray-500"} />
