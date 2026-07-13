@@ -3,7 +3,6 @@ import clsx from "clsx";
 import Icon from "components/Icon";
 import { Spinner } from "components/ui/spinner";
 import { Card } from "components/ui/card";
-import EmptyState from "components/EmptyState";
 import FrequencyBar from "components/FrequencyBar";
 import SelectDropdown from "components/SelectDropdown";
 import { formatFrequency } from "lib/helpers";
@@ -63,11 +62,9 @@ export default function SpeciesHotspotList({
         )}
       </div>
       <div className={clsx("transition-opacity duration-200", loading && "opacity-50")}>
-        {hotspots.length === 0 ? (
-          <EmptyState inline title="No hotspots match these filters." className="m-4" />
-        ) : (
-          hotspots.map((h, i) => <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />)
-        )}
+        {hotspots.map((h, i) => (
+          <SpeciesHotspotRow key={h.id} h={h} rank={i + 1} onSelect={onSelect} />
+        ))}
       </div>
     </Card>
   );

@@ -277,17 +277,19 @@ export default function SpeciesDetail() {
             )}
             {rankingsError && (
               <EmptyState
-                inline
                 variant="destructive"
                 title="Failed to load hotspot rankings"
                 onRetry={() => refetchRankings()}
               />
             )}
             {queryEnabled && loadingRankings && !rankings && (
-              <LoadingState inline label="Loading hotspot rankings…" className="py-4" />
+              <LoadingState label="Loading hotspot rankings…" className="py-4" />
             )}
 
-            {queryEnabled && !rankingsError && rankings && (
+            {queryEnabled && !rankingsError && rankings && filtered.length === 0 && (
+              <EmptyState title="No hotspots match these filters." />
+            )}
+            {queryEnabled && !rankingsError && rankings && filtered.length > 0 && (
               <SpeciesHotspotList
                 hotspots={filtered}
                 onSelect={handleHotspotClick}
