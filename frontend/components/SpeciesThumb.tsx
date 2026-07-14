@@ -1,16 +1,12 @@
 import clsx from "clsx";
-import { useSpeciesImages } from "hooks/useSpeciesImages";
 
 type Props = {
-  code: string;
+  img?: { url: string; by?: string };
   name: string;
   className?: string;
 };
 
-export default function SpeciesThumb({ code, name, className }: Props) {
-  const { getSpeciesImg } = useSpeciesImages();
-  const img = getSpeciesImg(code);
-
+export default function SpeciesThumb({ img, name, className }: Props) {
   if (!img) return <div className={clsx("aspect-4/3 rounded bg-gray-200", className)} />;
 
   return (

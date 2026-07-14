@@ -18,6 +18,9 @@ import SearchInput from "components/SearchInput";
 import FilterChip from "components/FilterChip";
 import useDownloadTargets from "hooks/useDownloadTargets";
 import useDownloadGroupLifelist from "hooks/useDownloadGroupLifelist";
+import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
+import useTripMutation from "hooks/useTripMutation";
+import { useSpeciesImages } from "hooks/useSpeciesImages";
 import Icon from "components/Icon";
 import LoadingState from "components/LoadingState";
 import { Download } from "lucide-react";
@@ -25,7 +28,7 @@ const PAGE_SIZE = 100;
 
 export default function TripTargets() {
   const { open } = useModal();
-  const { trip, selectedSpecies } = useTrip();
+  const { trip, selectedSpecies, canEdit } = useTrip();
   const handleContainerClick = useCloseOnOutsideClick();
   const { obs, obsLayer } = useFetchSpeciesObs({
     region: trip?.region,
@@ -55,6 +58,30 @@ export default function TripTargets() {
   const { lifelist } = useTargetView(trip);
   const { isGroup, isMutual } = useMutualTargets(trip);
   const { isGroup: isGroupList, download: downloadGroupList } = useDownloadGroupLifelist(trip);
+
+  const { getSpeciesImg } = useSpeciesImages();
+  const { allSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
+  const recentByCode = new Map((allSpecies ?? []).map((it) => [it.code, it]));
+  const regionCode = trip?.region.split(",")[0] || "";
+
+  const addStarMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/targets/add-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: [...(old.targetStars ?? []), input.code],
+    }),
+  });
+
+  const removeStarMutation = useTripMutation<{ code: string }>({
+    url: `/trips/${trip?._id}/targets/remove-star`,
+    method: "PATCH",
+    updateCache: (old, input) => ({
+      ...old,
+      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
+    }),
+  });
+
   const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
 
   // Filter targets
@@ -213,6 +240,18 @@ export default function TripTargets() {
                         index={index}
                         samples={regionData?.samples}
                         isMutual={isMutual(it.code)}
+                        tripId={trip?._id}
+                        regionCode={regionCode}
+                        startMonth={trip?.startMonth}
+                        endMonth={trip?.endMonth}
+                        canEdit={canEdit}
+                        isStarred={trip?.targetStars?.includes(it.code)}
+                        notes={trip?.targetNotes?.[it.code]}
+                        img={getSpeciesImg(it.code)}
+                        lastReport={recentByCode.get(it.code)}
+                        loadingRecent={loadingRecent}
+                        addStar={addStarMutation.mutate}
+                        removeStar={removeStarMutation.mutate}
                       />
                     ))}
                   </tbody>

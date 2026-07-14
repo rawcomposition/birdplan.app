@@ -1,12 +1,10 @@
 import React from "react";
-import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import MonthlyFrequencyChart from "components/MonthlyFrequencyChart";
-import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import { dateTimeToRelative } from "lib/helpers";
 import type { Target } from "@birdplan/shared";
+import type { RecentSpecies } from "lib/types";
 import SpeciesThumb from "components/SpeciesThumb";
-import useTripMutation from "hooks/useTripMutation";
 import MutualBadge from "components/MutualBadge";
 import { useNavigate } from "react-router-dom";
 
@@ -14,42 +12,49 @@ type PropsT = Target & {
   index: number;
   samples?: number[];
   isMutual?: boolean;
+  tripId?: string;
+  regionCode: string;
+  startMonth?: number;
+  endMonth?: number;
+  canEdit?: boolean;
+  isStarred?: boolean;
+  notes?: string;
+  img?: { url: string; by?: string };
+  lastReport?: RecentSpecies;
+  loadingRecent?: boolean;
+  addStar: (input: { code: string }) => void;
+  removeStar: (input: { code: string }) => void;
 };
 
-export default function TargetRow({ index, code, name, frequency, obs, samples, isMutual }: PropsT) {
-  const { trip, canEdit } = useTrip();
+function TargetRow({
+  index,
+  code,
+  name,
+  frequency,
+  obs,
+  samples,
+  isMutual,
+  tripId,
+  regionCode,
+  startMonth,
+  endMonth,
+  canEdit,
+  isStarred,
+  notes,
+  img,
+  lastReport,
+  loadingRecent,
+  addStar,
+  removeStar,
+}: PropsT) {
   const navigate = useNavigate();
-  const { recentSpecies, isLoading: loadingRecent } = useFetchRecentSpecies(trip?.region);
-  const isStarred = trip?.targetStars?.includes(code);
-  const notes = trip?.targetNotes?.[code];
-  const regionCode = trip?.region.split(",")[0] || "";
-
-  const addStarMutation = useTripMutation<{ code: string }>({
-    url: `/trips/${trip?._id}/targets/add-star`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      targetStars: [...(old.targetStars ?? []), input.code],
-    }),
-  });
-
-  const removeStarMutation = useTripMutation<{ code: string }>({
-    url: `/trips/${trip?._id}/targets/remove-star`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      targetStars: (old.targetStars || []).filter((it) => it !== input.code),
-    }),
-  });
-
-  const lastReport = recentSpecies?.find((species) => species.code === code);
 
   const monthly =
     obs && samples ? obs.map((o, i) => (samples[i] > 0 ? Math.round((o / samples[i]) * 1000) / 10 : 0)) : null;
 
   const handleRowClick = () => {
-    if (!trip?._id) return;
-    navigate(`/${trip._id}/targets/${code}`);
+    if (!tripId) return;
+    navigate(`/${tripId}/targets/${code}`);
   };
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
@@ -66,7 +71,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
         <div className="sm:hidden absolute top-1 left-2">
           {isStarred && <Icon name="star" className="text-star" />}
         </div>
-        <SpeciesThumb code={code} name={name} className="w-16 min-w-14 my-1 mx-1 sm:mx-0" />
+        <SpeciesThumb img={img} name={name} className="w-16 min-w-14 my-1 mx-1 sm:mx-0" />
       </td>
       <td>
         <div className="flex items-center gap-1.5 w-full mt-1 pl-2 sm:pl-0">
@@ -84,12 +89,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
       <td className="text-gray-600 font-bold pr-1 pl-2 sm:pr-4 sm:pl-0">{frequency}%</td>
       <td className="hidden md:table-cell pr-4 lg:pr-6">
         {monthly && (
-          <MonthlyFrequencyChart
-            monthly={monthly}
-            startMonth={trip?.startMonth}
-            endMonth={trip?.endMonth}
-            variant="mini"
-          />
+          <MonthlyFrequencyChart monthly={monthly} startMonth={startMonth} endMonth={endMonth} variant="mini" />
         )}
       </td>
       <td className="text-[14px] text-gray-600 hidden sm:table-cell">
@@ -106,7 +106,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
               type="button"
               onClick={(e) => {
                 stop(e);
-                removeStarMutation.mutate({ code });
+                removeStar({ code });
               }}
               className="items-center justify-center hidden sm:flex"
               disabled={!canEdit}
@@ -119,7 +119,7 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
               type="button"
               onClick={(e) => {
                 stop(e);
-                addStarMutation.mutate({ code });
+                addStar({ code });
               }}
               className="items-center justify-center hidden sm:flex"
               disabled={!canEdit}
@@ -133,3 +133,5 @@ export default function TargetRow({ index, code, name, frequency, obs, samples, 
     </tr>
   );
 }
+
+export default TargetRow;

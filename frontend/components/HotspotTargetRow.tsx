@@ -3,6 +3,7 @@ import FavButton from "components/FavButton";
 import FrequencyBar from "components/FrequencyBar";
 import MutualBadge from "components/MutualBadge";
 import SpeciesThumb from "components/SpeciesThumb";
+import { useSpeciesImages } from "hooks/useSpeciesImages";
 import { formatFrequency } from "lib/helpers";
 
 type Props = {
@@ -27,9 +28,10 @@ export default function HotspotTargetRow({
   isMutual,
   onClick,
 }: Props) {
+  const { getSpeciesImg } = useSpeciesImages();
   return (
     <div className="[&+&]:border-t [&+&]:border-gray-100 py-3 text-[13px] mx-1 flex gap-3 items-center">
-      <SpeciesThumb code={code} name={name} className="w-16 shrink-0" />
+      <SpeciesThumb img={getSpeciesImg(code)} name={name} className="w-16 shrink-0" />
       <div className="flex-1 min-w-0 flex flex-col justify-center gap-2.5">
         <div className="flex items-center gap-1.5">
           <button
