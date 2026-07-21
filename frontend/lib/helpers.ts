@@ -1,4 +1,4 @@
-import { Trip } from "@birdplan/shared";
+import { Trip, Hotspot, eBirdHotspot } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -124,6 +124,30 @@ export const getMarkerColor = (count: number) => {
 export const getMarkerColorIndex = (count: number) => {
   const color = getMarkerColor(count);
   return markerColors.indexOf(color);
+};
+
+export const buildHotspotsLayer = (
+  hotspots: eBirdHotspot[],
+  savedHotspots: Hotspot[]
+): GeoJSON.FeatureCollection | null => {
+  if (hotspots.length === 0) return null;
+  const savedIds = savedHotspots.map((it) => it.id);
+  return {
+    type: "FeatureCollection",
+    features: hotspots
+      .filter((it) => !savedIds.includes(it.id))
+      .map((hotspot) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [hotspot.lng, hotspot.lat],
+        },
+        properties: {
+          shade: getMarkerColorIndex(hotspot.species || 0),
+          id: hotspot.id,
+        },
+      })),
+  };
 };
 
 export const radiusOptions = [

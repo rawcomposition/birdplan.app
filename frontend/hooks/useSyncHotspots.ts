@@ -1,29 +1,13 @@
 import React from "react";
-import { eBirdHotspot } from "@birdplan/shared";
-import { getMarkerColorIndex } from "lib/helpers";
 import { useTrip } from "hooks/useTrip";
-import { useQuery } from "@tanstack/react-query";
+import useTripHotspots from "hooks/useTripHotspots";
 import useTripMutation from "hooks/useTripMutation";
 
 type SyncUpdate = { id: string; species: number; checklists: number; lat: number; lng: number; name?: string };
 
-export default function useFetchHotspots() {
+export default function useSyncHotspots() {
   const { trip, canEdit } = useTrip();
-  const region = trip?.region;
-
-  const { data } = useQuery<eBirdHotspot[]>({
-    queryKey: [`/region/${region}/hotspots`],
-    enabled: !!region,
-    meta: {
-      errorMessage: "Failed to load hotspots",
-      showLoading: true,
-    },
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours
-    gcTime: 60 * 60 * 1000, // 60 minutes
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-
+  const { data } = useTripHotspots();
   const hotspots = data || [];
   const hasFetched = hotspots.length > 0;
 
@@ -77,31 +61,4 @@ export default function useFetchHotspots() {
     syncMutation.mutate({ updates });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canEdit, hasFetched, trip?._id, trip?.hotspots, hotspots]);
-
-  const layer = React.useMemo(() => {
-    if (!hasFetched) return null;
-    const savedIds = trip?.hotspots?.map((it) => it.id) || [];
-    const layerHotspots = hotspots.filter((it) => !savedIds.includes(it.id));
-    return {
-      type: "FeatureCollection",
-      features: [
-        ...layerHotspots.map((hotspot) => {
-          const colorIndex = getMarkerColorIndex(hotspot.species || 0);
-          return {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [hotspot.lng, hotspot.lat],
-            },
-            properties: {
-              shade: colorIndex,
-              id: hotspot.id,
-            },
-          };
-        }),
-      ],
-    };
-  }, [trip?.hotspots, hasFetched, hotspots]);
-
-  return { hotspots, hotspotLayer: layer };
 }

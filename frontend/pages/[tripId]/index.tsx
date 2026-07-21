@@ -1,8 +1,9 @@
 import React from "react";
 import MapBox from "components/Mapbox";
 import { useModal } from "stores/modals";
-import useFetchHotspots from "hooks/useFetchHotspots";
-import { getMarkerColorIndex } from "lib/helpers";
+import useTripHotspots from "hooks/useTripHotspots";
+import useSyncHotspots from "hooks/useSyncHotspots";
+import { getMarkerColorIndex, buildHotspotsLayer } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import MapButton from "components/MapButton";
@@ -18,7 +19,13 @@ export default function Trip() {
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
   const savedHotspots = trip?.hotspots || [];
-  const { hotspots, hotspotLayer } = useFetchHotspots();
+  const { data } = useTripHotspots();
+  const hotspots = data || [];
+  useSyncHotspots();
+  const hotspotLayer = React.useMemo(
+    () => buildHotspotsLayer(data || [], trip?.hotspots || []),
+    [data, trip?.hotspots]
+  );
 
   const savedHotspotMarkers = savedHotspots.map((it) => ({
     lat: it.lat,

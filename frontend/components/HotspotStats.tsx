@@ -2,6 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import { dateTimeToRelative } from "lib/helpers";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
+import useTripHotspots from "hooks/useTripHotspots";
 
 type Props = {
   id: string;
@@ -11,6 +12,11 @@ type Props = {
 
 export default function HotspotStats({ id, speciesTotal, checklistsTotal }: Props) {
   const { checklists } = useFetchRecentChecklists(id);
+
+  const { data: hotspots } = useTripHotspots(speciesTotal == null || checklistsTotal == null);
+  const info = hotspots?.find((it) => it.id === id);
+  const species = speciesTotal ?? info?.species;
+  const checklistsCount = checklistsTotal ?? info?.checklists;
 
   const lastChecklistRow = checklists?.[0];
   const lastChecklistIsoDate = lastChecklistRow?.isoObsDate;
@@ -28,11 +34,11 @@ export default function HotspotStats({ id, speciesTotal, checklistsTotal }: Prop
   return (
     <div className="flex gap-10 text-gray-500">
       <div className="flex flex-col text-success">
-        <span className="text-3xl font-bold">{speciesTotal ?? "--"}</span>
+        <span className="text-3xl font-bold">{species ?? "--"}</span>
         <span className="text-xs">Species</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-3xl font-bold">{checklistsTotal?.toLocaleString() ?? "--"}</span>
+        <span className="text-3xl font-bold">{checklistsCount?.toLocaleString() ?? "--"}</span>
         <span className="text-xs">Checklists</span>
       </div>
       <div className="flex flex-col">

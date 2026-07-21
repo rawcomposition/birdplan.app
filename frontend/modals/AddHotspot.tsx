@@ -2,7 +2,7 @@ import React from "react";
 import { Header, Body } from "components/Modal";
 import { Input } from "components/ui/input";
 import { useModal } from "stores/modals";
-import useFetchHotspots from "hooks/useFetchHotspots";
+import useTripHotspots from "hooks/useTripHotspots";
 import { useTrip } from "hooks/useTrip";
 import { eBirdHotspot, HotspotInput } from "@birdplan/shared";
 import Icon from "components/Icon";
@@ -15,7 +15,7 @@ export default function AddHotspot() {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const { open, close } = useModal();
   const { trip, showAllHotspots, setShowAllHotspots } = useTrip();
-  const { hotspots } = useFetchHotspots();
+  const { data: hotspots = [] } = useTripHotspots();
 
   const addHotspotMutation = useTripMutation<HotspotInput>({
     url: `/trips/${trip?._id}/hotspots`,
