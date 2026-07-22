@@ -1,9 +1,11 @@
-import { useUser } from "hooks/useUser";
+import { useTrip } from "hooks/useTrip";
+import useTargetView from "hooks/useTargetView";
 import { RecentSpecies } from "lib/types";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useFetchRecentSpecies(region?: string) {
-  const { lifelist } = useUser();
+  const { trip } = useTrip();
+  const { lifelist } = useTargetView(trip);
 
   const { data, isLoading, error, refetch } = useQuery<RecentSpecies[]>({
     queryKey: [`/region/${region}/species`],

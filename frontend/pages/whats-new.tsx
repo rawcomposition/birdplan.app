@@ -8,6 +8,10 @@ export default function WhatsNew() {
     <PublicPage documentTitle="What's New | BirdPlan.app">
       <Heading title="What's New" className="mt-12" />
       <div className="prose prose-h2:text-foreground prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+        <h2>July 22, 2026</h2>
+        <ul>
+          <li>🐞 Recent Needs in the hotspot dialog now respects the trip&apos;s life list instead of your world list.</li>
+        </ul>
         <h2>July 21, 2026</h2>
         <ul>
           <li>🐞 Fixed missing species and checklist counts in the hotspot dialog.</li>
