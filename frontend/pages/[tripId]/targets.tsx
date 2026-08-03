@@ -94,8 +94,6 @@ export default function TripTargets() {
 
   const truncatedTargets = filteredTargets?.slice(0, showCount);
 
-  const minPercent = regionData?.items?.length ? Math.min(...regionData.items.map((it) => it.frequency)) : 0;
-
   const obsClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
     if (!observation) return toast.error("Observation not found");
@@ -172,7 +170,7 @@ export default function TripTargets() {
                 {!!regionData?.items?.length && (
                   <p className="mb-2 sm:mb-3 text-sm text-secondary-foreground">
                     Found <span className="font-semibold text-foreground tabular-nums">{filteredTargets?.length}</span>{" "}
-                    species above <span className="font-semibold text-foreground tabular-nums">{minPercent}%</span>
+                    species
                   </p>
                 )}
               </>

@@ -12,7 +12,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 import { router } from "router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-const QUERY_CACHE_BUSTER = "birdplan-cache-v3";
+const QUERY_CACHE_BUSTER = "birdplan-cache-v4";
 
 const queryClient = new QueryClient({
   defaultOptions: {
