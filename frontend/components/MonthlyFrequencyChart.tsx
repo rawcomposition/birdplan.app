@@ -28,6 +28,8 @@ type Props = {
 
 function isInRange(monthIdx: number, start?: number, end?: number) {
   if (!start || !end) return false;
+  const length = start <= end ? end - start + 1 : 12 - start + end + 1;
+  if (length > 6) return false;
   const m = monthIdx + 1;
   if (start <= end) return m >= start && m <= end;
   return m >= start || m <= end;
