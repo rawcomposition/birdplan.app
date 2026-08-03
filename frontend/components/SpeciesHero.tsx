@@ -179,7 +179,7 @@ export default function SpeciesHero({ name, scientificName, code, starred, mutua
           monthly={monthly}
           startMonth={trip?.startMonth}
           endMonth={trip?.endMonth}
-          className="mt-10 sm:mt-auto"
+          className="mt-10 min-h-48 sm:mt-0 sm:min-h-0 sm:flex-1"
         />
       </div>
     </Card>
