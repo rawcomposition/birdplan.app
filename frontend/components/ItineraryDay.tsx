@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, buttonVariants } from "components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "components/ui/card";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "components/ui/card";
 import {
   Combobox,
   ComboboxTrigger,
@@ -17,11 +17,11 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
-import { GripVertical, Plus, X } from "lucide-react";
+import { Car, GripVertical, Plus, X } from "lucide-react";
 import useTripMutation from "hooks/useTripMutation";
 import { useMutationState } from "@tanstack/react-query";
 import { Day } from "@birdplan/shared";
-import { nanoId } from "lib/helpers";
+import { formatDistance, formatTime, getGoogleDrivingRouteUrl, nanoId } from "lib/helpers";
 import { MarkerIconT } from "lib/icons";
 import { removeInvalidTravelData } from "lib/itinerary";
 import { cn } from "lib/utils";
@@ -153,6 +153,24 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
   const date = trip?.startDate ? dayjs(trip.startDate).add(dayIndex, "day").format("dddd, MMMM D") : "";
   const { notes } = day;
 
+  const findLocation = (locationId: string) =>
+    trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
+
+  const travelLegs = locations.slice(1).flatMap((it) => (it.travel && !it.travel.isDeleted ? [it.travel] : []));
+  const travelTime = travelLegs.reduce((total, it) => total + it.time, 0);
+  const travelDistance = travelLegs.reduce((total, it) => total + it.distance, 0);
+  const travelSummary = travelTime
+    ? `${formatTime(travelTime)} travel · ${formatDistance(travelDistance, false)}`
+    : "";
+  const headerDetails = [date, travelSummary].filter(Boolean).join(" · ");
+
+  const routeUrl = getGoogleDrivingRouteUrl(
+    locations.flatMap(({ locationId }) => {
+      const location = findLocation(locationId);
+      return location ? [{ lat: location.lat, lng: location.lng }] : [];
+    })
+  );
+
   const [addOpen, setAddOpen] = React.useState(false);
   const [addQuery, setAddQuery] = React.useState("");
 
@@ -170,7 +188,20 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
     <Card className="mb-6 print:break-inside-avoid print:shadow-none">
       <CardHeader className="pb-0">
         <CardTitle className="text-lg">Day {dayIndex + 1}</CardTitle>
-        {date && <CardDescription>{date}</CardDescription>}
+        {headerDetails && <CardDescription>{headerDetails}</CardDescription>}
+        {routeUrl && (
+          <CardAction>
+            <a
+              href={routeUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(buttonVariants({ variant: "ghost", size: "xs" }), "print:hidden")}
+            >
+              <Car className="size-3.5" />
+              Drive route
+            </a>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className="pt-3">
         <InputNotesSimple
@@ -193,8 +224,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
             >
               <ul className="flex flex-col">
                 {locations.map(({ locationId, type, id }, index) => {
-                  const location =
-                    trip?.hotspots?.find((h) => h.id === locationId) || trip?.markers?.find((m) => m.id === locationId);
+                  const location = findLocation(locationId);
 
                   return (
                     <React.Fragment key={id}>

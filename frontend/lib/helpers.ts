@@ -239,6 +239,21 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 }
 
+const GOOGLE_MAPS_MAX_STOPS = 11;
+
+export function getGoogleDrivingRouteUrl(points: { lat: number; lng: number }[]) {
+  if (points.length < 2) return null;
+  const stops = points.slice(0, GOOGLE_MAPS_MAX_STOPS).map(({ lat, lng }) => `${lat},${lng}`);
+  const params = new URLSearchParams({
+    api: "1",
+    origin: stops[0],
+    destination: stops[stops.length - 1],
+    travelmode: "driving",
+  });
+  if (stops.length > 2) params.set("waypoints", stops.slice(1, -1).join("|"));
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
+}
+
 export function withReturnTo(path: string, returnTo?: string): string {
   return returnTo ? `${path}?returnTo=${encodeURIComponent(returnTo)}` : path;
 }
