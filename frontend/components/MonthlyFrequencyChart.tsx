@@ -44,16 +44,15 @@ export default function MonthlyFrequencyChart({
 }: Props) {
   const [hover, setHover] = React.useState<number | null>(null);
   const isMini = variant === "mini";
-  const barHeight = isMini ? 40 : 160;
+  const fractions = monthly.map(frequencyFraction);
 
   return (
-    <div className={className}>
+    <div className={clsx(!isMini && "flex flex-col", className)}>
       <div
-        className={clsx("flex relative cursor-default", isMini ? "gap-0.5" : "gap-1.5")}
+        className={clsx("flex relative cursor-default", isMini ? "gap-0.5" : "gap-1.5 flex-1 min-h-0")}
         onMouseLeave={() => setHover(null)}
       >
         {monthly.map((v, i) => {
-          const h = frequencyFraction(v) * barHeight;
           const inRange = isInRange(i, startMonth, endMonth);
           const isHover = hover === i;
           return (
@@ -62,8 +61,13 @@ export default function MonthlyFrequencyChart({
               onMouseEnter={() => setHover(i)}
               className={clsx("flex-1 flex flex-col items-center min-w-0", isMini ? "gap-0" : "gap-1.5")}
             >
-              <div className="w-full flex items-end" style={{ height: `${barHeight}px` }}>
-                <div className="w-full relative" style={{ height: `${h}px` }}>
+              <div className={clsx("w-full flex items-end", isMini ? "h-10" : "h-40 sm:h-auto sm:flex-1")}>
+                <div
+                  className="w-full relative"
+                  style={{
+                    height: isMini ? `${fractions[i] * 40}px` : `${fractions[i] * 100}%`,
+                  }}
+                >
                   <div
                     className={clsx(
                       "w-full h-full transition-colors",
