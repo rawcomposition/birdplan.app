@@ -1,4 +1,4 @@
-import { Trip, Hotspot, eBirdHotspot } from "@birdplan/shared";
+import { Trip, Hotspot, eBirdHotspot, TravelData } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -210,7 +210,23 @@ export const formatTime = (time: number) => {
   return `${hours} hr ${minutes} min`;
 };
 
-export const formatDistance = (meters: number, metric: boolean) => {
+const MILE_REGIONS = ["US", "GB", "LR", "MM"];
+
+let prefersMiles: boolean | null = null;
+
+const usesMiles = () => {
+  if (prefersMiles === null) {
+    try {
+      const region = new Intl.Locale(navigator.language).maximize().region;
+      prefersMiles = !!region && MILE_REGIONS.includes(region);
+    } catch {
+      prefersMiles = false;
+    }
+  }
+  return prefersMiles;
+};
+
+export const formatDistance = (meters: number, metric: boolean = !usesMiles()) => {
   const distance = metric ? meters / 1000 : meters / 1609;
   const units = metric ? "km" : "mi";
   const rounded =
@@ -237,6 +253,27 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
   return placeId
     ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${placeId}`
     : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+}
+
+const GOOGLE_MAPS_MAX_STOPS = 11;
+
+const GOOGLE_TRAVEL_MODES: Record<TravelData["method"], string> = {
+  driving: "driving",
+  walking: "walking",
+  cycling: "bicycling",
+};
+
+export function getGoogleRouteUrl(points: { lat: number; lng: number }[], method: TravelData["method"] = "driving") {
+  if (points.length < 2) return null;
+  const stops = points.slice(0, GOOGLE_MAPS_MAX_STOPS).map(({ lat, lng }) => `${lat},${lng}`);
+  const params = new URLSearchParams({
+    api: "1",
+    origin: stops[0],
+    destination: stops[stops.length - 1],
+    travelmode: GOOGLE_TRAVEL_MODES[method],
+  });
+  if (stops.length > 2) params.set("waypoints", stops.slice(1, -1).join("|"));
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
 export function withReturnTo(path: string, returnTo?: string): string {
