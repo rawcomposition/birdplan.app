@@ -159,9 +159,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
   const travelLegs = locations.slice(1).flatMap((it) => (it.travel && !it.travel.isDeleted ? [it.travel] : []));
   const travelTime = travelLegs.reduce((total, it) => total + it.time, 0);
   const travelDistance = travelLegs.reduce((total, it) => total + it.distance, 0);
-  const travelSummary = travelTime
-    ? `${formatTime(travelTime)} travel · ${formatDistance(travelDistance, false)}`
-    : "";
+  const travelSummary = travelTime ? `${formatTime(travelTime)} (${formatDistance(travelDistance)})` : "";
   const headerDetails = [date, travelSummary].filter(Boolean).join(" · ");
 
   const methods = new Set(travelLegs.map((it) => it.method));

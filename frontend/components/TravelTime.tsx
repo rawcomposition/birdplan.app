@@ -83,7 +83,7 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
         <Icon name="cycling" className="text-gray-400" />
       )}
       <span className="font-medium">{formatTime(travelData.time)}</span>•
-      <span className="text-gray-500 text-xs">{formatDistance(travelData.distance, false)}</span>
+      <span className="text-gray-500 text-xs">{formatDistance(travelData.distance)}</span>
     </span>
   );
 

@@ -8,6 +8,15 @@ export default function WhatsNew() {
     <PublicPage documentTitle="What's New | BirdPlan.app">
       <Heading title="What's New" className="mt-12" />
       <div className="prose prose-h2:text-foreground prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+        <h2>August 25, 2026</h2>
+        <ul>
+          <li>✨ Itinerary days now show the total travel time and distance across all of the day&apos;s stops.</li>
+          <li>
+            ✨ A new View route button opens the day&apos;s entire route in Google Maps, using your travel mode for
+            that day.
+          </li>
+          <li>🛠️ Distances now display in miles or kilometers based on your region.</li>
+        </ul>
         <h2>August 3, 2026</h2>
         <ul>
           <li>🐞 Fixed target percentages being too high for species reported in only part of your date range.</li>

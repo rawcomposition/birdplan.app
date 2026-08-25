@@ -210,7 +210,23 @@ export const formatTime = (time: number) => {
   return `${hours} hr ${minutes} min`;
 };
 
-export const formatDistance = (meters: number, metric: boolean) => {
+const MILE_REGIONS = ["US", "GB", "LR", "MM"];
+
+let prefersMiles: boolean | null = null;
+
+const usesMiles = () => {
+  if (prefersMiles === null) {
+    try {
+      const region = new Intl.Locale(navigator.language).maximize().region;
+      prefersMiles = !!region && MILE_REGIONS.includes(region);
+    } catch {
+      prefersMiles = false;
+    }
+  }
+  return prefersMiles;
+};
+
+export const formatDistance = (meters: number, metric: boolean = !usesMiles()) => {
   const distance = metric ? meters / 1000 : meters / 1609;
   const units = metric ? "km" : "mi";
   const rounded =
