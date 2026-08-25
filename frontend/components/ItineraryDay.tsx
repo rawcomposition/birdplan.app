@@ -17,11 +17,11 @@ import MarkerWithIcon from "components/MarkerWithIcon";
 import TravelTime from "components/TravelTime";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
-import { Car, GripVertical, Plus, X } from "lucide-react";
+import { GripVertical, Plus, Route, X } from "lucide-react";
 import useTripMutation from "hooks/useTripMutation";
 import { useMutationState } from "@tanstack/react-query";
 import { Day } from "@birdplan/shared";
-import { formatDistance, formatTime, getGoogleDrivingRouteUrl, nanoId } from "lib/helpers";
+import { formatDistance, formatTime, getGoogleRouteUrl, nanoId } from "lib/helpers";
 import { MarkerIconT } from "lib/icons";
 import { removeInvalidTravelData } from "lib/itinerary";
 import { cn } from "lib/utils";
@@ -164,11 +164,14 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
     : "";
   const headerDetails = [date, travelSummary].filter(Boolean).join(" · ");
 
-  const routeUrl = getGoogleDrivingRouteUrl(
+  const methods = new Set(travelLegs.map((it) => it.method));
+  const routeMethod = methods.size === 1 ? [...methods][0] : "driving";
+  const routeUrl = getGoogleRouteUrl(
     locations.flatMap(({ locationId }) => {
       const location = findLocation(locationId);
       return location ? [{ lat: location.lat, lng: location.lng }] : [];
-    })
+    }),
+    routeMethod
   );
 
   const [addOpen, setAddOpen] = React.useState(false);
@@ -197,8 +200,8 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
               rel="noreferrer"
               className={cn(buttonVariants({ variant: "ghost", size: "xs" }), "print:hidden")}
             >
-              <Car className="size-3.5" />
-              Drive route
+              <Route className="size-3.5" />
+              View route
             </a>
           </CardAction>
         )}

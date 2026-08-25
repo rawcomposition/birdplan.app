@@ -2,7 +2,7 @@ import { useTrip } from "hooks/useTrip";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
 import { PersonStanding, Car, Bike } from "lucide-react";
-import { formatTime, formatDistance } from "lib/helpers";
+import { formatTime, formatDistance, getGoogleRouteUrl } from "lib/helpers";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -138,7 +138,12 @@ export default function TravelTime({ isEditing, dayId, id, isLoading }: Props) {
         </div>
       ) : (
         <a
-          href={`https://www.google.com/maps/dir/?api=1&origin=${marker1?.lat},${marker1?.lng}&destination=${marker2?.lat},${marker2?.lng}&travelmode=${travelData?.method}`}
+          href={
+            getGoogleRouteUrl(
+              [marker1, marker2].flatMap((it) => (it ? [{ lat: it.lat, lng: it.lng }] : [])),
+              travelData?.method
+            ) || undefined
+          }
           target="_blank"
         >
           {!travelData?.isDeleted && <div className="text-gray-500 text-xs relative">{TravelInfo}</div>}

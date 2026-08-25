@@ -1,4 +1,4 @@
-import { Trip, Hotspot, eBirdHotspot } from "@birdplan/shared";
+import { Trip, Hotspot, eBirdHotspot, TravelData } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -241,14 +241,20 @@ export function getGooglePlaceUrl(lat: number, lng: number, placeId?: string) {
 
 const GOOGLE_MAPS_MAX_STOPS = 11;
 
-export function getGoogleDrivingRouteUrl(points: { lat: number; lng: number }[]) {
+const GOOGLE_TRAVEL_MODES: Record<TravelData["method"], string> = {
+  driving: "driving",
+  walking: "walking",
+  cycling: "bicycling",
+};
+
+export function getGoogleRouteUrl(points: { lat: number; lng: number }[], method: TravelData["method"] = "driving") {
   if (points.length < 2) return null;
   const stops = points.slice(0, GOOGLE_MAPS_MAX_STOPS).map(({ lat, lng }) => `${lat},${lng}`);
   const params = new URLSearchParams({
     api: "1",
     origin: stops[0],
     destination: stops[stops.length - 1],
-    travelmode: "driving",
+    travelmode: GOOGLE_TRAVEL_MODES[method],
   });
   if (stops.length > 2) params.set("waypoints", stops.slice(1, -1).join("|"));
   return `https://www.google.com/maps/dir/?${params.toString()}`;
