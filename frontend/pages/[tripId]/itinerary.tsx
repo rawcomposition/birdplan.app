@@ -12,16 +12,13 @@ import Icon from "components/Icon";
 import { Printer } from "lucide-react";
 import useTripMutation from "hooks/useTripMutation";
 import ItineraryDay from "components/ItineraryDay";
+import { getTripDays } from "lib/itinerary";
 
 export default function Itinerary() {
   const { trip, canEdit } = useTrip();
   const { close, modalId } = useModal();
   const isDateRange = !!(trip?.startDate && trip?.endDate);
-  const dayCount = isDateRange ? dayjs(trip!.endDate).diff(dayjs(trip!.startDate), "day") + 1 : 0;
-  const persistedDays = trip?.itinerary || [];
-  const renderDays = isDateRange
-    ? Array.from({ length: dayCount }, (_, i) => persistedDays[i] || { id: `${trip!._id}-d${i}`, locations: [] })
-    : persistedDays;
+  const renderDays = getTripDays(trip);
   const dayIds = renderDays.map((d) => d.id);
   const hasDays = renderDays.length > 0;
   const shouldDefaultEdit = !!(trip && !isDateRange) || !!(trip && !trip?.itinerary?.length);
