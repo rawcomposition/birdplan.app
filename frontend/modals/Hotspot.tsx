@@ -154,7 +154,13 @@ export default function Hotspot({ hotspot }: Props) {
 
   const days = getTripDays(trip);
   const dayIds = days.map((it) => it.id);
-  const scheduledCount = days.filter((day) => day.locations?.some((loc) => loc.locationId === id)).length;
+  const scheduledDayIndexes = days.flatMap((day, index) =>
+    day.locations?.some((loc) => loc.locationId === id) ? [index] : []
+  );
+  const extraDayCount = scheduledDayIndexes.length - 1;
+  const itineraryLabel = scheduledDayIndexes.length
+    ? `${formatDayLabel(trip?.startDate, scheduledDayIndexes[0])}${extraDayCount > 0 ? ` +${extraDayCount}` : ""}`
+    : "Itinerary";
 
   return (
     <>
@@ -198,9 +204,13 @@ export default function Hotspot({ hotspot }: Props) {
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
-                  <Button variant="outline-white" size="sm">
+                  <Button
+                    variant="outline-white"
+                    size="sm"
+                    aria-label={scheduledDayIndexes.length ? `Itinerary: ${itineraryLabel}` : undefined}
+                  >
                     <Icon name="calendar" className="text-gray-400" />
-                    {scheduledCount ? `On ${scheduledCount} ${scheduledCount === 1 ? "day" : "days"}` : "Itinerary"}
+                    {itineraryLabel}
                   </Button>
                 }
               />
@@ -278,6 +288,9 @@ export default function Hotspot({ hotspot }: Props) {
     </>
   );
 }
+
+const formatDayLabel = (startDate: string | undefined, dayIndex: number) =>
+  startDate ? dayjs(startDate).add(dayIndex, "day").format("MMM D") : `Day ${dayIndex + 1}`;
 
 type ItineraryDayToggleProps = {
   day: Day;
