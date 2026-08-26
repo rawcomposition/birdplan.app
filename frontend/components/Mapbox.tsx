@@ -14,6 +14,7 @@ type Props = {
   markers?: MarkerT[];
   customMarkers?: CustomMarker[];
   hotspotLayer?: any;
+  minChecklists?: number;
   obsLayer?: any;
   addingMarker?: boolean;
   showSatellite?: boolean;
@@ -27,6 +28,7 @@ export default function Mapbox({
   customMarkers,
   onHotspotClick,
   hotspotLayer,
+  minChecklists = 0,
   obsLayer,
   addingMarker,
   showSatellite,
@@ -60,9 +62,20 @@ export default function Mapbox({
   const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
+    filter: [">=", ["coalesce", ["get", "checklists"], 0], minChecklists],
     paint: {
-      "circle-radius": isMobile ? 8 : 7,
-      "circle-stroke-width": 0.75,
+      "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        6,
+        ["interpolate", ["linear"], ["get", "species"], 0, 1.5, 300, 3.5],
+        10,
+        ["interpolate", ["linear"], ["get", "species"], 0, 3, 300, 6],
+        14,
+        ["interpolate", ["linear"], ["get", "species"], 0, 4.5, 300, isMobile ? 10 : 9],
+      ],
+      "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 0.3, 12, 0.75],
       "circle-stroke-color": "#555",
       "circle-color": [
         "match",

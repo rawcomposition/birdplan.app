@@ -9,13 +9,30 @@ import { useTrip } from "hooks/useTrip";
 import MapButton from "components/MapButton";
 import MapOverlay from "components/MapOverlay";
 import Icon from "components/Icon";
-import { Star, Utensils, MapPin } from "lucide-react";
+import { Star, Utensils, MapPin, Check, Filter } from "lucide-react";
 import { Button } from "components/ui/button";
+
+const CHECKLIST_FILTERS = [
+  { label: "All hotspots", value: 0 },
+  { label: "1+ checklists", value: 1 },
+  { label: "10+ checklists", value: 10 },
+  { label: "50+ checklists", value: 50 },
+  { label: "100+ checklists", value: 100 },
+];
 
 export default function Trip() {
   const { open } = useModal();
-  const { trip, canEdit, setSelectedSpecies, showAllHotspots, setShowAllHotspots, showSatellite, setShowSatellite } =
-    useTrip();
+  const {
+    trip,
+    canEdit,
+    setSelectedSpecies,
+    showAllHotspots,
+    setShowAllHotspots,
+    showSatellite,
+    setShowSatellite,
+    minChecklists,
+    setMinChecklists,
+  } = useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
   const savedHotspots = trip?.hotspots || [];
@@ -68,6 +85,19 @@ export default function Trip() {
         <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>
           <Icon name="layers" />
         </MapButton>
+        {showAllHotspots && (
+          <MapButton
+            tooltip="Filter hotspots"
+            active={minChecklists > 1}
+            childItems={CHECKLIST_FILTERS.map(({ label, value }) => ({
+              label,
+              onClick: () => setMinChecklists(value),
+              icon: minChecklists === value ? <Check /> : <span className="size-4" />,
+            }))}
+          >
+            <Filter />
+          </MapButton>
+        )}
         {canEdit && (
           <MapButton
             onClick={() => setIsAddingMarker((prev) => !prev)}
@@ -104,6 +134,7 @@ export default function Trip() {
               markers={markers}
               customMarkers={customMarkers}
               hotspotLayer={showAllHotspots && hotspotLayer}
+              minChecklists={minChecklists}
               bounds={trip.bounds}
               addingMarker={isAddingMarker}
               onDisableAddingMarker={() => setIsAddingMarker(false)}

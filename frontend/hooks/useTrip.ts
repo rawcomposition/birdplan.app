@@ -27,11 +27,13 @@ type TripUiState = {
   halo?: HaloT;
   showAllHotspots: boolean;
   showSatellite: boolean;
+  minChecklists: number;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   setHalo: (data?: HaloT) => void;
   setShowAllHotspots: (show: SetState<boolean>) => void;
   setShowSatellite: (show: SetState<boolean>) => void;
+  setMinChecklists: (min: number) => void;
 };
 
 const resolve = <T,>(value: SetState<T>, prev: T): T =>
@@ -40,11 +42,13 @@ const resolve = <T,>(value: SetState<T>, prev: T): T =>
 const useTripUiStore = create<TripUiState>((set) => ({
   showAllHotspots: false,
   showSatellite: false,
+  minChecklists: 1,
   setSelectedSpecies: (selectedSpecies) => set({ selectedSpecies }),
   setSelectedMarkerId: (selectedMarkerId) => set({ selectedMarkerId }),
   setHalo: (halo) => set({ halo }),
   setShowAllHotspots: (show) => set((s) => ({ showAllHotspots: resolve(show, s.showAllHotspots) })),
   setShowSatellite: (show) => set((s) => ({ showSatellite: resolve(show, s.showSatellite) })),
+  setMinChecklists: (minChecklists) => set({ minChecklists }),
 }));
 
 export const useClearSelectedSpeciesOnNavigate = () => {
@@ -105,11 +109,13 @@ export const useTrip = () => {
     dateRangeLabel,
     showAllHotspots: ui.showAllHotspots,
     showSatellite: ui.showSatellite,
+    minChecklists: ui.minChecklists,
     setSelectedSpecies: ui.setSelectedSpecies,
     setSelectedMarkerId: ui.setSelectedMarkerId,
     setHalo: ui.setHalo,
     setShowAllHotspots: ui.setShowAllHotspots,
     setShowSatellite: ui.setShowSatellite,
+    setMinChecklists: ui.setMinChecklists,
     refetch,
   };
 };
