@@ -218,14 +218,6 @@ export default function Hotspot({ hotspot }: Props) {
             </DropdownMenu>
           )}
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
-          <Button
-            variant="outline-white"
-            size="sm"
-            href={`https://ebird.org/hotspot/${id}`}
-            target="_blank"
-          >
-            <img src="/ebird.png" width={48} />
-          </Button>
           <DropdownMenu>
             <KebabMenuTrigger />
             <DropdownMenuContent align="end" className="w-[170px]">
