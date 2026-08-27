@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/
 import KebabMenuTrigger from "components/KebabMenuTrigger";
 import { getGooglePlaceUrl } from "lib/helpers";
 import EmptyState from "components/EmptyState";
+import ItineraryDays from "components/ItineraryDays";
 
 type Props = {
   markerId?: string;
@@ -160,6 +161,7 @@ export default function Marker({ markerId, lat: defaultLat, lng: defaultLng }: P
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <ItineraryDays locationId={marker.id} type="marker" className="mt-4 mb-4" />
             <InputNotes
               value={marker.notes}
               onBlur={(value) => saveNotesMutation.mutate({ notes: value })}

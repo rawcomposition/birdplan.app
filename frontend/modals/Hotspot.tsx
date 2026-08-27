@@ -1,30 +1,23 @@
 import React from "react";
 import { Header, Body } from "components/Modal";
-import { Day, HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
+import { HotspotInput, Hotspot as HotspotT, Trip } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
-import { isRegionEnglish, getMarkerColor, nanoId } from "lib/helpers";
+import { isRegionEnglish, getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "components/ui/tabs";
 import InputNotes from "components/InputNotes";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
 import KebabMenuTrigger from "components/KebabMenuTrigger";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
+import ItineraryDays from "components/ItineraryDays";
 import Icon from "components/Icon";
 import { useLocation } from "react-router-dom";
-import dayjs from "dayjs";
-import { getTripDays } from "lib/itinerary";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -152,16 +145,6 @@ export default function Hotspot({ hotspot }: Props) {
 
   const canTranslate = isSaved && canEdit && !isRegionEnglish(trip?.region || "");
 
-  const days = getTripDays(trip);
-  const dayIds = days.map((it) => it.id);
-  const scheduledDayIndexes = days.flatMap((day, index) =>
-    day.locations?.some((loc) => loc.locationId === id) ? [index] : []
-  );
-  const extraDayCount = scheduledDayIndexes.length - 1;
-  const itineraryLabel = scheduledDayIndexes.length
-    ? `${formatDayLabel(trip?.startDate, scheduledDayIndexes[0])}${extraDayCount > 0 ? ` +${extraDayCount}` : ""}`
-    : "Itinerary";
-
   return (
     <>
       <Header>{name}</Header>
@@ -200,34 +183,15 @@ export default function Hotspot({ hotspot }: Props) {
               {isSaved ? "Saved" : "Save"}
             </Button>
           )}
-          {canEdit && isSaved && !!days.length && (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="outline-white"
-                    size="sm"
-                    aria-label={scheduledDayIndexes.length ? `Itinerary: ${itineraryLabel}` : undefined}
-                  >
-                    <Icon name="calendar" className="text-gray-400" />
-                    {itineraryLabel}
-                  </Button>
-                }
-              />
-              <DropdownMenuContent align="start" className="min-w-[200px]">
-                {days.map((day, index) => (
-                  <ItineraryDayToggle
-                    key={day.id}
-                    day={day}
-                    dayIndex={index}
-                    dayIds={dayIds}
-                    hotspotId={id}
-                  />
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
           <DirectionsButton lat={lat} lng={lng} hotspotId={id} />
+          <Button
+            variant="outline-white"
+            size="sm"
+            href={`https://ebird.org/hotspot/${id}`}
+            target="_blank"
+          >
+            <img src="/ebird.png" width={48} />
+          </Button>
           <DropdownMenu>
             <KebabMenuTrigger />
             <DropdownMenuContent align="end" className="w-[170px]">
@@ -239,6 +203,7 @@ export default function Hotspot({ hotspot }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {isSaved && <ItineraryDays locationId={id} type="hotspot" className="-mt-2 mb-6" />}
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
         <HotspotFavs hotspotId={id} />
 
@@ -286,74 +251,5 @@ export default function Hotspot({ hotspot }: Props) {
         </Tabs>
       </Body>
     </>
-  );
-}
-
-const formatDayLabel = (startDate: string | undefined, dayIndex: number) =>
-  startDate ? dayjs(startDate).add(dayIndex, "day").format("MMM D") : `Day ${dayIndex + 1}`;
-
-type ItineraryDayToggleProps = {
-  day: Day;
-  dayIndex: number;
-  dayIds: string[];
-  hotspotId: string;
-};
-
-function ItineraryDayToggle({ day, dayIndex, dayIds, hotspotId }: ItineraryDayToggleProps) {
-  const { trip } = useTrip();
-  const entry = day.locations?.find((loc) => loc.locationId === hotspotId);
-  const date = trip?.startDate ? dayjs(trip.startDate).add(dayIndex, "day").format("ddd, MMM D") : "";
-
-  const addMutation = useTripMutation<
-    { type: "hotspot"; locationId: string; id: string; dayIds: string[] },
-    { itinerary: Day[] }
-  >({
-    url: `/trips/${trip?._id}/itinerary/${day.id}/add-location`,
-    method: "POST",
-    updateCache: (old, input) => ({
-      ...old,
-      itinerary: getTripDays(old).map((it) =>
-        it.id === day.id
-          ? {
-              ...it,
-              locations: [...(it.locations || []), { type: input.type, locationId: input.locationId, id: input.id }],
-            }
-          : it
-      ),
-    }),
-    reconcile: (old, response) => ({ ...old, itinerary: response.itinerary }),
-  });
-
-  const removeMutation = useTripMutation<{ id: string }>({
-    url: `/trips/${trip?._id}/itinerary/${day.id}/remove-location`,
-    method: "PATCH",
-    updateCache: (old, input) => ({
-      ...old,
-      itinerary: getTripDays(old).map((it) =>
-        it.id === day.id ? { ...it, locations: it.locations?.filter((loc) => loc.id !== input.id) || [] } : it
-      ),
-    }),
-  });
-
-  const onCheckedChange = (checked: boolean) => {
-    if (checked) {
-      addMutation.mutate({ type: "hotspot", locationId: hotspotId, id: nanoId(6), dayIds });
-    } else if (entry) {
-      removeMutation.mutate({ id: entry.id });
-    }
-  };
-
-  return (
-    <DropdownMenuCheckboxItem
-      checked={!!entry}
-      onCheckedChange={onCheckedChange}
-      closeOnClick={false}
-      disabled={addMutation.isPending || removeMutation.isPending}
-    >
-      <span className="truncate">
-        Day {dayIndex + 1}
-        {date && <span className="text-muted-foreground"> · {date}</span>}
-      </span>
-    </DropdownMenuCheckboxItem>
   );
 }

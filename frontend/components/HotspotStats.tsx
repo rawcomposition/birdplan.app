@@ -52,14 +52,6 @@ export default function HotspotStats({ id, speciesTotal, checklistsTotal }: Prop
         )}
         <span className="text-xs">Last Checklist</span>
       </div>
-      <a
-        href={`https://ebird.org/hotspot/${id}`}
-        target="_blank"
-        rel="noreferrer"
-        className="ml-auto self-center opacity-80 transition-opacity hover:opacity-100"
-      >
-        <img src="/ebird.png" alt="View on eBird" width={48} />
-      </a>
     </div>
   );
 }
