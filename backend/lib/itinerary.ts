@@ -43,6 +43,8 @@ export const updateDayTravelTimes = async (trip: Trip, day: Day): Promise<Day> =
       const method = travel?.method || defaultMethod || "driving";
       if (!fromId || !toId || !method) return it;
 
+      if (travel?.isDeleted && travel.locationId === fromId) return { ...it, travel };
+
       if (fromLocation.locationId == it.locationId) {
         return {
           ...it,
