@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/
 import KebabMenuTrigger from "components/KebabMenuTrigger";
 import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
+import ItineraryDays from "components/ItineraryDays";
 import Icon from "components/Icon";
 import { useLocation } from "react-router-dom";
 import useTripMutation from "hooks/useTripMutation";
@@ -202,6 +203,7 @@ export default function Hotspot({ hotspot }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {isSaved && <ItineraryDays locationId={id} type="hotspot" className="-mt-2 mb-6" />}
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
         <HotspotFavs hotspotId={id} />
 
