@@ -8,6 +8,10 @@ export default function WhatsNew() {
     <PublicPage documentTitle="What's New | BirdPlan.app">
       <Heading title="What's New" className="mt-12" />
       <div className="prose prose-h2:text-foreground prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+        <h2>August 28, 2026</h2>
+        <ul>
+          <li>✨ You can now add or remove hotspots from your trip's itinerary right from the hotspot dialog itself.</li>
+=        </ul>
         <h2>August 25, 2026</h2>
         <ul>
           <li>✨ Itinerary days now show the total travel time and distance across all of the day&apos;s stops.</li>
