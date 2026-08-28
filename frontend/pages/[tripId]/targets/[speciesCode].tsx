@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounceCallback } from "usehooks-ts";
@@ -62,7 +61,7 @@ export default function SpeciesDetail() {
     }),
   });
 
-  const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: speciesCode });
+  const { obs } = useFetchSpeciesObs({ region: trip?.region, code: speciesCode });
   const regionCode = trip?.region.split(",")[0] || "";
 
   const lastSeenByLocId: Record<string, string> = {};
@@ -202,16 +201,6 @@ export default function SpeciesDetail() {
     setSelectedSpecies({ code: speciesCode, name: speciesName || speciesCode });
   };
 
-  const obsClick = (id: string) => {
-    const observation = obs.find((it) => it.id === id);
-    if (!observation) return toast.error("Observation not found");
-    open(observation.isPersonal ? "personalLocation" : "hotspot", {
-      hotspot: observation,
-      speciesCode,
-      speciesName,
-    });
-  };
-
   return (
     <>
       {trip && speciesName && <title>{`${speciesName} | ${trip.name} | BirdPlan.app`}</title>}
@@ -306,7 +295,7 @@ export default function SpeciesDetail() {
           </div>
         </div>
       </div>
-      <SpeciesMapOverlay onOutsideClick={handleContainerClick} onHotspotClick={obsClick} obsLayer={obsLayer} />
+      <SpeciesMapOverlay onOutsideClick={handleContainerClick} />
     </>
   );
 }

@@ -1,8 +1,5 @@
 import React from "react";
-import { useModal } from "stores/modals";
-import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useCloseOnOutsideClick from "hooks/useCloseOnOutsideClick";
-import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import SpeciesMapOverlay from "components/SpeciesMapOverlay";
 import { Card } from "components/ui/card";
@@ -27,13 +24,8 @@ import { Download } from "lucide-react";
 const PAGE_SIZE = 100;
 
 export default function TripTargets() {
-  const { open } = useModal();
-  const { trip, selectedSpecies, canEdit } = useTrip();
+  const { trip, canEdit } = useTrip();
   const handleContainerClick = useCloseOnOutsideClick();
-  const { obs, obsLayer } = useFetchSpeciesObs({
-    region: trip?.region,
-    code: selectedSpecies?.code,
-  });
 
   // Filter options
   const [search, setSearch] = React.useState("");
@@ -93,23 +85,6 @@ export default function TripTargets() {
   );
 
   const truncatedTargets = filteredTargets?.slice(0, showCount);
-
-  const obsClick = (id: string) => {
-    const observation = obs.find((it) => it.id === id);
-    if (!observation) return toast.error("Observation not found");
-    if (observation.isPersonal) {
-      open("personalLocation", {
-        hotspot: observation,
-        speciesCode: selectedSpecies?.code,
-        speciesName: selectedSpecies?.name,
-      });
-    } else {
-      open("hotspot", {
-        hotspot: observation,
-        speciesName: selectedSpecies?.name,
-      });
-    }
-  };
 
   return (
     <>
@@ -270,7 +245,7 @@ export default function TripTargets() {
           </div>
         </div>
       </div>
-      <SpeciesMapOverlay onOutsideClick={handleContainerClick} onHotspotClick={obsClick} obsLayer={obsLayer} />
+      <SpeciesMapOverlay onOutsideClick={handleContainerClick} />
     </>
   );
 }

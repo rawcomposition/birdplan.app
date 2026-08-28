@@ -3,7 +3,7 @@ import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
 import { Marker as MarkerT } from "lib/types";
 import { Trip, CustomMarker } from "@birdplan/shared";
 import { MarkerIconT } from "lib/icons";
-import { markerColors, getLatLngFromBounds } from "lib/helpers";
+import { markerColors, getLatLngFromBounds, layerHasFrequency } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "stores/modals";
@@ -92,14 +92,27 @@ export default function Mapbox({
     },
   };
 
+  const hasFrequencyData = layerHasFrequency(obsLayer);
+
   const obsLayerStyle = {
     id: "obs",
     type: "circle",
     paint: {
-      "circle-radius": isMobile ? 8 : 7,
-      "circle-stroke-width": 0.75,
-      "circle-stroke-color": "#555",
-      "circle-color": ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
+      "circle-radius": hasFrequencyData
+        ? ["match", ["get", "isSaved"], "true", isMobile ? 9 : 8, isMobile ? 7 : 6]
+        : isMobile
+          ? 8
+          : 7,
+      "circle-stroke-width": hasFrequencyData ? ["match", ["get", "isSaved"], "true", 2.5, 0.75] : 0.75,
+      "circle-stroke-color": hasFrequencyData ? ["match", ["get", "isSaved"], "true", "#1e3a8a", "#555"] : "#555",
+      "circle-color": hasFrequencyData
+        ? [
+            "case",
+            ["==", ["get", "hasFrequency"], "false"],
+            "#b8b8b8",
+            ["match", ["get", "colorIndex"], ...markerColors.flatMap((color, i) => [i, color]), markerColors[3]],
+          ]
+        : ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
     },
   };
 
@@ -214,13 +227,34 @@ export default function Mapbox({
           </Marker>
         )}
       </Map>
-      {obsLayer && (
+      {obsLayer && !hasFrequencyData && (
         <div className="flex absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-2 z-10 rounded-tr-sm">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#555]" /> Personal Location
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ce0d02]" /> Hotspot
+          </span>
+        </div>
+      )}
+      {obsLayer && hasFrequencyData && (
+        <div className="flex flex-wrap absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-x-3 gap-y-1 z-10 rounded-tr-sm">
+          <span className="text-gray-500">Chance during trip dates:</span>
+          {[
+            [markerColors[3], "<15%"],
+            [markerColors[5], "15%"],
+            [markerColors[7], "30%"],
+            [markerColors[9], "50%+"],
+          ].map(([color, caption]) => (
+            <span key={caption} className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} /> {caption}
+            </span>
+          ))}
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#b8b8b8]" /> No data
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full border-2 border-[#1e3a8a] bg-transparent" /> Saved
           </span>
         </div>
       )}
