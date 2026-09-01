@@ -21,10 +21,19 @@ type Props = {
 
 export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const { trip, selectedSpecies, setSelectedSpecies } = useTrip();
-  const { open } = useModal();
+  const { open, modalId } = useModal();
   const [mode, setMode] = React.useState<MapMode>("trip");
+  const [showInfo, setShowInfo] = React.useState(true);
   const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
   const setShowPersonalLocations = useMapPreferences((state) => state.setShowPersonalLocations);
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !modalId) setSelectedSpecies(undefined);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalId, setSelectedSpecies]);
 
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const { hotspots } = useSpeciesHotspotRankings(selectedSpecies?.code);
@@ -52,21 +61,26 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
 
   return (
     <div className="absolute inset-0 z-10 flex flex-col" onClick={onOutsideClick}>
-      <MapOverlay onClose={() => setSelectedSpecies(undefined)} title={selectedSpecies.name}>
-        {subtitle}{" "}
-        <Button
-          className="underline"
-          variant="link"
-          size="sm"
-          href={`https://ebird.org/map/${selectedSpecies.code}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
-          target="_blank"
-        >
-          View on eBird
-        </Button>
-      </MapOverlay>
+      {showInfo && (
+        <MapOverlay onClose={() => setShowInfo(false)} title={selectedSpecies.name}>
+          {subtitle}{" "}
+          <Button
+            className="underline"
+            variant="link"
+            size="sm"
+            href={`https://ebird.org/map/${selectedSpecies.code}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
+            target="_blank"
+          >
+            View on eBird
+          </Button>
+        </MapOverlay>
+      )}
       <div className="w-full grow relative">
         {trip?.bounds && <MapBox key={trip._id} onHotspotClick={handleClick} obsLayer={layer} bounds={trip.bounds} />}
-        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-3">
+        <div className="absolute top-4 right-4 sm:left-4 sm:right-auto z-10 flex flex-col items-end sm:items-start gap-3">
+          <MapButton onClick={() => setSelectedSpecies(undefined)} tooltip="Close map">
+            <Icon name="xMark" />
+          </MapButton>
           <SegmentedControl<MapMode>
             value={mode}
             onChange={setMode}
