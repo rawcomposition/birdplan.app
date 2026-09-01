@@ -126,6 +126,9 @@ export const getMarkerColorIndex = (count: number) => {
   return markerColors.indexOf(color);
 };
 
+export const filterLayerToSaved = (layer: any, savedIds: Set<string>) =>
+  layer && { ...layer, features: layer.features.filter((it: any) => savedIds.has(it.properties?.id)) };
+
 export const layerHasFrequency = (layer?: any) =>
   !!layer?.features?.some((it: any) => it.properties?.hasFrequency === "true");
 

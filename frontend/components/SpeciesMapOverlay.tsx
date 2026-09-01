@@ -9,7 +9,7 @@ import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useSpeciesHotspotRankings from "hooks/useSpeciesHotspotRankings";
-import { buildFrequencyLayer } from "lib/helpers";
+import { buildFrequencyLayer, filterLayerToSaved } from "lib/helpers";
 import { useMapPreferences } from "stores/mapPreferences";
 import { Button } from "components/ui/button";
 
@@ -26,6 +26,8 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const [showInfo, setShowInfo] = React.useState(true);
   const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
   const setShowPersonalLocations = useMapPreferences((state) => state.setShowPersonalLocations);
+  const savedHotspotsOnly = useMapPreferences((state) => state.savedHotspotsOnly);
+  const setSavedHotspotsOnly = useMapPreferences((state) => state.setSavedHotspotsOnly);
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -41,7 +43,8 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   if (!selectedSpecies) return null;
 
   const savedIds = new Set(trip?.hotspots.map((it) => it.id) ?? []);
-  const layer = mode === "trip" ? buildFrequencyLayer(hotspots, savedIds) : obsLayer;
+  const fullLayer = mode === "trip" ? buildFrequencyLayer(hotspots, savedIds) : obsLayer;
+  const layer = savedHotspotsOnly ? filterLayerToSaved(fullLayer, savedIds) : fullLayer;
 
   const subtitle =
     mode === "trip"
@@ -89,7 +92,14 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
               { value: "recent", label: "Recent sightings" },
             ]}
           />
-          {mode === "recent" && (
+          <MapButton
+            onClick={() => setSavedHotspotsOnly(!savedHotspotsOnly)}
+            tooltip={savedHotspotsOnly ? "Show all hotspots" : "Show only saved hotspots"}
+            active={savedHotspotsOnly}
+          >
+            <Icon name={savedHotspotsOnly ? "star" : "starOutline"} />
+          </MapButton>
+          {mode === "recent" && !savedHotspotsOnly && (
             <MapButton
               onClick={() => setShowPersonalLocations(!showPersonalLocations)}
               tooltip={showPersonalLocations ? "Hide personal locations" : "Show personal locations"}
