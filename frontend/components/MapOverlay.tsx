@@ -1,18 +1,19 @@
 import React from "react";
 import { Card } from "components/ui/card";
 import { Button } from "components/ui/button";
-import { XIcon } from "lucide-react";
+import { ArrowLeftIcon, XIcon } from "lucide-react";
 import { useModal } from "stores/modals";
 import { cn } from "lib/utils";
 
 type Props = {
   onClose: () => void;
+  closeVariant?: "dismiss" | "back";
   className?: string;
   children: React.ReactNode;
   title: string;
 };
 
-export default function MapOverlay({ onClose, title, className, children }: Props) {
+export default function MapOverlay({ onClose, closeVariant = "dismiss", title, className, children }: Props) {
   const { modalId } = useModal();
 
   React.useEffect(() => {
@@ -35,8 +36,14 @@ export default function MapOverlay({ onClose, title, className, children }: Prop
           <h2 className="text-lg font-semibold">{title}</h2>
           <div className="text-xs text-muted-foreground mt-1.5">{children}</div>
         </div>
-        <Button variant="ghost" size="icon-lg" className="-mr-1 -mt-1 shrink-0" onClick={onClose} aria-label="Close">
-          <XIcon className="size-5" />
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          className="-mr-1 -mt-1 shrink-0"
+          onClick={onClose}
+          aria-label={closeVariant === "back" ? "Back" : "Close"}
+        >
+          {closeVariant === "back" ? <ArrowLeftIcon className="size-5" /> : <XIcon className="size-5" />}
         </Button>
       </div>
     </Card>

@@ -24,7 +24,6 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const { trip, selectedSpecies, setSelectedSpecies } = useTrip();
   const { open, modalId } = useModal();
   const [mode, setMode] = React.useState<MapMode>("trip");
-  const [showInfo, setShowInfo] = React.useState(true);
   const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
   const setShowPersonalLocations = useMapPreferences((state) => state.setShowPersonalLocations);
   const savedHotspotsOnly = useMapPreferences((state) => state.savedHotspotsOnly);
@@ -60,7 +59,7 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
       id: it.id,
       lat: it.lat,
       lng: it.lng,
-      color: mode === "trip" && frequency != null ? markerColors[frequencyColorIndex(frequency)] : undefined,
+      color: mode === "trip" ? markerColors[frequency == null ? 0 : frequencyColorIndex(frequency)] : undefined,
     };
   });
 
@@ -84,20 +83,6 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
 
   return (
     <div className="absolute inset-0 z-10 flex flex-col" onClick={onOutsideClick}>
-      {showInfo && (
-        <MapOverlay onClose={() => setShowInfo(false)} title={selectedSpecies.name}>
-          {subtitle}{" "}
-          <Button
-            className="underline"
-            variant="link"
-            size="sm"
-            href={`https://ebird.org/map/${selectedSpecies.code}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
-            target="_blank"
-          >
-            View on eBird
-          </Button>
-        </MapOverlay>
-      )}
       <div className="w-full grow relative">
         {trip?.bounds && (
           <MapBox
@@ -108,10 +93,24 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
             bounds={trip.bounds}
           />
         )}
-        <div className="absolute top-4 right-4 sm:left-4 sm:right-auto z-10 flex flex-col items-end sm:items-start gap-3">
-          <MapButton onClick={() => setSelectedSpecies(undefined)} tooltip="Close map">
-            <Icon name="xMark" />
-          </MapButton>
+        <div className="absolute top-3 left-3 right-3 sm:right-auto sm:w-[26rem] z-10 flex flex-col items-start gap-3">
+          <MapOverlay
+            onClose={() => setSelectedSpecies(undefined)}
+            closeVariant="back"
+            title={selectedSpecies.name}
+            className="relative left-0 top-0 w-full max-w-none translate-x-0"
+          >
+            {subtitle}{" "}
+            <Button
+              className="underline"
+              variant="link"
+              size="sm"
+              href={`https://ebird.org/map/${selectedSpecies.code}?env.minX=${trip?.bounds?.minX}&env.minY=${trip?.bounds?.minY}&env.maxX=${trip?.bounds?.maxX}&env.maxY=${trip?.bounds?.maxY}`}
+              target="_blank"
+            >
+              View on eBird
+            </Button>
+          </MapOverlay>
           <SegmentedControl<MapMode>
             value={mode}
             onChange={setMode}
@@ -130,7 +129,11 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
           <MapButton
             onClick={() => setShowPersonalLocations(!showPersonalLocations)}
             tooltip={
-              personalDisabled ? "Personal locations only appear in recent sightings" : "Hide personal locations"
+              personalDisabled
+                ? "Personal locations are only in recent sightings"
+                : showPersonalLocations
+                  ? "Hide personal locations"
+                  : "Show personal locations"
             }
             active={showPersonalLocations && !personalDisabled}
             disabled={personalDisabled}
