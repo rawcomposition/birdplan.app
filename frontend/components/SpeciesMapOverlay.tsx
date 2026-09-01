@@ -9,7 +9,7 @@ import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useSpeciesHotspotRankings from "hooks/useSpeciesHotspotRankings";
-import { buildFrequencyLayer, frequencyColorIndex, markerColors } from "lib/helpers";
+import { buildFrequencyLayer, filterOutPersonal, frequencyColorIndex, markerColors } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import { useMapPreferences } from "stores/mapPreferences";
 import { Button } from "components/ui/button";
@@ -22,7 +22,7 @@ type Props = {
 
 export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const { trip, selectedSpecies, setSelectedSpecies } = useTrip();
-  const { open, modalId } = useModal();
+  const { open } = useModal();
   const [mode, setMode] = React.useState<MapMode>("trip");
   const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
   const setShowPersonalLocations = useMapPreferences((state) => state.setShowPersonalLocations);
@@ -34,21 +34,13 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
     setSavedHotspotsOnly(false);
   }
 
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !modalId) setSelectedSpecies(undefined);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [modalId, setSelectedSpecies]);
-
   const savedHotspots = trip?.hotspots ?? [];
   const savedIds = new Set(savedHotspots.map((it) => it.id));
 
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const regionHotspots = useSpeciesHotspotRankings(selectedSpecies?.code);
   const savedRanked = useSpeciesHotspotRankings(
-    selectedSpecies?.code,
+    mode === "trip" ? selectedSpecies?.code : undefined,
     savedHotspots.map((it) => it.id)
   );
 
@@ -56,7 +48,8 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
 
   const savedFrequency = new Map(savedRanked.map((it) => [it.id, it.frequency]));
   const regionLayer = buildFrequencyLayer(regionHotspots, savedIds);
-  const layer = savedHotspotsOnly ? null : mode === "trip" ? regionLayer : obsLayer;
+  const recentLayer = showPersonalLocations ? obsLayer : filterOutPersonal(obsLayer);
+  const layer = savedHotspotsOnly ? null : mode === "trip" ? regionLayer : recentLayer;
 
   const markers = savedHotspots.map((it) => {
     const frequency = savedFrequency.get(it.id);

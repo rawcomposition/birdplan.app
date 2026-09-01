@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { EBIRD_BASE_URL } from "lib/config";
-import { useMapPreferences } from "stores/mapPreferences";
 
 type Obs = {
   id: string;
@@ -17,8 +16,6 @@ type Props = {
 };
 
 export default function useFetchSpeciesObs({ region, code }: Props) {
-  const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
-
   const { data } = useQuery<Obs[]>({
     queryKey: [`${EBIRD_BASE_URL}/data/obs/${region}/recent/${code}`, { back: 30, includeProvisional: true }],
     enabled: !!region && !!code,
@@ -32,16 +29,14 @@ export default function useFetchSpeciesObs({ region, code }: Props) {
   });
 
   const obs: Obs[] =
-    data
-      ?.filter(({ locationPrivate }: any) => showPersonalLocations || !locationPrivate)
-      .map(({ lat, lng, locId, locationPrivate, locName, obsDt }: any) => ({
-        lat,
-        lng,
-        id: locId,
-        name: locName,
-        isPersonal: locationPrivate,
-        obsDt,
-      })) || [];
+    data?.map(({ lat, lng, locId, locationPrivate, locName, obsDt }: any) => ({
+      lat,
+      lng,
+      id: locId,
+      name: locName,
+      isPersonal: locationPrivate,
+      obsDt,
+    })) || [];
 
   const hasFetched = obs.length > 0;
 

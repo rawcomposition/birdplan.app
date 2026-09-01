@@ -98,20 +98,11 @@ export default function Mapbox({
     id: "obs",
     type: "circle",
     paint: {
-      "circle-radius": hasFrequencyData
-        ? ["match", ["get", "isSaved"], "true", isMobile ? 9 : 8, isMobile ? 7 : 6]
-        : isMobile
-          ? 8
-          : 7,
-      "circle-stroke-width": hasFrequencyData ? ["match", ["get", "isSaved"], "true", 2.5, 0.75] : 0.75,
-      "circle-stroke-color": hasFrequencyData ? ["match", ["get", "isSaved"], "true", "#1e3a8a", "#555"] : "#555",
+      "circle-radius": hasFrequencyData ? (isMobile ? 7 : 6) : isMobile ? 8 : 7,
+      "circle-stroke-width": 0.75,
+      "circle-stroke-color": "#555",
       "circle-color": hasFrequencyData
-        ? [
-            "case",
-            ["==", ["get", "hasFrequency"], "false"],
-            "#b8b8b8",
-            ["match", ["get", "colorIndex"], ...markerColors.flatMap((color, i) => [i, color]), markerColors[3]],
-          ]
+        ? ["match", ["get", "colorIndex"], ...markerColors.flatMap((color, i) => [i, color]), markerColors[3]]
         : ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
     },
   };
@@ -250,12 +241,6 @@ export default function Mapbox({
               <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} /> {caption}
             </span>
           ))}
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#b8b8b8]" /> No data
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full border-2 border-[#1e3a8a] bg-transparent" /> Saved
-          </span>
         </div>
       )}
       <div className="absolute bottom-0 left-16 right-16 h-4 sm:hidden">
