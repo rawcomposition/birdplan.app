@@ -9,7 +9,8 @@ import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useSpeciesHotspotRankings from "hooks/useSpeciesHotspotRankings";
-import { buildFrequencyLayer, filterLayerToSaved } from "lib/helpers";
+import { buildFrequencyLayer, frequencyColorIndex, markerColors } from "lib/helpers";
+import MarkerWithIcon from "components/MarkerWithIcon";
 import { useMapPreferences } from "stores/mapPreferences";
 import { Button } from "components/ui/button";
 
@@ -37,14 +38,33 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [modalId, setSelectedSpecies]);
 
+  const savedHotspots = trip?.hotspots ?? [];
+  const savedIds = new Set(savedHotspots.map((it) => it.id));
+
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
-  const { hotspots } = useSpeciesHotspotRankings(selectedSpecies?.code);
+  const regionHotspots = useSpeciesHotspotRankings(selectedSpecies?.code);
+  const savedRanked = useSpeciesHotspotRankings(
+    selectedSpecies?.code,
+    savedHotspots.map((it) => it.id)
+  );
 
   if (!selectedSpecies) return null;
 
-  const savedIds = new Set(trip?.hotspots.map((it) => it.id) ?? []);
-  const fullLayer = mode === "trip" ? buildFrequencyLayer(hotspots, savedIds) : obsLayer;
-  const layer = savedHotspotsOnly ? filterLayerToSaved(fullLayer, savedIds) : fullLayer;
+  const savedFrequency = new Map(savedRanked.map((it) => [it.id, it.frequency]));
+  const regionLayer = buildFrequencyLayer(regionHotspots, savedIds);
+  const layer = savedHotspotsOnly ? null : mode === "trip" ? regionLayer : obsLayer;
+
+  const markers = savedHotspots.map((it) => {
+    const frequency = savedFrequency.get(it.id);
+    return {
+      id: it.id,
+      lat: it.lat,
+      lng: it.lng,
+      color: mode === "trip" && frequency != null ? markerColors[frequencyColorIndex(frequency)] : undefined,
+    };
+  });
+
+  const personalDisabled = mode === "trip" || savedHotspotsOnly;
 
   const subtitle =
     mode === "trip"
@@ -53,7 +73,7 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
 
   const handleClick = (id: string) => {
     const observation = obs.find((it) => it.id === id);
-    const target = trip?.hotspots.find((it) => it.id === id) || observation || hotspots.find((it) => it.id === id);
+    const target = savedHotspots.find((it) => it.id === id) || observation || regionHotspots.find((it) => it.id === id);
     if (!target) return toast.error("Location not found");
     open(observation?.isPersonal ? "personalLocation" : "hotspot", {
       hotspot: target,
@@ -79,7 +99,15 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
         </MapOverlay>
       )}
       <div className="w-full grow relative">
-        {trip?.bounds && <MapBox key={trip._id} onHotspotClick={handleClick} obsLayer={layer} bounds={trip.bounds} />}
+        {trip?.bounds && (
+          <MapBox
+            key={trip._id}
+            onHotspotClick={handleClick}
+            markers={markers}
+            obsLayer={layer}
+            bounds={trip.bounds}
+          />
+        )}
         <div className="absolute top-4 right-4 sm:left-4 sm:right-auto z-10 flex flex-col items-end sm:items-start gap-3">
           <MapButton onClick={() => setSelectedSpecies(undefined)} tooltip="Close map">
             <Icon name="xMark" />
@@ -97,17 +125,18 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
             tooltip={savedHotspotsOnly ? "Show all hotspots" : "Show only saved hotspots"}
             active={savedHotspotsOnly}
           >
-            <Icon name={savedHotspotsOnly ? "star" : "starOutline"} />
+            <MarkerWithIcon icon="hotspot" showStroke={false} className="scale-[0.7]" />
           </MapButton>
-          {mode === "recent" && !savedHotspotsOnly && (
-            <MapButton
-              onClick={() => setShowPersonalLocations(!showPersonalLocations)}
-              tooltip={showPersonalLocations ? "Hide personal locations" : "Show personal locations"}
-              active={showPersonalLocations}
-            >
-              <Icon name="user" />
-            </MapButton>
-          )}
+          <MapButton
+            onClick={() => setShowPersonalLocations(!showPersonalLocations)}
+            tooltip={
+              personalDisabled ? "Personal locations only appear in recent sightings" : "Hide personal locations"
+            }
+            active={showPersonalLocations && !personalDisabled}
+            disabled={personalDisabled}
+          >
+            <Icon name="user" />
+          </MapButton>
         </div>
       </div>
     </div>

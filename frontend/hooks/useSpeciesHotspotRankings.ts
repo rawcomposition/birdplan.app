@@ -6,25 +6,30 @@ import type { OpenBirdingHotspotRankingResponse } from "@birdplan/shared";
 
 const HOTSPOT_LIMIT = 500;
 
-export default function useSpeciesHotspotRankings(code?: string) {
+export default function useSpeciesHotspotRankings(code?: string, locationIds?: string[]) {
   const { trip } = useTrip();
   const months = trip ? getMonthRange(trip.startMonth, trip.endMonth) : [];
+  const scope = locationIds ? locationIds.join(",") : trip?.region;
 
-  const { data, isLoading } = useQuery<OpenBirdingHotspotRankingResponse>({
-    queryKey: ["openbirding-trip-hotspots", code, trip?.region, months.join(",")],
+  const { data } = useQuery<OpenBirdingHotspotRankingResponse>({
+    queryKey: ["openbirding-trip-hotspots", code, scope, months.join(",")],
     queryFn: async () => {
       const res = await fetch(`${OPENBIRDING_API_URL}/api/v1/hotspots/species/${code}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ region: trip?.region, limit: HOTSPOT_LIMIT, months, sortBy: "frequency" }),
+        body: JSON.stringify({
+          ...(locationIds ? { locationIds } : { region: trip?.region, limit: HOTSPOT_LIMIT }),
+          months,
+          sortBy: "frequency",
+        }),
       });
       if (!res.ok) throw new Error("Failed to fetch hotspot rankings");
       return res.json();
     },
-    enabled: !!code && !!OPENBIRDING_API_URL && !!trip?.region,
+    enabled: !!code && !!OPENBIRDING_API_URL && (locationIds ? locationIds.length > 0 : !!trip?.region),
     staleTime: 24 * 60 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
-  return { hotspots: data?.items ?? [], isLoading };
+  return data?.items ?? [];
 }

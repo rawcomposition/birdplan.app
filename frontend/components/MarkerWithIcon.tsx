@@ -11,7 +11,7 @@ type Props = {
   highlight?: boolean;
 };
 
-export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, className, highlight }: Props) {
+export default function MarkerWithIcon({ icon, darkIcon, color, showStroke = true, className, highlight }: Props) {
   const iconData = markerIcons[icon];
   if (!iconData) return null;
   return (
@@ -22,7 +22,7 @@ export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, clas
         className
       )}
       style={{
-        backgroundColor: iconData.color,
+        backgroundColor: color ?? iconData.color,
       }}
     >
       {highlight && (

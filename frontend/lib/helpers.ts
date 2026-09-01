@@ -126,13 +126,10 @@ export const getMarkerColorIndex = (count: number) => {
   return markerColors.indexOf(color);
 };
 
-export const filterLayerToSaved = (layer: any, savedIds: Set<string>) =>
-  layer && { ...layer, features: layer.features.filter((it: any) => savedIds.has(it.properties?.id)) };
-
 export const layerHasFrequency = (layer?: any) =>
   !!layer?.features?.some((it: any) => it.properties?.hasFrequency === "true");
 
-const frequencyColorIndex = (frequency: number) => {
+export const frequencyColorIndex = (frequency: number) => {
   if (frequency >= 50) return 9;
   if (frequency >= 40) return 8;
   if (frequency >= 30) return 7;
@@ -146,16 +143,16 @@ export const buildFrequencyLayer = (
   hotspots: { id: string; lat: number; lng: number; frequency: number }[],
   savedIds: Set<string>
 ): GeoJSON.FeatureCollection | null => {
-  if (hotspots.length === 0) return null;
+  const unsaved = hotspots.filter((it) => !savedIds.has(it.id));
+  if (unsaved.length === 0) return null;
   return {
     type: "FeatureCollection",
-    features: hotspots.map((hotspot) => ({
+    features: unsaved.map((hotspot) => ({
       type: "Feature",
       geometry: { type: "Point", coordinates: [hotspot.lng, hotspot.lat] },
       properties: {
         id: hotspot.id,
         hasFrequency: "true",
-        isSaved: savedIds.has(hotspot.id) ? "true" : "false",
         colorIndex: frequencyColorIndex(hotspot.frequency),
       },
     })),
