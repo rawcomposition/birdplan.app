@@ -126,8 +126,8 @@ export const getMarkerColorIndex = (count: number) => {
   return markerColors.indexOf(color);
 };
 
-export const filterOutPersonal = (layer: any) =>
-  layer && { ...layer, features: layer.features.filter((it: any) => it.properties?.isPersonal !== "true") };
+export const filterLayer = (layer: any, keep: (properties: any) => boolean) =>
+  layer && { ...layer, features: layer.features.filter((it: any) => keep(it.properties ?? {})) };
 
 export const layerHasFrequency = (layer?: any) =>
   !!layer?.features?.some((it: any) => it.properties?.hasFrequency === "true");

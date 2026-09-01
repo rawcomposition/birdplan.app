@@ -178,7 +178,7 @@ export default function Mapbox({
             <MarkerWithIcon
               icon="hotspot"
               color={marker.color}
-              className={marker.faded ? "opacity-40" : undefined}
+              className={marker.faded && marker.id !== selectedMarkerId ? "opacity-40" : undefined}
               highlight={marker.id === selectedMarkerId}
             />
           </Marker>

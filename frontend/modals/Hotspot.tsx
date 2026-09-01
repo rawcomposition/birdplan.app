@@ -129,11 +129,11 @@ export default function Hotspot({ hotspot }: Props) {
 
   const hasSpecies = !!modalSpecies && location.pathname.includes("targets");
   React.useEffect(() => {
-    if (hasSpecies) {
+    if (isSaved) {
+      setHalo(undefined);
+    } else if (hasSpecies) {
       setHalo({ lat, lng, color: "#ce0d02" });
-    } else if (isSaved) {
-      setSelectedMarkerId(id);
-    } else if (!isSaved) {
+    } else {
       setHalo({ lat, lng, color: getMarkerColor(species || 0) });
     }
     setSelectedMarkerId(id);

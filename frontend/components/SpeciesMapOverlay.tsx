@@ -9,7 +9,7 @@ import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useSpeciesHotspotRankings from "hooks/useSpeciesHotspotRankings";
-import { buildFrequencyLayer, filterOutPersonal, frequencyColorIndex, markerColors } from "lib/helpers";
+import { buildFrequencyLayer, filterLayer, frequencyColorIndex, markerColors } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import { useMapPreferences } from "stores/mapPreferences";
 import { Button } from "components/ui/button";
@@ -48,7 +48,10 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
 
   const savedFrequency = new Map(savedRanked.map((it) => [it.id, it.frequency]));
   const regionLayer = buildFrequencyLayer(regionHotspots, savedIds);
-  const recentLayer = showPersonalLocations ? obsLayer : filterOutPersonal(obsLayer);
+  const recentLayer = filterLayer(
+    obsLayer,
+    (it) => !savedIds.has(it.id) && (showPersonalLocations || it.isPersonal !== "true")
+  );
   const layer = savedHotspotsOnly ? null : mode === "trip" ? regionLayer : recentLayer;
 
   const reportedIds = new Set(obs.map((it) => it.id));
