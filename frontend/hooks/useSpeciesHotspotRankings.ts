@@ -20,7 +20,7 @@ export default function useSpeciesHotspotRankings(code?: string, locationIds?: s
         body: JSON.stringify({
           ...(locationIds ? { locationIds } : { region: trip?.region, limit: HOTSPOT_LIMIT }),
           months,
-          sortBy: "frequency",
+          sortBy: "best",
         }),
       });
       if (!res.ok) throw new Error("Failed to fetch hotspot rankings");

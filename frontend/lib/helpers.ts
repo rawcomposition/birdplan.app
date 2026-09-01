@@ -130,12 +130,12 @@ export const layerHasFrequency = (layer?: any) =>
   !!layer?.features?.some((it: any) => it.properties?.hasFrequency === "true");
 
 export const frequencyColorIndex = (frequency: number) => {
-  if (frequency >= 50) return 9;
-  if (frequency >= 40) return 8;
-  if (frequency >= 30) return 7;
+  if (frequency >= 80) return 9;
+  if (frequency >= 60) return 8;
+  if (frequency >= 40) return 7;
   if (frequency >= 20) return 6;
-  if (frequency >= 15) return 5;
-  if (frequency >= 10) return 4;
+  if (frequency >= 10) return 5;
+  if (frequency >= 5) return 4;
   return 3;
 };
 

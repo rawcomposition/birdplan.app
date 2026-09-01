@@ -241,10 +241,10 @@ export default function Mapbox({
         <div className="flex flex-wrap absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-x-3 gap-y-1 z-10 rounded-tr-sm">
           <span className="text-gray-500">Chance during trip dates:</span>
           {[
-            [markerColors[3], "<15%"],
-            [markerColors[5], "15%"],
-            [markerColors[7], "30%"],
-            [markerColors[9], "50%+"],
+            [markerColors[3], "<5%"],
+            [markerColors[5], "10%"],
+            [markerColors[7], "40%"],
+            [markerColors[9], "80%+"],
           ].map(([color, caption]) => (
             <span key={caption} className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} /> {caption}
