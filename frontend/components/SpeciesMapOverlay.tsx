@@ -51,13 +51,17 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const recentLayer = showPersonalLocations ? obsLayer : filterOutPersonal(obsLayer);
   const layer = savedHotspotsOnly ? null : mode === "trip" ? regionLayer : recentLayer;
 
+  const reportedIds = new Set(obs.map((it) => it.id));
+
   const markers = savedHotspots.map((it) => {
     const frequency = savedFrequency.get(it.id);
+    const hasDataForMode = mode === "trip" ? frequency != null : reportedIds.has(it.id);
     return {
       id: it.id,
       lat: it.lat,
       lng: it.lng,
       color: mode === "trip" ? markerColors[frequency == null ? 0 : frequencyColorIndex(frequency)] : undefined,
+      faded: !hasDataForMode,
     };
   });
 

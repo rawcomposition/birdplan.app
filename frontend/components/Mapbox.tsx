@@ -175,7 +175,12 @@ export default function Mapbox({
               handleHotspotClick(marker.id);
             }}
           >
-            <MarkerWithIcon icon="hotspot" color={marker.color} highlight={marker.id === selectedMarkerId} />
+            <MarkerWithIcon
+              icon="hotspot"
+              color={marker.color}
+              className={marker.faded ? "opacity-40" : undefined}
+              highlight={marker.id === selectedMarkerId}
+            />
           </Marker>
         ))}
         {customMarkers?.map((marker) => (
