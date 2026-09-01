@@ -21,7 +21,7 @@ export const fullMonths = [
   "August",
   "September",
   "October",
-  "Novermber",
+  "November",
   "December",
 ];
 
