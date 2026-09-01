@@ -3,11 +3,14 @@ import toast from "react-hot-toast";
 import MapBox from "components/Mapbox";
 import MapOverlay from "components/MapOverlay";
 import SegmentedControl from "components/SegmentedControl";
+import MapButton from "components/MapButton";
+import Icon from "components/Icon";
 import { useTrip } from "hooks/useTrip";
 import { useModal } from "stores/modals";
 import useFetchSpeciesObs from "hooks/useFetchSpeciesObs";
 import useSpeciesHotspotRankings from "hooks/useSpeciesHotspotRankings";
 import { buildFrequencyLayer } from "lib/helpers";
+import { useMapPreferences } from "stores/mapPreferences";
 import { Button } from "components/ui/button";
 
 type MapMode = "trip" | "recent";
@@ -20,6 +23,8 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const { trip, selectedSpecies, setSelectedSpecies } = useTrip();
   const { open } = useModal();
   const [mode, setMode] = React.useState<MapMode>("trip");
+  const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
+  const setShowPersonalLocations = useMapPreferences((state) => state.setShowPersonalLocations);
 
   const { obs, obsLayer } = useFetchSpeciesObs({ region: trip?.region, code: selectedSpecies?.code });
   const { hotspots } = useSpeciesHotspotRankings(selectedSpecies?.code);
@@ -61,7 +66,7 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
       </MapOverlay>
       <div className="w-full grow relative">
         {trip?.bounds && <MapBox key={trip._id} onHotspotClick={handleClick} obsLayer={layer} bounds={trip.bounds} />}
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-3">
           <SegmentedControl<MapMode>
             value={mode}
             onChange={setMode}
@@ -70,6 +75,15 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
               { value: "recent", label: "Recent sightings" },
             ]}
           />
+          {mode === "recent" && (
+            <MapButton
+              onClick={() => setShowPersonalLocations(!showPersonalLocations)}
+              tooltip={showPersonalLocations ? "Hide personal locations" : "Show personal locations"}
+              active={showPersonalLocations}
+            >
+              <Icon name="user" />
+            </MapButton>
+          )}
         </div>
       </div>
     </div>
