@@ -26,8 +26,13 @@ export default function SpeciesMapOverlay({ onOutsideClick }: Props) {
   const [mode, setMode] = React.useState<MapMode>("trip");
   const showPersonalLocations = useMapPreferences((state) => state.showPersonalLocations);
   const setShowPersonalLocations = useMapPreferences((state) => state.setShowPersonalLocations);
-  const savedHotspotsOnly = useMapPreferences((state) => state.savedHotspotsOnly);
-  const setSavedHotspotsOnly = useMapPreferences((state) => state.setSavedHotspotsOnly);
+  const [savedHotspotsOnly, setSavedHotspotsOnly] = React.useState(false);
+  const [prevCode, setPrevCode] = React.useState(selectedSpecies?.code);
+
+  if (selectedSpecies?.code !== prevCode) {
+    setPrevCode(selectedSpecies?.code);
+    setSavedHotspotsOnly(false);
+  }
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
