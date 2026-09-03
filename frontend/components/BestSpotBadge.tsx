@@ -10,7 +10,7 @@ export default function BestSpotBadge() {
         render={
           <span
             aria-label="Your best spot for this species"
-            className="inline-flex shrink-0 cursor-default items-center justify-center text-primary text-[13px]"
+            className="inline-flex shrink-0 cursor-default items-center justify-center text-pink-700 text-[13px]"
           >
             <Icon name="bullseye" />
           </span>
