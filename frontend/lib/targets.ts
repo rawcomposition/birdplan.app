@@ -51,10 +51,7 @@ export function bestHotspotsByCode(hotspots: HotspotTargetCounts[], months: numb
     const topFrequency = Math.max(...records.map((it) => it.frequency));
     const leaders = records.filter((it) => it.frequency === topFrequency);
     if (leaders.length === records.length) continue;
-    best.set(
-      code,
-      leaders.map((it) => it.hotspotId)
-    );
+    best.set(code, leaders.map((it) => it.hotspotId));
   }
 
   return best;

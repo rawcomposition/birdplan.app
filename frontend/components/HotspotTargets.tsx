@@ -9,7 +9,8 @@ import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
-import { computeFrequency, getMonthRange } from "lib/targets";
+import useSavedHotspotTargets from "hooks/useSavedHotspotTargets";
+import { bestHotspotsByCode, computeFrequency, getMonthRange } from "lib/targets";
 
 type Props = {
   hotspotId: string;
@@ -28,19 +29,19 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   const allMonths = getMonthRange(1, 12);
   const tripMonths = getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
+  const months = view === "all" ? allMonths : tripMonths;
 
-  const sortedItems = React.useMemo(() => {
-    if (!data?.items?.length) return [];
-    const months = view === "all" ? allMonths : tripMonths;
-    return data.items
-      .map((item) => ({
-        code: item.code,
-        name: item.name,
-        frequency: computeFrequency(item.obs, data.samples, months),
-      }))
-      .filter((it) => !lifelist?.includes(it.code) && it.frequency >= HOTSPOT_TARGET_CUTOFF)
-      .sort((a, b) => b.frequency - a.frequency);
-  }, [data, view, lifelist, allMonths, tripMonths]);
+  const { hotspots: savedHotspots } = useSavedHotspotTargets(isSaved && (trip?.hotspots.length ?? 0) > 1);
+  const bestHotspots = bestHotspotsByCode(savedHotspots, months);
+
+  const sortedItems = (data?.items || [])
+    .map((item) => ({
+      code: item.code,
+      name: item.name,
+      frequency: computeFrequency(item.obs, data?.samples || [], months),
+    }))
+    .filter((it) => !lifelist?.includes(it.code) && it.frequency >= HOTSPOT_TARGET_CUTOFF)
+    .sort((a, b) => b.frequency - a.frequency);
 
   if (isLoading) {
     return <LoadingState inline />;
@@ -79,6 +80,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           range={view === "all" ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
           isMutual={isMutual(it.code)}
+          isBestSpot={bestHotspots.get(it.code)?.includes(hotspotId)}
           onClick={() => {
             onSpeciesClick({ code: it.code, name: it.name });
           }}
