@@ -28,7 +28,12 @@ function sumMonths(counts: number[], months: number[]): number {
   return months.reduce((sum, m) => sum + (counts[m - 1] || 0), 0);
 }
 
-export function bestHotspotsByCode(hotspots: HotspotTargetCounts[], months: number[]): Map<string, string[]> {
+export type BestHotspots = {
+  hotspotIds: string[];
+  frequency: number;
+};
+
+export function bestHotspotsByCode(hotspots: HotspotTargetCounts[], months: number[]): Map<string, BestHotspots> {
   const recordsByCode = new Map<string, { hotspotId: string; frequency: number }[]>();
 
   for (const hotspot of hotspots) {
@@ -43,13 +48,13 @@ export function bestHotspotsByCode(hotspots: HotspotTargetCounts[], months: numb
     }
   }
 
-  const best = new Map<string, string[]>();
+  const best = new Map<string, BestHotspots>();
 
   for (const [code, records] of recordsByCode) {
-    const topFrequency = Math.max(...records.map((it) => it.frequency));
-    const leaders = records.filter((it) => it.frequency === topFrequency);
+    const frequency = Math.max(...records.map((it) => it.frequency));
+    const leaders = records.filter((it) => it.frequency === frequency);
     if (leaders.length === records.length) continue;
-    best.set(code, leaders.map((it) => it.hotspotId));
+    best.set(code, { hotspotIds: leaders.map((it) => it.hotspotId), frequency });
   }
 
   return best;

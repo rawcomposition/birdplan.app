@@ -1,13 +1,9 @@
 import { useQueries } from "@tanstack/react-query";
 import { OPENBIRDING_API_URL } from "lib/config";
-import { useTrip } from "hooks/useTrip";
 import type { HotspotTargetCounts } from "lib/targets";
 import type { OpenBirdingLocationResponse } from "@birdplan/shared";
 
-export default function useSavedHotspotTargets(enabled: boolean) {
-  const { trip } = useTrip();
-  const hotspotIds = trip?.hotspots.map((it) => it.id) ?? [];
-
+export default function useHotspotTargets(hotspotIds: string[], enabled: boolean) {
   const results = useQueries({
     queries: hotspotIds.map((id) => ({
       queryKey: [`${OPENBIRDING_API_URL}/api/v1/targets/location/${id}`],
@@ -30,5 +26,9 @@ export default function useSavedHotspotTargets(enabled: boolean) {
       })
     : [];
 
-  return { hotspots, isLoading: results.some((it) => it.isLoading) };
+  const namesByCode = new Map(
+    responses.flatMap((response) => (response ? response.items.map((it) => [it.code, it.name] as const) : []))
+  );
+
+  return { hotspots, namesByCode, isLoading: results.some((it) => it.isLoading) };
 }

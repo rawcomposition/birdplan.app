@@ -14,7 +14,9 @@ import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import { useModal } from "stores/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
+import KeyTargets from "components/KeyTargets";
 import TravelTime from "components/TravelTime";
+import type { KeyTarget } from "hooks/useKeyTargets";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
 import { GripVertical, Plus, Route, X } from "lucide-react";
@@ -35,6 +37,7 @@ type PropsT = {
   dayIndex: number;
   isEditing: boolean;
   dayIds: string[];
+  keyTargets: KeyTarget[];
 };
 
 const densify = (itinerary: Day[] | undefined, dayIds: string[]): Day[] => {
@@ -43,7 +46,7 @@ const densify = (itinerary: Day[] | undefined, dayIds: string[]): Day[] => {
   return Array.from({ length }, (_, i) => existing[i] || { id: dayIds[i], locations: [] });
 };
 
-export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: PropsT) {
+export default function ItineraryDay({ day, dayIndex, isEditing, dayIds, keyTargets }: PropsT) {
   const { trip, isFetching: isFetchingTrip } = useTrip();
   const { open } = useModal();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -303,6 +306,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
             </SortableContext>
           </DndContext>
         )}
+        <KeyTargets targets={keyTargets} />
         {isEditing && (
           <Combobox<AddOption>
             items={addOptions}

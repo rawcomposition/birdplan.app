@@ -9,7 +9,7 @@ import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
-import useSavedHotspotTargets from "hooks/useSavedHotspotTargets";
+import useHotspotTargets from "hooks/useHotspotTargets";
 import { bestHotspotsByCode, computeFrequency, getMonthRange } from "lib/targets";
 
 type Props = {
@@ -31,7 +31,8 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const tripMonths = getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
   const months = view === "all" ? allMonths : tripMonths;
 
-  const { hotspots: savedHotspots } = useSavedHotspotTargets(isSaved && (trip?.hotspots.length ?? 0) > 1);
+  const savedHotspotIds = trip?.hotspots.map((it) => it.id) ?? [];
+  const { hotspots: savedHotspots } = useHotspotTargets(savedHotspotIds, isSaved && savedHotspotIds.length > 1);
   const bestHotspots = bestHotspotsByCode(savedHotspots, months);
 
   const sortedItems = (data?.items || [])
@@ -80,7 +81,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           range={view === "all" ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
           isMutual={isMutual(it.code)}
-          isBestSpot={bestHotspots.get(it.code)?.includes(hotspotId)}
+          isBestSpot={bestHotspots.get(it.code)?.hotspotIds.includes(hotspotId)}
           onClick={() => {
             onSpeciesClick({ code: it.code, name: it.name });
           }}

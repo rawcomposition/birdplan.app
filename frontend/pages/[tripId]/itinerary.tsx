@@ -12,6 +12,7 @@ import Icon from "components/Icon";
 import { Printer } from "lucide-react";
 import useTripMutation from "hooks/useTripMutation";
 import ItineraryDay from "components/ItineraryDay";
+import useKeyTargets from "hooks/useKeyTargets";
 import { getTripDays } from "lib/itinerary";
 
 export default function Itinerary() {
@@ -20,6 +21,7 @@ export default function Itinerary() {
   const isDateRange = !!(trip?.startDate && trip?.endDate);
   const renderDays = getTripDays(trip);
   const dayIds = renderDays.map((d) => d.id);
+  const { targetsByDay } = useKeyTargets();
   const hasDays = renderDays.length > 0;
   const shouldDefaultEdit = !!(trip && !isDateRange) || !!(trip && !trip?.itinerary?.length);
   const [editing, setEditing] = React.useState(shouldDefaultEdit);
@@ -145,7 +147,14 @@ export default function Itinerary() {
               />
             )}
             {renderDays.map((day, index) => (
-              <ItineraryDay key={day.id} day={day} dayIndex={index} isEditing={isEditing} dayIds={dayIds} />
+              <ItineraryDay
+                key={day.id}
+                day={day}
+                dayIndex={index}
+                isEditing={isEditing}
+                dayIds={dayIds}
+                keyTargets={targetsByDay.get(day.id) || []}
+              />
             ))}
           </div>
         </div>
