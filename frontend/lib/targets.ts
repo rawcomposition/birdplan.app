@@ -29,17 +29,15 @@ function sumMonths(counts: number[], months: number[]): number {
 }
 
 export function bestHotspotsByCode(hotspots: HotspotTargetCounts[], months: number[]): Map<string, string[]> {
-  const recordsByCode = new Map<string, { hotspotId: string; frequency: number; observations: number }[]>();
+  const recordsByCode = new Map<string, { hotspotId: string; frequency: number }[]>();
 
   for (const hotspot of hotspots) {
     for (const [code, obs] of hotspot.obsByCode) {
-      const observations = sumMonths(obs, months);
-      if (observations < MIN_SPECIES_OBSERVATIONS) continue;
+      if (sumMonths(obs, months) < MIN_SPECIES_OBSERVATIONS) continue;
       const records = recordsByCode.get(code) || [];
       records.push({
         hotspotId: hotspot.hotspotId,
         frequency: computeFrequency(obs, hotspot.samples, months),
-        observations,
       });
       recordsByCode.set(code, records);
     }

@@ -17,17 +17,18 @@ export default function useSavedHotspotTargets(enabled: boolean) {
     })),
   });
 
-  const hotspots: HotspotTargetCounts[] = results.flatMap(({ data }, index) => {
-    const response = data as OpenBirdingLocationResponse | undefined;
-    if (!response) return [];
-    return [
-      {
-        hotspotId: hotspotIds[index],
-        samples: response.samples,
-        obsByCode: new Map(response.items.map((it) => [it.code, it.obs])),
-      },
-    ];
-  });
+  const responses = results.map(({ data }) => data as OpenBirdingLocationResponse | undefined);
+
+  const hotspots: HotspotTargetCounts[] = responses.every((it) => !!it)
+    ? hotspotIds.map((hotspotId, index) => {
+        const response = responses[index] as OpenBirdingLocationResponse;
+        return {
+          hotspotId,
+          samples: response.samples,
+          obsByCode: new Map(response.items.map((it) => [it.code, it.obs])),
+        };
+      })
+    : [];
 
   return { hotspots, isLoading: results.some((it) => it.isLoading) };
 }
