@@ -21,7 +21,7 @@ export default function Itinerary() {
   const isDateRange = !!(trip?.startDate && trip?.endDate);
   const renderDays = getTripDays(trip);
   const dayIds = renderDays.map((d) => d.id);
-  const { targetsByDay } = useKeyTargets();
+  const { groupsByDay } = useKeyTargets();
   const hasDays = renderDays.length > 0;
   const shouldDefaultEdit = !!(trip && !isDateRange) || !!(trip && !trip?.itinerary?.length);
   const [editing, setEditing] = React.useState(shouldDefaultEdit);
@@ -153,7 +153,7 @@ export default function Itinerary() {
                 dayIndex={index}
                 isEditing={isEditing}
                 dayIds={dayIds}
-                keyTargets={targetsByDay.get(day.id) || []}
+                keyTargets={groupsByDay.get(day.id) || []}
               />
             ))}
           </div>

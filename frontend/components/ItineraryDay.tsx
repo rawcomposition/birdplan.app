@@ -16,7 +16,7 @@ import { useModal } from "stores/modals";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import KeyTargets from "components/KeyTargets";
 import TravelTime from "components/TravelTime";
-import type { KeyTarget } from "hooks/useKeyTargets";
+import type { KeyTargetGroup } from "hooks/useKeyTargets";
 import InputNotesSimple from "components/InputNotesSimple";
 import Icon from "components/Icon";
 import { GripVertical, Plus, Route, X } from "lucide-react";
@@ -37,7 +37,7 @@ type PropsT = {
   dayIndex: number;
   isEditing: boolean;
   dayIds: string[];
-  keyTargets: KeyTarget[];
+  keyTargets: KeyTargetGroup[];
 };
 
 const densify = (itinerary: Day[] | undefined, dayIds: string[]): Day[] => {
@@ -306,7 +306,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds, keyTarg
             </SortableContext>
           </DndContext>
         )}
-        <KeyTargets targets={keyTargets} />
+        <KeyTargets groups={keyTargets} />
         {isEditing && (
           <Combobox<AddOption>
             items={addOptions}

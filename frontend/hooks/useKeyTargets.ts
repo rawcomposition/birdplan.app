@@ -10,7 +10,12 @@ export type KeyTarget = {
   code: string;
   name: string;
   frequency: number;
-  hotspotNames: string[];
+};
+
+export type KeyTargetGroup = {
+  hotspotId: string;
+  hotspotName: string;
+  targets: KeyTarget[];
 };
 
 export default function useKeyTargets() {
@@ -42,27 +47,37 @@ export default function useKeyTargets() {
   const hotspotNameById = new Map(trip?.hotspots.map((it) => [it.id, it.name]) ?? []);
   const seen = new Set(lifelist);
 
-  const targetsByDay = new Map<string, KeyTarget[]>(
+  const groupsByDay = new Map<string, KeyTargetGroup[]>(
     days.map((day, index) => {
       const dayIds = new Set(scheduledByDay[index]);
       const best = bestByMonthKey.get(monthsByDay[index].join(","));
-      const targets: KeyTarget[] = [];
+      const byHotspot = new Map<string, KeyTarget[]>();
 
       for (const [code, { hotspotIds, frequency }] of best ?? []) {
         if (frequency < HOTSPOT_TARGET_CUTOFF || seen.has(code)) continue;
-        const here = hotspotIds.filter((it) => dayIds.has(it));
-        if (!here.length) continue;
-        targets.push({
-          code,
-          name: namesByCode.get(code) || code,
-          frequency,
-          hotspotNames: here.flatMap((it) => hotspotNameById.get(it) ?? []),
-        });
+        for (const hotspotId of hotspotIds) {
+          if (!dayIds.has(hotspotId)) continue;
+          const targets = byHotspot.get(hotspotId) || [];
+          targets.push({ code, name: namesByCode.get(code) || code, frequency });
+          byHotspot.set(hotspotId, targets);
+        }
       }
 
-      return [day.id, targets.sort((a, b) => b.frequency - a.frequency)];
+      const groups = [...dayIds].flatMap((hotspotId) => {
+        const targets = byHotspot.get(hotspotId);
+        if (!targets?.length) return [];
+        return [
+          {
+            hotspotId,
+            hotspotName: hotspotNameById.get(hotspotId) || "Unknown Location",
+            targets: targets.sort((a, b) => b.frequency - a.frequency),
+          },
+        ];
+      });
+
+      return [day.id, groups];
     })
   );
 
-  return { targetsByDay, isLoading };
+  return { groupsByDay, isLoading };
 }
