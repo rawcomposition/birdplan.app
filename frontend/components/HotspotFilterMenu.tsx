@@ -21,7 +21,7 @@ export default function HotspotFilterMenu() {
 
   return (
     <div className="relative">
-      <MapButton onClick={() => setOpen((o) => !o)} tooltip={open ? undefined : "Hotspots"} active={showAllHotspots}>
+      <MapButton onClick={() => setOpen((o) => !o)} tooltip={open ? undefined : "Hotspots"} active={activeCount > 0}>
         <Icon name="sliders" />
       </MapButton>
       {open && (
