@@ -7,14 +7,14 @@ import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "stores/modals";
-import { useTrip } from "hooks/useTrip";
+import { useTrip, HotspotFilters, DEFAULT_HOTSPOT_FILTERS } from "hooks/useTrip";
 
 type Props = {
   bounds: Trip["bounds"];
   markers?: MarkerT[];
   customMarkers?: CustomMarker[];
   hotspotLayer?: any;
-  minChecklists?: number;
+  hotspotFilters?: HotspotFilters;
   obsLayer?: any;
   addingMarker?: boolean;
   showSatellite?: boolean;
@@ -28,7 +28,7 @@ export default function Mapbox({
   customMarkers,
   onHotspotClick,
   hotspotLayer,
-  minChecklists = 0,
+  hotspotFilters = DEFAULT_HOTSPOT_FILTERS,
   obsLayer,
   addingMarker,
   showSatellite,
@@ -59,20 +59,33 @@ export default function Mapbox({
     return window.innerWidth < 768;
   }, []);
 
+  const visibleHotspotCount = (hotspotLayer?.features || []).filter(
+    (f: any) =>
+      f.properties.checklists >= hotspotFilters.minChecklists &&
+      f.properties.species >= hotspotFilters.minSpecies
+  ).length;
+  const isSparse = visibleHotspotCount < 50;
+
   const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
-    filter: [">=", ["coalesce", ["get", "checklists"], 0], minChecklists],
+    filter: [
+      "all",
+      [">=", ["get", "checklists"], hotspotFilters.minChecklists],
+      [">=", ["get", "species"], hotspotFilters.minSpecies],
+    ],
     paint: {
       "circle-radius": [
         "interpolate",
         ["linear"],
         ["zoom"],
         6,
-        ["interpolate", ["linear"], ["get", "species"], 0, 2.5, 300, 5],
-        10,
+        isSparse
+          ? ["interpolate", ["linear"], ["get", "species"], 0, 3.5, 300, 7]
+          : ["interpolate", ["linear"], ["get", "species"], 0, 3, 300, 5],
+        9,
         ["interpolate", ["linear"], ["get", "species"], 0, 4.5, 300, 9],
-        14,
+        12,
         ["interpolate", ["linear"], ["get", "species"], 0, 7, 300, isMobile ? 10 : 9],
       ],
       "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 0.3, 12, 0.75],

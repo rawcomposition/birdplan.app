@@ -9,16 +9,9 @@ import { useTrip } from "hooks/useTrip";
 import MapButton from "components/MapButton";
 import MapOverlay from "components/MapOverlay";
 import Icon from "components/Icon";
-import { Star, Utensils, MapPin, Check, Filter } from "lucide-react";
+import HotspotFilterMenu from "components/HotspotFilterMenu";
+import { Star, Utensils, MapPin } from "lucide-react";
 import { Button } from "components/ui/button";
-
-const CHECKLIST_FILTERS = [
-  { label: "All hotspots", value: 0 },
-  { label: "1+ checklists", value: 1 },
-  { label: "10+ checklists", value: 10 },
-  { label: "50+ checklists", value: 50 },
-  { label: "100+ checklists", value: 100 },
-];
 
 export default function Trip() {
   const { open } = useModal();
@@ -30,8 +23,7 @@ export default function Trip() {
     setShowAllHotspots,
     showSatellite,
     setShowSatellite,
-    minChecklists,
-    setMinChecklists,
+    hotspotFilters,
   } = useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
@@ -75,29 +67,10 @@ export default function Trip() {
     <>
       {trip && <title>{`${trip.name} | BirdPlan.app`}</title>}
       <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
-        <MapButton
-          onClick={() => setShowAllHotspots((prev) => !prev)}
-          tooltip={showAllHotspots ? "Hide hotspots" : "Show hotspots"}
-          active={showAllHotspots}
-        >
-          <Icon name="mapFlatPin" />
-        </MapButton>
+        <HotspotFilterMenu />
         <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>
           <Icon name="layers" />
         </MapButton>
-        {showAllHotspots && (
-          <MapButton
-            tooltip="Filter hotspots"
-            active={minChecklists > 1}
-            childItems={CHECKLIST_FILTERS.map(({ label, value }) => ({
-              label,
-              onClick: () => setMinChecklists(value),
-              icon: minChecklists === value ? <Check /> : <span className="size-4" />,
-            }))}
-          >
-            <Filter />
-          </MapButton>
-        )}
         {canEdit && (
           <MapButton
             onClick={() => setIsAddingMarker((prev) => !prev)}
@@ -134,7 +107,7 @@ export default function Trip() {
               markers={markers}
               customMarkers={customMarkers}
               hotspotLayer={showAllHotspots && hotspotLayer}
-              minChecklists={minChecklists}
+              hotspotFilters={hotspotFilters}
               bounds={trip.bounds}
               addingMarker={isAddingMarker}
               onDisableAddingMarker={() => setIsAddingMarker(false)}
