@@ -9,7 +9,8 @@ export default function useCloseOnOutsideClick() {
       !target.closest("button") &&
       !target.closest("a") &&
       !target.closest('[role="button"]') &&
-      !target.closest(".mapboxgl-canvas")
+      !target.closest(".mapboxgl-canvas") &&
+      !target.closest(".mapboxgl-marker")
     ) {
       close();
     }

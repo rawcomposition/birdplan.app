@@ -125,6 +125,42 @@ export const getMarkerColorIndex = (count: number) => {
   return markerColors.indexOf(color);
 };
 
+export const filterLayer = (layer: any, keep: (properties: any) => boolean) =>
+  layer && { ...layer, features: layer.features.filter((it: any) => keep(it.properties ?? {})) };
+
+export const layerHasFrequency = (layer?: any) =>
+  !!layer?.features?.some((it: any) => it.properties?.hasFrequency === "true");
+
+export const frequencyColorIndex = (frequency: number) => {
+  if (frequency >= 80) return 9;
+  if (frequency >= 60) return 8;
+  if (frequency >= 40) return 7;
+  if (frequency >= 20) return 6;
+  if (frequency >= 10) return 5;
+  if (frequency >= 5) return 4;
+  return 3;
+};
+
+export const buildFrequencyLayer = (
+  hotspots: { id: string; lat: number; lng: number; frequency: number }[],
+  savedIds: Set<string>
+): GeoJSON.FeatureCollection | null => {
+  const unsaved = hotspots.filter((it) => !savedIds.has(it.id));
+  if (unsaved.length === 0) return null;
+  return {
+    type: "FeatureCollection",
+    features: unsaved.map((hotspot) => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [hotspot.lng, hotspot.lat] },
+      properties: {
+        id: hotspot.id,
+        hasFrequency: "true",
+        colorIndex: frequencyColorIndex(hotspot.frequency),
+      },
+    })),
+  };
+};
+
 export const buildHotspotsLayer = (
   hotspots: eBirdHotspot[],
   savedHotspots: Hotspot[]

@@ -3,7 +3,7 @@ import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
 import { Marker as MarkerT } from "lib/types";
 import { Trip, CustomMarker } from "@birdplan/shared";
 import { MarkerIconT } from "lib/icons";
-import { markerColors, getLatLngFromBounds } from "lib/helpers";
+import { markerColors, getLatLngFromBounds, layerHasFrequency } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "stores/modals";
@@ -118,14 +118,18 @@ export default function Mapbox({
     },
   };
 
+  const hasFrequencyData = layerHasFrequency(obsLayer);
+
   const obsLayerStyle = {
     id: "obs",
     type: "circle",
     paint: {
-      "circle-radius": isMobile ? 8 : 7,
+      "circle-radius": hasFrequencyData ? (isMobile ? 7 : 6) : isMobile ? 8 : 7,
       "circle-stroke-width": 0.75,
       "circle-stroke-color": "#555",
-      "circle-color": ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
+      "circle-color": hasFrequencyData
+        ? ["match", ["get", "colorIndex"], ...markerColors.flatMap((color, i) => [i, color]), markerColors[3]]
+        : ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
     },
   };
 
@@ -197,7 +201,12 @@ export default function Mapbox({
               handleHotspotClick(marker.id);
             }}
           >
-            <MarkerWithIcon icon="hotspot" highlight={marker.id === selectedMarkerId} />
+            <MarkerWithIcon
+              icon="hotspot"
+              color={marker.color}
+              className={marker.faded && marker.id !== selectedMarkerId ? "opacity-40" : undefined}
+              highlight={marker.id === selectedMarkerId}
+            />
           </Marker>
         ))}
         {customMarkers?.map((marker) => (
@@ -240,7 +249,7 @@ export default function Mapbox({
           </Marker>
         )}
       </Map>
-      {obsLayer && (
+      {obsLayer && !hasFrequencyData && (
         <div className="flex absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-2 z-10 rounded-tr-sm">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#555]" /> Personal Location
@@ -248,6 +257,21 @@ export default function Mapbox({
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ce0d02]" /> Hotspot
           </span>
+        </div>
+      )}
+      {obsLayer && hasFrequencyData && (
+        <div className="flex flex-wrap absolute bottom-0 left-0 bg-white/90 py-1.5 pl-2 pr-3 text-xs items-center gap-x-3 gap-y-1 z-10 rounded-tr-sm">
+          <span className="text-gray-500">Chance during trip dates:</span>
+          {[
+            [markerColors[3], "<5%"],
+            [markerColors[5], "10%"],
+            [markerColors[7], "40%"],
+            [markerColors[9], "80%+"],
+          ].map(([color, caption]) => (
+            <span key={caption} className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} /> {caption}
+            </span>
+          ))}
         </div>
       )}
       <div className="absolute bottom-0 left-16 right-16 h-4 sm:hidden">

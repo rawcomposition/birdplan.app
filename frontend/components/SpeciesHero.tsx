@@ -142,7 +142,7 @@ export default function SpeciesHero({ name, scientificName, code, starred, mutua
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onShowMap}>
                   <Map className="text-gray-500" />
-                  Recent Reports Map
+                  Show on Map
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   render={<a href={`https://ebird.org/species/${code}`} target="_blank" rel="noopener noreferrer" />}

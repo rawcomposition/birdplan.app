@@ -5,6 +5,8 @@ export type Marker = {
   lng: number;
   id: string;
   shade?: number;
+  color?: string;
+  faded?: boolean;
 };
 
 export type CustomMarker = {
