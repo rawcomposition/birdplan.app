@@ -5,12 +5,14 @@ import TextareaAutosize from "react-textarea-autosize";
 type Props = {
   value?: string;
   onBlur: (value: string) => void;
+  canEdit?: boolean;
 };
 
-export default function InputNotes({ value, onBlur }: Props) {
+export default function InputNotes({ value, onBlur, canEdit: canEditProp }: Props) {
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const [canRender, setCanRender] = React.useState(false);
-  const { canEdit } = useTrip();
+  const { canEdit: tripCanEdit } = useTrip();
+  const canEdit = canEditProp ?? tripCanEdit;
   const [notes, setNotes] = React.useState(value);
   const [isEditing, setIsEditing] = React.useState(!notes && canEdit);
 

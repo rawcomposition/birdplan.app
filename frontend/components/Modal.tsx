@@ -10,6 +10,7 @@ import { ModalId, MODAL_POSITIONS, useModal, useModalStore } from "stores/modals
 
 // modals
 import Hotspot from "modals/Hotspot";
+import ExploreHotspot from "modals/ExploreHotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import Marker from "modals/Marker";
 import AddHotspot from "modals/AddHotspot";
@@ -19,6 +20,7 @@ import OpenBirding from "modals/OpenBirding";
 import AddParticipant from "modals/AddParticipant";
 import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
+import ManageHotspotLists from "modals/ManageHotspotLists";
 import GenerateMagicLink from "modals/GenerateMagicLink";
 import Share from "modals/Share";
 
@@ -29,6 +31,7 @@ type ModalConfig = {
 
 const modals: Record<ModalId, ModalConfig> = {
   hotspot: { Component: Hotspot },
+  exploreHotspot: { Component: ExploreHotspot },
   personalLocation: { Component: PersonalLocation },
   addMarker: { Component: Marker },
   addPlace: { Component: AddPlace },
@@ -39,6 +42,7 @@ const modals: Record<ModalId, ModalConfig> = {
   addParticipant: { Component: AddParticipant },
   inviteAsEditor: { Component: InviteAsEditor },
   manageLifelist: { Component: ManageLifelist },
+  manageHotspotLists: { Component: ManageHotspotLists },
   generateMagicLink: { Component: GenerateMagicLink },
   share: { Component: Share },
 };
