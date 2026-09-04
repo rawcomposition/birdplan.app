@@ -5,13 +5,26 @@ import MapButton from "components/MapButton";
 import MinStepper from "components/MinStepper";
 import { Button } from "components/ui/button";
 import { Switch } from "components/ui/switch";
-import { useTrip, DEFAULT_HOTSPOT_FILTERS } from "hooks/useTrip";
+import { DEFAULT_HOTSPOT_FILTERS, HotspotFilters } from "hooks/useTrip";
 
 const MIN_CHECKLIST_STEPS = [0, 1, 5, 10, 25, 50, 100, 250, 500, 1000];
 const MIN_SPECIES_STEPS = [0, 25, 50, 100, 150, 200, 250, 300, 400];
 
-export default function HotspotFilterMenu() {
-  const { showAllHotspots, setShowAllHotspots, hotspotFilters, setHotspotFilters } = useTrip();
+type Props = {
+  showAllHotspots: boolean;
+  setShowAllHotspots: (show: boolean) => void;
+  hotspotFilters: HotspotFilters;
+  setHotspotFilters: (filters: Partial<HotspotFilters>) => void;
+  popoverClassName?: string;
+};
+
+export default function HotspotFilterMenu({
+  showAllHotspots,
+  setShowAllHotspots,
+  hotspotFilters,
+  setHotspotFilters,
+  popoverClassName = "right-14 sm:left-14 sm:right-auto",
+}: Props) {
   const [open, setOpen] = React.useState(false);
   const { minChecklists, minSpecies } = hotspotFilters;
   const activeCount =
@@ -27,7 +40,12 @@ export default function HotspotFilterMenu() {
       {open && (
         <>
           <div onClick={() => setOpen(false)} className="fixed inset-0 z-30" />
-          <div className="absolute top-0 right-14 sm:left-14 sm:right-auto z-40 w-[300px] bg-card border rounded-xl shadow-lg p-4">
+          <div
+            className={cn(
+              "absolute top-0 z-40 w-[300px] bg-card border rounded-xl shadow-lg p-4",
+              popoverClassName
+            )}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm font-semibold text-foreground">Filters</div>
               <Button

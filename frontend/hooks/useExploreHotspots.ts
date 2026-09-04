@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { OPENBIRDING_API_URL } from "lib/config";
 import { Trip, eBirdHotspot, OpenBirdingHotspotBBoxResponse } from "@birdplan/shared";
+import { HotspotFilters } from "hooks/useTrip";
 
 export const EXPLORE_MIN_ZOOM = 6;
 
@@ -19,11 +20,14 @@ const toBBoxParam = (bounds: Bounds) =>
     clamp(snapUp(bounds.maxY), -90, 90),
   ].join(",");
 
-export default function useExploreHotspots(bounds: Bounds | null, zoom: number) {
+export default function useExploreHotspots(bounds: Bounds | null, zoom: number, filters: HotspotFilters) {
   const bbox = bounds && zoom >= EXPLORE_MIN_ZOOM ? toBBoxParam(bounds) : null;
+  const params = new URLSearchParams({ bbox: bbox ?? "" });
+  if (filters.minChecklists > 0) params.set("minChecklists", String(filters.minChecklists));
+  if (filters.minSpecies > 0) params.set("minSpecies", String(filters.minSpecies));
 
   const query = useQuery<OpenBirdingHotspotBBoxResponse>({
-    queryKey: [`${OPENBIRDING_API_URL}/api/v1/hotspots?bbox=${bbox}`],
+    queryKey: [`${OPENBIRDING_API_URL}/api/v1/hotspots?${params}`],
     enabled: !!bbox && !!OPENBIRDING_API_URL,
     staleTime: 24 * 60 * 60 * 1000,
     refetchOnWindowFocus: false,

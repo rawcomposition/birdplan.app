@@ -7,11 +7,12 @@ import Icon from "components/Icon";
 import { Card } from "components/ui/card";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useModal } from "stores/modals";
-import { useTrip } from "hooks/useTrip";
+import { useTrip, DEFAULT_HOTSPOT_FILTERS, HotspotFilters } from "hooks/useTrip";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useHotspotLists from "hooks/useHotspotLists";
 import useExploreHotspots from "hooks/useExploreHotspots";
 import ExploreToolbar, { ALL_LISTS } from "components/ExploreToolbar";
+import HotspotFilterMenu from "components/HotspotFilterMenu";
 import { useSearchParams } from "react-router-dom";
 import { buildHotspotsLayer, getMarkerColorIndex } from "lib/helpers";
 
@@ -51,6 +52,10 @@ export default function Explore() {
   const { open } = useModal();
   const { showSatellite, setShowSatellite } = useTrip();
   const [initialBounds] = React.useState(readStoredBounds);
+  const [showAllHotspots, setShowAllHotspots] = React.useState(true);
+  const [hotspotFilters, setHotspotFilters] = React.useState(DEFAULT_HOTSPOT_FILTERS);
+  const updateHotspotFilters = (filters: Partial<HotspotFilters>) =>
+    setHotspotFilters((prev) => ({ ...prev, ...filters }));
   const [viewport, setViewport] = React.useState<{
     bounds: Bounds;
     zoom: number;
@@ -65,7 +70,11 @@ export default function Explore() {
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
   const savedHotspots =
     listId === ALL_LISTS ? allSavedHotspots : allSavedHotspots.filter((it) => it.listIds.includes(listId));
-  const { hotspots, isZoomedOut, isError } = useExploreHotspots(viewport?.bounds ?? null, viewport?.zoom ?? 0);
+  const { hotspots, isZoomedOut, isError } = useExploreHotspots(
+    showAllHotspots ? (viewport?.bounds ?? null) : null,
+    viewport?.zoom ?? 0,
+    hotspotFilters
+  );
 
   const hotspotLayer = React.useMemo(
     () =>
@@ -108,8 +117,10 @@ export default function Explore() {
     storeBounds(bounds);
   };
 
-  const notice = isZoomedOut
-    ? "Zoom in to load hotspots"
+  const notice = !showAllHotspots
+    ? null
+    : isZoomedOut
+      ? "Zoom in to load hotspots"
     : isError
       ? "Too many hotspots in view. Zoom in to see them."
       : null;
@@ -124,6 +135,13 @@ export default function Explore() {
             <div className="w-full grow relative">
               <ExploreToolbar listId={listId} onListChange={setListId} />
               <div className="absolute top-[68px] left-4 flex flex-col gap-3 z-10">
+                <HotspotFilterMenu
+                  showAllHotspots={showAllHotspots}
+                  setShowAllHotspots={setShowAllHotspots}
+                  hotspotFilters={hotspotFilters}
+                  setHotspotFilters={updateHotspotFilters}
+                  popoverClassName="left-14"
+                />
                 <MapButton
                   onClick={() => setShowSatellite((prev) => !prev)}
                   tooltip="Satellite view"
@@ -140,7 +158,7 @@ export default function Explore() {
               <MapBox
                 bounds={initialBounds}
                 markers={markers}
-                hotspotLayer={hotspotLayer}
+                hotspotLayer={showAllHotspots && hotspotLayer}
                 onHotspotClick={hotspotClick}
                 onMoveEnd={handleMoveEnd}
                 showSatellite={showSatellite}
