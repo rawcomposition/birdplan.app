@@ -20,6 +20,7 @@ import OpenBirding from "modals/OpenBirding";
 import AddParticipant from "modals/AddParticipant";
 import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
+import ManageHotspotLists from "modals/ManageHotspotLists";
 import GenerateMagicLink from "modals/GenerateMagicLink";
 import Share from "modals/Share";
 
@@ -41,6 +42,7 @@ const modals: Record<ModalId, ModalConfig> = {
   addParticipant: { Component: AddParticipant },
   inviteAsEditor: { Component: InviteAsEditor },
   manageLifelist: { Component: ManageLifelist },
+  manageHotspotLists: { Component: ManageHotspotLists },
   generateMagicLink: { Component: GenerateMagicLink },
   share: { Component: Share },
 };

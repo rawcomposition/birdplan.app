@@ -9,6 +9,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import useSavedHotspots from "hooks/useSavedHotspots";
+import useHotspotLists from "hooks/useHotspotLists";
 import useExploreHotspots from "hooks/useExploreHotspots";
 import ExploreToolbar, { ALL_LISTS } from "components/ExploreToolbar";
 import { useSearchParams } from "react-router-dom";
@@ -56,7 +57,9 @@ export default function Explore() {
   } | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const listId = searchParams.get("list") || ALL_LISTS;
+  const { lists } = useHotspotLists();
+  const listParam = searchParams.get("list");
+  const listId = listParam && lists.some((it) => it._id === listParam) ? listParam : ALL_LISTS;
   const setListId = (next: string) => setSearchParams(next === ALL_LISTS ? {} : { list: next }, { replace: true });
 
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
