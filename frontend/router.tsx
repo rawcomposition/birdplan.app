@@ -9,6 +9,7 @@ import Support from "pages/support";
 import Trips from "pages/trips";
 import Account from "pages/account";
 import Create from "pages/create";
+import Explore from "pages/explore";
 import WhatsNew from "pages/whats-new";
 import Privacy from "pages/privacy";
 import Onboarding from "pages/onboarding";
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
           { path: "/trips", element: <Trips /> },
           { path: "/account", element: <Account /> },
           { path: "/create", element: <Create /> },
+          { path: "/explore", element: <Explore /> },
           { path: "/import-lifelist", element: <ImportLifelist /> },
           {
             path: "/admin",

@@ -10,6 +10,7 @@ import region from "routes/region.js";
 import ebirdProxy from "routes/ebird-proxy.js";
 import participants from "routes/participants.js";
 import admin from "routes/admin.js";
+import savedHotspots from "routes/saved-hotspots.js";
 import { HTTPException } from "hono/http-exception";
 import { cors } from "hono/cors";
 
@@ -31,6 +32,7 @@ app.route("/v1/region", region);
 app.route("/v1/ebird-proxy", ebirdProxy);
 app.route("/v1/participants", participants);
 app.route("/v1/admin", admin);
+app.route("/v1/saved-hotspots", savedHotspots);
 
 app.notFound((c) => {
   return c.json({ message: "Not Found" }, 404);

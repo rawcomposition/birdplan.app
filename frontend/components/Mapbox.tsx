@@ -19,6 +19,7 @@ type Props = {
   showSatellite?: boolean;
   onHotspotClick?: (id: string) => void;
   onDisableAddingMarker?: () => void;
+  onMoveEnd?: (bounds: Trip["bounds"], zoom: number) => void;
 };
 
 export default function Mapbox({
@@ -31,6 +32,7 @@ export default function Mapbox({
   addingMarker,
   showSatellite,
   onDisableAddingMarker,
+  onMoveEnd,
 }: Props) {
   const { open, close } = useModal();
   const { selectedMarkerId, halo } = useTrip();
@@ -105,7 +107,7 @@ export default function Mapbox({
 
   const activeLayers = [hotspotLayer && "hotspots", obsLayer && "obs"].filter(Boolean);
   const { lat, lng } = getLatLngFromBounds(bounds);
-  if (!lat || !lng) return null;
+  if (lat == null || lng == null) return null;
 
   return (
     <div className={clsx("relative w-full h-full", addingMarker && "mapboxAddMarkerMode")}>
@@ -120,6 +122,14 @@ export default function Mapbox({
         }
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_KEY}
         interactiveLayerIds={activeLayers}
+        onLoad={(e) => {
+          const b = e.target.getBounds();
+          onMoveEnd?.({ minX: b.getWest(), minY: b.getSouth(), maxX: b.getEast(), maxY: b.getNorth() }, e.target.getZoom());
+        }}
+        onMoveEnd={(e) => {
+          const b = e.target.getBounds();
+          onMoveEnd?.({ minX: b.getWest(), minY: b.getSouth(), maxX: b.getEast(), maxY: b.getNorth() }, e.viewState.zoom);
+        }}
         onMouseLeave={(e) => {
           e.target.getCanvas().style.cursor = "";
         }}

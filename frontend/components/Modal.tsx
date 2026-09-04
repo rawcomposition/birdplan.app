@@ -10,6 +10,7 @@ import { ModalId, MODAL_POSITIONS, useModal, useModalStore } from "stores/modals
 
 // modals
 import Hotspot from "modals/Hotspot";
+import ExploreHotspot from "modals/ExploreHotspot";
 import PersonalLocation from "modals/PersonalLocation";
 import Marker from "modals/Marker";
 import AddHotspot from "modals/AddHotspot";
@@ -29,6 +30,7 @@ type ModalConfig = {
 
 const modals: Record<ModalId, ModalConfig> = {
   hotspot: { Component: Hotspot },
+  exploreHotspot: { Component: ExploreHotspot },
   personalLocation: { Component: PersonalLocation },
   addMarker: { Component: Marker },
   addPlace: { Component: AddPlace },

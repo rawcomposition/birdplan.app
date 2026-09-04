@@ -508,3 +508,55 @@ export type OpenBirdingHotspotRankingResponse = {
   citation: string;
   queryTime: string;
 };
+
+export type OpenBirdingHotspotBBoxResponse = {
+  items: [string, number, number, number][];
+};
+
+export type OpenBirdingHotspot = {
+  id: string;
+  name: string;
+  countryCode: string;
+  subnational1Code: string | null;
+  subnational2Code: string | null;
+  regionCode: string;
+  lat: number;
+  lng: number;
+  numSpecies: number | null;
+  numChecklists: number | null;
+};
+
+export type SavedHotspot = {
+  _id: string;
+  userId: string;
+  hotspotId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
+  checklists?: number;
+  notes?: string;
+  listIds: string[];
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type HotspotList = {
+  _id: string;
+  userId: string;
+  name: string;
+  createdAt: Date;
+};
+
+export type SavedHotspotInput = {
+  hotspotId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
+  checklists?: number;
+};
+
+export type SavedHotspotNotesInput = {
+  notes: string;
+};

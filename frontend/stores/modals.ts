@@ -5,6 +5,7 @@ export type ModalPosition = "right" | "center";
 
 export type ModalId =
   | "hotspot"
+  | "exploreHotspot"
   | "personalLocation"
   | "addMarker"
   | "addHotspot"
@@ -20,6 +21,7 @@ export type ModalId =
 
 export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   hotspot: "right",
+  exploreHotspot: "right",
   personalLocation: "right",
   addMarker: "right",
   addPlace: "right",

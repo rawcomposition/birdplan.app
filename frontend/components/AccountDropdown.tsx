@@ -1,6 +1,6 @@
 import React from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "components/ui/dropdown-menu";
-import { User, Feather, LogOut, Shield } from "lucide-react";
+import { User, Feather, LogOut, Shield, Compass } from "lucide-react";
 import Avatar from "components/Avatar";
 import { avatarFromUser } from "lib/avatar";
 import { useUser } from "hooks/useUser";
@@ -45,6 +45,10 @@ const AccountDropdown = ({ className, dropUp }: Props) => {
           <DropdownMenuItem className={itemClass} render={<Link to="/account" />}>
             <User />
             <span>Account</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className={itemClass} render={<Link to="/explore" />}>
+            <Compass />
+            <span>Explore Hotspots</span>
           </DropdownMenuItem>
           <DropdownMenuItem className={itemClass} render={<Link to={withReturnTo("/import-lifelist", asPath)} />}>
             <Feather />

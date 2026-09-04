@@ -303,6 +303,7 @@ const RESERVED_ROUTES = new Set([
   "accept",
   "admin",
   "magic",
+  "explore",
 ]);
 
 export function getTripIdFromPath(pathname: string): string | undefined {
