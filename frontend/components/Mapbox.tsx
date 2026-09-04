@@ -7,13 +7,14 @@ import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "stores/modals";
-import { useTrip } from "hooks/useTrip";
+import { useTrip, HotspotFilters, DEFAULT_HOTSPOT_FILTERS } from "hooks/useTrip";
 
 type Props = {
   bounds: Trip["bounds"];
   markers?: MarkerT[];
   customMarkers?: CustomMarker[];
   hotspotLayer?: any;
+  hotspotFilters?: HotspotFilters;
   obsLayer?: any;
   addingMarker?: boolean;
   showSatellite?: boolean;
@@ -28,6 +29,7 @@ export default function Mapbox({
   customMarkers,
   onHotspotClick,
   hotspotLayer,
+  hotspotFilters = DEFAULT_HOTSPOT_FILTERS,
   obsLayer,
   addingMarker,
   showSatellite,
@@ -59,12 +61,36 @@ export default function Mapbox({
     return window.innerWidth < 768;
   }, []);
 
+  const visibleHotspotCount = (hotspotLayer?.features || []).filter(
+    (f: any) =>
+      f.properties.checklists >= hotspotFilters.minChecklists &&
+      f.properties.species >= hotspotFilters.minSpecies
+  ).length;
+  const isSparse = visibleHotspotCount < 50;
+
   const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
+    filter: [
+      "all",
+      [">=", ["get", "checklists"], hotspotFilters.minChecklists],
+      [">=", ["get", "species"], hotspotFilters.minSpecies],
+    ],
     paint: {
-      "circle-radius": isMobile ? 8 : 7,
-      "circle-stroke-width": 0.75,
+      "circle-radius": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        6,
+        isSparse
+          ? ["interpolate", ["linear"], ["get", "species"], 0, 3.5, 300, 7]
+          : ["interpolate", ["linear"], ["get", "species"], 0, 3, 300, 5],
+        9,
+        ["interpolate", ["linear"], ["get", "species"], 0, 4.5, 300, 9],
+        12,
+        ["interpolate", ["linear"], ["get", "species"], 0, 7, 300, isMobile ? 10 : 9],
+      ],
+      "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 0.3, 12, 0.75],
       "circle-stroke-color": "#555",
       "circle-color": [
         "match",

@@ -9,13 +9,22 @@ import { useTrip } from "hooks/useTrip";
 import MapButton from "components/MapButton";
 import MapOverlay from "components/MapOverlay";
 import Icon from "components/Icon";
+import HotspotFilterMenu from "components/HotspotFilterMenu";
 import { Star, Utensils, MapPin } from "lucide-react";
 import { Button } from "components/ui/button";
 
 export default function Trip() {
   const { open } = useModal();
-  const { trip, canEdit, setSelectedSpecies, showAllHotspots, setShowAllHotspots, showSatellite, setShowSatellite } =
-    useTrip();
+  const {
+    trip,
+    canEdit,
+    setSelectedSpecies,
+    showAllHotspots,
+    setShowAllHotspots,
+    showSatellite,
+    setShowSatellite,
+    hotspotFilters,
+  } = useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
   const savedHotspots = trip?.hotspots || [];
@@ -58,13 +67,7 @@ export default function Trip() {
     <>
       {trip && <title>{`${trip.name} | BirdPlan.app`}</title>}
       <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
-        <MapButton
-          onClick={() => setShowAllHotspots((prev) => !prev)}
-          tooltip={showAllHotspots ? "Hide hotspots" : "Show hotspots"}
-          active={showAllHotspots}
-        >
-          <Icon name="mapFlatPin" />
-        </MapButton>
+        <HotspotFilterMenu />
         <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>
           <Icon name="layers" />
         </MapButton>
@@ -104,6 +107,7 @@ export default function Trip() {
               markers={markers}
               customMarkers={customMarkers}
               hotspotLayer={showAllHotspots && hotspotLayer}
+              hotspotFilters={hotspotFilters}
               bounds={trip.bounds}
               addingMarker={isAddingMarker}
               onDisableAddingMarker={() => setIsAddingMarker(false)}
