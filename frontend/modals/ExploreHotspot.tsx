@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "components/Modal";
-import { SavedHotspotInput } from "@birdplan/shared";
+import { SavedHotspotInput, SavedHotspotListsInput } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
@@ -13,10 +13,11 @@ import InputNotes from "components/InputNotes";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "components/ui/dropdown-menu";
 import KebabMenuTrigger from "components/KebabMenuTrigger";
 import HotspotTargets from "components/HotspotTargets";
-import Icon from "components/Icon";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSavedHotspotMutation from "hooks/useSavedHotspotMutation";
 import useOpenBirdingHotspot from "hooks/useOpenBirdingHotspot";
+import SaveToListsMenu from "components/SaveToListsMenu";
+import useHotspotLists from "hooks/useHotspotLists";
 
 type Props = {
   hotspotId: string;
@@ -34,8 +35,12 @@ const tabs = [
 export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) {
   const { setSelectedMarkerId, setHalo } = useTrip();
   const { savedHotspots } = useSavedHotspots();
+  const { lists } = useHotspotLists();
   const { data: info, isLoading } = useOpenBirdingHotspot(hotspotId);
-  const [modalSpecies, setModalSpecies] = React.useState<{ code: string; name: string }>();
+  const [modalSpecies, setModalSpecies] = React.useState<{
+    code: string;
+    name: string;
+  }>();
   const [tab, setTab] = React.useState("targets");
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
@@ -51,33 +56,39 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       {
         _id: input.hotspotId,
         userId: "",
-        listIds: [],
         createdAt: new Date(),
         updatedAt: new Date(),
         ...input,
+        listIds: input.listIds || [],
       },
       ...old.filter((it) => it.hotspotId !== input.hotspotId),
     ],
   });
 
-  const removeMutation = useSavedHotspotMutation({
-    url: `/saved-hotspots/${hotspotId}`,
-    method: "DELETE",
-    updateCache: (old) => old.filter((it) => it.hotspotId !== hotspotId),
+  const listsMutation = useSavedHotspotMutation<SavedHotspotListsInput>({
+    url: `/saved-hotspots/${hotspotId}/lists`,
+    method: "PATCH",
+    updateCache: (old, input) =>
+      input.listIds.length === 0
+        ? old.filter((it) => it.hotspotId !== hotspotId)
+        : old.map((it) => (it.hotspotId === hotspotId ? { ...it, listIds: input.listIds } : it)),
   });
 
   const notesMutation = useSavedHotspotMutation<{ notes: string }>({
     url: `/saved-hotspots/${hotspotId}/notes`,
     method: "PATCH",
-    updateCache: (old, input) =>
-      old.map((it) => (it.hotspotId === hotspotId ? { ...it, notes: input.notes } : it)),
+    updateCache: (old, input) => old.map((it) => (it.hotspotId === hotspotId ? { ...it, notes: input.notes } : it)),
   });
 
-  const handleSave = () => {
+  const handleChange = (listIds: string[]) => {
     if (isSaved) {
-      if (saved?.notes && !confirm("Are you sure you want to remove this saved hotspot? Your notes will be lost."))
+      if (
+        listIds.length === 0 &&
+        saved?.notes &&
+        !confirm("Removing this hotspot from all lists will delete your notes. Continue?")
+      )
         return;
-      removeMutation.mutate({});
+      listsMutation.mutate({ listIds });
       return;
     }
     saveMutation.mutate({
@@ -87,6 +98,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       lng: info?.lng ?? lng,
       species: speciesTotal ?? undefined,
       checklists: checklistsTotal ?? undefined,
+      listIds: listIds.length > 0 ? listIds : lists.slice(0, 1).map((it) => it._id),
     });
   };
 
@@ -108,17 +120,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       <Header>{name}</Header>
       <Body className="pb-10 sm:pb-4 relative">
         <div className="flex gap-2 mb-6">
-          <Button
-            variant="outline-white"
-            size="sm"
-            onClick={handleSave}
-            disabled={!isSaved && !info}
-            aria-pressed={isSaved}
-            className={isSaved ? "border-yellow-300 bg-yellow-50 text-yellow-800 hover:bg-yellow-50" : undefined}
-          >
-            <Icon name={isSaved ? "star" : "starOutline"} className={isSaved ? "text-yellow-500" : "text-gray-400"} />
-            {isSaved ? "Saved" : "Save"}
-          </Button>
+          <SaveToListsMenu saved={saved} disabled={!isSaved && !info} onChange={handleChange} />
           <DirectionsButton lat={lat} lng={lng} hotspotId={hotspotId} />
           <Button variant="outline-white" size="sm" href={`https://ebird.org/hotspot/${hotspotId}`} target="_blank">
             <img src="/ebird.png" width={48} />
@@ -136,7 +138,11 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <HotspotStats id={hotspotId} speciesTotal={speciesTotal ?? undefined} checklistsTotal={checklistsTotal ?? undefined} />
+        <HotspotStats
+          id={hotspotId}
+          speciesTotal={speciesTotal ?? undefined}
+          checklistsTotal={checklistsTotal ?? undefined}
+        />
 
         {isSaved && (
           <InputNotes
@@ -180,7 +186,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
                   setModalSpecies(species);
                   setTab("checklists");
                 }}
-                onAddToTrip={handleSave}
+                onAddToTrip={() => handleChange([])}
               />
             </TabsContent>
           </div>

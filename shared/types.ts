@@ -555,6 +555,15 @@ export type SavedHotspotInput = {
   lng: number;
   species?: number;
   checklists?: number;
+  listIds?: string[];
+};
+
+export type SavedHotspotListsInput = {
+  listIds: string[];
+};
+
+export type HotspotListInput = {
+  name: string;
 };
 
 export type SavedHotspotNotesInput = {
