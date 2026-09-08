@@ -11,6 +11,7 @@ import { useTrip, DEFAULT_HOTSPOT_FILTERS, HotspotFilters } from "hooks/useTrip"
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSyncSavedHotspots from "hooks/useSyncSavedHotspots";
 import useHotspotLists from "hooks/useHotspotLists";
+import useLabels from "hooks/useLabels";
 import useExploreHotspots from "hooks/useExploreHotspots";
 import ExploreToolbar, { ALL_LISTS } from "components/ExploreToolbar";
 import HotspotFilterMenu from "components/HotspotFilterMenu";
@@ -64,6 +65,7 @@ export default function Explore() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { lists } = useHotspotLists();
+  const { labels } = useLabels();
   const listParam = searchParams.get("list");
   const listId = listParam && lists.some((it) => it._id === listParam) ? listParam : ALL_LISTS;
   const setListId = (next: string) => setSearchParams(next === ALL_LISTS ? {} : { list: next }, { replace: true });
@@ -145,6 +147,7 @@ export default function Explore() {
                   showAllHotspots={showAllHotspots}
                   setShowAllHotspots={setShowAllHotspots}
                   hotspotFilters={hotspotFilters}
+                  labels={labels}
                   setHotspotFilters={updateHotspotFilters}
                   popoverClassName="left-14"
                 />

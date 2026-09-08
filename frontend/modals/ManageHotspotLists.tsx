@@ -1,8 +1,12 @@
 import React from "react";
-import { HotspotList, HotspotListInput } from "@birdplan/shared";
+import { HotspotList, HotspotListInput, HotspotListCreateInput } from "@birdplan/shared";
 import { Header, Body, Footer } from "components/Modal";
 import { useModal } from "stores/modals";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, MapPinPlus } from "lucide-react";
+import OptionsMenu from "components/OptionsMenu";
+import { DropdownMenuTrigger } from "components/ui/dropdown-menu";
+import useSavedHotspots from "hooks/useSavedHotspots";
+import { savedHotspotsInList, nanoId } from "lib/helpers";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
@@ -15,24 +19,16 @@ export default function ManageHotspotLists() {
   const [newName, setNewName] = React.useState("");
   const trimmed = newName.trim();
 
-  const createList = useHotspotListMutation<HotspotListInput>({
+  const createList = useHotspotListMutation<HotspotListCreateInput>({
     url: "/hotspot-lists",
     method: "POST",
-    updateCache: (old, input) => [
-      ...old,
-      {
-        _id: `new-${Date.now()}`,
-        userId: "",
-        name: input.name,
-        createdAt: new Date(),
-      },
-    ],
+    updateCache: (old, input) => [...old, { userId: "", createdAt: new Date(), ...input }],
   });
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!trimmed) return;
-    createList.mutate({ name: trimmed });
+    createList.mutate({ _id: nanoId(), name: trimmed });
     setNewName("");
   };
 
@@ -67,10 +63,11 @@ export default function ManageHotspotLists() {
 }
 
 function ListRow({ list }: { list: HotspotList }) {
+  const { stack } = useModal();
+  const { savedHotspots } = useSavedHotspots();
   const [isEditing, setIsEditing] = React.useState(false);
   const [name, setName] = React.useState(list.name);
   const trimmed = name.trim();
-  const isPending = list._id.startsWith("new-");
 
   const renameList = useHotspotListMutation<HotspotListInput>({
     url: `/hotspot-lists/${list._id}`,
@@ -105,6 +102,9 @@ function ListRow({ list }: { list: HotspotList }) {
     deleteList.mutate({});
   };
 
+  const handleAddToTrip = () =>
+    stack("addToTrip", { subtitle: list.name, hotspots: savedHotspotsInList(savedHotspots, list._id) });
+
   if (isEditing) {
     return (
       <li className="py-2">
@@ -131,26 +131,18 @@ function ListRow({ list }: { list: HotspotList }) {
   return (
     <li className="flex items-center gap-1 py-2">
       <span className="grow truncate text-sm font-medium text-foreground">{list.name}</span>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-muted-foreground"
-        aria-label="Rename list"
-        disabled={isPending}
-        onClick={startEditing}
+      <OptionsMenu
+        items={[
+          { name: "Rename", icon: <Pencil />, onClick: startEditing },
+          { name: "Import to Trip", icon: <MapPinPlus />, onClick: handleAddToTrip },
+          { name: "Delete", icon: <Trash2 />, onClick: handleDelete, danger: true },
+        ]}
+        className="min-w-[180px]"
       >
-        <Pencil className="size-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-muted-foreground hover:text-destructive"
-        aria-label="Delete list"
-        disabled={isPending}
-        onClick={handleDelete}
-      >
-        <Trash2 className="size-4" />
-      </Button>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="text-muted-foreground" />} title="Options">
+          <Icon name="verticalDots" />
+        </DropdownMenuTrigger>
+      </OptionsMenu>
     </li>
   );
 }

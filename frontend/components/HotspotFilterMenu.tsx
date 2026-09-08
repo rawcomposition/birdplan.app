@@ -6,7 +6,7 @@ import MinStepper from "components/MinStepper";
 import { Button } from "components/ui/button";
 import { Switch } from "components/ui/switch";
 import { DEFAULT_HOTSPOT_FILTERS, HotspotFilters } from "hooks/useTrip";
-import useLabels from "hooks/useLabels";
+import { TripLabel } from "@birdplan/shared";
 import LabelBadge from "components/LabelBadge";
 import LabelPickerItems from "components/LabelPickerItems";
 import { ChevronDown } from "lucide-react";
@@ -25,6 +25,7 @@ type Props = {
   showAllHotspots: boolean;
   setShowAllHotspots: (show: boolean) => void;
   hotspotFilters: HotspotFilters;
+  labels: TripLabel[];
   setHotspotFilters: (filters: Partial<HotspotFilters>) => void;
   popoverClassName?: string;
 };
@@ -33,11 +34,11 @@ export default function HotspotFilterMenu({
   showAllHotspots,
   setShowAllHotspots,
   hotspotFilters,
+  labels,
   setHotspotFilters,
   popoverClassName = "right-14 sm:left-14 sm:right-auto",
 }: Props) {
   const [open, setOpen] = React.useState(false);
-  const { labels } = useLabels();
   const { minChecklists, minSpecies, labelIds } = hotspotFilters;
   const activeLabelIds = labelIds.filter((id) => labels.some((it) => it._id === id));
   const selectedLabels = labels.filter((it) => activeLabelIds.includes(it._id));

@@ -13,6 +13,7 @@ export type Trip = {
   };
   hotspots: Hotspot[];
   markers: CustomMarker[];
+  labels?: TripLabel[];
   itinerary?: Day[];
   startDate?: string;
   endDate?: string;
@@ -104,6 +105,7 @@ export type Hotspot = {
   checklists?: number;
   notes?: string;
   favs?: HotspotFav[];
+  labelIds?: string[];
   deletedAt?: Date | null;
 };
 
@@ -400,6 +402,20 @@ export type HotspotNotesInput = {
   notes: string;
 };
 
+export type HotspotLabelsInput = {
+  labelIds: string[];
+};
+
+export type TripImportInput = {
+  hotspotIds: string[];
+  includeNotes: boolean;
+  includeLabels: boolean;
+};
+
+export type TripImportResponse = {
+  added: number;
+};
+
 export type SpeciesFavInput = {
   code: string;
 };
@@ -514,6 +530,10 @@ export type OpenBirdingHotspotBBoxResponse = {
   items: [string, number, number, number][];
 };
 
+export type OpenBirdingRegionHotspotsResponse = {
+  items: eBirdHotspot[];
+};
+
 export type OpenBirdingHotspotLookupResponse = {
   items: OpenBirdingHotspot[];
 };
@@ -617,6 +637,10 @@ export type LabelInput = {
   color: LabelColor;
 };
 
+export type LabelCreateInput = LabelInput & { _id: string };
+
+export type TripLabel = Pick<Label, "_id" | "name" | "color">;
+
 export type SavedHotspotLabelsInput = {
   labelIds: string[];
   name?: string;
@@ -627,6 +651,8 @@ export type SavedHotspotLabelsInput = {
 export type HotspotListInput = {
   name: string;
 };
+
+export type HotspotListCreateInput = HotspotListInput & { _id: string };
 
 export type SavedHotspotNotesInput = {
   notes: string;

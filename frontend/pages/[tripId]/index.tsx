@@ -12,7 +12,6 @@ import Icon from "components/Icon";
 import HotspotFilterMenu from "components/HotspotFilterMenu";
 import { Star, Utensils, MapPin } from "lucide-react";
 import { Button } from "components/ui/button";
-import useSavedHotspots from "hooks/useSavedHotspots";
 
 export default function Trip() {
   const { open } = useModal();
@@ -29,15 +28,11 @@ export default function Trip() {
   } = useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
-  const { savedHotspots: userSavedHotspots } = useSavedHotspots();
   const allSavedHotspots = trip?.hotspots || [];
   const savedHotspots =
     hotspotFilters.labelIds.length === 0
       ? allSavedHotspots
-      : allSavedHotspots.filter((it) => {
-          const labelIds = userSavedHotspots.find((saved) => saved.hotspotId === it.id)?.labelIds || [];
-          return labelIds.some((id) => hotspotFilters.labelIds.includes(id));
-        });
+      : allSavedHotspots.filter((it) => (it.labelIds || []).some((id) => hotspotFilters.labelIds.includes(id)));
   const { data } = useTripHotspots();
   const hotspots = data || [];
   useSyncHotspots();
@@ -81,6 +76,7 @@ export default function Trip() {
           showAllHotspots={showAllHotspots}
           setShowAllHotspots={setShowAllHotspots}
           hotspotFilters={hotspotFilters}
+          labels={trip?.labels || []}
           setHotspotFilters={setHotspotFilters}
         />
         <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>

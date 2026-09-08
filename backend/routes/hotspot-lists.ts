@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate } from "lib/utils.js";
+import { authenticate, parseClientId } from "lib/utils.js";
 import { connect, SavedHotspot, HotspotList } from "lib/db.js";
-import type { HotspotListInput } from "@birdplan/shared";
+import type { HotspotListInput, HotspotListCreateInput } from "@birdplan/shared";
 
 const hotspotLists = new Hono();
 
@@ -22,9 +22,11 @@ hotspotLists.get("/", async (c) => {
 
 hotspotLists.post("/", async (c) => {
   const session = await authenticate(c);
-  const name = parseName(await c.req.json<HotspotListInput>());
+  const data = await c.req.json<HotspotListCreateInput>();
+  const _id = parseClientId(data._id);
+  const name = parseName(data);
   await connect();
-  const row = await HotspotList.create({ userId: session.userId, name });
+  const row = await HotspotList.create({ _id, userId: session.userId, name });
   return c.json(row.toObject());
 });
 

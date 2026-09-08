@@ -1,10 +1,10 @@
-import { Label } from "@birdplan/shared";
+import { TripLabel } from "@birdplan/shared";
 import { Badge } from "components/ui/badge";
 import { labelColorClasses } from "lib/labelColors";
 import { cn } from "lib/utils";
 
 type Props = {
-  label: Label;
+  label: TripLabel;
   className?: string;
 };
 

@@ -1,19 +1,11 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { authenticate } from "lib/utils.js";
+import { authenticate, parseClientId } from "lib/utils.js";
 import { connect, SavedHotspot, Label } from "lib/db.js";
-import { LABEL_COLORS } from "@birdplan/shared";
-import type { LabelInput, LabelColor } from "@birdplan/shared";
+import { parseLabelInput } from "lib/labels.js";
+import type { LabelInput, LabelCreateInput } from "@birdplan/shared";
 
 const labels = new Hono();
-
-const parseInput = (data: LabelInput) => {
-  const name = typeof data.name === "string" ? data.name.trim() : "";
-  if (!name) throw new HTTPException(400, { message: "Name is required" });
-  if (name.length > 50) throw new HTTPException(400, { message: "Name is too long" });
-  if (!LABEL_COLORS.includes(data.color as LabelColor)) throw new HTTPException(400, { message: "Color is required" });
-  return { name, color: data.color };
-};
 
 labels.get("/", async (c) => {
   const session = await authenticate(c);
@@ -24,16 +16,18 @@ labels.get("/", async (c) => {
 
 labels.post("/", async (c) => {
   const session = await authenticate(c);
-  const input = parseInput(await c.req.json<LabelInput>());
+  const data = await c.req.json<LabelCreateInput>();
+  const _id = parseClientId(data._id);
+  const input = parseLabelInput(data);
   await connect();
-  const row = await Label.create({ userId: session.userId, ...input });
+  const row = await Label.create({ _id, userId: session.userId, ...input });
   return c.json(row.toObject());
 });
 
 labels.patch("/:id", async (c) => {
   const session = await authenticate(c);
   const id = c.req.param("id");
-  const input = parseInput(await c.req.json<LabelInput>());
+  const input = parseLabelInput(await c.req.json<LabelInput>());
   await connect();
   const result = await Label.updateOne({ _id: id, userId: session.userId }, { $set: input });
   if (result.matchedCount === 0) throw new HTTPException(404, { message: "Label not found" });

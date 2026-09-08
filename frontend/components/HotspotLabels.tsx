@@ -1,22 +1,11 @@
-import React from "react";
-import { Label, LabelInput, SavedHotspotLabelsInput } from "@birdplan/shared";
-import { Pencil, Plus } from "lucide-react";
-import { buttonVariants } from "components/ui/button";
-import LabelBadge from "components/LabelBadge";
-import LabelPickerItems from "components/LabelPickerItems";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "components/ui/dropdown-menu";
+import { LabelCreateInput, LabelInput, SavedHotspotLabelsInput } from "@birdplan/shared";
+import LabelPicker from "components/LabelPicker";
 import useLabels from "hooks/useLabels";
 import useLabelMutation from "hooks/useLabelMutation";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSavedHotspotMutation from "hooks/useSavedHotspotMutation";
 import { useModal } from "stores/modals";
-import { cn } from "lib/utils";
+import { nanoId } from "lib/helpers";
 
 type Props = {
   hotspotId: string;
@@ -34,7 +23,6 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
   const selectedIds = saved?.labelIds || [];
-  const selected = labels.filter((it) => selectedIds.includes(it._id));
 
   const labelsMutation = useSavedHotspotMutation<SavedHotspotLabelsInput>({
     url: `/saved-hotspots/${hotspotId}/labels`,
@@ -66,10 +54,10 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
     },
   });
 
-  const createLabel = useLabelMutation<LabelInput, Label>({
+  const createLabel = useLabelMutation<LabelCreateInput>({
     url: "/labels",
     method: "POST",
-    updateCache: (old, input) => [...old, { _id: `new-${Date.now()}`, userId: "", ...input, createdAt: new Date() }],
+    updateCache: (old, input) => [...old, { userId: "", createdAt: new Date(), ...input }],
   });
 
   const setLabelIds = (labelIds: string[]) => labelsMutation.mutate({ labelIds, name, lat, lng });
@@ -82,42 +70,20 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
   };
 
   const handleNewLabel = async (input: LabelInput) => {
-    const label = await createLabel.mutateAsync(input);
-    if (label?._id) setLabelIds([...selectedIds, label._id]);
+    const _id = nanoId();
+    await createLabel.mutateAsync({ _id, ...input });
+    setLabelIds([...selectedIds, _id]);
   };
 
   return (
-    <div className={cn("flex", className)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          disabled={disabled}
-          render={<div className="flex flex-wrap items-center gap-1.5 cursor-pointer disabled:cursor-default" />}
-        >
-          {selected.map((label) => (
-            <LabelBadge key={label._id} label={label} />
-          ))}
-          <span className={buttonVariants({ variant: "outline-white", size: "xs", className: "h-6 px-2 text-[13px]" })}>
-            <Plus className="size-3.5" />
-            {selected.length === 0 && "Add label"}
-          </span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-[220px]">
-          {labels.length > 0 && (
-            <>
-              <LabelPickerItems labels={labels} selectedIds={selectedIds} onToggle={toggle} />
-              <DropdownMenuSeparator />
-            </>
-          )}
-          <DropdownMenuItem onClick={() => stack("labelForm", { title: "New label", onSubmit: handleNewLabel })}>
-            <Plus />
-            New label
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => stack("manageLabels")}>
-            <Pencil />
-            Manage labels
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <LabelPicker
+      labels={labels}
+      selectedIds={selectedIds}
+      onToggle={toggle}
+      onNewLabel={handleNewLabel}
+      onManage={() => stack("manageLabels")}
+      disabled={disabled}
+      className={className}
+    />
   );
 }

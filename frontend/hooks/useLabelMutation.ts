@@ -7,7 +7,7 @@ import { LABELS_KEY } from "hooks/useLabels";
 const SAVED_KEY = ["/saved-hotspots"];
 
 type Options<TInput> = {
-  url: string;
+  url: string | ((data: TInput) => string);
   method: "POST" | "PUT" | "DELETE" | "PATCH";
   updateCache: (old: Label[], data: TInput) => Label[];
   updateSavedCache?: (old: SavedHotspot[], data: TInput) => SavedHotspot[];
@@ -22,7 +22,7 @@ export default function useLabelMutation<TInput, TResponse = any>({
   const queryClient = useQueryClient();
 
   return useMutation<TResponse, Error, TInput>({
-    mutationFn: async (input?: TInput) => mutate(method, url, input),
+    mutationFn: async (input?: TInput) => mutate(method, typeof url === "function" ? url(input as TInput) : url, input),
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey: LABELS_KEY });
       const prevLabels = queryClient.getQueryData<Label[]>(LABELS_KEY);

@@ -18,6 +18,8 @@ export type ModalId =
   | "manageLifelist"
   | "manageHotspotLists"
   | "manageLabels"
+  | "manageTripLabels"
+  | "addToTrip"
   | "labelForm"
   | "hotspotListForm"
   | "generateMagicLink"
@@ -38,6 +40,8 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   manageLifelist: "center",
   manageHotspotLists: "center",
   manageLabels: "center",
+  manageTripLabels: "center",
+  addToTrip: "center",
   labelForm: "center",
   hotspotListForm: "center",
   generateMagicLink: "center",

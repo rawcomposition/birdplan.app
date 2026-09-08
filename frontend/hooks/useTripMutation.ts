@@ -5,7 +5,7 @@ import { Trip } from "@birdplan/shared";
 import { useTrip } from "hooks/useTrip";
 
 type Options<TInput, TResponse> = {
-  url: string;
+  url: string | ((data: TInput) => string);
   method: "POST" | "PUT" | "DELETE" | "PATCH";
   updateCache: (old: Trip, data: TInput) => Trip;
   mutationKey?: string[];
@@ -25,7 +25,7 @@ export default function useTripMutation<TInput, TResponse = any>({
   return useMutation<TResponse, Error, TInput>({
     mutationKey,
     mutationFn: async (input?: TInput) => {
-      const res = await mutate(method, url, input);
+      const res = await mutate(method, typeof url === "function" ? url(input as TInput) : url, input);
       return res;
     },
     onMutate: async (input) => {

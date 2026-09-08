@@ -1,5 +1,5 @@
 import React from "react";
-import { Label } from "@birdplan/shared";
+import { TripLabel } from "@birdplan/shared";
 import { Search } from "lucide-react";
 import { DropdownMenuCheckboxItem, DropdownMenuGroup, DropdownMenuLabel } from "components/ui/dropdown-menu";
 import { labelColorClasses } from "lib/labelColors";
@@ -8,7 +8,7 @@ import { cn } from "lib/utils";
 const SEARCH_THRESHOLD = 8;
 
 type Props = {
-  labels: Label[];
+  labels: TripLabel[];
   selectedIds: string[];
   onToggle: (labelId: string, checked: boolean) => void;
   title?: string;

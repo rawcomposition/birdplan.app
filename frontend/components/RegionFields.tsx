@@ -10,8 +10,6 @@ type Props = {
   onChange: React.Dispatch<React.SetStateAction<RegionFieldsValue>>;
 };
 
-const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
-
 export default function RegionFields({ value, onChange }: Props) {
   const requireSubregion = requiresSubregion(value.country?.value);
 
@@ -37,7 +35,7 @@ export default function RegionFields({ value, onChange }: Props) {
                 onChange((v) => ({ ...v, country, states: undefined, counties: undefined }))
               }
               value={value.country}
-              menuPortalTarget={portalTarget()}
+              menuPortalTarget={document.body}
             />
           </Field>
           {value.country && (
@@ -48,7 +46,7 @@ export default function RegionFields({ value, onChange }: Props) {
                   parent={value.country.value}
                   onChange={(states: any) => onChange((v) => ({ ...v, states, counties: undefined }))}
                   value={value.states}
-                  menuPortalTarget={portalTarget()}
+                  menuPortalTarget={document.body}
                   isClearable={!requireSubregion}
                   isMulti
                 />
@@ -60,7 +58,7 @@ export default function RegionFields({ value, onChange }: Props) {
                     parent={value.states[0].value}
                     onChange={(counties: any) => onChange((v) => ({ ...v, counties }))}
                     value={value.counties}
-                    menuPortalTarget={portalTarget()}
+                    menuPortalTarget={document.body}
                     isClearable
                     isMulti
                   />

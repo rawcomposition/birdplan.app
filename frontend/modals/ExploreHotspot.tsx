@@ -19,6 +19,7 @@ import SaveToListsMenu from "components/SaveToListsMenu";
 import useHotspotLists from "hooks/useHotspotLists";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 import HotspotLabels from "components/HotspotLabels";
+import { useModal } from "stores/modals";
 
 type Props = {
   hotspotId: string;
@@ -35,6 +36,7 @@ const tabs = [
 
 export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) {
   const { setSelectedMarkerId } = useTrip();
+  const { stack } = useModal();
   const { savedHotspots } = useSavedHotspots();
   const { lists } = useHotspotLists();
   const { data: info, isLoading } = useOpenBirdingHotspot(hotspotId);
@@ -126,6 +128,21 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
           <DropdownMenu>
             <KebabMenuTrigger />
             <DropdownMenuContent align="end" className="w-[170px]">
+              <DropdownMenuItem
+                disabled={!info && !saved}
+                onClick={() =>
+                  stack("addToTrip", {
+                    hotspots: [
+                      {
+                        id: hotspotId,
+                        name: info?.name || saved?.name || name,
+                      },
+                    ],
+                  })
+                }
+              >
+                Save to Trip
+              </DropdownMenuItem>
               <DropdownMenuItem
                 render={
                   <a href={`https://ebird.org/hotspot/${hotspotId}/media?yr=all&m=`} target="_blank" rel="noreferrer" />

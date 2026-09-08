@@ -22,6 +22,8 @@ import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
 import ManageHotspotLists from "modals/ManageHotspotLists";
 import ManageLabels from "modals/ManageLabels";
+import ManageTripLabels from "modals/ManageTripLabels";
+import AddToTrip from "modals/AddToTrip";
 import LabelForm from "modals/LabelForm";
 import HotspotListForm from "modals/HotspotListForm";
 import GenerateMagicLink from "modals/GenerateMagicLink";
@@ -48,6 +50,8 @@ const modals: Record<ModalId, ModalConfig> = {
   manageLifelist: { Component: ManageLifelist },
   manageHotspotLists: { Component: ManageHotspotLists },
   manageLabels: { Component: ManageLabels },
+  manageTripLabels: { Component: ManageTripLabels },
+  addToTrip: { Component: AddToTrip, maxWidth: 440 },
   labelForm: { Component: LabelForm, maxWidth: 400 },
   hotspotListForm: { Component: HotspotListForm, maxWidth: 400 },
   generateMagicLink: { Component: GenerateMagicLink },

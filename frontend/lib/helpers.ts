@@ -1,4 +1,4 @@
-import { Trip, Hotspot, eBirdHotspot, TravelData } from "@birdplan/shared";
+import { Trip, Hotspot, SavedHotspot, eBirdHotspot, TravelData } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -338,3 +338,6 @@ export function getReturnLabel(returnTo?: string | null): string {
   if (/^\/[^/]+$/.test(path)) return "trip";
   return "back";
 }
+
+export const savedHotspotsInList = (savedHotspots: SavedHotspot[], listId: string) =>
+  savedHotspots.filter((it) => it.listIds.includes(listId) && !it.deletedAt);

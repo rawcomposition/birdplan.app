@@ -1,6 +1,6 @@
 import React from "react";
 import { useModal } from "stores/modals";
-import { HotspotList, HotspotListInput, SavedHotspot } from "@birdplan/shared";
+import { HotspotListCreateInput, SavedHotspot } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import Icon from "components/Icon";
 import {
@@ -15,6 +15,7 @@ import {
 } from "components/ui/dropdown-menu";
 import useHotspotLists from "hooks/useHotspotLists";
 import useHotspotListMutation from "hooks/useHotspotListMutation";
+import { nanoId } from "lib/helpers";
 
 type Props = {
   saved?: SavedHotspot;
@@ -27,18 +28,10 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
   const selected = new Set(saved?.listIds || []);
   const isSaved = selected.size > 0;
 
-  const createList = useHotspotListMutation<HotspotListInput, HotspotList>({
+  const createList = useHotspotListMutation<HotspotListCreateInput>({
     url: "/hotspot-lists",
     method: "POST",
-    updateCache: (old, input) => [
-      ...old,
-      {
-        _id: `new-${Date.now()}`,
-        userId: "",
-        name: input.name,
-        createdAt: new Date(),
-      },
-    ],
+    updateCache: (old, input) => [...old, { userId: "", createdAt: new Date(), ...input }],
   });
 
   const toggle = (listId: string, checked: boolean) => {
@@ -50,8 +43,9 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
 
   const { stack } = useModal();
   const handleNewList = async (name: string) => {
-    const list = await createList.mutateAsync({ name });
-    if (list?._id) onChange([...selected, list._id]);
+    const _id = nanoId();
+    await createList.mutateAsync({ _id, name });
+    onChange([...selected, _id]);
   };
 
   return (

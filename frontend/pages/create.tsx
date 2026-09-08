@@ -29,8 +29,6 @@ const monthOption = (month: number): Option => ({
 
 const defaultMonth = monthOption(dayjs().month() + 1);
 
-const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
-
 export default function CreateTrip() {
   const [region, setRegion] = React.useState<RegionFieldsValue>(emptyRegionFieldsValue);
   const [startDate, setStartDate] = React.useState("");
@@ -129,7 +127,7 @@ export default function CreateTrip() {
                           onChange={setStartMonth}
                           value={startMonth}
                           instanceId="startMonth"
-                          menuPortalTarget={portalTarget()}
+                          menuPortalTarget={document.body}
                         />
                       }
                       to={
@@ -137,7 +135,7 @@ export default function CreateTrip() {
                           onChange={setEndMonth}
                           value={endMonth}
                           instanceId="endMonth"
-                          menuPortalTarget={portalTarget()}
+                          menuPortalTarget={document.body}
                         />
                       }
                     />
