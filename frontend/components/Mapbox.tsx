@@ -38,7 +38,7 @@ export default function Mapbox({
   onDisableAddingMarker,
   onMoveEnd,
 }: Props) {
-  const { open, close } = useModal();
+  const { open, closeAll } = useModal();
   const { selectedMarkerId, halo } = useTrip();
   const isOpeningModal = React.useRef(false);
 
@@ -176,7 +176,7 @@ export default function Mapbox({
           if (features.length) {
             handleHotspotClick(features?.[0]?.properties?.id);
           } else if (!isOpeningModal.current) {
-            close();
+            closeAll();
           }
         }}
         // @ts-expect-error react-map-gl bounds prop typing mismatch

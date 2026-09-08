@@ -6,14 +6,12 @@ import { Pencil, Trash2 } from "lucide-react";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
 import LabelBadge from "components/LabelBadge";
-import LabelDialog from "components/LabelDialog";
 import useLabels from "hooks/useLabels";
 import useLabelMutation from "hooks/useLabelMutation";
 
 export default function ManageLabels() {
-  const { close } = useModal();
+  const { close, stack } = useModal();
   const { labels } = useLabels();
-  const [isAdding, setIsAdding] = React.useState(false);
 
   const createLabel = useLabelMutation<LabelInput>({
     url: "/labels",
@@ -31,7 +29,12 @@ export default function ManageLabels() {
             <LabelRow key={label._id} label={label} />
           ))}
         </ul>
-        <Button size="sm" variant="outline" className="mt-4" onClick={() => setIsAdding(true)}>
+        <Button
+          size="sm"
+          variant="outline"
+          className="mt-4"
+          onClick={() => stack("labelForm", { title: "New label", onSubmit: (input: LabelInput) => createLabel.mutate(input) })}
+        >
           <Icon name="plus" className="text-xs" />
           New label
         </Button>
@@ -39,21 +42,12 @@ export default function ManageLabels() {
       <Footer>
         <Button onClick={close}>Done</Button>
       </Footer>
-      <LabelDialog
-        open={isAdding}
-        title="New label"
-        onSubmit={(input) => {
-          setIsAdding(false);
-          createLabel.mutate(input);
-        }}
-        onClose={() => setIsAdding(false)}
-      />
     </>
   );
 }
 
 function LabelRow({ label }: { label: Label }) {
-  const [isEditing, setIsEditing] = React.useState(false);
+  const { stack } = useModal();
   const isPending = label._id.startsWith("new-");
 
   const updateLabel = useLabelMutation<LabelInput>({
@@ -88,7 +82,16 @@ function LabelRow({ label }: { label: Label }) {
         className="text-muted-foreground"
         aria-label="Edit label"
         disabled={isPending}
-        onClick={() => setIsEditing(true)}
+        onClick={() =>
+          stack("labelForm", {
+            title: "Edit label",
+            submitLabel: "Save",
+            defaultValue: { name: label.name, color: label.color },
+            onSubmit: (input: LabelInput) => {
+              if (input.name !== label.name || input.color !== label.color) updateLabel.mutate(input);
+            },
+          })
+        }
       >
         <Pencil className="size-4" />
       </Button>
@@ -102,17 +105,6 @@ function LabelRow({ label }: { label: Label }) {
       >
         <Trash2 className="size-4" />
       </Button>
-      <LabelDialog
-        open={isEditing}
-        title="Edit label"
-        submitLabel="Save"
-        defaultValue={{ name: label.name, color: label.color }}
-        onSubmit={(input) => {
-          setIsEditing(false);
-          if (input.name !== label.name || input.color !== label.color) updateLabel.mutate(input);
-        }}
-        onClose={() => setIsEditing(false)}
-      />
     </li>
   );
 }

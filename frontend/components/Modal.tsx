@@ -6,7 +6,7 @@ import { DialogTitle } from "components/ui/dialog";
 import clsx from "clsx";
 
 // stores
-import { ModalId, MODAL_POSITIONS, useModal, useModalStore } from "stores/modals";
+import { ModalId, ModalEntry, ModalPosition, MODAL_POSITIONS, useModal, useModalStore } from "stores/modals";
 
 // modals
 import Hotspot from "modals/Hotspot";
@@ -22,12 +22,15 @@ import InviteAsEditor from "modals/InviteAsEditor";
 import ManageLifelist from "modals/ManageLifelist";
 import ManageHotspotLists from "modals/ManageHotspotLists";
 import ManageLabels from "modals/ManageLabels";
+import LabelForm from "modals/LabelForm";
+import HotspotListForm from "modals/HotspotListForm";
 import GenerateMagicLink from "modals/GenerateMagicLink";
 import Share from "modals/Share";
 
 type ModalConfig = {
   Component: React.ComponentType<any>;
   maxHeight?: number | string;
+  maxWidth?: number | string;
 };
 
 const modals: Record<ModalId, ModalConfig> = {
@@ -45,38 +48,72 @@ const modals: Record<ModalId, ModalConfig> = {
   manageLifelist: { Component: ManageLifelist },
   manageHotspotLists: { Component: ManageHotspotLists },
   manageLabels: { Component: ManageLabels },
+  labelForm: { Component: LabelForm, maxWidth: 400 },
+  hotspotListForm: { Component: HotspotListForm, maxWidth: 400 },
   generateMagicLink: { Component: GenerateMagicLink },
   share: { Component: Share },
 };
 
-const ModalRoot = () => {
-  const modalId = useModalStore((s) => s.modalId);
-  const modalProps = useModalStore((s) => s.modalProps);
-  const closing = useModalStore((s) => s.closing);
-  const close = useModalStore((s) => s.close);
+const PositionContext = React.createContext<ModalPosition | null>(null);
 
-  const modal = modalId ? modals[modalId] : null;
-  const Component = modal?.Component as React.ElementType;
+const useModalPosition = (): ModalPosition | null => {
+  const contextPosition = React.useContext(PositionContext);
+  const { position } = useModal();
+  return contextPosition ?? position;
+};
+
+const ModalRoot = () => {
+  const entries = useModalStore((s) => s.entries);
+  return <ModalLayer entries={entries} index={0} />;
+};
+
+const ModalLayer = ({ entries, index }: { entries: ModalEntry[]; index: number }) => {
+  const entry = entries[index];
+  return entry ? <ModalLayerContent key={entry.key} entries={entries} index={index} entry={entry} /> : null;
+};
+
+const ModalLayerContent = ({
+  entries,
+  index,
+  entry,
+}: {
+  entries: ModalEntry[];
+  index: number;
+  entry: ModalEntry;
+}) => {
+  const close = useModalStore((s) => s.close);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const { Component, maxHeight, maxWidth } = modals[entry.modalId];
+  const position = MODAL_POSITIONS[entry.modalId];
 
   const handleDismiss = () => {
     close();
-    modalProps?.onDismiss?.();
+    entry.modalProps?.onDismiss?.();
   };
 
   return (
-    <ModalWrapper
-      position={modalId ? MODAL_POSITIONS[modalId] : undefined}
-      maxHeight={modal?.maxHeight}
-      open={!!modal && !closing}
-      onClose={handleDismiss}
-    >
-      {modal && <Component {...modalProps} />}
-    </ModalWrapper>
+    <PositionContext.Provider value={position}>
+      <ModalWrapper
+        position={position}
+        maxHeight={maxHeight}
+        maxWidth={maxWidth}
+        open={mounted && !entry.closing}
+        onClose={handleDismiss}
+      >
+        <Component {...entry.modalProps} />
+        <ModalLayer entries={entries} index={index + 1} />
+      </ModalWrapper>
+    </PositionContext.Provider>
   );
 };
 
 const Footer = ({ children, align = "end" }: { children: React.ReactNode; align?: "end" | "between" }) => {
-  const { position } = useModal();
+  const position: ModalPosition | null = useModalPosition();
   return (
     <footer
       className={clsx(
@@ -91,7 +128,7 @@ const Footer = ({ children, align = "end" }: { children: React.ReactNode; align?
 };
 
 const Header = ({ children }: { children: React.ReactNode }) => {
-  const { position } = useModal();
+  const position: ModalPosition | null = useModalPosition();
   return position === "center" ? (
     <DialogTitle className="pl-6 sm:pl-7 pr-14 pt-7 text-xl font-bold tracking-tight text-gray-900">{children}</DialogTitle>
   ) : (
@@ -110,7 +147,7 @@ const Body = ({
   className?: string;
   noPadding?: boolean;
 }) => {
-  const { position } = useModal();
+  const position: ModalPosition | null = useModalPosition();
   const padding = position === "center" ? "px-6 sm:px-7 pt-4" : "px-4 sm:px-6 pt-4";
   const scroll = position === "center" && "overflow-auto grow";
   return <div className={clsx(!noPadding && padding, className, scroll)}>{children}</div>;

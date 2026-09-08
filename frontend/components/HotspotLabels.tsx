@@ -3,7 +3,6 @@ import { Label, LabelInput, SavedHotspotLabelsInput } from "@birdplan/shared";
 import { Pencil, Plus } from "lucide-react";
 import { buttonVariants } from "components/ui/button";
 import LabelBadge from "components/LabelBadge";
-import LabelDialog from "components/LabelDialog";
 import LabelPickerItems from "components/LabelPickerItems";
 import {
   DropdownMenu,
@@ -31,8 +30,7 @@ type Props = {
 export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, className }: Props) {
   const { labels } = useLabels();
   const { savedHotspots } = useSavedHotspots();
-  const { openOver } = useModal();
-  const [isAdding, setIsAdding] = React.useState(false);
+  const { stack } = useModal();
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
   const selectedIds = saved?.labelIds || [];
@@ -84,7 +82,6 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
   };
 
   const handleNewLabel = async (input: LabelInput) => {
-    setIsAdding(false);
     const label = await createLabel.mutateAsync(input);
     if (label?._id) setLabelIds([...selectedIds, label._id]);
   };
@@ -111,17 +108,16 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
               <DropdownMenuSeparator />
             </>
           )}
-          <DropdownMenuItem onClick={() => setIsAdding(true)}>
+          <DropdownMenuItem onClick={() => stack("labelForm", { title: "New label", onSubmit: handleNewLabel })}>
             <Plus />
             New label
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openOver("manageLabels")}>
+          <DropdownMenuItem onClick={() => stack("manageLabels")}>
             <Pencil />
             Manage labels
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <LabelDialog open={isAdding} title="New label" onSubmit={handleNewLabel} onClose={() => setIsAdding(false)} />
     </div>
   );
 }

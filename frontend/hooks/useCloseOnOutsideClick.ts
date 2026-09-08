@@ -2,7 +2,7 @@ import React from "react";
 import { useModal } from "stores/modals";
 
 export default function useCloseOnOutsideClick() {
-  const { close } = useModal();
+  const { closeAll } = useModal();
   return (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement;
     if (
@@ -11,7 +11,7 @@ export default function useCloseOnOutsideClick() {
       !target.closest('[role="button"]') &&
       !target.closest(".mapboxgl-canvas")
     ) {
-      close();
+      closeAll();
     }
   };
 }

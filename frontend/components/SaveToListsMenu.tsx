@@ -1,8 +1,8 @@
 import React from "react";
+import { useModal } from "stores/modals";
 import { HotspotList, HotspotListInput, SavedHotspot } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import Icon from "components/Icon";
-import HotspotListDialog from "components/HotspotListDialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -24,7 +24,6 @@ type Props = {
 
 export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
   const { lists } = useHotspotLists();
-  const [isAdding, setIsAdding] = React.useState(false);
   const selected = new Set(saved?.listIds || []);
   const isSaved = selected.size > 0;
 
@@ -49,8 +48,8 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
     onChange([...next]);
   };
 
+  const { stack } = useModal();
   const handleNewList = async (name: string) => {
-    setIsAdding(false);
     const list = await createList.mutateAsync({ name });
     if (list?._id) onChange([...selected, list._id]);
   };
@@ -88,13 +87,12 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
             ))}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsAdding(true)}>
+          <DropdownMenuItem onClick={() => stack("hotspotListForm", { title: "New list", onSubmit: handleNewList })}>
             <Icon name="plus" className="text-xs" />
             New list
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <HotspotListDialog open={isAdding} title="New list" onSubmit={handleNewList} onClose={() => setIsAdding(false)} />
     </>
   );
 }

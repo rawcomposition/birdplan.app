@@ -19,7 +19,7 @@ type Props = {
 export default function Header({ border }: Props) {
   const { isOnline } = useRealtimeStatus();
   const { canEdit, trip } = useTrip();
-  const { close, open } = useModal();
+  const { closeAll, open } = useModal();
   const { user } = useUser();
 
   const isSubPage = useLocation().pathname !== "/trips";
@@ -40,7 +40,7 @@ export default function Header({ border }: Props) {
       )}
       <header
         className={clsx("bg-white h-[60px] shrink-0 flex items-center print:hidden", border && "border-b border-gray-100")}
-        onClick={close}
+        onClick={closeAll}
       >
         <Link
           to={user?._id ? "/trips" : "/"}
