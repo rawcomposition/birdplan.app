@@ -14,13 +14,10 @@ import type {
 
 const savedHotspots = new Hono();
 
-const DEFAULT_LIST_NAME = "Favorites";
-
 const getDefaultListId = async (userId: string) => {
-  const existing = await HotspotList.findOne({ userId }).sort({ createdAt: 1 }).lean();
-  if (existing) return existing._id;
-  const created = await HotspotList.create({ userId, name: DEFAULT_LIST_NAME });
-  return created._id;
+  const list = await HotspotList.findOne({ userId }).sort({ createdAt: 1 }).lean();
+  if (!list) throw new HTTPException(500, { message: "Default list not found" });
+  return list._id;
 };
 
 const getOwnedListIds = async (userId: string, listIds: unknown) => {

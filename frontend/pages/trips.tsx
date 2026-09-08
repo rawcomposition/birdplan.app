@@ -11,6 +11,7 @@ import EmptyState from "components/EmptyState";
 import LoadingState from "components/LoadingState";
 import TripCard from "components/TripCard";
 import WidgetCard from "components/WidgetCard";
+import HotspotListsWidget from "components/HotspotListsWidget";
 import { useUser } from "hooks/useUser";
 import { get } from "lib/http";
 import news from "data/news.json";
@@ -154,6 +155,8 @@ export default function Trips() {
                 <p className="mt-2 text-xs text-muted-foreground">Updated {dayjs(user.lifelistUpdatedAt).fromNow()}</p>
               )}
             </WidgetCard>
+
+            <HotspotListsWidget />
 
             {recentNews.length > 0 && (
               <WidgetCard title="What's new" action={{ label: "All updates", to: "/whats-new" }}>
