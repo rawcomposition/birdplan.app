@@ -9,10 +9,9 @@ const fields: Record<keyof Omit<SavedHotspot, "createdAt" | "updatedAt">, any> =
   name: { type: String, required: true },
   lat: { type: Number, required: true },
   lng: { type: Number, required: true },
-  species: Number,
-  checklists: Number,
   notes: String,
   listIds: { type: [String], default: [] },
+  deletedAt: Date,
 };
 
 const SavedHotspotSchema = new Schema(fields, {

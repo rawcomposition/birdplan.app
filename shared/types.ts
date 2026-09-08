@@ -104,6 +104,7 @@ export type Hotspot = {
   checklists?: number;
   notes?: string;
   favs?: HotspotFav[];
+  deletedAt?: Date | null;
 };
 
 export type User = {
@@ -513,6 +514,24 @@ export type OpenBirdingHotspotBBoxResponse = {
   items: [string, number, number, number][];
 };
 
+export type OpenBirdingHotspotLookupResponse = {
+  items: OpenBirdingHotspot[];
+};
+
+export type HotspotSyncUpdate = {
+  id: string;
+  species?: number;
+  checklists?: number;
+  lat?: number;
+  lng?: number;
+  name?: string;
+  deleted: boolean;
+};
+
+export type HotspotSyncInput = {
+  updates: HotspotSyncUpdate[];
+};
+
 export type OpenBirdingHotspot = {
   id: string;
   name: string;
@@ -533,10 +552,9 @@ export type SavedHotspot = {
   name: string;
   lat: number;
   lng: number;
-  species?: number;
-  checklists?: number;
   notes?: string;
   listIds: string[];
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -553,8 +571,6 @@ export type SavedHotspotInput = {
   name: string;
   lat: number;
   lng: number;
-  species?: number;
-  checklists?: number;
   listIds?: string[];
 };
 

@@ -18,6 +18,7 @@ import useSavedHotspotMutation from "hooks/useSavedHotspotMutation";
 import useOpenBirdingHotspot from "hooks/useOpenBirdingHotspot";
 import SaveToListsMenu from "components/SaveToListsMenu";
 import useHotspotLists from "hooks/useHotspotLists";
+import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 
 type Props = {
   hotspotId: string;
@@ -45,9 +46,10 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
   const isSaved = !!saved;
+  const isDeleted = !!saved?.deletedAt;
   const name = info?.name || saved?.name || (isLoading ? "Loading..." : hotspotId);
-  const speciesTotal = info?.numSpecies ?? saved?.species ?? species;
-  const checklistsTotal = info?.numChecklists ?? saved?.checklists;
+  const speciesTotal = info?.numSpecies ?? species;
+  const checklistsTotal = info?.numChecklists;
 
   const saveMutation = useSavedHotspotMutation<SavedHotspotInput>({
     url: "/saved-hotspots",
@@ -96,8 +98,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       name: info?.name || name,
       lat: info?.lat ?? lat,
       lng: info?.lng ?? lng,
-      species: speciesTotal ?? undefined,
-      checklists: checklistsTotal ?? undefined,
       listIds: listIds.length > 0 ? listIds : lists.slice(0, 1).map((it) => it._id),
     });
   };
@@ -119,6 +119,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     <>
       <Header>{name}</Header>
       <Body className="pb-10 sm:pb-4 relative">
+        {isDeleted && <DeletedHotspotNotice onRemove={() => handleChange([])} />}
         <div className="flex gap-2 mb-6">
           <SaveToListsMenu saved={saved} disabled={!isSaved && !info} onChange={handleChange} />
           <DirectionsButton lat={lat} lng={lng} hotspotId={hotspotId} />

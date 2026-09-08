@@ -9,6 +9,7 @@ import ErrorBoundary from "components/ErrorBoundary";
 import { useModal } from "stores/modals";
 import { useTrip, DEFAULT_HOTSPOT_FILTERS, HotspotFilters } from "hooks/useTrip";
 import useSavedHotspots from "hooks/useSavedHotspots";
+import useSyncSavedHotspots from "hooks/useSyncSavedHotspots";
 import useHotspotLists from "hooks/useHotspotLists";
 import useExploreHotspots from "hooks/useExploreHotspots";
 import ExploreToolbar, { ALL_LISTS } from "components/ExploreToolbar";
@@ -68,6 +69,7 @@ export default function Explore() {
   const setListId = (next: string) => setSearchParams(next === ALL_LISTS ? {} : { list: next }, { replace: true });
 
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
+  const { liveById } = useSyncSavedHotspots();
   const savedHotspots =
     listId === ALL_LISTS ? allSavedHotspots : allSavedHotspots.filter((it) => it.listIds.includes(listId));
   const { hotspots, isZoomedOut, isError } = useExploreHotspots(
@@ -94,7 +96,8 @@ export default function Explore() {
     id: it.hotspotId,
     lat: it.lat,
     lng: it.lng,
-    shade: getMarkerColorIndex(it.species || 0),
+    shade: getMarkerColorIndex(liveById[it.hotspotId]?.numSpecies || 0),
+    deleted: !!it.deletedAt,
   }));
 
   const hotspotClick = (id: string) => {
@@ -107,7 +110,7 @@ export default function Explore() {
       hotspotId: id,
       lat,
       lng,
-      species: saved?.species ?? hotspot?.species,
+      species: liveById[id]?.numSpecies ?? hotspot?.species,
     });
   };
 

@@ -1,8 +1,15 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
 import { authenticate } from "lib/utils.js";
 import { connect, SavedHotspot, HotspotList } from "lib/db.js";
-import type { SavedHotspotInput, SavedHotspotListsInput, SavedHotspotNotesInput } from "@birdplan/shared";
+import type {
+  HotspotSyncInput,
+  SavedHotspotInput,
+  SavedHotspotListsInput,
+  SavedHotspotNotesInput,
+  SavedHotspot as SavedHotspotT,
+} from "@birdplan/shared";
 
 const savedHotspots = new Hono();
 
@@ -55,8 +62,6 @@ savedHotspots.post("/", async (c) => {
         name,
         lat: data.lat,
         lng: data.lng,
-        species: Number.isFinite(data.species) ? data.species : undefined,
-        checklists: Number.isFinite(data.checklists) ? data.checklists : undefined,
         ...(requestedListIds ? { listIds } : {}),
       },
       $setOnInsert: requestedListIds ? {} : { listIds },
@@ -65,6 +70,30 @@ savedHotspots.post("/", async (c) => {
   ).lean();
 
   return c.json(row);
+});
+
+savedHotspots.patch("/sync", async (c) => {
+  const session = await authenticate(c);
+  const { updates } = await c.req.json<HotspotSyncInput>();
+  if (!Array.isArray(updates) || updates.length === 0) return c.json({});
+
+  await connect();
+  const now = new Date();
+  const ops: AnyBulkWriteOperation<SavedHotspotT>[] = updates.map((u) => {
+    const $set: Record<string, unknown> = {};
+    if (Number.isFinite(u.lat)) $set.lat = u.lat;
+    if (Number.isFinite(u.lng)) $set.lng = u.lng;
+    if (typeof u.name === "string" && u.name.length > 0) $set.name = u.name;
+    const filter = u.deleted
+      ? { userId: session.userId, hotspotId: u.id, deletedAt: null }
+      : { userId: session.userId, hotspotId: u.id };
+    const update: UpdateQuery<SavedHotspotT> = u.deleted
+      ? { $set: { ...$set, deletedAt: now } }
+      : { ...(Object.keys($set).length ? { $set } : {}), $unset: { deletedAt: true } };
+    return { updateOne: { filter, update } };
+  });
+  await SavedHotspot.bulkWrite(ops);
+  return c.json({});
 });
 
 savedHotspots.delete("/:hotspotId", async (c) => {

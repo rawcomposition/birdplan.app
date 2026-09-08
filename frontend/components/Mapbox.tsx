@@ -23,6 +23,8 @@ type Props = {
   onMoveEnd?: (bounds: Trip["bounds"], zoom: number) => void;
 };
 
+const DELETED_MARKER_COLOR = "#9ca3af";
+
 export default function Mapbox({
   bounds,
   markers,
@@ -207,7 +209,17 @@ export default function Mapbox({
               handleHotspotClick(marker.id);
             }}
           >
-            <MarkerWithIcon icon="hotspot" highlight={marker.id === selectedMarkerId} />
+            {marker.deleted ? (
+              <MarkerWithIcon
+                icon="hotspot"
+                iconName="xMarkBold"
+                color={DELETED_MARKER_COLOR}
+                className="opacity-80"
+                highlight={marker.id === selectedMarkerId}
+              />
+            ) : (
+              <MarkerWithIcon icon="hotspot" highlight={marker.id === selectedMarkerId} />
+            )}
           </Marker>
         ))}
         {customMarkers?.map((marker) => (

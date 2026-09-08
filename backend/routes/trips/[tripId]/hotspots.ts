@@ -1,9 +1,18 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
 import { isTripEditor } from "lib/participants.js";
-import type { HotspotInput, HotspotNotesInput, HotspotFav, SpeciesFavInput, TranslateNameResponse } from "@birdplan/shared";
+import type {
+  HotspotInput,
+  HotspotNotesInput,
+  HotspotFav,
+  HotspotSyncInput,
+  SpeciesFavInput,
+  TranslateNameResponse,
+  Trip as TripT,
+} from "@birdplan/shared";
 import * as deepl from "deepl-node";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -125,9 +134,7 @@ hotspots.patch("/sync", async (c) => {
   const tripId = c.req.param("tripId");
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
-  const { updates } = await c.req.json<{
-    updates: { id: string; species: number; checklists: number; lat: number; lng: number; name?: string }[];
-  }>();
+  const { updates } = await c.req.json<HotspotSyncInput>();
   if (!Array.isArray(updates) || updates.length === 0) return c.json({});
 
   await connect();
@@ -138,24 +145,22 @@ hotspots.patch("/sync", async (c) => {
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
-  const ops = updates.flatMap((u) => {
+  const now = new Date();
+  const ops: AnyBulkWriteOperation<TripT>[] = updates.map((u) => {
     const $set: Record<string, unknown> = {};
     if (Number.isFinite(u.species)) $set["hotspots.$.species"] = u.species;
     if (Number.isFinite(u.checklists)) $set["hotspots.$.checklists"] = u.checklists;
     if (Number.isFinite(u.lat)) $set["hotspots.$.lat"] = u.lat;
     if (Number.isFinite(u.lng)) $set["hotspots.$.lng"] = u.lng;
     if (typeof u.name === "string" && u.name.length > 0) $set["hotspots.$.name"] = u.name;
-    if (Object.keys($set).length === 0) return [];
-    return [
-      {
-        updateOne: {
-          filter: { _id: tripId, "hotspots.id": u.id },
-          update: { $set },
-        },
-      },
-    ];
+    const filter = u.deleted
+      ? { _id: tripId, hotspots: { $elemMatch: { id: u.id, deletedAt: null } } }
+      : { _id: tripId, "hotspots.id": u.id };
+    const update: UpdateQuery<TripT> = u.deleted
+      ? { $set: { ...$set, "hotspots.$.deletedAt": now } }
+      : { ...(Object.keys($set).length ? { $set } : {}), $unset: { "hotspots.$.deletedAt": true } };
+    return { updateOne: { filter, update } };
   });
-  if (ops.length === 0) return c.json({});
   await Trip.bulkWrite(ops);
 
   return c.json({});

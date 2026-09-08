@@ -1,5 +1,5 @@
 import Icon from "components/Icon";
-import { markerIcons, MarkerIconT } from "lib/icons";
+import { markerIcons, MarkerIconT, IconNameT } from "lib/icons";
 import clsx from "clsx";
 
 type Props = {
@@ -9,9 +9,18 @@ type Props = {
   className?: string;
   showStroke?: boolean;
   highlight?: boolean;
+  iconName?: IconNameT;
 };
 
-export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, className, highlight }: Props) {
+export default function MarkerWithIcon({
+  icon,
+  darkIcon,
+  color,
+  showStroke = true,
+  className,
+  highlight,
+  iconName,
+}: Props) {
   const iconData = markerIcons[icon];
   if (!iconData) return null;
   return (
@@ -22,13 +31,13 @@ export default function MarkerWithIcon({ icon, darkIcon, showStroke = true, clas
         className
       )}
       style={{
-        backgroundColor: iconData.color,
+        backgroundColor: color || iconData.color,
       }}
     >
       {highlight && (
         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 border-2 border-white/80 rounded-full bg-white/70 z-[-1]" />
       )}
-      <Icon name={iconData.icon} className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
+      <Icon name={iconName || iconData.icon} className={clsx("text-[13px]", darkIcon ? "text-gray-700" : "text-gray-100")} />
     </div>
   );
 }

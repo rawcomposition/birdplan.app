@@ -17,6 +17,7 @@ import HotspotTargets from "components/HotspotTargets";
 import HotspotFavs from "components/HotspotFavs";
 import ItineraryDays from "components/ItineraryDays";
 import Icon from "components/Icon";
+import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 import { useLocation } from "react-router-dom";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
@@ -34,6 +35,7 @@ export default function Hotspot({ hotspot }: Props) {
   const name = savedHotspot?.name || hotspot.name;
   const notes = savedHotspot?.notes;
   const originalName = savedHotspot?.originalName;
+  const isDeleted = !!savedHotspot?.deletedAt;
   const [modalSpecies, setModalSpecies] = React.useState(selectedSpecies);
   const [tab, setTab] = React.useState(modalSpecies ? "checklists" : "targets");
   const location = useLocation();
@@ -149,6 +151,9 @@ export default function Hotspot({ hotspot }: Props) {
     <>
       <Header>{name}</Header>
       <Body className="pb-10 sm:pb-4 relative">
+        {isDeleted && (
+          <DeletedHotspotNotice onRemove={canEdit ? handleSave : undefined} removeLabel="Remove from trip" />
+        )}
         {canTranslate && (
           <div className="text-[12px] -mt-3 mb-4">
             {!originalName && !translateMutation.isPending && (

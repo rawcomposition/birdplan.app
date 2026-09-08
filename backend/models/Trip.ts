@@ -62,6 +62,7 @@ const fields: Record<
       notes: String,
       species: Number,
       checklists: Number,
+      deletedAt: Date,
       favs: [
         {
           _id: false,
