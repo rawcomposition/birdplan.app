@@ -4,7 +4,6 @@ import { SavedHotspotInput, SavedHotspotListsInput } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
-import { getMarkerColor } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -35,7 +34,7 @@ const tabs = [
 ];
 
 export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) {
-  const { setSelectedMarkerId, setHalo } = useTrip();
+  const { setSelectedMarkerId } = useTrip();
   const { savedHotspots } = useSavedHotspots();
   const { lists } = useHotspotLists();
   const { data: info, isLoading } = useOpenBirdingHotspot(hotspotId);
@@ -46,7 +45,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
   const [tab, setTab] = React.useState("targets");
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
-  const isSaved = !!saved && saved.listIds.length > 0;
   const hasRow = !!saved;
   const isDeleted = !!saved?.deletedAt;
   const name = info?.name || saved?.name || (isLoading ? "Loading..." : hotspotId);
@@ -104,22 +102,15 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       name: info?.name || name,
       lat: info?.lat ?? lat,
       lng: info?.lng ?? lng,
+      species: speciesTotal ?? undefined,
       listIds: listIds.length > 0 ? listIds : lists.slice(0, 1).map((it) => it._id),
     });
   };
 
   React.useEffect(() => {
-    if (isSaved) {
-      setHalo(undefined);
-    } else {
-      setHalo({ lat, lng, color: getMarkerColor(species || 0) });
-    }
     setSelectedMarkerId(hotspotId);
-    return () => {
-      setSelectedMarkerId(undefined);
-      setHalo(undefined);
-    };
-  }, [hotspotId, lat, lng, isSaved, species]);
+    return () => setSelectedMarkerId(undefined);
+  }, [hotspotId]);
 
   return (
     <>

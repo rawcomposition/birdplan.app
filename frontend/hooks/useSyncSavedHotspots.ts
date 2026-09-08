@@ -8,7 +8,7 @@ export default function useSyncSavedHotspots() {
   const { savedHotspots } = useSavedHotspots();
   const ids = savedHotspots.map((it) => it.hotspotId);
   const { data } = useOpenBirdingHotspotLookup(ids);
-  const hasSynced = React.useRef<string | undefined>(undefined);
+  const hasSynced = React.useRef(false);
 
   const syncMutation = useSavedHotspotMutation<HotspotSyncInput>({
     url: "/saved-hotspots/sync",
@@ -21,6 +21,7 @@ export default function useSyncSavedHotspots() {
           ...row,
           ...(u.lat !== undefined ? { lat: u.lat } : {}),
           ...(u.lng !== undefined ? { lng: u.lng } : {}),
+          ...(u.species !== undefined ? { species: u.species } : {}),
           ...(u.name !== undefined ? { name: u.name } : {}),
           deletedAt: u.deleted ? row.deletedAt || new Date() : undefined,
         };
@@ -28,10 +29,8 @@ export default function useSyncSavedHotspots() {
   });
 
   React.useEffect(() => {
-    if (!data || savedHotspots.length === 0) return;
-    const syncKey = [...ids].sort().join(",");
-    if (hasSynced.current === syncKey) return;
-    hasSynced.current = syncKey;
+    if (!data || hasSynced.current) return;
+    hasSynced.current = true;
 
     const updates: HotspotSyncUpdate[] = savedHotspots.flatMap((saved) => {
       const live = data.items.find((it) => it.id === saved.hotspotId);
@@ -40,6 +39,7 @@ export default function useSyncSavedHotspots() {
       if (live.name && live.name !== saved.name) changes.name = live.name;
       if (live.lat !== saved.lat) changes.lat = live.lat;
       if (live.lng !== saved.lng) changes.lng = live.lng;
+      if (live.numSpecies != null && live.numSpecies !== saved.species) changes.species = live.numSpecies;
       const hasChanges = Object.keys(changes).length > 0 || !!saved.deletedAt;
       return hasChanges ? [{ id: saved.hotspotId, deleted: false, ...changes }] : [];
     });
@@ -48,6 +48,4 @@ export default function useSyncSavedHotspots() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, savedHotspots]);
 
-  const liveById = Object.fromEntries((data?.items || []).map((it) => [it.id, it]));
-  return { liveById };
 }

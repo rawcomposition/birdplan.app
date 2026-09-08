@@ -69,7 +69,7 @@ export default function Explore() {
   const setListId = (next: string) => setSearchParams(next === ALL_LISTS ? {} : { list: next }, { replace: true });
 
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
-  const { liveById } = useSyncSavedHotspots();
+  useSyncSavedHotspots();
   const savedHotspots = allSavedHotspots.filter(
     (it) =>
       (listId === ALL_LISTS ? it.listIds.length > 0 : it.listIds.includes(listId)) &&
@@ -99,7 +99,7 @@ export default function Explore() {
     id: it.hotspotId,
     lat: it.lat,
     lng: it.lng,
-    shade: getMarkerColorIndex(liveById[it.hotspotId]?.numSpecies || 0),
+    shade: getMarkerColorIndex(it.species || 0),
     deleted: !!it.deletedAt,
   }));
 
@@ -113,7 +113,7 @@ export default function Explore() {
       hotspotId: id,
       lat,
       lng,
-      species: liveById[id]?.numSpecies ?? hotspot?.species,
+      species: saved?.species ?? hotspot?.species,
     });
   };
 

@@ -13,12 +13,6 @@ type SelectedSpecies = {
   name: string;
 };
 
-type HaloT = {
-  lat: number;
-  lng: number;
-  color: string;
-};
-
 type SetState<T> = T | ((prev: T) => T);
 
 export type HotspotFilters = {
@@ -32,13 +26,11 @@ export const DEFAULT_HOTSPOT_FILTERS: HotspotFilters = { minChecklists: 0, minSp
 type TripUiState = {
   selectedSpecies?: SelectedSpecies;
   selectedMarkerId?: string;
-  halo?: HaloT;
   showAllHotspots: boolean;
   showSatellite: boolean;
   hotspotFilters: HotspotFilters;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
-  setHalo: (data?: HaloT) => void;
   setShowAllHotspots: (show: SetState<boolean>) => void;
   setShowSatellite: (show: SetState<boolean>) => void;
   setHotspotFilters: (filters: Partial<HotspotFilters>) => void;
@@ -53,7 +45,6 @@ const useTripUiStore = create<TripUiState>((set) => ({
   hotspotFilters: DEFAULT_HOTSPOT_FILTERS,
   setSelectedSpecies: (selectedSpecies) => set({ selectedSpecies }),
   setSelectedMarkerId: (selectedMarkerId) => set({ selectedMarkerId }),
-  setHalo: (halo) => set({ halo }),
   setShowAllHotspots: (show) => set((s) => ({ showAllHotspots: resolve(show, s.showAllHotspots) })),
   setShowSatellite: (show) => set((s) => ({ showSatellite: resolve(show, s.showSatellite) })),
   setHotspotFilters: (filters) => set((s) => ({ hotspotFilters: { ...s.hotspotFilters, ...filters } })),
@@ -113,14 +104,12 @@ export const useTrip = () => {
     isOwner,
     is404,
     selectedMarkerId: ui.selectedMarkerId,
-    halo: ui.halo,
     dateRangeLabel,
     showAllHotspots: ui.showAllHotspots,
     showSatellite: ui.showSatellite,
     hotspotFilters: ui.hotspotFilters,
     setSelectedSpecies: ui.setSelectedSpecies,
     setSelectedMarkerId: ui.setSelectedMarkerId,
-    setHalo: ui.setHalo,
     setShowAllHotspots: ui.setShowAllHotspots,
     setShowSatellite: ui.setShowSatellite,
     setHotspotFilters: ui.setHotspotFilters,

@@ -71,6 +71,7 @@ savedHotspots.post("/", async (c) => {
         name,
         lat: data.lat,
         lng: data.lng,
+        ...(Number.isFinite(data.species) ? { species: data.species } : {}),
         ...(requestedListIds ? { listIds } : {}),
       },
       $setOnInsert: requestedListIds ? {} : { listIds },
@@ -92,6 +93,7 @@ savedHotspots.patch("/sync", async (c) => {
     const $set: Record<string, unknown> = {};
     if (Number.isFinite(u.lat)) $set.lat = u.lat;
     if (Number.isFinite(u.lng)) $set.lng = u.lng;
+    if (Number.isFinite(u.species)) $set.species = u.species;
     if (typeof u.name === "string" && u.name.length > 0) $set.name = u.name;
     const filter = u.deleted
       ? { userId: session.userId, hotspotId: u.id, deletedAt: null }

@@ -13,13 +13,13 @@ type Props = {
 };
 
 export default function PersonalLocation({ hotspot, speciesCode }: Props) {
-  const { setHalo } = useTrip();
+  const { setSelectedMarkerId } = useTrip();
   const { id, name, lat, lng } = hotspot;
 
   React.useEffect(() => {
-    setHalo({ lat, lng, color: "#555" });
-    return () => setHalo(undefined);
-  }, [lat, lng]);
+    setSelectedMarkerId(id);
+    return () => setSelectedMarkerId(undefined);
+  }, [id]);
 
   return (
     <>

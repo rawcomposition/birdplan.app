@@ -5,7 +5,7 @@ import { Button } from "components/ui/button";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
-import { isRegionEnglish, getMarkerColor } from "lib/helpers";
+import { isRegionEnglish } from "lib/helpers";
 import RecentSpeciesList from "components/RecentSpeciesList";
 import HotspotStats from "components/HotspotStats";
 import RecentChecklistList from "components/RecentChecklistList";
@@ -18,7 +18,6 @@ import HotspotFavs from "components/HotspotFavs";
 import ItineraryDays from "components/ItineraryDays";
 import Icon from "components/Icon";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
-import { useLocation } from "react-router-dom";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,8 +29,8 @@ type Props = {
 };
 
 export default function Hotspot({ hotspot }: Props) {
-  const { trip, canEdit, selectedSpecies, setSelectedMarkerId, setHalo } = useTrip();
-  const { id, lat, lng, species } = hotspot;
+  const { trip, canEdit, selectedSpecies, setSelectedMarkerId } = useTrip();
+  const { id, lat, lng } = hotspot;
   const savedHotspot = trip?.hotspots.find((it) => it.id === id);
   const isSaved = !!savedHotspot;
   const name = savedHotspot?.name || hotspot.name;
@@ -40,7 +39,6 @@ export default function Hotspot({ hotspot }: Props) {
   const isDeleted = !!savedHotspot?.deletedAt;
   const [modalSpecies, setModalSpecies] = React.useState(selectedSpecies);
   const [tab, setTab] = React.useState(modalSpecies ? "checklists" : "targets");
-  const location = useLocation();
   const queryClient = useQueryClient();
   const { user } = useUser();
 
@@ -132,21 +130,10 @@ export default function Hotspot({ hotspot }: Props) {
     }
   };
 
-  const hasSpecies = !!modalSpecies && location.pathname.includes("targets");
   React.useEffect(() => {
-    if (hasSpecies) {
-      setHalo({ lat, lng, color: "#ce0d02" });
-    } else if (isSaved) {
-      setSelectedMarkerId(id);
-    } else if (!isSaved) {
-      setHalo({ lat, lng, color: getMarkerColor(species || 0) });
-    }
     setSelectedMarkerId(id);
-    return () => {
-      setSelectedMarkerId(undefined);
-      setHalo(undefined);
-    };
-  }, [id, lat, lng, isSaved, species, hasSpecies]);
+    return () => setSelectedMarkerId(undefined);
+  }, [id]);
 
   const canTranslate = isSaved && canEdit && !isRegionEnglish(trip?.region || "");
 

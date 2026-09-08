@@ -552,6 +552,7 @@ export type SavedHotspot = {
   name: string;
   lat: number;
   lng: number;
+  species?: number;
   notes?: string;
   listIds: string[];
   labelIds: string[];
@@ -572,6 +573,7 @@ export type SavedHotspotInput = {
   name: string;
   lat: number;
   lng: number;
+  species?: number;
   listIds?: string[];
 };
 
