@@ -214,7 +214,8 @@ export default function Mapbox({
                 icon="hotspot"
                 iconName="xMarkBold"
                 color={DELETED_MARKER_COLOR}
-                className="opacity-80"
+                showStroke={false}
+                className="border-2 border-gray-500"
                 highlight={marker.id === selectedMarkerId}
               />
             ) : (
