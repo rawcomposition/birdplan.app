@@ -69,29 +69,36 @@ export default function Mapbox({
       f.properties.species >= hotspotFilters.minSpecies
   ).length;
   const isSparse = visibleHotspotCount < 50;
+  const selectedInLayer = (hotspotLayer?.features || []).some((f: any) => f.properties.id === selectedMarkerId);
+
+  const hsRadius = (scale = 1, offset = 0) => {
+    const px = (v: number) => v * scale + offset;
+    return [
+      "interpolate",
+      ["linear"],
+      ["zoom"],
+      6,
+      isSparse
+        ? ["interpolate", ["linear"], ["get", "species"], 0, px(3.5), 300, px(7)]
+        : ["interpolate", ["linear"], ["get", "species"], 0, px(3), 300, px(5)],
+      9,
+      ["interpolate", ["linear"], ["get", "species"], 0, px(4.5), 300, px(9)],
+      12,
+      ["interpolate", ["linear"], ["get", "species"], 0, px(7), 300, px(isMobile ? 10 : 9)],
+    ];
+  };
+  const hsFilter = [
+    "all",
+    [">=", ["get", "checklists"], hotspotFilters.minChecklists],
+    [">=", ["get", "species"], hotspotFilters.minSpecies],
+  ];
 
   const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
-    filter: [
-      "all",
-      [">=", ["get", "checklists"], hotspotFilters.minChecklists],
-      [">=", ["get", "species"], hotspotFilters.minSpecies],
-    ],
+    filter: hsFilter,
     paint: {
-      "circle-radius": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        6,
-        isSparse
-          ? ["interpolate", ["linear"], ["get", "species"], 0, 3.5, 300, 7]
-          : ["interpolate", ["linear"], ["get", "species"], 0, 3, 300, 5],
-        9,
-        ["interpolate", ["linear"], ["get", "species"], 0, 4.5, 300, 9],
-        12,
-        ["interpolate", ["linear"], ["get", "species"], 0, 7, 300, isMobile ? 10 : 9],
-      ],
+      "circle-radius": hsRadius(),
       "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 0.3, 12, 0.75],
       "circle-stroke-color": "#555",
       "circle-color": [
@@ -121,6 +128,21 @@ export default function Mapbox({
       ],
     },
   };
+
+  const selectedFilter = [...hsFilter, ["==", ["get", "id"], selectedMarkerId ?? ""]];
+  const hsHaloLayerStyle = {
+    id: "hotspot-halo",
+    type: "circle",
+    filter: selectedFilter,
+    paint: {
+      "circle-radius": hsRadius(1.6, 1),
+      "circle-color": "rgba(255,255,255,0.7)",
+      "circle-stroke-width": 2,
+      "circle-stroke-color": "#fff",
+    },
+  };
+
+  const hsSelectedLayerStyle = { ...hsLayerStyle, id: "hotspot-selected", filter: selectedFilter };
 
   const obsLayerStyle = {
     id: "obs",
@@ -240,6 +262,10 @@ export default function Mapbox({
           <Source id="hotspot-layer" type="geojson" data={hotspotLayer}>
             {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...hsLayerStyle} />
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+            <Layer {...hsHaloLayerStyle} />
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+            <Layer {...hsSelectedLayerStyle} />
           </Source>
         )}
         {obsLayer && (
@@ -248,7 +274,7 @@ export default function Mapbox({
             <Layer {...obsLayerStyle} />
           </Source>
         )}
-        {halo && (
+        {halo && !selectedInLayer && (
           <Marker latitude={halo.lat} longitude={halo.lng}>
             <div className="w-9 h-9 rounded-full border-2 border-white/80 bg-white/70 flex items-center justify-center">
               <div
