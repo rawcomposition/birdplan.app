@@ -85,7 +85,7 @@ function ListRow({ list }: { list: HotspotList }) {
     updateSavedCache: (old) =>
       old
         .map((it) => ({ ...it, listIds: it.listIds.filter((id) => id !== list._id) }))
-        .filter((it) => it.listIds.length > 0),
+        .filter((it) => it.listIds.length > 0 || it.labelIds.length > 0),
   });
 
   const startEditing = () => {

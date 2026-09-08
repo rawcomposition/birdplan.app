@@ -11,6 +11,7 @@ const fields: Record<keyof Omit<SavedHotspot, "createdAt" | "updatedAt">, any> =
   lng: { type: Number, required: true },
   notes: String,
   listIds: { type: [String], default: [] },
+  labelIds: { type: [String], default: [] },
   deletedAt: Date,
 };
 

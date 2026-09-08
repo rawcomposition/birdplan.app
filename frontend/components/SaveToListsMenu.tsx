@@ -25,8 +25,8 @@ type Props = {
 export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
   const { lists } = useHotspotLists();
   const [isAdding, setIsAdding] = React.useState(false);
-  const isSaved = !!saved;
   const selected = new Set(saved?.listIds || []);
+  const isSaved = selected.size > 0;
 
   const createList = useHotspotListMutation<HotspotListInput, HotspotList>({
     url: "/hotspot-lists",

@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
 import { authenticate } from "lib/utils.js";
-import { connect, SavedHotspot, HotspotList } from "lib/db.js";
+import { connect, SavedHotspot, HotspotList, Label } from "lib/db.js";
 import type {
   HotspotSyncInput,
   SavedHotspotInput,
+  SavedHotspotLabelsInput,
   SavedHotspotListsInput,
   SavedHotspotNotesInput,
   SavedHotspot as SavedHotspotT,
@@ -27,6 +28,17 @@ const getOwnedListIds = async (userId: string, listIds: unknown) => {
   const ids = [...new Set(listIds.filter((id): id is string => typeof id === "string" && !!id))];
   if (ids.length === 0) return [];
   const owned = await HotspotList.find({ userId, _id: { $in: ids } })
+    .select("_id")
+    .lean();
+  const ownedIds = new Set(owned.map((it) => it._id));
+  return ids.filter((id) => ownedIds.has(id));
+};
+
+const getOwnedLabelIds = async (userId: string, labelIds: unknown) => {
+  if (!Array.isArray(labelIds)) return null;
+  const ids = [...new Set(labelIds.filter((id): id is string => typeof id === "string" && !!id))];
+  if (ids.length === 0) return [];
+  const owned = await Label.find({ userId, _id: { $in: ids } })
     .select("_id")
     .lean();
   const ownedIds = new Set(owned.map((it) => it._id));
@@ -130,13 +142,49 @@ savedHotspots.patch("/:hotspotId/lists", async (c) => {
   const listIds = await getOwnedListIds(session.userId, data.listIds);
   if (!listIds) throw new HTTPException(400, { message: "List IDs are required" });
 
-  if (listIds.length === 0) {
-    await SavedHotspot.deleteOne({ userId: session.userId, hotspotId });
-    return c.json({});
-  }
-
   const result = await SavedHotspot.updateOne({ userId: session.userId, hotspotId }, { $set: { listIds } });
   if (result.matchedCount === 0) throw new HTTPException(404, { message: "Saved hotspot not found" });
+  if (listIds.length === 0) {
+    await SavedHotspot.deleteOne({ userId: session.userId, hotspotId, labelIds: { $size: 0 } });
+  }
+  return c.json({});
+});
+
+savedHotspots.put("/:hotspotId/labels", async (c) => {
+  const session = await authenticate(c);
+  const hotspotId = c.req.param("hotspotId");
+  if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
+
+  const data = await c.req.json<SavedHotspotLabelsInput>();
+  await connect();
+  const labelIds = await getOwnedLabelIds(session.userId, data.labelIds);
+  if (!labelIds) throw new HTTPException(400, { message: "Label IDs are required" });
+
+  const existing = await SavedHotspot.findOne({ userId: session.userId, hotspotId }).lean();
+  if (!existing) {
+    const name = typeof data.name === "string" ? data.name.trim() : "";
+    if (!name) throw new HTTPException(400, { message: "Name is required" });
+    if (!Number.isFinite(data.lat) || !Number.isFinite(data.lng)) {
+      throw new HTTPException(400, { message: "Coordinates are required" });
+    }
+    if (labelIds.length === 0) return c.json({});
+    const row = await SavedHotspot.create({
+      userId: session.userId,
+      hotspotId,
+      name,
+      lat: data.lat,
+      lng: data.lng,
+      listIds: [],
+      labelIds,
+    });
+    return c.json(row.toObject());
+  }
+
+  if (labelIds.length === 0 && existing.listIds.length === 0) {
+    await SavedHotspot.deleteOne({ _id: existing._id });
+    return c.json({});
+  }
+  await SavedHotspot.updateOne({ _id: existing._id }, { $set: { labelIds } });
   return c.json({});
 });
 

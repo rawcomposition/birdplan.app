@@ -19,6 +19,7 @@ import useOpenBirdingHotspot from "hooks/useOpenBirdingHotspot";
 import SaveToListsMenu from "components/SaveToListsMenu";
 import useHotspotLists from "hooks/useHotspotLists";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
+import HotspotLabels from "components/HotspotLabels";
 
 type Props = {
   hotspotId: string;
@@ -45,7 +46,8 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
   const [tab, setTab] = React.useState("targets");
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
-  const isSaved = !!saved;
+  const isSaved = !!saved && saved.listIds.length > 0;
+  const hasRow = !!saved;
   const isDeleted = !!saved?.deletedAt;
   const name = info?.name || saved?.name || (isLoading ? "Loading..." : hotspotId);
   const speciesTotal = info?.numSpecies ?? species;
@@ -62,6 +64,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
         updatedAt: new Date(),
         ...input,
         listIds: input.listIds || [],
+        labelIds: [],
       },
       ...old.filter((it) => it.hotspotId !== input.hotspotId),
     ],
@@ -71,9 +74,11 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     url: `/saved-hotspots/${hotspotId}/lists`,
     method: "PATCH",
     updateCache: (old, input) =>
-      input.listIds.length === 0
-        ? old.filter((it) => it.hotspotId !== hotspotId)
-        : old.map((it) => (it.hotspotId === hotspotId ? { ...it, listIds: input.listIds } : it)),
+      old.flatMap((it) => {
+        if (it.hotspotId !== hotspotId) return [it];
+        if (input.listIds.length === 0 && it.labelIds.length === 0) return [];
+        return [{ ...it, listIds: input.listIds }];
+      }),
   });
 
   const notesMutation = useSavedHotspotMutation<{ notes: string }>({
@@ -83,9 +88,10 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
   });
 
   const handleChange = (listIds: string[]) => {
-    if (isSaved) {
+    if (hasRow) {
       if (
         listIds.length === 0 &&
+        saved?.labelIds.length === 0 &&
         saved?.notes &&
         !confirm("Removing this hotspot from all lists will delete your notes. Continue?")
       )
@@ -121,7 +127,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       <Body className="pb-10 sm:pb-4 relative">
         {isDeleted && <DeletedHotspotNotice onRemove={() => handleChange([])} />}
         <div className="flex gap-2 mb-6">
-          <SaveToListsMenu saved={saved} disabled={!isSaved && !info} onChange={handleChange} />
+          <SaveToListsMenu saved={saved} disabled={!hasRow && !info} onChange={handleChange} />
           <DirectionsButton lat={lat} lng={lng} hotspotId={hotspotId} />
           <Button variant="outline-white" size="sm" href={`https://ebird.org/hotspot/${hotspotId}`} target="_blank">
             <img src="/ebird.png" width={48} />
@@ -139,13 +145,21 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        <HotspotLabels
+          hotspotId={hotspotId}
+          name={info?.name || name}
+          lat={info?.lat ?? lat}
+          lng={info?.lng ?? lng}
+          disabled={!hasRow && !info}
+          className="-mt-3 mb-5"
+        />
         <HotspotStats
           id={hotspotId}
           speciesTotal={speciesTotal ?? undefined}
           checklistsTotal={checklistsTotal ?? undefined}
         />
 
-        {isSaved && (
+        {hasRow && (
           <InputNotes
             key={hotspotId}
             value={saved?.notes}

@@ -554,6 +554,7 @@ export type SavedHotspot = {
   lng: number;
   notes?: string;
   listIds: string[];
+  labelIds: string[];
   deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -576,6 +577,49 @@ export type SavedHotspotInput = {
 
 export type SavedHotspotListsInput = {
   listIds: string[];
+};
+
+export const LABEL_COLORS = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "gray",
+] as const;
+
+export type LabelColor = (typeof LABEL_COLORS)[number];
+
+export type Label = {
+  _id: string;
+  userId: string;
+  name: string;
+  color: LabelColor;
+  createdAt: Date;
+};
+
+export type LabelInput = {
+  name: string;
+  color: LabelColor;
+};
+
+export type SavedHotspotLabelsInput = {
+  labelIds: string[];
+  name?: string;
+  lat?: number;
+  lng?: number;
 };
 
 export type HotspotListInput = {

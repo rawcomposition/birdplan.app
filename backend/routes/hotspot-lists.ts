@@ -47,8 +47,8 @@ hotspotLists.delete("/:id", async (c) => {
     userId: session.userId,
   });
   if (result.deletedCount === 0) throw new HTTPException(404, { message: "List not found" });
-  await SavedHotspot.deleteMany({ userId: session.userId, listIds: [id] });
   await SavedHotspot.updateMany({ userId: session.userId, listIds: id }, { $pull: { listIds: id } });
+  await SavedHotspot.deleteMany({ userId: session.userId, listIds: { $size: 0 }, labelIds: { $size: 0 } });
   return c.json({});
 });
 

@@ -22,6 +22,8 @@ import { useLocation } from "react-router-dom";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "hooks/useUser";
+import HotspotLabels from "components/HotspotLabels";
 
 type Props = {
   hotspot: HotspotT;
@@ -40,6 +42,7 @@ export default function Hotspot({ hotspot }: Props) {
   const [tab, setTab] = React.useState(modalSpecies ? "checklists" : "targets");
   const location = useLocation();
   const queryClient = useQueryClient();
+  const { user } = useUser();
 
   const tabs = [
     {
@@ -208,6 +211,7 @@ export default function Hotspot({ hotspot }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {user && <HotspotLabels hotspotId={id} name={name} lat={lat} lng={lng} className="-mt-3 mb-5" />}
         {isSaved && <ItineraryDays locationId={id} type="hotspot" className="-mt-2 mb-6" />}
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
         <HotspotFavs hotspotId={id} />

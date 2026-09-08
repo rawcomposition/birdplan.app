@@ -70,8 +70,9 @@ export default function Explore() {
 
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
   const { liveById } = useSyncSavedHotspots();
-  const savedHotspots =
-    listId === ALL_LISTS ? allSavedHotspots : allSavedHotspots.filter((it) => it.listIds.includes(listId));
+  const savedHotspots = allSavedHotspots.filter((it) =>
+    listId === ALL_LISTS ? it.listIds.length > 0 : it.listIds.includes(listId),
+  );
   const { hotspots, isZoomedOut, isError } = useExploreHotspots(
     showAllHotspots ? (viewport?.bounds ?? null) : null,
     viewport?.zoom ?? 0,
