@@ -1,8 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { TripImportInput, TripImportResponse, TripListPage, isHotspotInRegion } from "@birdplan/shared";
-import useOpenBirdingHotspotLookup from "hooks/useOpenBirdingHotspotLookup";
+import { TripImportInput, TripImportResponse, TripListPage } from "@birdplan/shared";
 import { Header, Body, Footer } from "components/Modal";
 import { Button } from "components/ui/button";
 import { Switch } from "components/ui/switch";
@@ -34,16 +33,6 @@ export default function AddToTrip({ hotspots, subtitle }: Props) {
     value: it._id,
     label: it.name,
   }));
-  const selectedTrip = data?.trips.find((it) => it._id === selectedOption?.value);
-
-  const { data: lookup, isLoading: isLoadingRegion } = useOpenBirdingHotspotLookup(hotspots.map((it) => it.id));
-  const regionIds = new Set(
-    selectedTrip && lookup
-      ? lookup.items.filter((it) => isHotspotInRegion(it.regionCode, selectedTrip.region)).map((it) => it.id)
-      : [],
-  );
-  const inRegion = selectedTrip && lookup ? hotspots.filter((it) => regionIds.has(it.id)) : hotspots;
-  const outsideCount = hotspots.length - inRegion.length;
 
   const ids = new Set(hotspots.map((it) => it.id));
   const savedRows = savedHotspots.filter((it) => ids.has(it.hotspotId));
@@ -69,9 +58,9 @@ export default function AddToTrip({ hotspots, subtitle }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedOption || inRegion.length === 0) return;
+    if (!selectedOption) return;
     mutation.mutate({
-      hotspotIds: inRegion.map((it) => it.id),
+      hotspotIds: hotspots.map((it) => it.id),
       includeNotes: hasNotes && includeNotes,
       includeLabels: hasLabels && includeLabels,
     });
@@ -95,14 +84,6 @@ export default function AddToTrip({ hotspots, subtitle }: Props) {
             styles={formSelectStyles}
             menuPortalTarget={document.body}
           />
-          {selectedTrip && lookup && outsideCount > 0 && (
-            <p className="mt-2 text-sm text-warning">
-              {inRegion.length === 0
-                ? `${isSingle ? "This hotspot is" : "These hotspots are"} outside this trip's region.`
-                : `${outsideCount} of ${count} hotspots are outside this trip's region and will be skipped.`}{" "}
-              Edit the trip's region to include {isSingle ? "it" : "them"}.
-            </p>
-          )}
         </Field>
         {(hasNotes || hasLabels) && (
           <div className="flex flex-col gap-3">
@@ -127,7 +108,7 @@ export default function AddToTrip({ hotspots, subtitle }: Props) {
         </Button>
         <Button
           type="submit"
-          disabled={!selectedOption || isLoadingRegion || inRegion.length === 0}
+          disabled={!selectedOption}
           loading={mutation.isPending}
           loadingText={isSingle ? "Saving..." : "Importing..."}
         >

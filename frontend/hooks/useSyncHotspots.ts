@@ -1,14 +1,13 @@
 import React from "react";
 import { HotspotSyncInput, HotspotSyncUpdate } from "@birdplan/shared";
 import { useTrip } from "hooks/useTrip";
-import useTripHotspots from "hooks/useTripHotspots";
+import useOpenBirdingHotspotLookup from "hooks/useOpenBirdingHotspotLookup";
 import useTripMutation from "hooks/useTripMutation";
 
 export default function useSyncHotspots() {
   const { trip, canEdit } = useTrip();
-  const { data } = useTripHotspots();
-  const hotspots = data || [];
-  const hasFetched = hotspots.length > 0;
+  const savedIds = (trip?.hotspots || []).map((it) => it.id);
+  const { data } = useOpenBirdingHotspotLookup(canEdit ? savedIds : []);
   const hasSynced = React.useRef<string | undefined>(undefined);
 
   const syncMutation = useTripMutation<HotspotSyncInput>({
@@ -33,18 +32,19 @@ export default function useSyncHotspots() {
   });
 
   React.useEffect(() => {
-    if (!canEdit || !hasFetched || !trip?._id || !trip.hotspots?.length) return;
+    if (!canEdit || !data || !trip?._id || !trip.hotspots?.length) return;
     const syncKey = `${trip._id}:${trip.hotspots.map((it) => it.id).sort().join(",")}`;
     if (hasSynced.current === syncKey) return;
     hasSynced.current = syncKey;
 
+    const liveById = new Map(data.items.map((it) => [it.id, it]));
     const updates: HotspotSyncUpdate[] = trip.hotspots.flatMap((saved) => {
-      const live = hotspots.find((h) => h.id === saved.id);
+      const live = liveById.get(saved.id);
       if (!live) return saved.deletedAt ? [] : [{ id: saved.id, deleted: true }];
       const changes: Partial<HotspotSyncUpdate> = {};
       if (!saved.originalName && live.name && live.name !== saved.name) changes.name = live.name;
-      if (Number.isFinite(live.species) && live.species !== saved.species) changes.species = live.species;
-      if (Number.isFinite(live.checklists) && live.checklists !== saved.checklists) changes.checklists = live.checklists;
+      if (live.numSpecies != null && live.numSpecies !== saved.species) changes.species = live.numSpecies;
+      if (live.numChecklists != null && live.numChecklists !== saved.checklists) changes.checklists = live.numChecklists;
       if (Number.isFinite(live.lat) && live.lat !== saved.lat) changes.lat = live.lat;
       if (Number.isFinite(live.lng) && live.lng !== saved.lng) changes.lng = live.lng;
       const hasChanges = Object.keys(changes).length > 0 || !!saved.deletedAt;
@@ -53,5 +53,5 @@ export default function useSyncHotspots() {
     if (updates.length === 0) return;
     syncMutation.mutate({ updates });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canEdit, hasFetched, trip?._id, trip?.hotspots, hotspots]);
+  }, [canEdit, data, trip?._id, trip?.hotspots]);
 }

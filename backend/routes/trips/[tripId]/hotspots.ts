@@ -4,7 +4,7 @@ import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
 import { authenticate, nanoId } from "lib/utils.js";
 import { connect, Trip, SavedHotspot, Label } from "lib/db.js";
 import { isTripEditor, loadEditableTrip } from "lib/participants.js";
-import { fetchHotspotsInRegion } from "lib/openbirding.js";
+import { lookupHotspots } from "lib/openbirding.js";
 import type {
   HotspotInput,
   HotspotLabelsInput,
@@ -55,7 +55,7 @@ hotspots.post("/import", async (c) => {
   const candidateIds = [...new Set(data.hotspotIds.filter((id): id is string => typeof id === "string" && !!id))].filter(
     (id) => !existingIds.has(id)
   );
-  const lookup = await fetchHotspotsInRegion(candidateIds, trip.region);
+  const lookup = await lookupHotspots(candidateIds);
   const incoming: HotspotInput[] = lookup.map((it) => ({
     id: it.id,
     name: it.name,
