@@ -40,6 +40,8 @@ const loadMarkerImages = (map: MapboxMap) => {
   });
 };
 
+const clickableLayerIds = ["markers", "hotspots", "obs"];
+
 const markerImage = (marker: MarkerT) => (marker.deleted ? "deleted-hotspot" : `saved-hotspot-${marker.shade ?? 0}`);
 const placeImage = (marker: CustomMarker) => `place-${marker.icon in markerIcons ? marker.icon : "hotspot"}`;
 
@@ -234,18 +236,19 @@ export default function Mapbox({
         onLoad={(e) => {
           loadMarkerImages(e.target);
           e.target.on("style.load", () => loadMarkerImages(e.target));
+          e.target.on("mousemove", (ev) => {
+            const map = ev.target;
+            if (map.isMoving()) return;
+            const layers = clickableLayerIds.filter((id) => map.getLayer(id));
+            const hovering = layers.length > 0 && map.queryRenderedFeatures(ev.point, { layers }).length > 0;
+            map.getCanvas().style.cursor = hovering ? "pointer" : "";
+          });
           const b = e.target.getBounds();
           onMoveEnd?.({ minX: b.getWest(), minY: b.getSouth(), maxX: b.getEast(), maxY: b.getNorth() }, e.target.getZoom());
         }}
         onMoveEnd={(e) => {
           const b = e.target.getBounds();
           onMoveEnd?.({ minX: b.getWest(), minY: b.getSouth(), maxX: b.getEast(), maxY: b.getNorth() }, e.viewState.zoom);
-        }}
-        onMouseLeave={(e) => {
-          e.target.getCanvas().style.cursor = "";
-        }}
-        onMouseEnter={(e) => {
-          e.target.getCanvas().style.cursor = "pointer";
         }}
         onClick={(e) => {
           if (addingMarker) {
