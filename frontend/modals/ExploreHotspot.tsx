@@ -145,18 +145,18 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        <HotspotStats
+          id={hotspotId}
+          speciesTotal={speciesTotal ?? undefined}
+          checklistsTotal={checklistsTotal ?? undefined}
+        />
         <HotspotLabels
           hotspotId={hotspotId}
           name={info?.name || name}
           lat={info?.lat ?? lat}
           lng={info?.lng ?? lng}
           disabled={!hasRow && !info}
-          className="-mt-3 mb-5"
-        />
-        <HotspotStats
-          id={hotspotId}
-          speciesTotal={speciesTotal ?? undefined}
-          checklistsTotal={checklistsTotal ?? undefined}
+          className="mt-5"
         />
 
         {hasRow && (

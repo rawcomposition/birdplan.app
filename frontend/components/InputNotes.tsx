@@ -30,10 +30,10 @@ export default function InputNotes({ value, onBlur, canEdit: canEditProp }: Prop
   return (
     <>
       {isEditing ? (
-        <div className="mt-6 -mx-2">
+        <div className="mt-4">
           <TextareaAutosize
             placeholder="Notes..."
-            className="mt-1 block w-full rounded-md border border-border bg-card px-3 py-2 text-base shadow-xs outline-primary outline-offset-0 focus:border-ring sm:text-sm"
+            className="mt-1 block w-full rounded-xl border border-border bg-card px-3 py-2 text-base shadow-xs outline-primary outline-offset-0 focus:border-ring sm:text-sm"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             onBlur={(e) => onBlur(e.target.value)}
@@ -43,7 +43,7 @@ export default function InputNotes({ value, onBlur, canEdit: canEditProp }: Prop
           />
         </div>
       ) : (
-        <div className="mt-6 text-secondary-foreground text-sm relative group whitespace-pre-wrap">{notes || "No notes"}</div>
+        <div className="mt-4 text-secondary-foreground text-sm relative group whitespace-pre-wrap">{notes || "No notes"}</div>
       )}
       <div className="-mt-1 -ml-3">
         {showToggleBtn && (

@@ -10,7 +10,7 @@ type Props = {
 
 export default function LabelBadge({ label, className }: Props) {
   return (
-    <Badge variant="secondary" className={cn(labelColorClasses[label.color].badge, className)}>
+    <Badge variant="secondary" className={cn("h-6 px-2 text-[13px]", labelColorClasses[label.color].badge, className)}>
       {label.name}
     </Badge>
   );

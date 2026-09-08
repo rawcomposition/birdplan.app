@@ -1,7 +1,7 @@
 import React from "react";
 import { Label, LabelInput, SavedHotspotLabelsInput } from "@birdplan/shared";
-import { Tag } from "lucide-react";
-import { Button } from "components/ui/button";
+import { Plus } from "lucide-react";
+import { buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
 import LabelBadge from "components/LabelBadge";
 import LabelDialog from "components/LabelDialog";
@@ -94,17 +94,19 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
   };
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1.5", className)}>
-      {selected.map((label) => (
-        <LabelBadge key={label._id} label={label} />
-      ))}
+    <div className={cn("flex", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger
           disabled={disabled}
-          render={<Button variant="ghost" size="xs" className="h-5 px-1.5 text-xs text-gray-500" />}
+          render={<div className="flex flex-wrap items-center gap-1.5 cursor-pointer disabled:cursor-default" />}
         >
-          <Tag className="size-3" />
-          {selected.length === 0 ? "Add label" : ""}
+          {selected.map((label) => (
+            <LabelBadge key={label._id} label={label} />
+          ))}
+          <span className={buttonVariants({ variant: "outline-white", size: "xs", className: "h-6 px-2 text-[13px]" })}>
+            <Plus className="size-3.5" />
+            {selected.length === 0 && "Add label"}
+          </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-[220px]">
           {labels.length > 0 && (

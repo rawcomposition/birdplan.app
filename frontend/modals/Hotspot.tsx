@@ -211,9 +211,9 @@ export default function Hotspot({ hotspot }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {user && <HotspotLabels hotspotId={id} name={name} lat={lat} lng={lng} className="-mt-3 mb-5" />}
-        {isSaved && <ItineraryDays locationId={id} type="hotspot" className="-mt-2 mb-6" />}
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
+        {user && <HotspotLabels hotspotId={id} name={name} lat={lat} lng={lng} className="mt-5" />}
+        {isSaved && <ItineraryDays locationId={id} type="hotspot" className="mt-4" />}
         <HotspotFavs hotspotId={id} />
 
         {isSaved && (
