@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { Compass } from "lucide-react";
 import { TripListPage, TripStats } from "@birdplan/shared";
 import Header from "components/Header";
 import Footer from "components/Footer";
@@ -74,10 +73,6 @@ export default function Trips() {
             </h1>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <Button variant="outline-white" href="/explore" className="items-center">
-              <Compass className="size-4" />
-              Explore
-            </Button>
             <Button variant="default" href="/create" className="pr-6 items-center">
               <span className="text-xl font-bold leading-4">+</span>Create Trip
             </Button>

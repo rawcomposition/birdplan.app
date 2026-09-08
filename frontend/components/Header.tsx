@@ -22,8 +22,13 @@ export default function Header({ border }: Props) {
   const { closeAll, open } = useModal();
   const { user } = useUser();
 
-  const isSubPage = useLocation().pathname !== "/trips";
+  const { pathname } = useLocation();
+  const isSubPage = pathname !== "/trips";
   const tripsHref = user?._id ? "/trips" : "/";
+  const navLinks = [
+    { to: "/trips", label: "Trips" },
+    { to: "/explore", label: "Explore" },
+  ];
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -55,6 +60,22 @@ export default function Header({ border }: Props) {
           </Link>
         )}
         <div className="mr-auto gap-8 items-center flex min-w-0">
+          {!trip && user?._id && (
+            <nav className="flex items-center gap-1">
+              {navLinks.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className={clsx(
+                    "relative px-3 sm:px-4 py-1.5 font-medium transition-colors after:absolute after:inset-x-3 sm:after:inset-x-4 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary after:transition-opacity",
+                    pathname === to ? "text-gray-900 after:opacity-100" : "text-gray-600 hover:text-gray-900 after:opacity-0"
+                  )}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          )}
           {trip && (
             <nav className="flex items-center min-w-0">
               <Link to={tripsHref} className="text-gray-600 px-5 py-1.5 hidden md:flex items-center font-medium">
