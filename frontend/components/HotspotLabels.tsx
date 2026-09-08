@@ -1,25 +1,21 @@
 import React from "react";
 import { Label, LabelInput, SavedHotspotLabelsInput } from "@birdplan/shared";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { buttonVariants } from "components/ui/button";
-import Icon from "components/Icon";
 import LabelBadge from "components/LabelBadge";
 import LabelDialog from "components/LabelDialog";
+import LabelPickerItems from "components/LabelPickerItems";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuCheckboxItem,
   DropdownMenuItem,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "components/ui/dropdown-menu";
 import useLabels from "hooks/useLabels";
 import useLabelMutation from "hooks/useLabelMutation";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSavedHotspotMutation from "hooks/useSavedHotspotMutation";
-import { labelColorClasses } from "lib/labelColors";
 import { useModal } from "stores/modals";
 import { cn } from "lib/utils";
 
@@ -35,7 +31,7 @@ type Props = {
 export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, className }: Props) {
   const { labels } = useLabels();
   const { savedHotspots } = useSavedHotspots();
-  const { open } = useModal();
+  const { openOver } = useModal();
   const [isAdding, setIsAdding] = React.useState(false);
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
@@ -111,30 +107,16 @@ export default function HotspotLabels({ hotspotId, name, lat, lng, disabled, cla
         <DropdownMenuContent align="start" className="w-[220px]">
           {labels.length > 0 && (
             <>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Labels</DropdownMenuLabel>
-                {labels.map((label) => (
-                  <DropdownMenuCheckboxItem
-                    key={label._id}
-                    checked={selectedIds.includes(label._id)}
-                    closeOnClick={false}
-                    disabled={label._id.startsWith("new-")}
-                    onCheckedChange={(checked) => toggle(label._id, checked)}
-                  >
-                    <span className={cn("size-3 rounded-full shrink-0", labelColorClasses[label.color].swatch)} />
-                    <span className="truncate">{label.name}</span>
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuGroup>
+              <LabelPickerItems labels={labels} selectedIds={selectedIds} onToggle={toggle} />
               <DropdownMenuSeparator />
             </>
           )}
           <DropdownMenuItem onClick={() => setIsAdding(true)}>
-            <Icon name="plus" className="text-xs" />
+            <Plus />
             New label
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => open("manageLabels")}>
-            <Icon name="pencil" className="text-xs" />
+          <DropdownMenuItem onClick={() => openOver("manageLabels")}>
+            <Pencil />
             Manage labels
           </DropdownMenuItem>
         </DropdownMenuContent>

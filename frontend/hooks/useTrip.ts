@@ -24,9 +24,10 @@ type SetState<T> = T | ((prev: T) => T);
 export type HotspotFilters = {
   minChecklists: number;
   minSpecies: number;
+  labelIds: string[];
 };
 
-export const DEFAULT_HOTSPOT_FILTERS: HotspotFilters = { minChecklists: 0, minSpecies: 0 };
+export const DEFAULT_HOTSPOT_FILTERS: HotspotFilters = { minChecklists: 0, minSpecies: 0, labelIds: [] };
 
 type TripUiState = {
   selectedSpecies?: SelectedSpecies;
