@@ -54,7 +54,8 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
         queryKey: [`/trips/${selectedOption?.value}`],
       });
       queryClient.invalidateQueries({ queryKey: ["/trips"] });
-      toast.success(added === 0 ? "Already in this trip" : `Added ${added} hotspot${added === 1 ? "" : "s"}`);
+      if (added === 0) toast(isSingle ? "Already in this trip" : "All hotspots are already in this trip");
+      else toast.success(`Added ${added} hotspot${added === 1 ? "" : "s"}`);
       close();
     },
   });
