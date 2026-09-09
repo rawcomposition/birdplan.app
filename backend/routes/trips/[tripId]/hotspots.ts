@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
-import { authenticate, nanoId } from "lib/utils.js";
-import { connect, Trip, SavedHotspot, Label } from "lib/db.js";
+import { authenticate } from "lib/utils.js";
+import { connect, Trip } from "lib/db.js";
 import { isTripEditor, loadEditableTrip } from "lib/participants.js";
-import { lookupHotspots } from "lib/openbirding.js";
+import { buildImportedHotspots } from "lib/hotspotImport.js";
 import type {
   HotspotInput,
   HotspotLabelsInput,
@@ -15,7 +15,6 @@ import type {
   TranslateNameResponse,
   TripImportInput,
   TripImportResponse,
-  TripLabel,
   Trip as TripT,
 } from "@birdplan/shared";
 import * as deepl from "deepl-node";
@@ -51,59 +50,15 @@ hotspots.post("/import", async (c) => {
   if (!Array.isArray(data.hotspotIds)) throw new HTTPException(400, { message: "Hotspot IDs are required" });
 
   const trip = await loadEditableTrip(c.req.param("tripId"), session.userId);
-  const existingIds = new Set(trip.hotspots.map((it) => it.id));
-  const candidateIds = [...new Set(data.hotspotIds.filter((id): id is string => typeof id === "string" && !!id))].filter(
-    (id) => !existingIds.has(id)
-  );
-  const lookup = await lookupHotspots(candidateIds);
-  const incoming: HotspotInput[] = lookup.map((it) => ({
-    id: it.id,
-    name: it.name,
-    lat: it.lat,
-    lng: it.lng,
-    species: it.numSpecies ?? 0,
-    checklists: it.numChecklists ?? 0,
-  }));
-  if (incoming.length === 0) return c.json<TripImportResponse>({ added: 0 });
-
-  const includeNotes = !!data.includeNotes;
-  const includeLabels = !!data.includeLabels;
-  const savedRows =
-    includeNotes || includeLabels
-      ? await SavedHotspot.find({ userId: session.userId, hotspotId: { $in: incoming.map((it) => it.id) } }).lean()
-      : [];
-  const savedById = new Map(savedRows.map((it) => [it.hotspotId, it]));
-
-  const newLabels: TripLabel[] = [];
-  const tripLabelIdByUserLabelId = new Map<string, string>();
-  if (includeLabels) {
-    const userLabelIds = [...new Set(savedRows.flatMap((it) => it.labelIds || []))];
-    const userLabels = userLabelIds.length ? await Label.find({ userId: session.userId, _id: { $in: userLabelIds } }).lean() : [];
-    const tripLabels = [...(trip.labels || [])];
-    for (const userLabel of userLabels) {
-      const match = tripLabels.find((it) => it.name.toLowerCase() === userLabel.name.toLowerCase());
-      if (match) {
-        tripLabelIdByUserLabelId.set(userLabel._id, match._id);
-        continue;
-      }
-      const label: TripLabel = { _id: nanoId(), name: userLabel.name, color: userLabel.color };
-      tripLabels.push(label);
-      newLabels.push(label);
-      tripLabelIdByUserLabelId.set(userLabel._id, label._id);
-    }
-  }
-
-  const hotspotsToAdd = incoming.map((it) => {
-    const saved = savedById.get(it.id);
-    const labelIds = (saved?.labelIds || [])
-      .map((id) => tripLabelIdByUserLabelId.get(id))
-      .filter((id): id is string => !!id);
-    return {
-      ...it,
-      ...(includeNotes && saved?.notes ? { notes: saved.notes } : {}),
-      ...(includeLabels && labelIds.length ? { labelIds } : {}),
-    };
+  const { hotspots: hotspotsToAdd, newLabels } = await buildImportedHotspots({
+    userId: session.userId,
+    hotspotIds: data.hotspotIds,
+    existingHotspotIds: trip.hotspots.map((it) => it.id),
+    existingLabels: trip.labels || [],
+    includeNotes: !!data.includeNotes,
+    includeLabels: !!data.includeLabels,
   });
+  if (hotspotsToAdd.length === 0) return c.json<TripImportResponse>({ added: 0 });
 
   await Trip.updateOne(
     { _id: trip._id },

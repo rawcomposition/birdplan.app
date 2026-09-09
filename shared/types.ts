@@ -345,6 +345,7 @@ export type TripInput = {
   endDate?: string;
   startMonth: number;
   endMonth: number;
+  listId?: string;
 };
 
 export type TripUpdateInput = {

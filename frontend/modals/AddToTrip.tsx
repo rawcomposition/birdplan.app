@@ -1,5 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TripImportInput, TripImportResponse, TripListPage } from "@birdplan/shared";
 import { Header, Body, Footer } from "components/Modal";
@@ -16,10 +17,12 @@ import { useModal } from "stores/modals";
 type Props = {
   hotspots: { id: string; name: string }[];
   subtitle?: string;
+  listId?: string;
 };
 
-export default function AddToTrip({ hotspots, subtitle }: Props) {
+export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
   const { close } = useModal();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { savedHotspots } = useSavedHotspots();
   const [selectedOption, setSelectedOption] = React.useState<Option | null>(null);
@@ -85,6 +88,22 @@ export default function AddToTrip({ hotspots, subtitle }: Props) {
             menuPortalTarget={document.body}
           />
         </Field>
+        {listId && (
+          <p className="text-sm text-muted-foreground">
+            Or{" "}
+            <button
+              type="button"
+              className="font-bold text-link"
+              onClick={() => {
+                close();
+                navigate(`/create?list=${listId}`);
+              }}
+            >
+              create a new trip
+            </button>{" "}
+            from this list.
+          </p>
+        )}
         {(hasNotes || hasLabels) && (
           <div className="flex flex-col gap-3">
             {hasNotes && (

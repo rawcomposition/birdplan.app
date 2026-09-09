@@ -72,7 +72,12 @@ const topEntry = (entries: ModalEntry[]) => entries.filter((it) => !it.closing).
 
 export const useModalStore = create<ModalState>((set, get) => ({
   entries: [],
-  open: (id, props) => set({ entries: [createEntry(id, props)] }),
+  open: (id, props) =>
+    set((s) => {
+      const root = s.entries[0];
+      const entry = createEntry(id, props);
+      return { entries: [root && !root.closing ? { ...entry, key: root.key } : entry] };
+    }),
   stack: (id, props) => set((s) => ({ entries: [...s.entries.filter((it) => !it.closing), createEntry(id, props)] })),
   close: () => {
     const top = topEntry(get().entries);

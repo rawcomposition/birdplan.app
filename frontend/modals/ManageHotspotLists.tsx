@@ -103,7 +103,11 @@ function ListRow({ list }: { list: HotspotList }) {
   };
 
   const handleAddToTrip = () =>
-    stack("addToTrip", { subtitle: list.name, hotspots: savedHotspotsInList(savedHotspots, list._id) });
+    stack("addToTrip", {
+      subtitle: list.name,
+      listId: list._id,
+      hotspots: savedHotspotsInList(savedHotspots, list._id),
+    });
 
   if (isEditing) {
     return (
@@ -139,7 +143,10 @@ function ListRow({ list }: { list: HotspotList }) {
         ]}
         className="min-w-[180px]"
       >
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="text-muted-foreground" />} title="Options">
+        <DropdownMenuTrigger
+          render={<Button variant="ghost" size="icon" className="text-muted-foreground" />}
+          title="Options"
+        >
           <Icon name="verticalDots" />
         </DropdownMenuTrigger>
       </OptionsMenu>

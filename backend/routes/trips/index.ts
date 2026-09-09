@@ -6,6 +6,7 @@ import { authenticate, getBounds, validateTripDates } from "lib/utils.js";
 import { connect, Trip, Participant, IntegrationToken, User } from "lib/db.js";
 import { uploadMapboxImageToStorage, imageUrl } from "lib/storage.js";
 import { SHARE_CODE_TTL_MINUTES } from "lib/config.js";
+import { buildImportedHotspots, listHotspotIds } from "lib/hotspotImport.js";
 import type { TripInput, ParticipantView, TripStats, TripListItem, TripListPage } from "@birdplan/shared";
 
 type ParticipantAvatar = Pick<ParticipantView, "_id" | "userId" | "name" | "photoUrl">;
@@ -249,7 +250,7 @@ trips.get("/", async (c) => {
 trips.post("/", async (c) => {
   const session = await authenticate(c);
 
-  const data = await c.req.json<TripInput>();
+  const { listId, ...data } = await c.req.json<TripInput>();
   validateTripDates(data);
 
   const bounds = await getBounds(data.region);
@@ -264,6 +265,17 @@ trips.post("/", async (c) => {
   const user = await User.findOne({ _id: session.userId }).select("name").lean();
   const ownerName = user?.name || "";
 
+  const { hotspots, newLabels } = listId
+    ? await buildImportedHotspots({
+        userId: session.userId,
+        hotspotIds: await listHotspotIds(session.userId, listId),
+        existingHotspotIds: [],
+        existingLabels: [],
+        includeNotes: true,
+        includeLabels: true,
+      })
+    : { hotspots: [], newLabels: [] };
+
   const trip = await Trip.create({
     ...data,
     ownerId: session.userId,
@@ -271,7 +283,8 @@ trips.post("/", async (c) => {
     bounds,
     imgUrl,
     itinerary: [],
-    hotspots: [],
+    hotspots,
+    labels: newLabels,
     markers: [],
   });
 

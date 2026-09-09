@@ -20,6 +20,7 @@ export default function HotspotListsWidget() {
   const addToTrip = (list: HotspotList) =>
     open("addToTrip", {
       subtitle: list.name,
+      listId: list._id,
       hotspots: savedHotspotsInList(savedHotspots, list._id),
     });
 
