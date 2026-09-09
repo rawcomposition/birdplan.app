@@ -132,12 +132,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
                 disabled={!info && !saved}
                 onClick={() =>
                   stack("addToTrip", {
-                    hotspots: [
-                      {
-                        id: hotspotId,
-                        name: info?.name || saved?.name || name,
-                      },
-                    ],
+                    hotspots: [{ hotspotId, name: info?.name || saved?.name || name }],
                   })
                 }
               >

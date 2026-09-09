@@ -2,7 +2,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { TripImportInput, TripImportResponse, TripListPage } from "@birdplan/shared";
+import { SavedHotspot, TripImportInput, TripImportResponse, TripListPage } from "@birdplan/shared";
 import { Header, Body, Footer } from "components/Modal";
 import { Button } from "components/ui/button";
 import { Switch } from "components/ui/switch";
@@ -15,7 +15,7 @@ import useSavedHotspots from "hooks/useSavedHotspots";
 import { useModal } from "stores/modals";
 
 type Props = {
-  hotspots: { id: string; name: string }[];
+  hotspots: Pick<SavedHotspot, "hotspotId" | "name">[];
   subtitle?: string;
   listId?: string;
 };
@@ -37,7 +37,7 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
     label: it.name,
   }));
 
-  const ids = new Set(hotspots.map((it) => it.id));
+  const ids = new Set(hotspots.map((it) => it.hotspotId));
   const savedRows = savedHotspots.filter((it) => ids.has(it.hotspotId));
   const hasNotes = savedRows.some((it) => !!it.notes);
   const hasLabels = savedRows.some((it) => it.labelIds.length > 0);
@@ -64,7 +64,7 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
     e.preventDefault();
     if (!selectedOption) return;
     mutation.mutate({
-      hotspotIds: hotspots.map((it) => it.id),
+      hotspotIds: hotspots.map((it) => it.hotspotId),
       includeNotes: hasNotes && includeNotes,
       includeLabels: hasLabels && includeLabels,
     });
