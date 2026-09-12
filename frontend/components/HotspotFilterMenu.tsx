@@ -53,7 +53,7 @@ function LabelField({ title, placeholder, labels, selectedIds, disabledIds, excl
           ) : (
             selectedLabels.map((label) =>
               exclude ? (
-                <LabelBadge key={label._id} label={label} className="line-through opacity-70 gap-1">
+                <LabelBadge key={label._id} label={label} className="gap-1">
                   <Ban className="size-3 shrink-0" />
                 </LabelBadge>
               ) : (

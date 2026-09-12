@@ -83,18 +83,19 @@ export default function Explore() {
     hotspotFilters
   );
 
-  const hotspotLayer = React.useMemo(
+  const hiddenHotspotIds = React.useMemo(
     () =>
-      buildHotspotsLayer(
-        hotspots,
-        savedHotspots.map((it) => ({
-          id: it.hotspotId,
-          name: it.name,
-          lat: it.lat,
-          lng: it.lng,
-        })),
+      new Set(
+        allSavedHotspots
+          .filter((it) => it.listIds.length > 0 || !matchesLabelFilters(it.labelIds, hotspotFilters))
+          .map((it) => it.hotspotId)
       ),
-    [hotspots, savedHotspots],
+    [allSavedHotspots, hotspotFilters]
+  );
+
+  const hotspotLayer = React.useMemo(
+    () => buildHotspotsLayer(hotspots.filter((it) => !hiddenHotspotIds.has(it.id)), []),
+    [hotspots, hiddenHotspotIds]
   );
 
   const markers = savedHotspots.map((it) => ({
