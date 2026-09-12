@@ -13,6 +13,7 @@ export type Trip = {
   };
   hotspots: Hotspot[];
   markers: CustomMarker[];
+  labels?: TripLabel[];
   itinerary?: Day[];
   startDate?: string;
   endDate?: string;
@@ -104,6 +105,8 @@ export type Hotspot = {
   checklists?: number;
   notes?: string;
   favs?: HotspotFav[];
+  labelIds?: string[];
+  deletedAt?: Date | null;
 };
 
 export type User = {
@@ -342,6 +345,9 @@ export type TripInput = {
   endDate?: string;
   startMonth: number;
   endMonth: number;
+  listId?: string;
+  includeNotes?: boolean;
+  includeLabels?: boolean;
 };
 
 export type TripUpdateInput = {
@@ -397,6 +403,20 @@ export type HotspotInput = {
 
 export type HotspotNotesInput = {
   notes: string;
+};
+
+export type HotspotLabelsInput = {
+  labelIds: string[];
+};
+
+export type TripImportInput = {
+  hotspotIds: string[];
+  includeNotes: boolean;
+  includeLabels: boolean;
+};
+
+export type TripImportResponse = {
+  added: number;
 };
 
 export type SpeciesFavInput = {
@@ -507,4 +527,136 @@ export type OpenBirdingHotspotRankingResponse = {
   items: OpenBirdingHotspotRanking[];
   citation: string;
   queryTime: string;
+};
+
+export type OpenBirdingHotspotBBoxResponse = {
+  items: [string, number, number, number][];
+};
+
+export type OpenBirdingRegionHotspotsResponse = {
+  items: eBirdHotspot[];
+};
+
+export type OpenBirdingHotspotLookupResponse = {
+  items: OpenBirdingHotspot[];
+};
+
+export type HotspotSyncUpdate = {
+  id: string;
+  species?: number;
+  checklists?: number;
+  lat?: number;
+  lng?: number;
+  name?: string;
+  deleted: boolean;
+};
+
+export type HotspotSyncInput = {
+  updates: HotspotSyncUpdate[];
+};
+
+export type OpenBirdingHotspot = {
+  id: string;
+  name: string;
+  countryCode: string;
+  subnational1Code: string | null;
+  subnational2Code: string | null;
+  regionCode: string;
+  lat: number;
+  lng: number;
+  numSpecies: number | null;
+  numChecklists: number | null;
+};
+
+export type SavedHotspot = {
+  _id: string;
+  userId: string;
+  hotspotId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
+  notes?: string;
+  listIds: string[];
+  labelIds: string[];
+  deletedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type HotspotList = {
+  _id: string;
+  userId: string;
+  name: string;
+  createdAt: Date;
+};
+
+export type SavedHotspotInput = {
+  hotspotId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
+  listIds?: string[];
+};
+
+export type SavedHotspotListsInput = {
+  listIds: string[];
+};
+
+export const LABEL_COLORS = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "gray",
+] as const;
+
+export type LabelColor = (typeof LABEL_COLORS)[number];
+
+export type Label = {
+  _id: string;
+  userId: string;
+  name: string;
+  color: LabelColor;
+  createdAt: Date;
+};
+
+export type LabelInput = {
+  name: string;
+  color: LabelColor;
+};
+
+export type LabelCreateInput = LabelInput & { _id: string };
+
+export type TripLabel = Pick<Label, "_id" | "name" | "color">;
+
+export type SavedHotspotLabelsInput = {
+  labelIds: string[];
+  name?: string;
+  lat?: number;
+  lng?: number;
+};
+
+export type HotspotListInput = {
+  name: string;
+};
+
+export type HotspotListCreateInput = HotspotListInput & { _id: string };
+
+export type SavedHotspotNotesInput = {
+  notes: string;
 };

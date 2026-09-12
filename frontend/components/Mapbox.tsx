@@ -1,13 +1,14 @@
 import React from "react";
-import Map, { Marker, Source, Layer, GeolocateControl } from "react-map-gl";
+import Map, { Source, Layer, GeolocateControl } from "react-map-gl";
+import type { MapboxMap } from "react-map-gl";
 import { Marker as MarkerT } from "lib/types";
 import { Trip, CustomMarker } from "@birdplan/shared";
-import { MarkerIconT } from "lib/icons";
+import { markerIcons } from "lib/icons";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
-import MarkerWithIcon from "components/MarkerWithIcon";
 import clsx from "clsx";
 import { useModal } from "stores/modals";
-import { useTrip, HotspotFilters, DEFAULT_HOTSPOT_FILTERS } from "hooks/useTrip";
+import { useTrip } from "hooks/useTrip";
+import { HotspotFilters, DEFAULT_HOTSPOT_FILTERS } from "stores/hotspotFilterPreferences";
 
 type Props = {
   bounds: Trip["bounds"];
@@ -20,7 +21,30 @@ type Props = {
   showSatellite?: boolean;
   onHotspotClick?: (id: string) => void;
   onDisableAddingMarker?: () => void;
+  onMoveEnd?: (bounds: Trip["bounds"], zoom: number) => void;
 };
+
+const markerImageIds = [
+  ...markerColors.map((_, i) => `saved-hotspot-${i}`),
+  "deleted-hotspot",
+  ...Object.keys(markerIcons).map((it) => `place-${it}`),
+];
+
+const loadMarkerImages = (map: MapboxMap) => {
+  markerImageIds.forEach((id) => {
+    if (map.hasImage(id)) return;
+    map.loadImage(`/markers/${id}.png`, (error, image) => {
+      if (error || !image || map.hasImage(id)) return;
+      map.addImage(id, image, { pixelRatio: 2 });
+      map.triggerRepaint();
+    });
+  });
+};
+
+const clickableLayerIds = ["markers", "hotspots", "obs"];
+
+const markerImage = (marker: MarkerT) => (marker.deleted ? "deleted-hotspot" : `saved-hotspot-${marker.shade ?? 0}`);
+const placeImage = (marker: CustomMarker) => `place-${marker.icon in markerIcons ? marker.icon : "hotspot"}`;
 
 export default function Mapbox({
   bounds,
@@ -33,9 +57,10 @@ export default function Mapbox({
   addingMarker,
   showSatellite,
   onDisableAddingMarker,
+  onMoveEnd,
 }: Props) {
-  const { open, close } = useModal();
-  const { selectedMarkerId, halo } = useTrip();
+  const { open, closeAll } = useModal();
+  const { selectedMarkerId } = useTrip();
   const isOpeningModal = React.useRef(false);
 
   const handleHotspotClick = (id: string) => {
@@ -46,9 +71,9 @@ export default function Mapbox({
     }, 500);
   };
 
-  const handleMarkerClick = (marker: CustomMarker) => {
+  const handleMarkerClick = (markerId: string) => {
     isOpeningModal.current = true;
-    open("viewMarker", { markerId: marker.id });
+    open("viewMarker", { markerId });
     setTimeout(() => {
       isOpeningModal.current = false;
     }, 500);
@@ -66,28 +91,34 @@ export default function Mapbox({
   ).length;
   const isSparse = visibleHotspotCount < 50;
 
+  const hsRadius = (scale = 1, offset = 0) => {
+    const px = (v: number) => v * scale + offset;
+    return [
+      "interpolate",
+      ["linear"],
+      ["zoom"],
+      6,
+      isSparse
+        ? ["interpolate", ["linear"], ["get", "species"], 0, px(3.5), 300, px(7)]
+        : ["interpolate", ["linear"], ["get", "species"], 0, px(3), 300, px(5)],
+      9,
+      ["interpolate", ["linear"], ["get", "species"], 0, px(4.5), 300, px(9)],
+      12,
+      ["interpolate", ["linear"], ["get", "species"], 0, px(7), 300, px(isMobile ? 10 : 9)],
+    ];
+  };
+  const hsFilter = [
+    "all",
+    [">=", ["get", "checklists"], hotspotFilters.minChecklists],
+    [">=", ["get", "species"], hotspotFilters.minSpecies],
+  ];
+
   const hsLayerStyle = {
     id: "hotspots",
     type: "circle",
-    filter: [
-      "all",
-      [">=", ["get", "checklists"], hotspotFilters.minChecklists],
-      [">=", ["get", "species"], hotspotFilters.minSpecies],
-    ],
+    filter: hsFilter,
     paint: {
-      "circle-radius": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        6,
-        isSparse
-          ? ["interpolate", ["linear"], ["get", "species"], 0, 3.5, 300, 7]
-          : ["interpolate", ["linear"], ["get", "species"], 0, 3, 300, 5],
-        9,
-        ["interpolate", ["linear"], ["get", "species"], 0, 4.5, 300, 9],
-        12,
-        ["interpolate", ["linear"], ["get", "species"], 0, 7, 300, isMobile ? 10 : 9],
-      ],
+      "circle-radius": hsRadius(),
       "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 0.3, 12, 0.75],
       "circle-stroke-color": "#555",
       "circle-color": [
@@ -118,6 +149,56 @@ export default function Mapbox({
     },
   };
 
+  const selectedFilter = [...hsFilter, ["==", ["get", "id"], selectedMarkerId ?? ""]];
+  const hsHaloLayerStyle = {
+    id: "hotspot-halo",
+    type: "circle",
+    filter: selectedFilter,
+    paint: {
+      "circle-radius": hsRadius(1.6, 1),
+      "circle-color": "rgba(255,255,255,0.7)",
+      "circle-stroke-width": 2,
+      "circle-stroke-color": "#fff",
+    },
+  };
+
+  const hsSelectedLayerStyle = { ...hsLayerStyle, id: "hotspot-selected", filter: selectedFilter };
+
+  const markerLayer: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: [
+      ...(markers || []).map((it) => ({ ...it, type: "hotspot", image: markerImage(it) })),
+      ...(customMarkers || []).map((it) => ({ ...it, type: "place", image: placeImage(it) })),
+    ].map(({ lat, lng, id, type, image }) => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [lng, lat] },
+      properties: { id, type, image },
+    })),
+  };
+  const markerSelectedFilter = ["==", ["get", "id"], selectedMarkerId ?? ""];
+  const markerLayerStyle = {
+    id: "markers",
+    type: "symbol",
+    layout: {
+      "icon-image": ["get", "image"],
+      "icon-size": ["interpolate", ["linear"], ["zoom"], 7, 0.7, 12, 0.9],
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+    },
+  };
+  const markerHaloLayerStyle = {
+    id: "marker-halo",
+    type: "circle",
+    filter: markerSelectedFilter,
+    paint: {
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 7, 16, 12, 20],
+      "circle-color": "rgba(255,255,255,0.7)",
+      "circle-stroke-width": 2,
+      "circle-stroke-color": "#fff",
+    },
+  };
+  const markerSelectedLayerStyle = { ...markerLayerStyle, id: "marker-selected", filter: markerSelectedFilter };
+
   const obsLayerStyle = {
     id: "obs",
     type: "circle",
@@ -128,10 +209,17 @@ export default function Mapbox({
       "circle-color": ["match", ["get", "isPersonal"], "true", "#555", "#ce0d02"],
     },
   };
+  const obsHaloLayerStyle = {
+    id: "obs-halo",
+    type: "circle",
+    filter: markerSelectedFilter,
+    paint: { ...markerHaloLayerStyle.paint, "circle-radius": isMobile ? 14 : 12 },
+  };
+  const obsSelectedLayerStyle = { ...obsLayerStyle, id: "obs-selected", filter: markerSelectedFilter };
 
-  const activeLayers = [hotspotLayer && "hotspots", obsLayer && "obs"].filter(Boolean);
+  const activeLayers = ["markers", hotspotLayer && "hotspots", obsLayer && "obs"].filter(Boolean);
   const { lat, lng } = getLatLngFromBounds(bounds);
-  if (!lat || !lng) return null;
+  if (lat == null || lng == null) return null;
 
   return (
     <div className={clsx("relative w-full h-full", addingMarker && "mapboxAddMarkerMode")}>
@@ -146,11 +234,22 @@ export default function Mapbox({
         }
         mapboxAccessToken={import.meta.env.VITE_MAPBOX_KEY}
         interactiveLayerIds={activeLayers}
-        onMouseLeave={(e) => {
-          e.target.getCanvas().style.cursor = "";
+        onLoad={(e) => {
+          loadMarkerImages(e.target);
+          e.target.on("style.load", () => loadMarkerImages(e.target));
+          e.target.on("mousemove", (ev) => {
+            const map = ev.target;
+            if (map.isMoving()) return;
+            const layers = clickableLayerIds.filter((id) => map.getLayer(id));
+            const hovering = layers.length > 0 && map.queryRenderedFeatures(ev.point, { layers }).length > 0;
+            map.getCanvas().style.cursor = hovering ? "pointer" : "";
+          });
+          const b = e.target.getBounds();
+          onMoveEnd?.({ minX: b.getWest(), minY: b.getSouth(), maxX: b.getEast(), maxY: b.getNorth() }, e.target.getZoom());
         }}
-        onMouseEnter={(e) => {
-          e.target.getCanvas().style.cursor = "pointer";
+        onMoveEnd={(e) => {
+          const b = e.target.getBounds();
+          onMoveEnd?.({ minX: b.getWest(), minY: b.getSouth(), maxX: b.getEast(), maxY: b.getNorth() }, e.viewState.zoom);
         }}
         onClick={(e) => {
           if (addingMarker) {
@@ -160,11 +259,13 @@ export default function Mapbox({
             onDisableAddingMarker?.();
             return;
           }
-          const features = e.target.queryRenderedFeatures(e.point, { layers: activeLayers });
-          if (features.length) {
-            handleHotspotClick(features?.[0]?.properties?.id);
+          const feature = e.target.queryRenderedFeatures(e.point, { layers: activeLayers })[0];
+          if (feature?.properties?.type === "place") {
+            handleMarkerClick(feature.properties.id);
+          } else if (feature) {
+            handleHotspotClick(feature.properties?.id);
           } else if (!isOpeningModal.current) {
-            close();
+            closeAll();
           }
         }}
         // @ts-expect-error react-map-gl bounds prop typing mismatch
@@ -187,57 +288,33 @@ export default function Mapbox({
             marginBottom: "1rem",
           }}
         />
-        {markers?.map((marker) => (
-          <Marker
-            key={marker.id}
-            latitude={marker.lat}
-            longitude={marker.lng}
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              handleHotspotClick(marker.id);
-            }}
-          >
-            <MarkerWithIcon icon="hotspot" highlight={marker.id === selectedMarkerId} />
-          </Marker>
-        ))}
-        {customMarkers?.map((marker) => (
-          <Marker
-            key={marker.id}
-            latitude={marker.lat}
-            longitude={marker.lng}
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              handleMarkerClick(marker);
-            }}
-          >
-            <MarkerWithIcon icon={marker.icon as MarkerIconT} highlight={marker.id === selectedMarkerId} />
-          </Marker>
-        ))}
         {hotspotLayer && (
           <Source id="hotspot-layer" type="geojson" data={hotspotLayer}>
             {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...hsLayerStyle} />
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+            <Layer {...hsHaloLayerStyle} />
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+            <Layer {...hsSelectedLayerStyle} />
           </Source>
         )}
+        <Source id="marker-layer" type="geojson" data={markerLayer}>
+          {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+          <Layer {...markerLayerStyle} />
+          {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+          <Layer {...markerHaloLayerStyle} />
+          {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+          <Layer {...markerSelectedLayerStyle} />
+        </Source>
         {obsLayer && (
           <Source id="obs-layer" type="geojson" data={obsLayer}>
             {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
             <Layer {...obsLayerStyle} />
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+            <Layer {...obsHaloLayerStyle} />
+            {/* @ts-expect-error react-map-gl Layer style spread typing mismatch */}
+            <Layer {...obsSelectedLayerStyle} />
           </Source>
-        )}
-        {halo && (
-          <Marker latitude={halo.lat} longitude={halo.lng}>
-            <div className="w-9 h-9 rounded-full border-2 border-white/80 bg-white/70 flex items-center justify-center">
-              <div
-                className="rounded-full border-[#555] border-[0.75px] cursor-pointer"
-                style={{
-                  backgroundColor: halo.color,
-                  width: isMobile ? "17px" : "15px",
-                  height: isMobile ? "17px" : "15px",
-                }}
-              />
-            </div>
-          </Marker>
         )}
       </Map>
       {obsLayer && (

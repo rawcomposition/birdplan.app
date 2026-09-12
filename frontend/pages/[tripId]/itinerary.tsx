@@ -16,7 +16,7 @@ import { getTripDays } from "lib/itinerary";
 
 export default function Itinerary() {
   const { trip, canEdit } = useTrip();
-  const { close, modalId } = useModal();
+  const { closeAll, modalId } = useModal();
   const isDateRange = !!(trip?.startDate && trip?.endDate);
   const renderDays = getTripDays(trip);
   const dayIds = renderDays.map((d) => d.id);
@@ -56,7 +56,7 @@ export default function Itinerary() {
     if (!modalId) return;
     const isButton = (e.target as HTMLElement).closest("button");
     if (isButton) return;
-    if (modalId) close();
+    closeAll();
   };
 
   const dateRange =

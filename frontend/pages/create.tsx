@@ -1,6 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "components/Header";
 import { Button } from "components/ui/button";
 import MonthSelect from "components/MonthSelect";
@@ -13,12 +13,17 @@ import RangeField from "components/RangeField";
 import Expander from "components/Expander";
 import RegionFields from "components/RegionFields";
 import CreateTripHero from "components/CreateTripHero";
+import { Bookmark } from "lucide-react";
+import useHotspotLists from "hooks/useHotspotLists";
+import useSavedHotspots from "hooks/useSavedHotspots";
+import { savedHotspotsInList } from "lib/helpers";
 import { Option } from "lib/types";
 import { TripInput } from "@birdplan/shared";
 import { useModal } from "stores/modals";
 import dayjs from "dayjs";
 import { months } from "lib/helpers";
 import useMutation from "hooks/useMutation";
+import { useQueryClient } from "@tanstack/react-query";
 import { RegionFieldsValue, emptyRegionFieldsValue, getRegionCode, validateRegionFields } from "lib/region";
 import { Flow } from "lib/enums";
 
@@ -29,8 +34,6 @@ const monthOption = (month: number): Option => ({
 
 const defaultMonth = monthOption(dayjs().month() + 1);
 
-const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
-
 export default function CreateTrip() {
   const [region, setRegion] = React.useState<RegionFieldsValue>(emptyRegionFieldsValue);
   const [startDate, setStartDate] = React.useState("");
@@ -38,7 +41,13 @@ export default function CreateTrip() {
   const [startMonth, setStartMonth] = React.useState<Option>(defaultMonth);
   const [endMonth, setEndMonth] = React.useState<Option>(defaultMonth);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { close } = useModal();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { lists } = useHotspotLists();
+  const { savedHotspots } = useSavedHotspots();
+  const list = lists.find((it) => it._id === searchParams.get("list"));
+  const listCount = list ? savedHotspotsInList(savedHotspots, list._id).length : 0;
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -56,6 +65,8 @@ export default function CreateTrip() {
     url: "/trips",
     method: "POST",
     onSuccess: ({ id }) => {
+      queryClient.invalidateQueries({ queryKey: ["/trips"] });
+      queryClient.invalidateQueries({ queryKey: ["/trips/stats"] });
       navigate(`/${id}/lifelist?from=${Flow.Create}`);
       close();
     },
@@ -79,6 +90,9 @@ export default function CreateTrip() {
       endDate,
       startMonth: Number(startMonth.value),
       endMonth: Number(endMonth.value),
+      listId: list?._id,
+      includeNotes: searchParams.get("notes") !== "false",
+      includeLabels: searchParams.get("labels") !== "false",
     });
   };
 
@@ -94,6 +108,23 @@ export default function CreateTrip() {
               <BackLink to="/trips" label="Back to trips" className="mb-6" />
 
               <Heading hat="New trip" title="Where are you headed?" className="mb-7" />
+
+              {list && (
+                <div className="mb-6 flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success text-white">
+                    <Bookmark className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-foreground">{list.name}</p>
+                    <p className="text-xs text-muted-foreground tabular-nums">
+                      {listCount} hotspot{listCount === 1 ? "" : "s"} will be added
+                    </p>
+                  </div>
+                  <Button type="button" variant="link" className="text-sm" onClick={() => setSearchParams({})}>
+                    Remove
+                  </Button>
+                </div>
+              )}
 
               <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-[22px]">
@@ -129,7 +160,7 @@ export default function CreateTrip() {
                           onChange={setStartMonth}
                           value={startMonth}
                           instanceId="startMonth"
-                          menuPortalTarget={portalTarget()}
+                          menuPortalTarget={document.body}
                         />
                       }
                       to={
@@ -137,7 +168,7 @@ export default function CreateTrip() {
                           onChange={setEndMonth}
                           value={endMonth}
                           instanceId="endMonth"
-                          menuPortalTarget={portalTarget()}
+                          menuPortalTarget={document.body}
                         />
                       }
                     />

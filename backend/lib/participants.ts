@@ -1,10 +1,20 @@
-import { connect, Participant, User as UserModel } from "lib/db.js";
+import { HTTPException } from "hono/http-exception";
+import { connect, Participant, Trip, User as UserModel } from "lib/db.js";
 import type { Participant as ParticipantT, User, ParticipantListMode } from "@birdplan/shared";
 
 export async function isTripEditor(tripId: string, userId?: string | null): Promise<boolean> {
   if (!userId) return false;
   await connect();
   return !!(await Participant.exists({ tripId, userId, status: "active" }));
+}
+
+export async function loadEditableTrip(tripId: string | undefined, userId: string) {
+  if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
+  await connect();
+  const [trip, isEditor] = await Promise.all([Trip.findById(tripId).lean(), isTripEditor(tripId, userId)]);
+  if (!trip) throw new HTTPException(404, { message: "Trip not found" });
+  if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
+  return trip;
 }
 
 export function isEditorInRoster(roster: Pick<ParticipantT, "userId" | "status">[], userId?: string | null): boolean {

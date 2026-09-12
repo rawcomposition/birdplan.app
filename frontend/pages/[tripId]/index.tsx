@@ -6,6 +6,7 @@ import useSyncHotspots from "hooks/useSyncHotspots";
 import { getMarkerColorIndex, buildHotspotsLayer } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
+import { matchesLabelFilters } from "stores/hotspotFilterPreferences";
 import MapButton from "components/MapButton";
 import MapOverlay from "components/MapOverlay";
 import Icon from "components/Icon";
@@ -24,10 +25,12 @@ export default function Trip() {
     showSatellite,
     setShowSatellite,
     hotspotFilters,
+    setHotspotFilters,
   } = useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
-  const savedHotspots = trip?.hotspots || [];
+  const allSavedHotspots = trip?.hotspots || [];
+  const savedHotspots = allSavedHotspots.filter((it) => matchesLabelFilters(it.labelIds, hotspotFilters));
   const { data } = useTripHotspots();
   const hotspots = data || [];
   useSyncHotspots();
@@ -41,6 +44,7 @@ export default function Trip() {
     lng: it.lng,
     shade: getMarkerColorIndex(it.species || 0),
     id: it.id,
+    deleted: !!it.deletedAt,
   }));
 
   const markers = [...savedHotspotMarkers];
@@ -48,8 +52,7 @@ export default function Trip() {
 
   const hotspotClick = (id: string) => {
     setSelectedSpecies(undefined);
-    const allHotspots = hotspots.length > 0 ? hotspots : savedHotspots;
-    const hotspot = allHotspots.find((it) => it.id === id);
+    const hotspot = hotspots.find((it) => it.id === id) || allSavedHotspots.find((it) => it.id === id);
     if (!hotspot) return toast.error("Hotspot not found");
     open("hotspot", { hotspot });
   };
@@ -67,7 +70,13 @@ export default function Trip() {
     <>
       {trip && <title>{`${trip.name} | BirdPlan.app`}</title>}
       <div className="absolute top-4 right-4 sm:left-4 sm:right-auto flex flex-col gap-3 z-10">
-        <HotspotFilterMenu />
+        <HotspotFilterMenu
+          showAllHotspots={showAllHotspots}
+          setShowAllHotspots={setShowAllHotspots}
+          hotspotFilters={hotspotFilters}
+          labels={trip?.labels || []}
+          setHotspotFilters={setHotspotFilters}
+        />
         <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>
           <Icon name="layers" />
         </MapButton>

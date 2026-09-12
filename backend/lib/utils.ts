@@ -9,6 +9,11 @@ export const nanoId = (length: number = 16) => {
   return customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", length)();
 };
 
+export const parseClientId = (value: unknown): string => {
+  if (typeof value !== "string" || !/^[A-Za-z0-9]{16}$/.test(value)) throw new HTTPException(400, { message: "Invalid ID" });
+  return value;
+};
+
 export const newInviteToken = () => ({
   inviteToken: nanoId(40),
   inviteExpiresAt: new Date(Date.now() + INVITE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000),

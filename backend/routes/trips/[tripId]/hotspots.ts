@@ -1,9 +1,22 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
 import { authenticate } from "lib/utils.js";
 import { connect, Trip } from "lib/db.js";
-import { isTripEditor } from "lib/participants.js";
-import type { HotspotInput, HotspotNotesInput, HotspotFav, SpeciesFavInput, TranslateNameResponse } from "@birdplan/shared";
+import { isTripEditor, loadEditableTrip } from "lib/participants.js";
+import { buildImportedHotspots } from "lib/hotspotImport.js";
+import type {
+  HotspotInput,
+  HotspotLabelsInput,
+  HotspotNotesInput,
+  HotspotFav,
+  HotspotSyncInput,
+  SpeciesFavInput,
+  TranslateNameResponse,
+  TripImportInput,
+  TripImportResponse,
+  Trip as TripT,
+} from "@birdplan/shared";
 import * as deepl from "deepl-node";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -28,6 +41,52 @@ hotspots.post("/", async (c) => {
   if (trip.hotspots.find((it) => it.id === data.id)) return c.json({});
 
   await Trip.updateOne({ _id: tripId }, { $push: { hotspots: data } });
+  return c.json({});
+});
+
+hotspots.post("/import", async (c) => {
+  const session = await authenticate(c);
+  const data = await c.req.json<TripImportInput>();
+  if (!Array.isArray(data.hotspotIds)) throw new HTTPException(400, { message: "Hotspot IDs are required" });
+
+  const trip = await loadEditableTrip(c.req.param("tripId"), session.userId);
+  const { hotspots: hotspotsToAdd, newLabels } = await buildImportedHotspots({
+    userId: session.userId,
+    hotspotIds: data.hotspotIds,
+    existingHotspotIds: trip.hotspots.map((it) => it.id),
+    existingLabels: trip.labels || [],
+    includeNotes: !!data.includeNotes,
+    includeLabels: !!data.includeLabels,
+  });
+  if (hotspotsToAdd.length === 0) return c.json<TripImportResponse>({ added: 0 });
+
+  await Trip.updateOne(
+    { _id: trip._id },
+    {
+      $push: {
+        hotspots: { $each: hotspotsToAdd },
+        ...(newLabels.length ? { labels: { $each: newLabels } } : {}),
+      },
+    }
+  );
+  return c.json<TripImportResponse>({ added: hotspotsToAdd.length });
+});
+
+hotspots.put("/:hotspotId/labels", async (c) => {
+  const session = await authenticate(c);
+  const hotspotId = c.req.param("hotspotId");
+  if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
+
+  const data = await c.req.json<HotspotLabelsInput>();
+  if (!Array.isArray(data.labelIds)) throw new HTTPException(400, { message: "Label IDs are required" });
+
+  const trip = await loadEditableTrip(c.req.param("tripId"), session.userId);
+  if (!trip.hotspots.some((it) => it.id === hotspotId)) throw new HTTPException(404, { message: "Hotspot not found" });
+
+  const tripLabelIds = new Set((trip.labels || []).map((it) => it._id));
+  const labelIds = [...new Set(data.labelIds.filter((id): id is string => typeof id === "string" && tripLabelIds.has(id)))];
+
+  await Trip.updateOne({ _id: trip._id, "hotspots.id": hotspotId }, { $set: { "hotspots.$.labelIds": labelIds } });
   return c.json({});
 });
 
@@ -125,9 +184,7 @@ hotspots.patch("/sync", async (c) => {
   const tripId = c.req.param("tripId");
   if (!tripId) throw new HTTPException(400, { message: "Trip ID is required" });
 
-  const { updates } = await c.req.json<{
-    updates: { id: string; species: number; checklists: number; lat: number; lng: number; name?: string }[];
-  }>();
+  const { updates } = await c.req.json<HotspotSyncInput>();
   if (!Array.isArray(updates) || updates.length === 0) return c.json({});
 
   await connect();
@@ -138,24 +195,22 @@ hotspots.patch("/sync", async (c) => {
   if (!trip) throw new HTTPException(404, { message: "Trip not found" });
   if (!isEditor) throw new HTTPException(403, { message: "Forbidden" });
 
-  const ops = updates.flatMap((u) => {
+  const now = new Date();
+  const ops: AnyBulkWriteOperation<TripT>[] = updates.map((u) => {
     const $set: Record<string, unknown> = {};
     if (Number.isFinite(u.species)) $set["hotspots.$.species"] = u.species;
     if (Number.isFinite(u.checklists)) $set["hotspots.$.checklists"] = u.checklists;
     if (Number.isFinite(u.lat)) $set["hotspots.$.lat"] = u.lat;
     if (Number.isFinite(u.lng)) $set["hotspots.$.lng"] = u.lng;
     if (typeof u.name === "string" && u.name.length > 0) $set["hotspots.$.name"] = u.name;
-    if (Object.keys($set).length === 0) return [];
-    return [
-      {
-        updateOne: {
-          filter: { _id: tripId, "hotspots.id": u.id },
-          update: { $set },
-        },
-      },
-    ];
+    const filter = u.deleted
+      ? { _id: tripId, hotspots: { $elemMatch: { id: u.id, deletedAt: null } } }
+      : { _id: tripId, "hotspots.id": u.id };
+    const update: UpdateQuery<TripT> = u.deleted
+      ? { $set: { ...$set, "hotspots.$.deletedAt": now } }
+      : { ...(Object.keys($set).length ? { $set } : {}), $unset: { "hotspots.$.deletedAt": true } };
+    return { updateOne: { filter, update } };
   });
-  if (ops.length === 0) return c.json({});
   await Trip.bulkWrite(ops);
 
   return c.json({});

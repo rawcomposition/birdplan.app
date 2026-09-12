@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "lib/utils";
 import Icon from "components/Icon";
 import {
@@ -6,6 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
 } from "components/ui/dropdown-menu";
 
 export type SelectOption<T extends string> = {
@@ -21,6 +23,7 @@ type Props<T extends string> = {
   compact?: boolean;
   align?: "left" | "right";
   className?: string;
+  children?: React.ReactNode;
 };
 
 export default function SelectDropdown<T extends string>({
@@ -31,6 +34,7 @@ export default function SelectDropdown<T extends string>({
   compact,
   align = "right",
   className,
+  children,
 }: Props<T>) {
   const current = options.find((o) => o.value === value) ?? options[0];
 
@@ -57,6 +61,12 @@ export default function SelectDropdown<T extends string>({
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
+        {children && (
+          <>
+            <DropdownMenuSeparator />
+            {children}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

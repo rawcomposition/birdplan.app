@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 const ebirdProxy = new Hono();
 
@@ -19,7 +20,7 @@ ebirdProxy.get("/:path{.*}", async (c) => {
   const response = await fetch(url);
   const data = await response.json();
 
-  return c.json(data);
+  return c.json(data, response.status as ContentfulStatusCode);
 });
 
 export default ebirdProxy;

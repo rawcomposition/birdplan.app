@@ -15,7 +15,7 @@ export default function useFetchRecentChecklists(region?: string) {
   });
 
   const groupedChecklists = React.useMemo(() => {
-    if (!data) return [];
+    if (!Array.isArray(data)) return [];
     const grouped = data.reduce(
       (acc, item) => {
         const key = `${item.obsDt}-${item.obsTime || nanoId(5)}`;
@@ -28,5 +28,5 @@ export default function useFetchRecentChecklists(region?: string) {
     return Object.values(grouped);
   }, [data]);
 
-  return { checklists: data, groupedChecklists, isLoading, error, refetch };
+  return { checklists: Array.isArray(data) ? data : undefined, groupedChecklists, isLoading, error, refetch };
 }

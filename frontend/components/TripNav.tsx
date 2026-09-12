@@ -9,7 +9,7 @@ import OptionsMenu from "components/OptionsMenu";
 import { DropdownMenuTrigger } from "components/ui/dropdown-menu";
 import { Button, buttonVariants } from "components/ui/button";
 import Icon from "components/Icon";
-import { Feather, Users, Settings, Download, Send } from "lucide-react";
+import { Feather, Users, Settings, Download, Send, Tag } from "lucide-react";
 
 const links = [
   { name: "Map", slug: "", icon: "mapFlat" },
@@ -43,6 +43,11 @@ export default function TripNav() {
       name: `Participants${participants ? ` (${participants.length})` : ""}`,
       href: `/${trip?._id}/participants`,
       icon: <Users />,
+    },
+    {
+      name: `Labels${trip?.labels?.length ? ` (${trip.labels.length})` : ""}`,
+      onClick: () => open("manageTripLabels"),
+      icon: <Tag />,
     },
     {
       name: "Trip Settings",

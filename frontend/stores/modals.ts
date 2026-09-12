@@ -5,6 +5,7 @@ export type ModalPosition = "right" | "center";
 
 export type ModalId =
   | "hotspot"
+  | "exploreHotspot"
   | "personalLocation"
   | "addMarker"
   | "addHotspot"
@@ -15,11 +16,18 @@ export type ModalId =
   | "addParticipant"
   | "inviteAsEditor"
   | "manageLifelist"
+  | "manageHotspotLists"
+  | "manageLabels"
+  | "manageTripLabels"
+  | "addToTrip"
+  | "labelForm"
+  | "hotspotListForm"
   | "generateMagicLink"
   | "share";
 
 export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   hotspot: "right",
+  exploreHotspot: "right",
   personalLocation: "right",
   addMarker: "right",
   addPlace: "right",
@@ -30,39 +38,68 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   addParticipant: "center",
   inviteAsEditor: "center",
   manageLifelist: "center",
+  manageHotspotLists: "center",
+  manageLabels: "center",
+  manageTripLabels: "center",
+  addToTrip: "center",
+  labelForm: "center",
+  hotspotListForm: "center",
   generateMagicLink: "center",
   share: "center",
 };
 
+export type ModalEntry = { key: number; modalId: ModalId; modalProps: KeyValue; closing: boolean };
+
 type ModalState = {
-  modalId: ModalId | null;
-  modalProps: KeyValue;
-  closing: boolean;
+  entries: ModalEntry[];
   open: (id: ModalId, props?: KeyValue) => void;
+  stack: (id: ModalId, props?: KeyValue) => void;
   close: () => void;
+  closeAll: () => void;
 };
 
-let closeTimer: ReturnType<typeof setTimeout> | undefined;
+const CLOSE_DELAY = 500;
+let nextKey = 0;
 
-export const useModalStore = create<ModalState>((set) => ({
-  modalId: null,
-  modalProps: {},
+const createEntry = (modalId: ModalId, props?: KeyValue): ModalEntry => ({
+  key: nextKey++,
+  modalId,
+  modalProps: props || {},
   closing: false,
-  open: (id, props) => {
-    clearTimeout(closeTimer);
-    set({ modalId: id, modalProps: props || {}, closing: false });
-  },
+});
+
+const topEntry = (entries: ModalEntry[]) => entries.filter((it) => !it.closing).at(-1);
+
+export const useModalStore = create<ModalState>((set, get) => ({
+  entries: [],
+  open: (id, props) =>
+    set((s) => {
+      const root = s.entries[0];
+      const entry = createEntry(id, props);
+      return { entries: [root && !root.closing ? { ...entry, key: root.key } : entry] };
+    }),
+  stack: (id, props) => set((s) => ({ entries: [...s.entries.filter((it) => !it.closing), createEntry(id, props)] })),
   close: () => {
-    set({ closing: true });
-    clearTimeout(closeTimer);
-    closeTimer = setTimeout(() => set({ modalId: null, closing: false }), 500);
+    const top = topEntry(get().entries);
+    if (!top) return;
+    set((s) => ({ entries: s.entries.map((it) => (it.key === top.key ? { ...it, closing: true } : it)) }));
+    setTimeout(() => set((s) => ({ entries: s.entries.filter((it) => it.key !== top.key) })), CLOSE_DELAY);
+  },
+  closeAll: () => {
+    const keys = get().entries.map((it) => it.key);
+    if (keys.length === 0) return;
+    set((s) => ({ entries: s.entries.map((it) => ({ ...it, closing: true })) }));
+    setTimeout(() => set((s) => ({ entries: s.entries.filter((it) => !keys.includes(it.key)) })), CLOSE_DELAY);
   },
 }));
 
 export const useModal = () => {
-  const modalId = useModalStore((s) => s.modalId);
+  const entries = useModalStore((s) => s.entries);
   const open = useModalStore((s) => s.open);
+  const stack = useModalStore((s) => s.stack);
   const close = useModalStore((s) => s.close);
+  const closeAll = useModalStore((s) => s.closeAll);
+  const modalId = topEntry(entries)?.modalId ?? null;
   const position = modalId ? MODAL_POSITIONS[modalId] : null;
-  return { open, close, modalId, position };
+  return { open, stack, close, closeAll, modalId, position };
 };
