@@ -8,10 +8,21 @@ export default function WhatsNew() {
     <PublicPage documentTitle="What's New | BirdPlan.app">
       <Heading title="What's New" className="mt-12" />
       <div className="prose prose-h2:text-foreground prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+        <h2>September 4, 2026</h2>
+        <ul>
+          <li>
+            ✨ <strong>Hotspot filters on the trip map.</strong> The hotspot button now opens a filter menu where you
+            can set a minimum number of checklists and species to declutter busy regions.
+          </li>
+          <li>
+            💅 Hotspot markers on the map now scale with species count and zoom level so dense areas are easier to
+            read.
+          </li>
+        </ul>
         <h2>August 28, 2026</h2>
         <ul>
           <li>✨ You can now add or remove hotspots from your trip's itinerary right from the hotspot dialog itself.</li>
-=        </ul>
+        </ul>
         <h2>August 25, 2026</h2>
         <ul>
           <li>✨ Itinerary days now show the total travel time and distance across all of the day&apos;s stops.</li>
