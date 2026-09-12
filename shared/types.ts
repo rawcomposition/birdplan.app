@@ -346,6 +346,8 @@ export type TripInput = {
   startMonth: number;
   endMonth: number;
   listId?: string;
+  includeNotes?: boolean;
+  includeLabels?: boolean;
 };
 
 export type TripUpdateInput = {

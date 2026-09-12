@@ -96,8 +96,11 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
               type="button"
               className="font-bold text-link"
               onClick={() => {
+                const params = new URLSearchParams({ list: listId });
+                if (hasNotes && !includeNotes) params.set("notes", "false");
+                if (hasLabels && !includeLabels) params.set("labels", "false");
                 close();
-                navigate(`/create?list=${listId}`);
+                navigate(`/create?${params}`);
               }}
             >
               create a new trip

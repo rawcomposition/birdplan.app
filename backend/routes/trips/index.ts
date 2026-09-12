@@ -250,7 +250,7 @@ trips.get("/", async (c) => {
 trips.post("/", async (c) => {
   const session = await authenticate(c);
 
-  const { listId, ...data } = await c.req.json<TripInput>();
+  const { listId, includeNotes = true, includeLabels = true, ...data } = await c.req.json<TripInput>();
   validateTripDates(data);
 
   const bounds = await getBounds(data.region);
@@ -271,8 +271,8 @@ trips.post("/", async (c) => {
         hotspotIds: await listHotspotIds(session.userId, listId),
         existingHotspotIds: [],
         existingLabels: [],
-        includeNotes: true,
-        includeLabels: true,
+        includeNotes,
+        includeLabels,
       })
     : { hotspots: [], newLabels: [] };
 

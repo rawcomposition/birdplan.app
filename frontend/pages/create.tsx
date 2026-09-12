@@ -91,6 +91,8 @@ export default function CreateTrip() {
       startMonth: Number(startMonth.value),
       endMonth: Number(endMonth.value),
       listId: list?._id,
+      includeNotes: searchParams.get("notes") !== "false",
+      includeLabels: searchParams.get("labels") !== "false",
     });
   };
 
