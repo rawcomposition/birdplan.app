@@ -10,11 +10,18 @@ const SEARCH_THRESHOLD = 8;
 type Props = {
   labels: TripLabel[];
   selectedIds: string[];
+  disabledIds?: string[];
   onToggle: (labelId: string, checked: boolean) => void;
   title?: string;
 };
 
-export default function LabelPickerItems({ labels, selectedIds, onToggle, title = "Labels" }: Props) {
+export default function LabelPickerItems({
+  labels,
+  selectedIds,
+  disabledIds = [],
+  onToggle,
+  title = "Labels",
+}: Props) {
   const [search, setSearch] = React.useState("");
   const query = search.trim().toLowerCase();
   const visible = query ? labels.filter((it) => it.name.toLowerCase().includes(query)) : labels;
@@ -42,7 +49,7 @@ export default function LabelPickerItems({ labels, selectedIds, onToggle, title 
             key={label._id}
             checked={selectedIds.includes(label._id)}
             closeOnClick={false}
-            disabled={label._id.startsWith("new-")}
+            disabled={label._id.startsWith("new-") || disabledIds.includes(label._id)}
             onCheckedChange={(checked) => onToggle(label._id, checked)}
           >
             <span className={cn("size-3 rounded-full shrink-0", labelColorClasses[label.color].swatch)} />

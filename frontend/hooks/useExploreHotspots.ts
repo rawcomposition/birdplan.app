@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { OPENBIRDING_API_URL } from "lib/config";
 import { Trip, eBirdHotspot, OpenBirdingHotspotBBoxResponse } from "@birdplan/shared";
-import { HotspotFilters } from "hooks/useTrip";
+import { HotspotFilters } from "stores/hotspotFilterPreferences";
 
 export const EXPLORE_MIN_ZOOM = 6;
 

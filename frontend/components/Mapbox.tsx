@@ -7,7 +7,8 @@ import { markerIcons } from "lib/icons";
 import { markerColors, getLatLngFromBounds } from "lib/helpers";
 import clsx from "clsx";
 import { useModal } from "stores/modals";
-import { useTrip, HotspotFilters, DEFAULT_HOTSPOT_FILTERS } from "hooks/useTrip";
+import { useTrip } from "hooks/useTrip";
+import { HotspotFilters, DEFAULT_HOTSPOT_FILTERS } from "stores/hotspotFilterPreferences";
 
 type Props = {
   bounds: Trip["bounds"];

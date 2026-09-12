@@ -6,6 +6,7 @@ import useSyncHotspots from "hooks/useSyncHotspots";
 import { getMarkerColorIndex, buildHotspotsLayer } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
+import { matchesLabelFilters } from "stores/hotspotFilterPreferences";
 import MapButton from "components/MapButton";
 import MapOverlay from "components/MapOverlay";
 import Icon from "components/Icon";
@@ -29,10 +30,7 @@ export default function Trip() {
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
   const allSavedHotspots = trip?.hotspots || [];
-  const savedHotspots =
-    hotspotFilters.labelIds.length === 0
-      ? allSavedHotspots
-      : allSavedHotspots.filter((it) => (it.labelIds || []).some((id) => hotspotFilters.labelIds.includes(id)));
+  const savedHotspots = allSavedHotspots.filter((it) => matchesLabelFilters(it.labelIds, hotspotFilters));
   const { data } = useTripHotspots();
   const hotspots = data || [];
   useSyncHotspots();

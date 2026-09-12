@@ -7,6 +7,7 @@ import { useSessionToken } from "lib/sessionToken";
 import { HttpError } from "lib/http";
 import { formatMonthRange, getTripIdFromPath } from "lib/helpers";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useHotspotFilters } from "stores/hotspotFilterPreferences";
 
 type SelectedSpecies = {
   code: string;
@@ -15,25 +16,15 @@ type SelectedSpecies = {
 
 type SetState<T> = T | ((prev: T) => T);
 
-export type HotspotFilters = {
-  minChecklists: number;
-  minSpecies: number;
-  labelIds: string[];
-};
-
-export const DEFAULT_HOTSPOT_FILTERS: HotspotFilters = { minChecklists: 0, minSpecies: 0, labelIds: [] };
-
 type TripUiState = {
   selectedSpecies?: SelectedSpecies;
   selectedMarkerId?: string;
   showAllHotspots: boolean;
   showSatellite: boolean;
-  hotspotFilters: HotspotFilters;
   setSelectedSpecies: (species?: SelectedSpecies) => void;
   setSelectedMarkerId: (id?: string) => void;
   setShowAllHotspots: (show: SetState<boolean>) => void;
   setShowSatellite: (show: SetState<boolean>) => void;
-  setHotspotFilters: (filters: Partial<HotspotFilters>) => void;
 };
 
 const resolve = <T,>(value: SetState<T>, prev: T): T =>
@@ -42,12 +33,10 @@ const resolve = <T,>(value: SetState<T>, prev: T): T =>
 const useTripUiStore = create<TripUiState>((set) => ({
   showAllHotspots: false,
   showSatellite: false,
-  hotspotFilters: DEFAULT_HOTSPOT_FILTERS,
   setSelectedSpecies: (selectedSpecies) => set({ selectedSpecies }),
   setSelectedMarkerId: (selectedMarkerId) => set({ selectedMarkerId }),
   setShowAllHotspots: (show) => set((s) => ({ showAllHotspots: resolve(show, s.showAllHotspots) })),
   setShowSatellite: (show) => set((s) => ({ showSatellite: resolve(show, s.showSatellite) })),
-  setHotspotFilters: (filters) => set((s) => ({ hotspotFilters: { ...s.hotspotFilters, ...filters } })),
 }));
 
 export const useClearSelectedSpeciesOnNavigate = () => {
@@ -90,6 +79,7 @@ export const useTrip = () => {
   });
 
   const ui = useTripUiStore();
+  const { hotspotFilters, setHotspotFilters } = useHotspotFilters("trip");
   const errorStatus = error instanceof HttpError ? error.status : undefined;
   const is404 = !!id && !trip && !isLoading && (errorStatus === 404 || errorStatus === 403);
 
@@ -107,12 +97,12 @@ export const useTrip = () => {
     dateRangeLabel,
     showAllHotspots: ui.showAllHotspots,
     showSatellite: ui.showSatellite,
-    hotspotFilters: ui.hotspotFilters,
+    hotspotFilters,
     setSelectedSpecies: ui.setSelectedSpecies,
     setSelectedMarkerId: ui.setSelectedMarkerId,
     setShowAllHotspots: ui.setShowAllHotspots,
     setShowSatellite: ui.setShowSatellite,
-    setHotspotFilters: ui.setHotspotFilters,
+    setHotspotFilters,
     refetch,
   };
 };

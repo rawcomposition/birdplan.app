@@ -7,7 +7,8 @@ import Icon from "components/Icon";
 import { Card } from "components/ui/card";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useModal } from "stores/modals";
-import { useTrip, DEFAULT_HOTSPOT_FILTERS, HotspotFilters } from "hooks/useTrip";
+import { useTrip } from "hooks/useTrip";
+import { matchesLabelFilters, useHotspotFilters, useHotspotFilterPreferencesStore } from "stores/hotspotFilterPreferences";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSyncSavedHotspots from "hooks/useSyncSavedHotspots";
 import useHotspotLists from "hooks/useHotspotLists";
@@ -54,10 +55,9 @@ export default function Explore() {
   const { open } = useModal();
   const { showSatellite, setShowSatellite } = useTrip();
   const [initialBounds] = React.useState(readStoredBounds);
-  const [showAllHotspots, setShowAllHotspots] = React.useState(true);
-  const [hotspotFilters, setHotspotFilters] = React.useState(DEFAULT_HOTSPOT_FILTERS);
-  const updateHotspotFilters = (filters: Partial<HotspotFilters>) =>
-    setHotspotFilters((prev) => ({ ...prev, ...filters }));
+  const showAllHotspots = useHotspotFilterPreferencesStore((s) => s.exploreShowAll);
+  const setShowAllHotspots = useHotspotFilterPreferencesStore((s) => s.setExploreShowAll);
+  const { hotspotFilters, setHotspotFilters } = useHotspotFilters("explore");
   const [viewport, setViewport] = React.useState<{
     bounds: Bounds;
     zoom: number;
@@ -75,7 +75,7 @@ export default function Explore() {
   const savedHotspots = allSavedHotspots.filter(
     (it) =>
       (listId === ALL_LISTS ? it.listIds.length > 0 : it.listIds.includes(listId)) &&
-      (hotspotFilters.labelIds.length === 0 || (it.labelIds || []).some((id) => hotspotFilters.labelIds.includes(id))),
+      matchesLabelFilters(it.labelIds, hotspotFilters),
   );
   const { hotspots, isZoomedOut, isError } = useExploreHotspots(
     showAllHotspots ? (viewport?.bounds ?? null) : null,
@@ -148,7 +148,7 @@ export default function Explore() {
                   setShowAllHotspots={setShowAllHotspots}
                   hotspotFilters={hotspotFilters}
                   labels={labels}
-                  setHotspotFilters={updateHotspotFilters}
+                  setHotspotFilters={setHotspotFilters}
                   popoverClassName="left-14"
                 />
                 <MapButton
