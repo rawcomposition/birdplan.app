@@ -8,11 +8,10 @@ import { Card } from "components/ui/card";
 import ErrorBoundary from "components/ErrorBoundary";
 import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
-import { matchesLabelFilters, useHotspotFilters, useHotspotFilterPreferencesStore } from "stores/hotspotFilterPreferences";
+import { useHotspotFilters, useHotspotFilterPreferencesStore } from "stores/hotspotFilterPreferences";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSyncSavedHotspots from "hooks/useSyncSavedHotspots";
 import useHotspotLists from "hooks/useHotspotLists";
-import useLabels from "hooks/useLabels";
 import useExploreHotspots from "hooks/useExploreHotspots";
 import ExploreToolbar, { ALL_LISTS } from "components/ExploreToolbar";
 import HotspotFilterMenu from "components/HotspotFilterMenu";
@@ -65,17 +64,14 @@ export default function Explore() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { lists } = useHotspotLists();
-  const { labels } = useLabels();
   const listParam = searchParams.get("list");
   const listId = listParam && lists.some((it) => it._id === listParam) ? listParam : ALL_LISTS;
   const setListId = (next: string) => setSearchParams(next === ALL_LISTS ? {} : { list: next }, { replace: true });
 
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
   useSyncSavedHotspots();
-  const savedHotspots = allSavedHotspots.filter(
-    (it) =>
-      (listId === ALL_LISTS ? it.listIds.length > 0 : it.listIds.includes(listId)) &&
-      matchesLabelFilters(it.labelIds, hotspotFilters),
+  const savedHotspots = allSavedHotspots.filter((it) =>
+    listId === ALL_LISTS ? it.listIds.length > 0 : it.listIds.includes(listId)
   );
   const { hotspots, isZoomedOut, isError } = useExploreHotspots(
     showAllHotspots ? (viewport?.bounds ?? null) : null,
@@ -84,13 +80,8 @@ export default function Explore() {
   );
 
   const hiddenHotspotIds = React.useMemo(
-    () =>
-      new Set(
-        allSavedHotspots
-          .filter((it) => it.listIds.length > 0 || !matchesLabelFilters(it.labelIds, hotspotFilters))
-          .map((it) => it.hotspotId)
-      ),
-    [allSavedHotspots, hotspotFilters]
+    () => new Set(allSavedHotspots.filter((it) => it.listIds.length > 0).map((it) => it.hotspotId)),
+    [allSavedHotspots]
   );
 
   const hotspotLayer = React.useMemo(
@@ -148,7 +139,6 @@ export default function Explore() {
                   showAllHotspots={showAllHotspots}
                   setShowAllHotspots={setShowAllHotspots}
                   hotspotFilters={hotspotFilters}
-                  labels={labels}
                   setHotspotFilters={setHotspotFilters}
                   popoverClassName="left-14"
                 />

@@ -4,8 +4,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 export type HotspotFilters = {
   minChecklists: number;
   minSpecies: number;
-  labelIds: string[];
-  excludedLabelIds: string[];
 };
 
 export type HotspotFilterScope = "explore" | "trip";
@@ -13,8 +11,6 @@ export type HotspotFilterScope = "explore" | "trip";
 export const DEFAULT_HOTSPOT_FILTERS: HotspotFilters = {
   minChecklists: 0,
   minSpecies: 0,
-  labelIds: [],
-  excludedLabelIds: [],
 };
 
 type HotspotFilterPreferencesState = {
@@ -59,13 +55,4 @@ export const useHotspotFilters = (scope: HotspotFilterScope) => {
     hotspotFilters,
     setHotspotFilters: (filters: Partial<HotspotFilters>) => setFilters(scope, filters),
   };
-};
-
-export const matchesLabelFilters = (
-  labelIds: string[] | undefined,
-  { labelIds: included, excludedLabelIds: excluded }: HotspotFilters
-) => {
-  const ids = labelIds || [];
-  if (excluded.some((id) => ids.includes(id))) return false;
-  return included.length === 0 || included.some((id) => ids.includes(id));
 };

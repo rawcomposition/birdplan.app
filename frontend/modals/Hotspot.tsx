@@ -21,7 +21,6 @@ import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 import useTripMutation from "hooks/useTripMutation";
 import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import TripHotspotLabels from "components/TripHotspotLabels";
 
 type Props = {
   hotspot: HotspotT;
@@ -197,7 +196,6 @@ export default function Hotspot({ hotspot }: Props) {
           </DropdownMenu>
         </div>
         <HotspotStats id={id} speciesTotal={hotspot.species} checklistsTotal={hotspot.checklists} />
-        {isSaved && <TripHotspotLabels hotspotId={id} className="mt-5" />}
         {isSaved && <ItineraryDays locationId={id} type="hotspot" className="mt-4" />}
         <HotspotFavs hotspotId={id} />
 

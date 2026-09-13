@@ -1,5 +1,4 @@
 import type { Trip } from "@birdplan/shared";
-import { LABEL_COLORS } from "@birdplan/shared";
 import mongoose, { Schema, model, Model } from "mongoose";
 import { nanoId } from "lib/utils.js";
 
@@ -64,7 +63,6 @@ const fields: Record<
       species: Number,
       checklists: Number,
       deletedAt: Date,
-      labelIds: [{ type: String }],
       favs: [
         {
           _id: false,
@@ -89,13 +87,6 @@ const fields: Record<
       placeType: String,
       osmType: String,
       osmId: Number,
-    },
-  ],
-  labels: [
-    {
-      _id: { type: String, default: () => nanoId() },
-      name: { type: String, required: true },
-      color: { type: String, enum: LABEL_COLORS, required: true },
     },
   ],
   startDate: { type: String, default: null },

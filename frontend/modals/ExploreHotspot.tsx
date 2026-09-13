@@ -18,7 +18,6 @@ import useOpenBirdingHotspot from "hooks/useOpenBirdingHotspot";
 import SaveToListsMenu from "components/SaveToListsMenu";
 import useHotspotLists from "hooks/useHotspotLists";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
-import HotspotLabels from "components/HotspotLabels";
 import { useModal } from "stores/modals";
 
 type Props = {
@@ -64,7 +63,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
         updatedAt: new Date(),
         ...input,
         listIds: input.listIds || [],
-        labelIds: [],
       },
       ...old.filter((it) => it.hotspotId !== input.hotspotId),
     ],
@@ -76,7 +74,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     updateCache: (old, input) =>
       old.flatMap((it) => {
         if (it.hotspotId !== hotspotId) return [it];
-        if (input.listIds.length === 0 && it.labelIds.length === 0) return [];
+        if (input.listIds.length === 0) return [];
         return [{ ...it, listIds: input.listIds }];
       }),
   });
@@ -91,7 +89,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     if (hasRow) {
       if (
         listIds.length === 0 &&
-        saved?.labelIds.length === 0 &&
         saved?.notes &&
         !confirm("Removing this hotspot from all lists will delete your notes. Continue?")
       )
@@ -152,14 +149,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
           id={hotspotId}
           speciesTotal={speciesTotal ?? undefined}
           checklistsTotal={checklistsTotal ?? undefined}
-        />
-        <HotspotLabels
-          hotspotId={hotspotId}
-          name={info?.name || name}
-          lat={info?.lat ?? lat}
-          lng={info?.lng ?? lng}
-          disabled={!hasRow && !info}
-          className="mt-5"
         />
 
         {hasRow && (

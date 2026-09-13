@@ -6,7 +6,6 @@ import useSyncHotspots from "hooks/useSyncHotspots";
 import { getMarkerColorIndex, buildHotspotsLayer } from "lib/helpers";
 import toast from "react-hot-toast";
 import { useTrip } from "hooks/useTrip";
-import { matchesLabelFilters } from "stores/hotspotFilterPreferences";
 import MapButton from "components/MapButton";
 import MapOverlay from "components/MapOverlay";
 import Icon from "components/Icon";
@@ -29,8 +28,7 @@ export default function Trip() {
   } = useTrip();
   const [isAddingMarker, setIsAddingMarker] = React.useState(false);
 
-  const allSavedHotspots = trip?.hotspots || [];
-  const savedHotspots = allSavedHotspots.filter((it) => matchesLabelFilters(it.labelIds, hotspotFilters));
+  const savedHotspots = trip?.hotspots || [];
   const { data } = useTripHotspots();
   const hotspots = data || [];
   useSyncHotspots();
@@ -52,7 +50,7 @@ export default function Trip() {
 
   const hotspotClick = (id: string) => {
     setSelectedSpecies(undefined);
-    const hotspot = hotspots.find((it) => it.id === id) || allSavedHotspots.find((it) => it.id === id);
+    const hotspot = hotspots.find((it) => it.id === id) || savedHotspots.find((it) => it.id === id);
     if (!hotspot) return toast.error("Hotspot not found");
     open("hotspot", { hotspot });
   };
@@ -74,7 +72,6 @@ export default function Trip() {
           showAllHotspots={showAllHotspots}
           setShowAllHotspots={setShowAllHotspots}
           hotspotFilters={hotspotFilters}
-          labels={trip?.labels || []}
           setHotspotFilters={setHotspotFilters}
         />
         <MapButton onClick={() => setShowSatellite((prev) => !prev)} tooltip="Satellite view" active={showSatellite}>

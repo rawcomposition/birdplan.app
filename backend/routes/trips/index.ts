@@ -250,7 +250,7 @@ trips.get("/", async (c) => {
 trips.post("/", async (c) => {
   const session = await authenticate(c);
 
-  const { listId, includeNotes = true, includeLabels = true, ...data } = await c.req.json<TripInput>();
+  const { listId, includeNotes = true, ...data } = await c.req.json<TripInput>();
   validateTripDates(data);
 
   const bounds = await getBounds(data.region);
@@ -265,16 +265,14 @@ trips.post("/", async (c) => {
   const user = await User.findOne({ _id: session.userId }).select("name").lean();
   const ownerName = user?.name || "";
 
-  const { hotspots, newLabels } = listId
+  const hotspots = listId
     ? await buildImportedHotspots({
         userId: session.userId,
         hotspotIds: await listHotspotIds(session.userId, listId),
         existingHotspotIds: [],
-        existingLabels: [],
         includeNotes,
-        includeLabels,
       })
-    : { hotspots: [], newLabels: [] };
+    : [];
 
   const trip = await Trip.create({
     ...data,
@@ -284,7 +282,6 @@ trips.post("/", async (c) => {
     imgUrl,
     itinerary: [],
     hotspots,
-    labels: newLabels,
     markers: [],
   });
 

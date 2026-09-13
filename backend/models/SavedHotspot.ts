@@ -12,7 +12,6 @@ const fields: Record<keyof Omit<SavedHotspot, "createdAt" | "updatedAt">, any> =
   species: Number,
   notes: String,
   listIds: { type: [String], default: [] },
-  labelIds: { type: [String], default: [] },
   deletedAt: Date,
 };
 

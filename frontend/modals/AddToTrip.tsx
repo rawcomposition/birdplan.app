@@ -27,7 +27,6 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
   const { savedHotspots } = useSavedHotspots();
   const [selectedOption, setSelectedOption] = React.useState<Option | null>(null);
   const [includeNotes, setIncludeNotes] = React.useState(true);
-  const [includeLabels, setIncludeLabels] = React.useState(true);
 
   const { data, isLoading } = useQuery<TripListPage>({
     queryKey: ["/trips", { limit: 50 }],
@@ -40,7 +39,6 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
   const ids = new Set(hotspots.map((it) => it.hotspotId));
   const savedRows = savedHotspots.filter((it) => ids.has(it.hotspotId));
   const hasNotes = savedRows.some((it) => !!it.notes);
-  const hasLabels = savedRows.some((it) => it.labelIds.length > 0);
 
   const count = hotspots.length;
   const isSingle = count === 1;
@@ -66,7 +64,6 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
     mutation.mutate({
       hotspotIds: hotspots.map((it) => it.hotspotId),
       includeNotes: hasNotes && includeNotes,
-      includeLabels: hasLabels && includeLabels,
     });
   };
 
@@ -98,7 +95,6 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
               onClick={() => {
                 const params = new URLSearchParams({ list: listId });
                 if (hasNotes && !includeNotes) params.set("notes", "false");
-                if (hasLabels && !includeLabels) params.set("labels", "false");
                 close();
                 navigate(`/create?${params}`);
               }}
@@ -108,21 +104,11 @@ export default function AddToTrip({ hotspots, subtitle, listId }: Props) {
             from this list.
           </p>
         )}
-        {(hasNotes || hasLabels) && (
-          <div className="flex flex-col gap-3">
-            {hasNotes && (
-              <label className="flex cursor-pointer items-center justify-between gap-3">
-                <span className="text-sm">Copy my notes into the trip</span>
-                <Switch checked={includeNotes} onCheckedChange={setIncludeNotes} />
-              </label>
-            )}
-            {hasLabels && (
-              <label className="flex cursor-pointer items-center justify-between gap-3">
-                <span className="text-sm">Copy labels into the trip</span>
-                <Switch checked={includeLabels} onCheckedChange={setIncludeLabels} />
-              </label>
-            )}
-          </div>
+        {hasNotes && (
+          <label className="flex cursor-pointer items-center justify-between gap-3">
+            <span className="text-sm">Copy my notes into the trip</span>
+            <Switch checked={includeNotes} onCheckedChange={setIncludeNotes} />
+          </label>
         )}
       </Body>
       <Footer>

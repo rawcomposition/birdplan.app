@@ -7,7 +7,6 @@ import { isTripEditor, loadEditableTrip } from "lib/participants.js";
 import { buildImportedHotspots } from "lib/hotspotImport.js";
 import type {
   HotspotInput,
-  HotspotLabelsInput,
   HotspotNotesInput,
   HotspotFav,
   HotspotSyncInput,
@@ -50,44 +49,16 @@ hotspots.post("/import", async (c) => {
   if (!Array.isArray(data.hotspotIds)) throw new HTTPException(400, { message: "Hotspot IDs are required" });
 
   const trip = await loadEditableTrip(c.req.param("tripId"), session.userId);
-  const { hotspots: hotspotsToAdd, newLabels } = await buildImportedHotspots({
+  const hotspotsToAdd = await buildImportedHotspots({
     userId: session.userId,
     hotspotIds: data.hotspotIds,
     existingHotspotIds: trip.hotspots.map((it) => it.id),
-    existingLabels: trip.labels || [],
     includeNotes: !!data.includeNotes,
-    includeLabels: !!data.includeLabels,
   });
   if (hotspotsToAdd.length === 0) return c.json<TripImportResponse>({ added: 0 });
 
-  await Trip.updateOne(
-    { _id: trip._id },
-    {
-      $push: {
-        hotspots: { $each: hotspotsToAdd },
-        ...(newLabels.length ? { labels: { $each: newLabels } } : {}),
-      },
-    }
-  );
+  await Trip.updateOne({ _id: trip._id }, { $push: { hotspots: { $each: hotspotsToAdd } } });
   return c.json<TripImportResponse>({ added: hotspotsToAdd.length });
-});
-
-hotspots.put("/:hotspotId/labels", async (c) => {
-  const session = await authenticate(c);
-  const hotspotId = c.req.param("hotspotId");
-  if (!hotspotId) throw new HTTPException(400, { message: "Hotspot ID is required" });
-
-  const data = await c.req.json<HotspotLabelsInput>();
-  if (!Array.isArray(data.labelIds)) throw new HTTPException(400, { message: "Label IDs are required" });
-
-  const trip = await loadEditableTrip(c.req.param("tripId"), session.userId);
-  if (!trip.hotspots.some((it) => it.id === hotspotId)) throw new HTTPException(404, { message: "Hotspot not found" });
-
-  const tripLabelIds = new Set((trip.labels || []).map((it) => it._id));
-  const labelIds = [...new Set(data.labelIds.filter((id): id is string => typeof id === "string" && tripLabelIds.has(id)))];
-
-  await Trip.updateOne({ _id: trip._id, "hotspots.id": hotspotId }, { $set: { "hotspots.$.labelIds": labelIds } });
-  return c.json({});
 });
 
 hotspots.delete("/:hotspotId", async (c) => {

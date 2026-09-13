@@ -26,7 +26,6 @@ import type { TripUpdateInput, TripDatesInput, OpenBirdingLocationResponse } fro
 import targetStars from "./targets.js";
 import markers from "./markers.js";
 import hotspots from "./hotspots.js";
-import labels from "./labels.js";
 import itinerary from "./itinerary.js";
 import { pruneItineraryToDates } from "lib/itinerary.js";
 import participants from "./participants.js";
@@ -38,7 +37,6 @@ const trip = new Hono();
 trip.route("/targets", targetStars);
 trip.route("/markers", markers);
 trip.route("/hotspots", hotspots);
-trip.route("/labels", labels);
 trip.route("/itinerary", itinerary);
 trip.route("/participants", participants);
 

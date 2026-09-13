@@ -17,10 +17,7 @@ export type ModalId =
   | "inviteAsEditor"
   | "manageLifelist"
   | "manageHotspotLists"
-  | "manageLabels"
-  | "manageTripLabels"
   | "addToTrip"
-  | "labelForm"
   | "hotspotListForm"
   | "generateMagicLink"
   | "share";
@@ -39,10 +36,7 @@ export const MODAL_POSITIONS: Record<ModalId, ModalPosition> = {
   inviteAsEditor: "center",
   manageLifelist: "center",
   manageHotspotLists: "center",
-  manageLabels: "center",
-  manageTripLabels: "center",
   addToTrip: "center",
-  labelForm: "center",
   hotspotListForm: "center",
   generateMagicLink: "center",
   share: "center",
