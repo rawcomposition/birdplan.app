@@ -179,9 +179,11 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds }: Props
   const addOptions: AddOption[] = [
     ...(trip?.markers
       .filter((it) => !addedIds.has(it.id))
+      .sort((a, b) => a.name.localeCompare(b.name))
       .map((m) => ({ id: m.id, name: m.name, type: "marker" as const, icon: m.icon as MarkerIconT })) ?? []),
     ...(trip?.hotspots
       .filter((it) => !addedIds.has(it.id))
+      .sort((a, b) => a.name.localeCompare(b.name))
       .map((h) => ({ id: h.id, name: h.name, type: "hotspot" as const, icon: "hotspot" as const })) ?? []),
   ];
 
