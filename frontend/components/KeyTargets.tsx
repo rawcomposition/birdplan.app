@@ -1,21 +1,25 @@
 import React from "react";
-import Icon from "components/Icon";
+import { ChevronDown, CircleHelp } from "lucide-react";
+import LoadingState from "components/LoadingState";
 import { Tooltip, TooltipTrigger, TooltipContent } from "components/ui/tooltip";
 import { formatFrequency } from "lib/helpers";
 import { cn } from "lib/utils";
 import type { KeyTargetGroup } from "hooks/useKeyTargets";
 
 const TOOLTIP =
-  "Species more likely at this day's hotspots than anywhere else on your itinerary, based on eBird reports for this month.";
+  "Species that are hard to find elsewhere on your scheduled itinerary or offer a substantially better chance today, based on eBird reports for this month.";
 
 type Props = {
   groups: KeyTargetGroup[];
+  isLoading: boolean;
 };
 
-export default function KeyTargets({ groups }: Props) {
+export default function KeyTargets({ groups, isLoading }: Props) {
   const [expanded, setExpanded] = React.useState(false);
 
-  if (!groups.length) return null;
+  if (!groups.length) {
+    return isLoading ? <LoadingState inline label="Finding key species" className="mt-4" /> : null;
+  }
 
   const speciesCount = new Set(groups.flatMap((it) => it.targets.map((target) => target.code))).size;
 
@@ -28,10 +32,7 @@ export default function KeyTargets({ groups }: Props) {
           aria-expanded={expanded}
           className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground"
         >
-          <Icon
-            name="angleDown"
-            className={cn("text-[9px] transition-transform print:hidden", !expanded && "-rotate-90")}
-          />
+          <ChevronDown className={cn("size-3 transition-transform print:hidden", !expanded && "-rotate-90")} />
           Key species to look for
           <span className="font-normal text-muted-foreground/70 print:hidden">({speciesCount})</span>
         </button>
@@ -42,7 +43,7 @@ export default function KeyTargets({ groups }: Props) {
                 aria-label="What this means"
                 className="cursor-default text-[11px] text-muted-foreground/70 print:hidden"
               >
-                <Icon name="questionMark" />
+                <CircleHelp className="size-3" />
               </span>
             }
           />

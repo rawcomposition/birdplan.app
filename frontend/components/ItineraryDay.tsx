@@ -38,6 +38,7 @@ type PropsT = {
   isEditing: boolean;
   dayIds: string[];
   keyTargets: KeyTargetGroup[];
+  keyTargetsLoading: boolean;
 };
 
 const densify = (itinerary: Day[] | undefined, dayIds: string[]): Day[] => {
@@ -46,7 +47,7 @@ const densify = (itinerary: Day[] | undefined, dayIds: string[]): Day[] => {
   return Array.from({ length }, (_, i) => existing[i] || { id: dayIds[i], locations: [] });
 };
 
-export default function ItineraryDay({ day, dayIndex, isEditing, dayIds, keyTargets }: PropsT) {
+export default function ItineraryDay({ day, dayIndex, isEditing, dayIds, keyTargets, keyTargetsLoading }: PropsT) {
   const { trip, isFetching: isFetchingTrip } = useTrip();
   const { open } = useModal();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -306,7 +307,7 @@ export default function ItineraryDay({ day, dayIndex, isEditing, dayIds, keyTarg
             </SortableContext>
           </DndContext>
         )}
-        <KeyTargets groups={keyTargets} />
+        <KeyTargets groups={keyTargets} isLoading={keyTargetsLoading} />
         {isEditing && (
           <Combobox<AddOption>
             items={addOptions}
