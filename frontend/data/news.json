@@ -1,5 +1,10 @@
 [
   {
+    "date": "2026-09-13",
+    "title": "Explore hotspots",
+    "description": "Browse eBird hotspots anywhere on a new Explore map, save them to lists with notes, then turn a list into a trip or add it to an existing one."
+  },
+  {
     "date": "2026-06-24",
     "title": "Simpler email sign-in",
     "description": "We've switched to a simpler email sign-in that sends a one-time code instead of using a password, streamlining authentication and reducing our reliance on external services."

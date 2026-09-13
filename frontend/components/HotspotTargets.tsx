@@ -28,7 +28,8 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   const allMonths = getMonthRange(1, 12);
   const tripMonths = getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
-  const months = period === "all" ? allMonths : tripMonths;
+  const allYear = period === "all" || !trip;
+  const months = allYear ? allMonths : tripMonths;
 
   const sortedItems = (data?.items || [])
     .map((item) => ({
@@ -49,7 +50,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   return (
     <>
-      {!!data?.items?.length && (
+      {!!data?.items?.length && trip && (
         <div className="my-4 flex items-center gap-2">
           <SelectDropdown
             compact
@@ -73,7 +74,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           frequency={it.frequency}
           index={index}
           hotspotId={hotspotId}
-          range={period === "all" ? "All Year" : dateRangeLabel}
+          range={allYear ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
           isMutual={isMutual(it.code)}
           onClick={() => {
@@ -84,7 +85,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
       <div className="flex items-center justify-between mt-2">
         <a
           href={
-            period === "all"
+            allYear
               ? `https://ebird.org/targets?r1=${hotspotId}&bmo=1&emo=12&r2=world&t2=life`
               : `https://ebird.org/targets?r1=${hotspotId}&bmo=${trip?.startMonth}&emo=${trip?.endMonth}&r2=world&t2=life`
           }

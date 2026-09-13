@@ -172,7 +172,7 @@ export default function ImportLifelist() {
             noOptionsMessage={({ inputValue }) =>
               inputValue.length > 0 ? "No species found" : "Search for a species..."
             }
-            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+            menuPortalTarget={document.body}
             isMulti
             isLoading={isLoading}
             onChange={(newValue: Option[]) => {

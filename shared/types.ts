@@ -104,6 +104,7 @@ export type Hotspot = {
   checklists?: number;
   notes?: string;
   favs?: HotspotFav[];
+  deletedAt?: Date | null;
 };
 
 export type User = {
@@ -342,6 +343,8 @@ export type TripInput = {
   endDate?: string;
   startMonth: number;
   endMonth: number;
+  listId?: string;
+  includeNotes?: boolean;
 };
 
 export type TripUpdateInput = {
@@ -397,6 +400,15 @@ export type HotspotInput = {
 
 export type HotspotNotesInput = {
   notes: string;
+};
+
+export type TripImportInput = {
+  hotspotIds: string[];
+  includeNotes: boolean;
+};
+
+export type TripImportResponse = {
+  added: number;
 };
 
 export type SpeciesFavInput = {
@@ -507,4 +519,100 @@ export type OpenBirdingHotspotRankingResponse = {
   items: OpenBirdingHotspotRanking[];
   citation: string;
   queryTime: string;
+};
+
+export type OpenBirdingHotspotBBoxResponse = {
+  items: [string, number, number, number][];
+};
+
+export type OpenBirdingRegionHotspotsResponse = {
+  items: eBirdHotspot[];
+};
+
+export type OpenBirdingHotspotLookupResponse = {
+  items: OpenBirdingHotspot[];
+};
+
+export type HotspotSyncUpdate = {
+  id: string;
+  species?: number;
+  checklists?: number;
+  lat?: number;
+  lng?: number;
+  name?: string;
+  deleted: boolean;
+};
+
+export type HotspotSyncInput = {
+  updates: HotspotSyncUpdate[];
+};
+
+export type OpenBirdingHotspot = {
+  id: string;
+  name: string;
+  countryCode: string;
+  subnational1Code: string | null;
+  subnational2Code: string | null;
+  regionCode: string;
+  lat: number;
+  lng: number;
+  numSpecies: number | null;
+  numChecklists: number | null;
+};
+
+export type SavedHotspot = {
+  _id: string;
+  userId: string;
+  hotspotId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
+  notes?: string;
+  listIds: string[];
+  deletedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type HotspotList = {
+  _id: string;
+  userId: string;
+  name: string;
+  lastUsedAt?: Date;
+  createdAt: Date;
+};
+
+export type HiddenHotspot = {
+  _id: string;
+  userId: string;
+  hotspotId: string;
+  createdAt: Date;
+};
+
+export type SavedHotspotInput = {
+  hotspotId: string;
+  name: string;
+  lat: number;
+  lng: number;
+  species?: number;
+  listIds?: string[];
+};
+
+export type SavedHotspotListsInput = {
+  listIds: string[];
+};
+
+export type HotspotListInput = {
+  name: string;
+};
+
+export type HotspotListCreateInput = HotspotListInput & { _id: string };
+
+export type SavedHotspotNotesInput = {
+  notes: string;
+  name?: string;
+  lat?: number;
+  lng?: number;
+  species?: number;
 };
