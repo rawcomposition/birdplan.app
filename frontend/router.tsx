@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { createBrowserRouter, replace } from "react-router-dom";
 import RootLayout from "RootLayout";
 import Home from "pages/index";
 import Login from "pages/login";
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        loader: () => (getSessionToken() ? redirect("/trips") : null),
+        loader: () => (getSessionToken() ? replace("/trips") : null),
         element: <Home />,
       },
       { path: "/login", element: <Login /> },
