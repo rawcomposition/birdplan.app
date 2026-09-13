@@ -2,14 +2,15 @@ import dayjs from "dayjs";
 import { useTrip } from "hooks/useTrip";
 import useTripLifelist from "hooks/useTripLifelist";
 import useHotspotTargets from "hooks/useHotspotTargets";
-import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import { getTripDays } from "lib/itinerary";
-import { bestHotspotsByCode, getMonthRange } from "lib/targets";
+import { getDayTargetOpportunities, getKeySpeciesOpportunities, getMonthRange } from "lib/targets";
 
 export type KeyTarget = {
   code: string;
   name: string;
   frequency: number;
+  hardToFindElsewhere: boolean;
+  materiallyBetterToday: boolean;
 };
 
 export type KeyTargetGroup = {
@@ -25,40 +26,41 @@ export default function useKeyTargets() {
   const days = getTripDays(trip);
   const savedIds = new Set(trip?.hotspots.map((it) => it.id) ?? []);
   const scheduledByDay = days.map((day) =>
-    (day.locations || []).flatMap((it) =>
-      it.type === "hotspot" && savedIds.has(it.locationId) ? [it.locationId] : []
-    )
+    [...new Set(
+      (day.locations || []).flatMap((it) =>
+        it.type === "hotspot" && savedIds.has(it.locationId) ? [it.locationId] : []
+      )
+    )]
   );
   const poolIds = [...new Set(scheduledByDay.flat())];
 
-  const { hotspots, namesByCode, isLoading } = useHotspotTargets(poolIds, poolIds.length > 1);
+  const { hotspots, namesByCode, isLoading } = useHotspotTargets(poolIds, poolIds.length > 0);
 
   const tripMonths = getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
   const monthsByDay = days.map((_, index) =>
     trip?.startDate ? [dayjs(trip.startDate).add(index, "day").month() + 1] : tripMonths
   );
-  const bestByMonthKey = new Map(
-    [...new Set(monthsByDay.map((it) => it.join(",")))].map((key) => [
-      key,
-      bestHotspotsByCode(hotspots, key.split(",").map(Number)),
-    ])
+  const hotspotsById = new Map(hotspots.map((hotspot) => [hotspot.hotspotId, hotspot]));
+  const opportunitiesByDay = scheduledByDay.map((hotspotIds, index) =>
+    getDayTargetOpportunities(hotspotsById, hotspotIds, monthsByDay[index])
   );
+  const keySpeciesByDay = getKeySpeciesOpportunities(opportunitiesByDay);
 
   const hotspotNameById = new Map(trip?.hotspots.map((it) => [it.id, it.name]) ?? []);
   const seen = new Set(lifelist);
 
   const groupsByDay = new Map<string, KeyTargetGroup[]>(
     days.map((day, index) => {
-      const dayIds = new Set(scheduledByDay[index]);
-      const best = bestByMonthKey.get(monthsByDay[index].join(","));
+      const dayIds = scheduledByDay[index];
+      const keySpecies = keySpeciesByDay.get(index);
       const byHotspot = new Map<string, KeyTarget[]>();
 
-      for (const [code, { hotspotIds, frequency }] of best ?? []) {
-        if (frequency < HOTSPOT_TARGET_CUTOFF || seen.has(code)) continue;
+      for (const [code, opportunity] of keySpecies ?? []) {
+        if (seen.has(code)) continue;
+        const { frequency, hotspotIds, hardToFindElsewhere, materiallyBetterToday } = opportunity;
         for (const hotspotId of hotspotIds) {
-          if (!dayIds.has(hotspotId)) continue;
           const targets = byHotspot.get(hotspotId) || [];
-          targets.push({ code, name: namesByCode.get(code) || code, frequency });
+          targets.push({ code, name: namesByCode.get(code) || code, frequency, hardToFindElsewhere, materiallyBetterToday });
           byHotspot.set(hotspotId, targets);
         }
       }
