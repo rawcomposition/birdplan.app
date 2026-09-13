@@ -1,7 +1,7 @@
-import Icon from "components/Icon";
+import { Crosshair } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "components/ui/tooltip";
 
-const TOOLTIP = "Your best spot — the highest reporting frequency for this species among your saved hotspots";
+const TOOLTIP = "This hotspot has a higher reporting frequency for this species than your other saved hotspots during the selected period.";
 
 export default function BestSpotBadge() {
   return (
@@ -10,9 +10,9 @@ export default function BestSpotBadge() {
         render={
           <span
             aria-label="Your best spot for this species"
-            className="inline-flex shrink-0 cursor-default items-center justify-center text-pink-700 text-[13px]"
+            className="inline-flex shrink-0 cursor-default items-center justify-center text-pink-700"
           >
-            <Icon name="bullseye" />
+            <Crosshair className="size-4" />
           </span>
         }
       />
