@@ -29,7 +29,7 @@ export type HotspotTargetCounts = {
   obsByCode: Map<string, number[]>;
 };
 
-function sumMonths(counts: number[], months: number[]): number {
+export function sumMonths(counts: number[], months: number[]): number {
   return months.reduce((sum, m) => sum + (counts[m - 1] || 0), 0);
 }
 

@@ -11,12 +11,15 @@ import { Button } from "components/ui/button";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
 import TargetViewToggle from "components/TargetViewToggle";
+import SelectDropdown from "components/SelectDropdown";
 import OptionsMenu from "components/OptionsMenu";
 import KebabMenuTrigger from "components/KebabMenuTrigger";
 import TargetRow from "components/TargetRow";
 import SearchInput from "components/SearchInput";
 import FilterChip from "components/FilterChip";
 import useDownloadTargets from "hooks/useDownloadTargets";
+import useSavedHotspotTargets from "hooks/useSavedHotspotTargets";
+import useTargetCoverage from "hooks/useTargetCoverage";
 import useDownloadGroupLifelist from "hooks/useDownloadGroupLifelist";
 import useFetchRecentSpecies from "hooks/useFetchRecentSpecies";
 import useTripMutation from "hooks/useTripMutation";
@@ -41,18 +44,32 @@ export default function TripTargets() {
   const [showMutual, setShowMutual] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const showCount = page * PAGE_SIZE;
+  const { coverage, setCoverage } = useTargetCoverage(trip);
+  const savedHotspotIds = trip?.hotspots.map((it) => it.id) ?? [];
 
   // Fetch targets from OpenBirding
   const {
     data: regionData,
-    isLoading: isLoadingTargets,
-    error: targetsError,
-    refetch: refetchTargets,
+    isLoading: isLoadingRegionTargets,
+    error: regionTargetsError,
+    refetch: refetchRegionTargets,
   } = useDownloadTargets({
     region: trip?.region,
     startMonth: trip?.startMonth,
     endMonth: trip?.endMonth,
-    enabled: !!trip,
+    enabled: !!trip && coverage === "region",
+  });
+  const {
+    items: savedHotspotItems,
+    samples: savedHotspotSamples,
+    isLoading: isLoadingSavedHotspots,
+    isError: savedHotspotsError,
+    refetch: refetchSavedHotspots,
+  } = useSavedHotspotTargets({
+    hotspotIds: savedHotspotIds,
+    startMonth: trip?.startMonth,
+    endMonth: trip?.endMonth,
+    enabled: !!trip && coverage === "saved" && savedHotspotIds.length > 0,
   });
 
   const { lifelist } = useTargetView(trip);
@@ -82,7 +99,12 @@ export default function TripTargets() {
     }),
   });
 
-  const targetSpecies = regionData?.items?.filter((it) => !lifelist.includes(it.code)) || [];
+  const targetData = coverage === "region" ? regionData?.items || [] : savedHotspotItems;
+  const targetSamples = coverage === "region" ? regionData?.samples || [] : savedHotspotSamples;
+  const isLoadingTargets = coverage === "region" ? isLoadingRegionTargets : isLoadingSavedHotspots;
+  const targetsError = coverage === "region" ? regionTargetsError : savedHotspotsError;
+  const refetchTargets = coverage === "region" ? refetchRegionTargets : refetchSavedHotspots;
+  const targetSpecies = targetData.filter((it) => !lifelist.includes(it.code));
 
   // Filter targets
   const filteredTargets = targetSpecies?.filter(
@@ -150,6 +172,16 @@ export default function TripTargets() {
                           Mutual
                         </FilterChip>
                       )}
+                      <SelectDropdown
+                        label="Coverage"
+                        align="left"
+                        value={coverage}
+                        onChange={setCoverage}
+                        options={[
+                          { value: "region", label: "Region" },
+                          { value: "saved", label: "Saved hotspots" },
+                        ]}
+                      />
                       <TargetViewToggle trip={trip} align="left" />
                     </div>
                     <OptionsMenu
@@ -167,10 +199,16 @@ export default function TripTargets() {
                     </OptionsMenu>
                   </div>
                 </div>
-                {!!regionData?.items?.length && (
+                {!!targetData.length && (
                   <p className="mb-2 sm:mb-3 text-sm text-secondary-foreground">
                     Found <span className="font-semibold text-foreground tabular-nums">{filteredTargets?.length}</span>{" "}
                     species
+                    {coverage === "saved" && (
+                      <span>
+                        {" "}across {targetSamples.reduce((total, samples) => total + samples, 0).toLocaleString()} checklists at{" "}
+                        {savedHotspotIds.length} saved hotspots
+                      </span>
+                    )}
                   </p>
                 )}
               </>
@@ -187,19 +225,32 @@ export default function TripTargets() {
                 }
               />
             )}
-            {!!regionData?.items?.length && !truncatedTargets?.length && (
+            {coverage === "saved" && !savedHotspotIds.length && !isLoadingTargets && (
+              <EmptyState
+                className="mt-4"
+                title="No saved hotspots"
+                description="Save hotspots to see targets based on the locations in your trip."
+              />
+            )}
+            {!!targetData.length && !truncatedTargets?.length && (
               <EmptyState
                 className="mt-4"
                 title="No targets found"
                 description={
                   showStarred || (showMutual && isGroup) || search
                     ? "Try clearing your filters."
-                    : "It looks like you have already seen all the species in this region."
+                    : coverage === "saved"
+                      ? "It looks like you have already seen all species meeting the evidence requirements at your saved hotspots."
+                      : "It looks like you have already seen all the species in this region."
                 }
               />
             )}
-            {!isLoadingTargets && !targetsError && !regionData?.items?.length && (
-              <EmptyState className="mt-4" title="No target data available for this region" />
+            {!isLoadingTargets && !targetsError && !targetData.length && !(coverage === "saved" && !savedHotspotIds.length) && (
+              <EmptyState
+                className="mt-4"
+                title={coverage === "saved" ? "No saved-hotspot targets found" : "No target data available for this region"}
+                description={coverage === "saved" ? "No species meet the minimum report and checklist requirements." : undefined}
+              />
             )}
             {!!truncatedTargets?.length && (
               <Card className="overflow-hidden">
@@ -236,7 +287,7 @@ export default function TripTargets() {
                         key={it.code}
                         {...it}
                         index={index}
-                        samples={regionData?.samples}
+                        samples={targetSamples}
                         isMutual={isMutual(it.code)}
                         tripId={trip?._id}
                         regionCode={regionCode}
@@ -264,7 +315,7 @@ export default function TripTargets() {
                 </Button>
               )}
             </div>
-            {regionData?.citation && (
+            {coverage === "region" && regionData?.citation && (
               <p className="text-muted-foreground/70 text-xs text-center pb-6 px-4">{regionData.citation}</p>
             )}
           </div>

@@ -28,5 +28,13 @@ export default function useHotspotTargets(hotspotIds: string[], enabled: boolean
     responses.flatMap((response) => (response ? response.items.map((it) => [it.code, it.name] as const) : []))
   );
 
-  return { hotspots, namesByCode, isLoading: results.some((it) => it.isLoading) };
+  const refetch = () => Promise.all(results.map((it) => it.refetch()));
+
+  return {
+    hotspots,
+    namesByCode,
+    isLoading: results.some((it) => it.isLoading),
+    isError: results.some((it) => it.isError),
+    refetch,
+  };
 }
