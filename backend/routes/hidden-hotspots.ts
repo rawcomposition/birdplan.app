@@ -28,7 +28,8 @@ hiddenHotspots.put("/:hotspotId", async (c) => {
       { $setOnInsert: { userId: session.userId, hotspotId } },
       { upsert: true },
     ),
-    SavedHotspot.deleteOne({ userId: session.userId, hotspotId }),
+    SavedHotspot.updateOne({ userId: session.userId, hotspotId, notes: { $nin: [null, ""] } }, { $set: { listIds: [] } }),
+    SavedHotspot.deleteOne({ userId: session.userId, hotspotId, notes: { $in: [null, ""] } }),
   ]);
   return c.json({});
 });

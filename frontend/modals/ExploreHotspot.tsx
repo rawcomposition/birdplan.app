@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Body } from "components/Modal";
-import { SavedHotspotInput, SavedHotspotListsInput } from "@birdplan/shared";
+import { SavedHotspotInput, SavedHotspotListsInput, SavedHotspotNotesInput } from "@birdplan/shared";
 import { Button } from "components/ui/button";
 import { useTrip } from "hooks/useTrip";
 import DirectionsButton from "components/DirectionsButton";
@@ -80,7 +80,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     updateCache: (old, input) =>
       old.flatMap((it) => {
         if (it.hotspotId !== hotspotId) return [it];
-        if (input.listIds.length === 0) return [];
+        if (input.listIds.length === 0 && !it.notes) return [];
         return [{ ...it, listIds: input.listIds }];
       }),
     updateHiddenCache: (old, input) => (input.listIds.length > 0 ? old.filter((id) => id !== hotspotId) : old),
@@ -90,7 +90,11 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     url: `/hidden-hotspots/${hotspotId}`,
     method: "PUT",
     updateCache: (old) => [...old.filter((id) => id !== hotspotId), hotspotId],
-    updateSavedCache: (old) => old.filter((it) => it.hotspotId !== hotspotId),
+    updateSavedCache: (old) =>
+      old.flatMap((it) => {
+        if (it.hotspotId !== hotspotId) return [it];
+        return it.notes ? [{ ...it, listIds: [] }] : [];
+      }),
   });
 
   const unhideMutation = useHiddenHotspotMutation({
@@ -99,20 +103,51 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     updateCache: (old) => old.filter((id) => id !== hotspotId),
   });
 
-  const notesMutation = useSavedHotspotMutation<{ notes: string }>({
+  const notesMutation = useSavedHotspotMutation<SavedHotspotNotesInput>({
     url: `/saved-hotspots/${hotspotId}/notes`,
     method: "PATCH",
-    updateCache: (old, input) => old.map((it) => (it.hotspotId === hotspotId ? { ...it, notes: input.notes } : it)),
+    updateCache: (old, input) => {
+      const existing = old.find((it) => it.hotspotId === hotspotId);
+      if (existing) {
+        return old.flatMap((it) => {
+          if (it.hotspotId !== hotspotId) return [it];
+          if (!input.notes && it.listIds.length === 0) return [];
+          return [{ ...it, notes: input.notes }];
+        });
+      }
+      if (!input.notes) return old;
+      return [
+        {
+          _id: hotspotId,
+          userId: "",
+          hotspotId,
+          name: input.name || name,
+          lat: input.lat ?? lat,
+          lng: input.lng ?? lng,
+          species: input.species,
+          notes: input.notes,
+          listIds: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        ...old,
+      ];
+    },
   });
+
+  const handleNotes = (notes: string) => {
+    if (notes === (saved?.notes || "")) return;
+    notesMutation.mutate({
+      notes,
+      name: info?.name || name,
+      lat: info?.lat ?? lat,
+      lng: info?.lng ?? lng,
+      species: speciesTotal ?? undefined,
+    });
+  };
 
   const handleChange = (listIds: string[]) => {
     if (hasRow) {
-      if (
-        listIds.length === 0 &&
-        saved?.notes &&
-        !confirm("Removing this hotspot from all lists will delete your notes. Continue?")
-      )
-        return;
       listsMutation.mutate({ listIds });
       return;
     }
@@ -124,12 +159,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       species: speciesTotal ?? undefined,
       listIds: listIds.length > 0 ? listIds : lists.slice(0, 1).map((it) => it._id),
     });
-  };
-
-  const handleHide = () => {
-    if (saved?.notes && !confirm("Hiding this hotspot will remove it from your lists and delete your notes. Continue?"))
-      return;
-    hideMutation.mutate();
   };
 
   React.useEffect(() => {
@@ -170,7 +199,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
               >
                 Save to Trip
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={isHidden ? () => unhideMutation.mutate() : handleHide}>
+              <DropdownMenuItem onClick={() => (isHidden ? unhideMutation.mutate() : hideMutation.mutate())}>
                 {isHidden ? "Unhide Hotspot" : "Hide Hotspot"}
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -189,14 +218,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
           checklistsTotal={checklistsTotal ?? undefined}
         />
 
-        {hasRow && (
-          <InputNotes
-            key={hotspotId}
-            value={saved?.notes}
-            canEdit
-            onBlur={(value) => notesMutation.mutate({ notes: value })}
-          />
-        )}
+        <InputNotes key={hotspotId} value={saved?.notes} canEdit onBlur={handleNotes} />
         <Tabs value={tab} onValueChange={(value) => setTab(value as string)}>
           <div className="-mx-4 sm:-mx-6 mb-3">
             <TabsList className="mt-6 bg-gray-100 px-6">

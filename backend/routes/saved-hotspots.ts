@@ -116,7 +116,27 @@ savedHotspots.patch("/:hotspotId/notes", async (c) => {
 
   await connect();
   const result = await SavedHotspot.updateOne({ userId: session.userId, hotspotId }, { $set: { notes } });
-  if (result.matchedCount === 0) throw new HTTPException(404, { message: "Saved hotspot not found" });
+  if (result.matchedCount > 0) {
+    if (!notes) await SavedHotspot.deleteOne({ userId: session.userId, hotspotId, listIds: { $size: 0 } });
+    return c.json({});
+  }
+  if (!notes) return c.json({});
+
+  const name = typeof data.name === "string" ? data.name.trim() : "";
+  if (!name) throw new HTTPException(400, { message: "Name is required" });
+  if (!Number.isFinite(data.lat) || !Number.isFinite(data.lng)) {
+    throw new HTTPException(400, { message: "Coordinates are required" });
+  }
+  await SavedHotspot.create({
+    userId: session.userId,
+    hotspotId,
+    name,
+    lat: data.lat,
+    lng: data.lng,
+    ...(Number.isFinite(data.species) ? { species: data.species } : {}),
+    notes,
+    listIds: [],
+  });
   return c.json({});
 });
 
@@ -133,7 +153,7 @@ savedHotspots.patch("/:hotspotId/lists", async (c) => {
   const result = await SavedHotspot.updateOne({ userId: session.userId, hotspotId }, { $set: { listIds } });
   if (result.matchedCount === 0) throw new HTTPException(404, { message: "Saved hotspot not found" });
   if (listIds.length === 0) {
-    await SavedHotspot.deleteOne({ userId: session.userId, hotspotId });
+    await SavedHotspot.deleteOne({ userId: session.userId, hotspotId, notes: { $in: [null, ""] } });
   } else {
     await HiddenHotspot.deleteOne({ userId: session.userId, hotspotId });
   }

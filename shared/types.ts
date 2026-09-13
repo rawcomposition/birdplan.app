@@ -610,4 +610,8 @@ export type HotspotListCreateInput = HotspotListInput & { _id: string };
 
 export type SavedHotspotNotesInput = {
   notes: string;
+  name?: string;
+  lat?: number;
+  lng?: number;
+  species?: number;
 };
