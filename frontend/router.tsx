@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, replace } from "react-router-dom";
 import RootLayout from "RootLayout";
 import Home from "pages/index";
 import Login from "pages/login";
@@ -26,6 +26,7 @@ import TripLifelist from "pages/[tripId]/lifelist";
 import NotFound from "components/NotFound";
 import RequireAuth from "components/RequireAuth";
 import TripLayout from "components/TripLayout";
+import { getSessionToken } from "lib/sessionToken";
 
 const Admin = lazy(() => import("pages/admin"));
 
@@ -33,7 +34,11 @@ export const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      { path: "/", element: <Home /> },
+      {
+        path: "/",
+        loader: () => (getSessionToken() ? replace("/trips") : null),
+        element: <Home />,
+      },
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Signup /> },
       { path: "/contact", element: <Contact /> },
