@@ -43,9 +43,9 @@ const loadMarkerImages = (map: MapboxMap) => {
 
 const clickableLayerIds = ["markers", "hotspots", "obs"];
 
-const HIDDEN_HOTSPOT_COLOR = "#6b7280";
-const HIDDEN_HOTSPOT_STROKE = "#374151";
-const HIDDEN_HOTSPOT_SCALE = 0.7;
+const HIDDEN_HOTSPOT_COLOR = "#4b5563";
+const HIDDEN_HOTSPOT_STROKE = "#1f2937";
+const HIDDEN_HOTSPOT_SCALE = 0.8;
 const isHiddenHotspot = ["boolean", ["get", "hidden"], false];
 
 const markerImage = (marker: MarkerT) => (marker.deleted ? "deleted-hotspot" : `saved-hotspot-${marker.shade ?? 0}`);

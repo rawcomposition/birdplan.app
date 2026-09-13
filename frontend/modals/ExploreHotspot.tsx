@@ -22,6 +22,7 @@ import useHotspotLists from "hooks/useHotspotLists";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 import { useModal } from "stores/modals";
 import { EyeOff } from "lucide-react";
+import { useHotspotListPreferencesStore } from "stores/hotspotListPreferences";
 
 type Props = {
   hotspotId: string;
@@ -38,10 +39,11 @@ const tabs = [
 
 export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) {
   const { setSelectedMarkerId } = useTrip();
-  const { stack } = useModal();
+  const { stack, modalId } = useModal();
   const { savedHotspots } = useSavedHotspots();
   const { hiddenIds } = useHiddenHotspots();
   const { lists } = useHotspotLists();
+  const lastUsedListId = useHotspotListPreferencesStore((s) => s.lastUsedListId);
   const { data: info, isLoading } = useOpenBirdingHotspot(hotspotId);
   const [modalSpecies, setModalSpecies] = React.useState<{
     code: string;
@@ -51,6 +53,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
   const hasRow = !!saved;
+  const isSaved = (saved?.listIds.length ?? 0) > 0;
   const isDeleted = !!saved?.deletedAt;
   const isHidden = hiddenIds.has(hotspotId);
   const name = info?.name || saved?.name || (isLoading ? "Loading..." : hotspotId);
@@ -161,10 +164,36 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     });
   };
 
+  const toggleSave = () => {
+    if (!hasRow && !info) return;
+    if (isSaved) {
+      handleChange([]);
+      return;
+    }
+    const defaultList = lists.find((it) => it._id === lastUsedListId) ?? lists[0];
+    handleChange(defaultList ? [defaultList._id] : []);
+  };
+
+  const toggleHide = () => (isHidden ? unhideMutation.mutate() : hideMutation.mutate());
+
   React.useEffect(() => {
     setSelectedMarkerId(hotspotId);
     return () => setSelectedMarkerId(undefined);
   }, [hotspotId]);
+
+  React.useEffect(() => {
+    if (modalId !== "exploreHotspot") return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
+      const key = event.key.toLowerCase();
+      if (key === "s") toggleSave();
+      else if (key === "x") toggleHide();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalId, toggleSave, toggleHide]);
 
   return (
     <>
@@ -199,7 +228,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
               >
                 Save to Trip
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => (isHidden ? unhideMutation.mutate() : hideMutation.mutate())}>
+              <DropdownMenuItem onClick={toggleHide}>
                 {isHidden ? "Unhide Hotspot" : "Hide Hotspot"}
               </DropdownMenuItem>
               <DropdownMenuItem
