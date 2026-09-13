@@ -107,7 +107,7 @@ export function getKeySpeciesOpportunities(
       const otherDays = opportunitiesByDay.filter((day, index) => index !== dayIndex && day.hasScheduledHotspots);
       const flagsByCode = new Map<string, KeySpeciesOpportunity>();
 
-      if (!today.hasReliableCoverage || !otherDays.length || !otherDays.every((it) => it.hasReliableCoverage)) {
+      if (!today.hasReliableCoverage || !otherDays.length) {
         return [dayIndex, flagsByCode];
       }
 
