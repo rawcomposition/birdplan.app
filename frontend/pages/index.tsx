@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import { Button } from "components/ui/button";
 import Icon from "components/Icon";
 import { useUser } from "hooks/useUser";
@@ -38,7 +39,12 @@ const features = [
 ];
 
 export default function BirdPlan() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
+
+  if (user?._id && !loading) {
+    return <Navigate to="/trips" replace />;
+  }
+
   const isLoggedIn = !!user?._id;
   return (
     <PublicPage documentTitle="BirdPlan.app - Plan Your Next Birding Adventure">
