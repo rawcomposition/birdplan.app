@@ -1,3 +1,7 @@
 export const HOTSPOT_TARGET_CUTOFF = 5; // percent
+export const MIN_SPECIES_OBSERVATIONS = 5;
+export const MIN_TARGET_CHECKLISTS = 20;
+export const TARGET_ADVANTAGE_MIN_LEAD_PERCENTAGE_POINTS = 5;
+export const TARGET_ADVANTAGE_MIN_LEAD_RATIO = 1.5;
 export const EBIRD_BASE_URL = "/ebird-proxy";
 export const OPENBIRDING_API_URL = import.meta.env.VITE_OPENBIRDING_API_URL;
