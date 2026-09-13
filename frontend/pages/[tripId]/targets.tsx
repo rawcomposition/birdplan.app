@@ -173,7 +173,7 @@ export default function TripTargets() {
                         </FilterChip>
                       )}
                       <SelectDropdown
-                        label="Coverage"
+                        label="Frequency"
                         align="left"
                         value={coverage}
                         onChange={setCoverage}
