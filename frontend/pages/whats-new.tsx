@@ -8,6 +8,24 @@ export default function WhatsNew() {
     <PublicPage documentTitle="What's New | BirdPlan.app">
       <Heading title="What's New" className="mt-12" />
       <div className="prose prose-h2:text-foreground prose-h2:mt-12 prose-ul:list-none prose-ul:pl-4 mb-12">
+        <h2>September 13, 2026</h2>
+        <ul>
+          <li>
+            🎉 <strong>Explore.</strong> A new <Link to="/explore">Explore</Link> tab in the header opens a world map
+            of eBird hotspots you can browse without a trip. Click any hotspot to see targets, recent needs, and
+            checklists.
+          </li>
+          <li>
+            ✨ <strong>Hotspot lists.</strong> Save hotspots to as many named lists as you like, add notes, and switch
+            between lists on the Explore map. Your lists also appear on your dashboard.
+          </li>
+          <li>
+            ✨ <strong>Create a trip from a list.</strong> Start a trip from any list, or use{" "}
+            <strong>Save to Trip</strong> in the hotspot dialog to add one or many saved hotspots to an existing trip,
+            optionally copying your notes.
+          </li>
+          <li>🛠️ Hotspots that eBird has removed are now flagged in the dialog with a one-click remove.</li>
+        </ul>
         <h2>September 4, 2026</h2>
         <ul>
           <li>
