@@ -579,6 +579,7 @@ export type HotspotList = {
   _id: string;
   userId: string;
   name: string;
+  lastUsedAt?: Date;
   createdAt: Date;
 };
 

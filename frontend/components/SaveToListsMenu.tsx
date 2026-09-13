@@ -16,7 +16,6 @@ import {
 import useHotspotLists from "hooks/useHotspotLists";
 import useHotspotListMutation from "hooks/useHotspotListMutation";
 import { nanoId } from "lib/helpers";
-import { useHotspotListPreferencesStore } from "stores/hotspotListPreferences";
 
 type Props = {
   saved?: SavedHotspot;
@@ -26,7 +25,11 @@ type Props = {
 
 export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
   const { lists } = useHotspotLists();
-  const setLastUsedListId = useHotspotListPreferencesStore((s) => s.setLastUsedListId);
+  const [openOrder, setOpenOrder] = React.useState<string[]>();
+  const rank = new Map(openOrder?.map((id, i) => [id, i]));
+  const orderedLists = openOrder
+    ? [...lists].sort((a, b) => (rank.get(a._id) ?? Infinity) - (rank.get(b._id) ?? Infinity))
+    : lists;
   const selected = new Set(saved?.listIds || []);
   const isSaved = selected.size > 0;
 
@@ -38,10 +41,8 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
 
   const toggle = (listId: string, checked: boolean) => {
     const next = new Set(selected);
-    if (checked) {
-      next.add(listId);
-      setLastUsedListId(listId);
-    } else next.delete(listId);
+    if (checked) next.add(listId);
+    else next.delete(listId);
     onChange([...next]);
   };
 
@@ -49,13 +50,12 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
   const handleNewList = async (name: string) => {
     const _id = nanoId();
     await createList.mutateAsync({ _id, name });
-    setLastUsedListId(_id);
     onChange([...selected, _id]);
   };
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => setOpenOrder(open ? lists.map((it) => it._id) : undefined)}>
         <DropdownMenuTrigger
           disabled={disabled}
           render={
@@ -74,7 +74,7 @@ export default function SaveToListsMenu({ saved, disabled, onChange }: Props) {
         <DropdownMenuContent align="start" className="w-[240px]">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Save to list</DropdownMenuLabel>
-            {lists.map((list) => (
+            {orderedLists.map((list) => (
               <DropdownMenuCheckboxItem
                 key={list._id}
                 checked={selected.has(list._id)}

@@ -16,7 +16,7 @@ const parseName = (data: HotspotListInput) => {
 hotspotLists.get("/", async (c) => {
   const session = await authenticate(c);
   await connect();
-  const rows = await HotspotList.find({ userId: session.userId }).sort({ createdAt: 1 }).lean();
+  const rows = await HotspotList.find({ userId: session.userId }).sort({ lastUsedAt: -1, createdAt: 1 }).lean();
   return c.json(rows);
 });
 

@@ -22,7 +22,6 @@ import useHotspotLists from "hooks/useHotspotLists";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 import { useModal } from "stores/modals";
 import { EyeOff } from "lucide-react";
-import { useHotspotListPreferencesStore } from "stores/hotspotListPreferences";
 
 type Props = {
   hotspotId: string;
@@ -43,7 +42,6 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
   const { savedHotspots } = useSavedHotspots();
   const { hiddenIds } = useHiddenHotspots();
   const { lists } = useHotspotLists();
-  const lastUsedListId = useHotspotListPreferencesStore((s) => s.lastUsedListId);
   const { data: info, isLoading } = useOpenBirdingHotspot(hotspotId);
   const [modalSpecies, setModalSpecies] = React.useState<{
     code: string;
@@ -170,8 +168,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       handleChange([]);
       return;
     }
-    const defaultList = lists.find((it) => it._id === lastUsedListId) ?? lists[0];
-    handleChange(defaultList ? [defaultList._id] : []);
+    handleChange(lists.slice(0, 1).map((it) => it._id));
   };
 
   const toggleHide = () => (isHidden ? unhideMutation.mutate() : hideMutation.mutate());

@@ -19,6 +19,11 @@ const getDefaultListId = async (userId: string) => {
   return list._id;
 };
 
+const markListsUsed = async (userId: string, listIds: string[]) => {
+  if (listIds.length === 0) return;
+  await HotspotList.updateMany({ userId, _id: { $in: listIds } }, { $set: { lastUsedAt: new Date() } });
+};
+
 const getOwnedListIds = async (userId: string, listIds: unknown) => {
   if (!Array.isArray(listIds)) return null;
   const ids = [...new Set(listIds.filter((id): id is string => typeof id === "string" && !!id))];
@@ -66,7 +71,10 @@ savedHotspots.post("/", async (c) => {
     },
     { upsert: true, new: true },
   ).lean();
-  await HiddenHotspot.deleteOne({ userId: session.userId, hotspotId });
+  await Promise.all([
+    HiddenHotspot.deleteOne({ userId: session.userId, hotspotId }),
+    markListsUsed(session.userId, listIds),
+  ]);
 
   return c.json(row);
 });
@@ -150,12 +158,20 @@ savedHotspots.patch("/:hotspotId/lists", async (c) => {
   const listIds = await getOwnedListIds(session.userId, data.listIds);
   if (!listIds) throw new HTTPException(400, { message: "List IDs are required" });
 
-  const result = await SavedHotspot.updateOne({ userId: session.userId, hotspotId }, { $set: { listIds } });
-  if (result.matchedCount === 0) throw new HTTPException(404, { message: "Saved hotspot not found" });
+  const previous = await SavedHotspot.findOneAndUpdate(
+    { userId: session.userId, hotspotId },
+    { $set: { listIds } },
+    { new: false },
+  ).lean();
+  if (!previous) throw new HTTPException(404, { message: "Saved hotspot not found" });
   if (listIds.length === 0) {
     await SavedHotspot.deleteOne({ userId: session.userId, hotspotId, notes: { $in: [null, ""] } });
   } else {
-    await HiddenHotspot.deleteOne({ userId: session.userId, hotspotId });
+    const previousIds = new Set(previous.listIds);
+    await Promise.all([
+      HiddenHotspot.deleteOne({ userId: session.userId, hotspotId }),
+      markListsUsed(session.userId, listIds.filter((id) => !previousIds.has(id))),
+    ]);
   }
   return c.json({});
 });

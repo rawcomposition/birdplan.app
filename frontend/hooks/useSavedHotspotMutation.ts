@@ -4,6 +4,7 @@ import { mutate } from "lib/http";
 import { SavedHotspot } from "@birdplan/shared";
 import { SAVED_HOTSPOTS_KEY } from "hooks/useSavedHotspots";
 import { HIDDEN_HOTSPOTS_KEY } from "hooks/useHiddenHotspots";
+import { HOTSPOT_LISTS_KEY } from "hooks/useHotspotLists";
 
 type Options<TInput> = {
   url: string;
@@ -35,6 +36,7 @@ export default function useSavedHotspotMutation<TInput, TResponse = any>({
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: SAVED_HOTSPOTS_KEY });
+      queryClient.invalidateQueries({ queryKey: HOTSPOT_LISTS_KEY });
       if (updateHiddenCache) queryClient.invalidateQueries({ queryKey: HIDDEN_HOTSPOTS_KEY });
     },
     onError: (error, _data, context: any) => {

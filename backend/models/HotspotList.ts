@@ -6,13 +6,14 @@ const fields: Record<keyof Omit<HotspotList, "createdAt">, any> = {
   _id: { type: String, default: () => nanoId() },
   userId: { type: String, required: true },
   name: { type: String, required: true },
+  lastUsedAt: Date,
 };
 
 const HotspotListSchema = new Schema(fields, {
   timestamps: { createdAt: true, updatedAt: false },
 });
 
-HotspotListSchema.index({ userId: 1, createdAt: 1 });
+HotspotListSchema.index({ userId: 1, lastUsedAt: -1, createdAt: 1 });
 
 const HotspotListModel =
   (mongoose.models.HotspotList as Model<HotspotList>) || model<HotspotList>("HotspotList", HotspotListSchema);
