@@ -18,7 +18,7 @@ type Props = {
 };
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
-  const [view, setView] = React.useState<string>("all");
+  const [view, setView] = React.useState<string>("obs");
   const { trip, dateRangeLabel } = useTrip();
   const { lifelist } = useTargetView(trip);
   const { isMutual } = useMutualTargets(trip);

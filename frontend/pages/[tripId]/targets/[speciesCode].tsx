@@ -35,7 +35,7 @@ export default function SpeciesDetail() {
   const { open } = useModal();
   const handleContainerClick = useCloseOnOutsideClick();
 
-  const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
+  const [monthMode, setMonthMode] = React.useState<MonthMode>("trip");
   const [nowMs] = React.useState(() => Date.now());
   const { scope, setScope, sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();
