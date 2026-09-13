@@ -43,6 +43,11 @@ const loadMarkerImages = (map: MapboxMap) => {
 
 const clickableLayerIds = ["markers", "hotspots", "obs"];
 
+const HIDDEN_HOTSPOT_COLOR = "#6b7280";
+const HIDDEN_HOTSPOT_STROKE = "#374151";
+const HIDDEN_HOTSPOT_SCALE = 0.7;
+const isHiddenHotspot = ["boolean", ["get", "hidden"], false];
+
 const markerImage = (marker: MarkerT) => (marker.deleted ? "deleted-hotspot" : `saved-hotspot-${marker.shade ?? 0}`);
 const placeImage = (marker: CustomMarker) => `place-${marker.icon in markerIcons ? marker.icon : "hotspot"}`;
 
@@ -93,18 +98,22 @@ export default function Mapbox({
 
   const hsRadius = (scale = 1, offset = 0) => {
     const px = (v: number) => v * scale + offset;
+    const stop = (min: number, max: number) => [
+      "case",
+      isHiddenHotspot,
+      px(min * HIDDEN_HOTSPOT_SCALE),
+      ["interpolate", ["linear"], ["get", "species"], 0, px(min), 300, px(max)],
+    ];
     return [
       "interpolate",
       ["linear"],
       ["zoom"],
       6,
-      isSparse
-        ? ["interpolate", ["linear"], ["get", "species"], 0, px(3.5), 300, px(7)]
-        : ["interpolate", ["linear"], ["get", "species"], 0, px(3), 300, px(5)],
+      isSparse ? stop(3.5, 7) : stop(3, 5),
       9,
-      ["interpolate", ["linear"], ["get", "species"], 0, px(4.5), 300, px(9)],
+      stop(4.5, 9),
       12,
-      ["interpolate", ["linear"], ["get", "species"], 0, px(7), 300, px(isMobile ? 10 : 9)],
+      stop(7, isMobile ? 10 : 9),
     ];
   };
   const hsFilter = [
@@ -120,31 +129,36 @@ export default function Mapbox({
     paint: {
       "circle-radius": hsRadius(),
       "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 6, 0.3, 12, 0.75],
-      "circle-stroke-color": "#555",
+      "circle-stroke-color": ["case", isHiddenHotspot, HIDDEN_HOTSPOT_STROKE, "#555"],
       "circle-color": [
-        "match",
-        ["get", "shade"],
-        0,
-        markerColors[0],
-        1,
-        markerColors[1],
-        2,
-        markerColors[2],
-        3,
-        markerColors[3],
-        4,
-        markerColors[4],
-        5,
-        markerColors[5],
-        6,
-        markerColors[6],
-        7,
-        markerColors[7],
-        8,
-        markerColors[8],
-        9,
-        markerColors[9],
-        markerColors[0],
+        "case",
+        isHiddenHotspot,
+        HIDDEN_HOTSPOT_COLOR,
+        [
+          "match",
+          ["get", "shade"],
+          0,
+          markerColors[0],
+          1,
+          markerColors[1],
+          2,
+          markerColors[2],
+          3,
+          markerColors[3],
+          4,
+          markerColors[4],
+          5,
+          markerColors[5],
+          6,
+          markerColors[6],
+          7,
+          markerColors[7],
+          8,
+          markerColors[8],
+          9,
+          markerColors[9],
+          markerColors[0],
+        ],
       ],
     },
   };

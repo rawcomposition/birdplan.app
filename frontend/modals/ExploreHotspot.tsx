@@ -14,11 +14,14 @@ import KebabMenuTrigger from "components/KebabMenuTrigger";
 import HotspotTargets from "components/HotspotTargets";
 import useSavedHotspots from "hooks/useSavedHotspots";
 import useSavedHotspotMutation from "hooks/useSavedHotspotMutation";
+import useHiddenHotspots from "hooks/useHiddenHotspots";
+import useHiddenHotspotMutation from "hooks/useHiddenHotspotMutation";
 import useOpenBirdingHotspot from "hooks/useOpenBirdingHotspot";
 import SaveToListsMenu from "components/SaveToListsMenu";
 import useHotspotLists from "hooks/useHotspotLists";
 import DeletedHotspotNotice from "components/DeletedHotspotNotice";
 import { useModal } from "stores/modals";
+import { EyeOff } from "lucide-react";
 
 type Props = {
   hotspotId: string;
@@ -37,6 +40,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
   const { setSelectedMarkerId } = useTrip();
   const { stack } = useModal();
   const { savedHotspots } = useSavedHotspots();
+  const { hiddenIds } = useHiddenHotspots();
   const { lists } = useHotspotLists();
   const { data: info, isLoading } = useOpenBirdingHotspot(hotspotId);
   const [modalSpecies, setModalSpecies] = React.useState<{
@@ -48,6 +52,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
   const saved = savedHotspots.find((it) => it.hotspotId === hotspotId);
   const hasRow = !!saved;
   const isDeleted = !!saved?.deletedAt;
+  const isHidden = hiddenIds.has(hotspotId);
   const name = info?.name || saved?.name || (isLoading ? "Loading..." : hotspotId);
   const speciesTotal = info?.numSpecies ?? species;
   const checklistsTotal = info?.numChecklists;
@@ -66,6 +71,7 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       },
       ...old.filter((it) => it.hotspotId !== input.hotspotId),
     ],
+    updateHiddenCache: (old) => old.filter((id) => id !== hotspotId),
   });
 
   const listsMutation = useSavedHotspotMutation<SavedHotspotListsInput>({
@@ -77,6 +83,20 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
         if (input.listIds.length === 0) return [];
         return [{ ...it, listIds: input.listIds }];
       }),
+    updateHiddenCache: (old, input) => (input.listIds.length > 0 ? old.filter((id) => id !== hotspotId) : old),
+  });
+
+  const hideMutation = useHiddenHotspotMutation({
+    url: `/hidden-hotspots/${hotspotId}`,
+    method: "PUT",
+    updateCache: (old) => [...old.filter((id) => id !== hotspotId), hotspotId],
+    updateSavedCache: (old) => old.filter((it) => it.hotspotId !== hotspotId),
+  });
+
+  const unhideMutation = useHiddenHotspotMutation({
+    url: `/hidden-hotspots/${hotspotId}`,
+    method: "DELETE",
+    updateCache: (old) => old.filter((id) => id !== hotspotId),
   });
 
   const notesMutation = useSavedHotspotMutation<{ notes: string }>({
@@ -106,6 +126,12 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
     });
   };
 
+  const handleHide = () => {
+    if (saved?.notes && !confirm("Hiding this hotspot will remove it from your lists and delete your notes. Continue?"))
+      return;
+    hideMutation.mutate();
+  };
+
   React.useEffect(() => {
     setSelectedMarkerId(hotspotId);
     return () => setSelectedMarkerId(undefined);
@@ -116,6 +142,15 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
       <Header>{name}</Header>
       <Body className="pb-10 sm:pb-4 relative">
         {isDeleted && <DeletedHotspotNotice onRemove={() => handleChange([])} />}
+        {isHidden && (
+          <div className="flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 px-3 py-2.5 mb-5 text-sm text-gray-600">
+            <EyeOff className="size-4 text-gray-400 shrink-0" />
+            <span className="grow">This hotspot is hidden.</span>
+            <Button variant="outline-white" size="sm" type="button" onClick={() => unhideMutation.mutate()}>
+              Unhide
+            </Button>
+          </div>
+        )}
         <div className="flex gap-2 mb-6">
           <SaveToListsMenu saved={saved} disabled={!hasRow && !info} onChange={handleChange} />
           <DirectionsButton lat={lat} lng={lng} hotspotId={hotspotId} />
@@ -134,6 +169,9 @@ export default function ExploreHotspot({ hotspotId, lat, lng, species }: Props) 
                 }
               >
                 Save to Trip
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={isHidden ? () => unhideMutation.mutate() : handleHide}>
+                {isHidden ? "Unhide Hotspot" : "Hide Hotspot"}
               </DropdownMenuItem>
               <DropdownMenuItem
                 render={

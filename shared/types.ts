@@ -582,6 +582,13 @@ export type HotspotList = {
   createdAt: Date;
 };
 
+export type HiddenHotspot = {
+  _id: string;
+  userId: string;
+  hotspotId: string;
+  createdAt: Date;
+};
+
 export type SavedHotspotInput = {
   hotspotId: string;
   name: string;

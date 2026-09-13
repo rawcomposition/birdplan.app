@@ -10,6 +10,7 @@ import { useModal } from "stores/modals";
 import { useTrip } from "hooks/useTrip";
 import { useHotspotFilters, useHotspotFilterPreferencesStore } from "stores/hotspotFilterPreferences";
 import useSavedHotspots from "hooks/useSavedHotspots";
+import useHiddenHotspots from "hooks/useHiddenHotspots";
 import useSyncSavedHotspots from "hooks/useSyncSavedHotspots";
 import useHotspotLists from "hooks/useHotspotLists";
 import useExploreHotspots from "hooks/useExploreHotspots";
@@ -69,6 +70,7 @@ export default function Explore() {
   const setListId = (next: string) => setSearchParams(next === ALL_LISTS ? {} : { list: next }, { replace: true });
 
   const { savedHotspots: allSavedHotspots } = useSavedHotspots();
+  const { hiddenIds } = useHiddenHotspots();
   useSyncSavedHotspots();
   const savedHotspots = allSavedHotspots.filter((it) =>
     listId === ALL_LISTS ? it.listIds.length > 0 : it.listIds.includes(listId)
@@ -79,14 +81,14 @@ export default function Explore() {
     hotspotFilters
   );
 
-  const hiddenHotspotIds = React.useMemo(
+  const savedHotspotIds = React.useMemo(
     () => new Set(allSavedHotspots.filter((it) => it.listIds.length > 0).map((it) => it.hotspotId)),
     [allSavedHotspots]
   );
 
   const hotspotLayer = React.useMemo(
-    () => buildHotspotsLayer(hotspots.filter((it) => !hiddenHotspotIds.has(it.id)), []),
-    [hotspots, hiddenHotspotIds]
+    () => buildHotspotsLayer(hotspots.filter((it) => !savedHotspotIds.has(it.id)), [], hiddenIds),
+    [hotspots, savedHotspotIds, hiddenIds]
   );
 
   const markers = savedHotspots.map((it) => ({

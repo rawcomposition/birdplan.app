@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { AnyBulkWriteOperation, UpdateQuery } from "mongoose";
 import { authenticate } from "lib/utils.js";
-import { connect, SavedHotspot, HotspotList } from "lib/db.js";
+import { connect, SavedHotspot, HotspotList, HiddenHotspot } from "lib/db.js";
 import type {
   HotspotSyncInput,
   SavedHotspotInput,
@@ -66,6 +66,7 @@ savedHotspots.post("/", async (c) => {
     },
     { upsert: true, new: true },
   ).lean();
+  await HiddenHotspot.deleteOne({ userId: session.userId, hotspotId });
 
   return c.json(row);
 });
@@ -133,6 +134,8 @@ savedHotspots.patch("/:hotspotId/lists", async (c) => {
   if (result.matchedCount === 0) throw new HTTPException(404, { message: "Saved hotspot not found" });
   if (listIds.length === 0) {
     await SavedHotspot.deleteOne({ userId: session.userId, hotspotId });
+  } else {
+    await HiddenHotspot.deleteOne({ userId: session.userId, hotspotId });
   }
   return c.json({});
 });

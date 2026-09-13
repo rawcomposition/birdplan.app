@@ -9,6 +9,7 @@ import RateLimit from "models/RateLimit.js";
 import Log from "models/Log.js";
 import SavedHotspot from "models/SavedHotspot.js";
 import HotspotList from "models/HotspotList.js";
+import HiddenHotspot from "models/HiddenHotspot.js";
 import mongoose from "mongoose";
 
 let connectPromise: Promise<mongoose.Connection> | null = null;
@@ -53,4 +54,17 @@ export async function connect() {
   return connectPromise;
 }
 
-export { Trip, User, Participant, IntegrationToken, Session, OtpCode, MagicLink, RateLimit, Log, SavedHotspot, HotspotList };
+export {
+  Trip,
+  User,
+  Participant,
+  IntegrationToken,
+  Session,
+  OtpCode,
+  MagicLink,
+  RateLimit,
+  Log,
+  SavedHotspot,
+  HotspotList,
+  HiddenHotspot,
+};
