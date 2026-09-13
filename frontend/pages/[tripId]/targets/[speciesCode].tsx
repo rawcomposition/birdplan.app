@@ -25,7 +25,7 @@ import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
 import { getMonthRange } from "lib/targets";
 import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
-import useTargetPeriod from "hooks/useTargetPeriod";
+import { useTargetPreferencesStore } from "stores/targetPreferences";
 import type { OpenBirdingHotspotRankingResponse } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
@@ -36,7 +36,7 @@ export default function SpeciesDetail() {
   const { open } = useModal();
   const handleContainerClick = useCloseOnOutsideClick();
 
-  const { period, setPeriod } = useTargetPeriod(trip);
+  const { period, setPeriod } = useTargetPreferencesStore();
   const [nowMs] = React.useState(() => Date.now());
   const { scope, setScope, sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();

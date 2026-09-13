@@ -6,23 +6,23 @@ export type TargetPeriod = "trip" | "all";
 
 type TargetPreferencesState = {
   viewByTrip: Record<string, TargetView>;
-  periodByTrip: Record<string, TargetPeriod>;
+  period: TargetPeriod;
   setView: (tripId: string, view: TargetView) => void;
-  setPeriod: (tripId: string, period: TargetPeriod) => void;
+  setPeriod: (period: TargetPeriod) => void;
 };
 
 export const useTargetPreferencesStore = create<TargetPreferencesState>()(
   persist(
     (set) => ({
       viewByTrip: {},
-      periodByTrip: {},
+      period: "all",
       setView: (tripId, view) => set((state) => ({ viewByTrip: { ...state.viewByTrip, [tripId]: view } })),
-      setPeriod: (tripId, period) => set((state) => ({ periodByTrip: { ...state.periodByTrip, [tripId]: period } })),
+      setPeriod: (period) => set({ period }),
     }),
     {
       name: "target-preferences",
       storage: createJSONStorage(() => localStorage),
-      partialize: ({ viewByTrip, periodByTrip }) => ({ viewByTrip, periodByTrip }),
+      partialize: ({ viewByTrip, period }) => ({ viewByTrip, period }),
     }
   )
 );

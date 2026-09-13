@@ -4,8 +4,8 @@ import EmptyState from "components/EmptyState";
 import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
-import useTargetPeriod from "hooks/useTargetPeriod";
 import useMutualTargets from "hooks/useMutualTargets";
+import { useTargetPreferencesStore } from "stores/targetPreferences";
 import TargetViewToggle from "components/TargetViewToggle";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
@@ -19,7 +19,7 @@ type Props = {
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
   const { trip, dateRangeLabel } = useTrip();
-  const { period, setPeriod } = useTargetPeriod(trip);
+  const { period, setPeriod } = useTargetPreferencesStore();
   const { lifelist } = useTargetView(trip);
   const { isMutual } = useMutualTargets(trip);
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
