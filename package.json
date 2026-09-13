@@ -19,8 +19,10 @@
     "get-avicommons": "npm run get-avicommons --workspace=backend",
     "get-feature-photo": "npm run get-feature-photo --workspace=backend --",
     "tz-sync-regions": "npm run tz-sync-regions --workspace=backend",
+    "backfill-hotspot-lists": "npm run backfill-hotspot-lists --workspace=backend",
     "lint": "npm run lint --workspace=frontend",
-    "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=shared"
+    "typecheck": "npm run build --workspace=backend && npm run typecheck --workspace=frontend && npm run typecheck --workspace=shared",
+    "generate-markers": "npm run generate-markers --workspace=frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

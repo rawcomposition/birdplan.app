@@ -8,6 +8,7 @@ type Props = {
   open: boolean;
   position?: ModalPosition;
   maxHeight?: number | string;
+  maxWidth?: number | string;
   dismissable?: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export default function ModalWrapper({ position = "right", ...props }: Props) {
 
 type RoleProps = Omit<Props, "position">;
 
-function CenterDialog({ open, onClose, maxHeight = "auto", dismissable = true, children }: RoleProps) {
+function CenterDialog({ open, onClose, maxHeight = "auto", maxWidth = 460, dismissable = true, children }: RoleProps) {
   return (
     <Dialog
       open={open}
@@ -29,8 +30,8 @@ function CenterDialog({ open, onClose, maxHeight = "auto", dismissable = true, c
     >
       <DialogContent
         showCloseButton={dismissable}
-        style={{ maxHeight }}
-        className="flex flex-col gap-0 overflow-hidden rounded-2xl p-0 w-[calc(100%-2rem)] max-w-[460px] sm:max-w-[460px]"
+        style={{ maxHeight, maxWidth }}
+        className="flex flex-col gap-0 overflow-hidden rounded-2xl p-0 w-[calc(100%-2rem)]"
       >
         <ErrorBoundary>{children}</ErrorBoundary>
       </DialogContent>

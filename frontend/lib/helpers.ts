@@ -1,4 +1,4 @@
-import { Trip, Hotspot, eBirdHotspot, TravelData } from "@birdplan/shared";
+import { Trip, Hotspot, SavedHotspot, eBirdHotspot, TravelData } from "@birdplan/shared";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -127,27 +127,32 @@ export const getMarkerColorIndex = (count: number) => {
 
 export const buildHotspotsLayer = (
   hotspots: eBirdHotspot[],
-  savedHotspots: Hotspot[]
+  savedHotspots: Hotspot[],
+  hiddenIds: Set<string> = new Set()
 ): GeoJSON.FeatureCollection | null => {
   if (hotspots.length === 0) return null;
   const savedIds = savedHotspots.map((it) => it.id);
+  const visible = hotspots.filter((it) => !savedIds.includes(it.id));
+  const toFeature = (hotspot: eBirdHotspot): GeoJSON.Feature => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [hotspot.lng, hotspot.lat],
+    },
+    properties: {
+      shade: getMarkerColorIndex(hotspot.species || 0),
+      species: hotspot.species || 0,
+      checklists: hotspot.checklists || 0,
+      id: hotspot.id,
+      hidden: hiddenIds.has(hotspot.id),
+    },
+  });
   return {
     type: "FeatureCollection",
-    features: hotspots
-      .filter((it) => !savedIds.includes(it.id))
-      .map((hotspot) => ({
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [hotspot.lng, hotspot.lat],
-        },
-        properties: {
-          shade: getMarkerColorIndex(hotspot.species || 0),
-          species: hotspot.species || 0,
-          checklists: hotspot.checklists || 0,
-          id: hotspot.id,
-        },
-      })),
+    features: [
+      ...visible.filter((it) => hiddenIds.has(it.id)).map(toFeature),
+      ...visible.filter((it) => !hiddenIds.has(it.id)).map(toFeature),
+    ],
   };
 };
 
@@ -304,6 +309,7 @@ const RESERVED_ROUTES = new Set([
   "accept",
   "admin",
   "magic",
+  "explore",
 ]);
 
 export function getTripIdFromPath(pathname: string): string | undefined {
@@ -337,3 +343,6 @@ export function getReturnLabel(returnTo?: string | null): string {
   if (/^\/[^/]+$/.test(path)) return "trip";
   return "back";
 }
+
+export const savedHotspotsInList = (savedHotspots: SavedHotspot[], listId: string) =>
+  savedHotspots.filter((it) => it.listIds.includes(listId) && !it.deletedAt);

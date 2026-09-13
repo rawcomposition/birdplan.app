@@ -28,8 +28,6 @@ const monthOption = (month: number): Option => ({
   label: months[month - 1],
 });
 
-const portalTarget = () => (typeof document !== "undefined" ? document.body : null);
-
 export default function TripSettings() {
   const { trip, is404, isOwner } = useTrip();
   const initialRegion = useResolvedRegion(trip?.region);
@@ -159,7 +157,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 onChange={setStartMonth}
                 value={startMonth}
                 instanceId="startMonth"
-                menuPortalTarget={portalTarget()}
+                menuPortalTarget={document.body}
               />
             }
             to={
@@ -167,7 +165,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
                 onChange={setEndMonth}
                 value={endMonth}
                 instanceId="endMonth"
-                menuPortalTarget={portalTarget()}
+                menuPortalTarget={document.body}
               />
             }
           />

@@ -31,7 +31,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   const sortedItems = React.useMemo(() => {
     if (!data?.items?.length) return [];
-    const months = view === "all" ? allMonths : tripMonths;
+    const months = view === "all" || !trip ? allMonths : tripMonths;
     return data.items
       .map((item) => ({
         code: item.code,
@@ -52,7 +52,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   return (
     <>
-      {!!data?.items?.length && (
+      {!!data?.items?.length && trip && (
         <div className="my-4 flex items-center gap-2">
           <SelectDropdown
             compact
@@ -76,7 +76,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           frequency={it.frequency}
           index={index}
           hotspotId={hotspotId}
-          range={view === "all" ? "All Year" : dateRangeLabel}
+          range={view === "all" || !trip ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
           isMutual={isMutual(it.code)}
           onClick={() => {
@@ -87,7 +87,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
       <div className="flex items-center justify-between mt-2">
         <a
           href={
-            view === "all"
+            view === "all" || !trip
               ? `https://ebird.org/targets?r1=${hotspotId}&bmo=1&emo=12&r2=world&t2=life`
               : `https://ebird.org/targets?r1=${hotspotId}&bmo=${trip?.startMonth}&emo=${trip?.endMonth}&r2=world&t2=life`
           }
