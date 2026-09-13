@@ -1,4 +1,3 @@
-import React from "react";
 import { useTrip } from "hooks/useTrip";
 import LoadingState from "components/LoadingState";
 import EmptyState from "components/EmptyState";
@@ -6,6 +5,7 @@ import HotspotTargetRow from "components/HotspotTargetRow";
 import SelectDropdown from "components/SelectDropdown";
 import useTargetView from "hooks/useTargetView";
 import useMutualTargets from "hooks/useMutualTargets";
+import { useTargetPreferencesStore } from "stores/targetPreferences";
 import TargetViewToggle from "components/TargetViewToggle";
 import { HOTSPOT_TARGET_CUTOFF } from "lib/config";
 import useLocationTargets from "hooks/useLocationTargets";
@@ -18,8 +18,8 @@ type Props = {
 };
 
 export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
-  const [view, setView] = React.useState<string>("all");
   const { trip, dateRangeLabel } = useTrip();
+  const { period, setPeriod } = useTargetPreferencesStore();
   const { lifelist } = useTargetView(trip);
   const { isMutual } = useMutualTargets(trip);
   const { data, isLoading, isError, refetch } = useLocationTargets(hotspotId);
@@ -28,19 +28,17 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
 
   const allMonths = getMonthRange(1, 12);
   const tripMonths = getMonthRange(trip?.startMonth || 1, trip?.endMonth || 12);
+  const allYear = period === "all" || !trip;
+  const months = allYear ? allMonths : tripMonths;
 
-  const sortedItems = React.useMemo(() => {
-    if (!data?.items?.length) return [];
-    const months = view === "all" || !trip ? allMonths : tripMonths;
-    return data.items
-      .map((item) => ({
-        code: item.code,
-        name: item.name,
-        frequency: computeFrequency(item.obs, data.samples, months),
-      }))
-      .filter((it) => !lifelist?.includes(it.code) && it.frequency >= HOTSPOT_TARGET_CUTOFF)
-      .sort((a, b) => b.frequency - a.frequency);
-  }, [data, view, lifelist, allMonths, tripMonths]);
+  const sortedItems = (data?.items || [])
+    .map((item) => ({
+      code: item.code,
+      name: item.name,
+      frequency: computeFrequency(item.obs, data?.samples || [], months),
+    }))
+    .filter((it) => !lifelist?.includes(it.code) && it.frequency >= HOTSPOT_TARGET_CUTOFF)
+    .sort((a, b) => b.frequency - a.frequency);
 
   if (isLoading) {
     return <LoadingState inline />;
@@ -57,11 +55,11 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           <SelectDropdown
             compact
             align="left"
-            value={view}
-            onChange={setView}
+            value={period}
+            onChange={setPeriod}
             options={[
               { value: "all", label: "All Year" },
-              { value: "obs", label: dateRangeLabel },
+              { value: "trip", label: dateRangeLabel },
             ]}
           />
           <TargetViewToggle trip={trip} compact align="left" />
@@ -76,7 +74,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
           frequency={it.frequency}
           index={index}
           hotspotId={hotspotId}
-          range={view === "all" || !trip ? "All Year" : dateRangeLabel}
+          range={allYear ? "All Year" : dateRangeLabel}
           isSaved={isSaved}
           isMutual={isMutual(it.code)}
           onClick={() => {
@@ -87,7 +85,7 @@ export default function HotspotTargets({ hotspotId, onSpeciesClick }: Props) {
       <div className="flex items-center justify-between mt-2">
         <a
           href={
-            view === "all" || !trip
+            allYear
               ? `https://ebird.org/targets?r1=${hotspotId}&bmo=1&emo=12&r2=world&t2=life`
               : `https://ebird.org/targets?r1=${hotspotId}&bmo=${trip?.startMonth}&emo=${trip?.endMonth}&r2=world&t2=life`
           }

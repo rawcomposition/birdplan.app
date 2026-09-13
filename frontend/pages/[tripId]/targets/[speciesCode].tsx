@@ -12,7 +12,7 @@ import SpeciesMapOverlay from "components/SpeciesMapOverlay";
 import { Card } from "components/ui/card";
 import SpeciesHero from "components/SpeciesHero";
 import SpeciesHotspotToolbar, { type SortKey } from "components/SpeciesHotspotToolbar";
-import SpeciesHotspotList, { type HotspotItem, type MonthMode } from "components/SpeciesHotspotList";
+import SpeciesHotspotList, { type HotspotItem } from "components/SpeciesHotspotList";
 import { useTrip } from "hooks/useTrip";
 import useTripLifelist from "hooks/useTripLifelist";
 import useMutualTargets from "hooks/useMutualTargets";
@@ -25,6 +25,7 @@ import { OPENBIRDING_API_URL } from "lib/config";
 import { dateTimeToRelative } from "lib/helpers";
 import { getMonthRange } from "lib/targets";
 import { useSpeciesHotspotPreferences } from "stores/speciesHotspotPreferences";
+import { useTargetPreferencesStore } from "stores/targetPreferences";
 import type { OpenBirdingHotspotRankingResponse } from "@birdplan/shared";
 
 export default function SpeciesDetail() {
@@ -35,7 +36,7 @@ export default function SpeciesDetail() {
   const { open } = useModal();
   const handleContainerClick = useCloseOnOutsideClick();
 
-  const [monthMode, setMonthMode] = React.useState<MonthMode>("all");
+  const { period, setPeriod } = useTargetPreferencesStore();
   const [nowMs] = React.useState(() => Date.now());
   const { scope, setScope, sort, setSort, minObservations, setMinObservations, recentDays, setRecentDays } =
     useSpeciesHotspotPreferences();
@@ -99,7 +100,7 @@ export default function SpeciesDetail() {
 
   const queryBody = {
     sortBy: apiSortBy,
-    ...(monthMode === "trip" && months ? { months } : {}),
+    ...(period === "trip" && months ? { months } : {}),
     ...(minObservations > 1 ? { minObservations } : {}),
     ...(scopedLocationIds ? { locationIds: scopedLocationIds } : { region: trip?.region, limit: 500 }),
   };
@@ -293,8 +294,8 @@ export default function SpeciesDetail() {
               <SpeciesHotspotList
                 hotspots={filtered}
                 onSelect={handleHotspotClick}
-                monthMode={monthMode}
-                setMonthMode={setMonthMode}
+                monthMode={period}
+                setMonthMode={setPeriod}
                 tripRangeLabel={dateRangeLabel}
                 loading={fetchingRankings}
               />

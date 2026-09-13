@@ -7,19 +7,18 @@ import FrequencyBar from "components/FrequencyBar";
 import SelectDropdown from "components/SelectDropdown";
 import { formatFrequency } from "lib/helpers";
 import type { OpenBirdingHotspotRanking } from "@birdplan/shared";
+import type { TargetPeriod } from "stores/targetPreferences";
 
 export type HotspotItem = OpenBirdingHotspotRanking & {
   saved: boolean;
   lastSeen?: string;
 };
 
-export type MonthMode = "trip" | "all";
-
 type Props = {
   hotspots: HotspotItem[];
   onSelect: (id: string) => void;
-  monthMode: MonthMode;
-  setMonthMode: (m: MonthMode) => void;
+  monthMode: TargetPeriod;
+  setMonthMode: (m: TargetPeriod) => void;
   tripRangeLabel: string;
   loading?: boolean;
 };
