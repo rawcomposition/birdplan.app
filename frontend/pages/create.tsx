@@ -26,6 +26,7 @@ import useMutation from "hooks/useMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { RegionFieldsValue, emptyRegionFieldsValue, getRegionCode, validateRegionFields } from "lib/region";
 import { Flow } from "lib/enums";
+import ExceptionsEditor from "components/ExceptionsEditor";
 
 const monthOption = (month: number): Option => ({
   value: month.toString(),
@@ -170,6 +171,14 @@ export default function CreateTrip() {
                           menuPortalTarget={document.body}
                         />
                       }
+                    />
+                  </Expander>
+
+                  <Expander label="Include previously seen species (optional)">
+                    <ExceptionsEditor
+                      region={getRegionCode(region) ?? undefined}
+                      startMonth={Number(startMonth.value)}
+                      endMonth={Number(endMonth.value)}
                     />
                   </Expander>
                 </div>
