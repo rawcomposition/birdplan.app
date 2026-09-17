@@ -49,7 +49,15 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
     <>
       {speciesCode && (
         <div className="text-sm -mx-1 my-1 bg-gray-50 border border-gray-100 py-2.5 px-3 rounded">
-          <div className="font-semibold text-gray-800">{speciesName}</div>
+          <a
+            href={`https://ebird.org/species/${speciesCode}`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 font-semibold text-gray-800 hover:text-link"
+          >
+            {speciesName}
+            <img src="/ebird.png" alt="eBird" className="h-3.5 w-auto" />
+          </a>
           {isLoadingTargets && <Spinner className="size-5 mt-1" />}
           {!isLoadingTargets && successRate !== null && (
             <div className="mt-0.5 text-gray-600">
