@@ -29,7 +29,8 @@ export function parseLifelistCsv(file: File): Promise<string[]> {
           return;
         }
         const sciNames = results.data
-          .filter((it: any) => it.Countable === "1" && it.Category === "species")
+          // Forms are never countable, but undescribed forms are treated as species
+          .filter((it: any) => (it.Countable === "1" && it.Category === "species") || it.Category === "form")
           .map((it: any) => it["Scientific Name"]);
         resolve(sciNames);
       },
