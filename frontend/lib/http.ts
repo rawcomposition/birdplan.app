@@ -1,6 +1,5 @@
 import { toast } from "react-hot-toast";
 import { getSessionToken } from "lib/sessionToken";
-import { OPENBIRDING_API_URL } from "lib/config";
 
 type Params = {
   [key: string]: string | number | boolean;
@@ -35,11 +34,9 @@ export const get = async (url: string, params: Params, showLoading?: boolean) =>
   if (showLoading) toast.loading("Loading...", { id: url });
   const isBackend = urlWithParams.startsWith(import.meta.env.VITE_API_URL);
   const token = isBackend ? getSessionToken() : undefined;
-  const isOpenBirdingHotspots = !!OPENBIRDING_API_URL && urlWithParams.startsWith(`${OPENBIRDING_API_URL}/api/v1/hotspots`);
   const res = await fetch(urlWithParams, {
     method: "GET",
     headers: isBackend ? { Authorization: `Bearer ${token || ""}` } : undefined,
-    cache: isOpenBirdingHotspots ? "reload" : undefined,
   });
   if (showLoading) toast.dismiss(url);
 
