@@ -22,6 +22,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getRegionCode, validateRegionFields, RegionFieldsValue } from "lib/region";
 import { Trip } from "@birdplan/shared";
 import dayjs from "dayjs";
+import ExceptionsEditor from "components/ExceptionsEditor";
 
 const monthOption = (month: number): Option => ({
   value: month.toString(),
@@ -127,6 +128,7 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
       title="Trip settings"
       documentTitle="Trip Settings | BirdPlan.app"
       back={{ to: `/${trip._id}`, label: "Back to trip" }}
+      maxWidth="4xl"
     >
       <form onSubmit={handleSubmit}>
         <Card className="flex flex-col gap-[22px] rounded-2xl p-5 sm:p-6">
@@ -171,6 +173,14 @@ function SettingsForm({ trip, initialRegion, isOwner }: SettingsFormProps) {
           />
 
           <RegionFields value={region} onChange={setRegion} />
+        </Card>
+
+        <Card className="mt-6 rounded-2xl p-5 sm:p-6">
+          <ExceptionsEditor
+            region={getRegionCode(region) ?? undefined}
+            startMonth={Number(startMonth.value)}
+            endMonth={Number(endMonth.value)}
+          />
         </Card>
 
         <div className="mt-6 flex justify-end items-center gap-3">

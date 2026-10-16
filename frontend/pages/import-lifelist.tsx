@@ -5,23 +5,17 @@ import { useSearchParams } from "react-router-dom";
 import { Button } from "components/ui/button";
 import { Card } from "components/ui/card";
 import DashboardPage from "components/DashboardPage";
-import LoadingState from "components/LoadingState";
-import EmptyState from "components/EmptyState";
 import LifelistUpload from "components/LifelistUpload";
 import Icon from "components/Icon";
 import { EBIRD_WORLD_LIFELIST_URL } from "components/EbirdDownloadLink";
 import useMutation from "hooks/useMutation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import AsyncSelect from "components/ReactSelectAsyncStyled";
-import { Option } from "lib/types";
+import { useQueryClient } from "@tanstack/react-query";
 import { getReturnLabel } from "lib/helpers";
+import ExceptionsEditor from "components/ExceptionsEditor";
 
 export default function ImportLifelist() {
-  const [exceptionsValue, setExceptionsValue] = React.useState<Option[]>([]);
-  const [seededKey, setSeededKey] = React.useState<string | null>(null);
   const { user, lifelist } = useUser();
   const lifelistUpdatedAt = user?.lifelistUpdatedAt;
-  const exceptions = user?.exceptions;
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
 
@@ -34,16 +28,6 @@ export default function ImportLifelist() {
   const isOnboarding = onboarding === "1";
   const hasList = !!lifelist?.length;
 
-  const exceptionsString = exceptions?.join(",");
-
-  const setExceptionsMutation = useMutation({
-    url: "/profile",
-    method: "PATCH",
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/auth/me"] });
-    },
-  });
-
   const importMutation = useMutation({
     url: `/profile/lifelist`,
     method: "PUT",
@@ -53,35 +37,6 @@ export default function ImportLifelist() {
     },
   });
 
-  const {
-    data: taxonomy,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery<{ name: string; code: string }[]>({
-    queryKey: ["/taxonomy"],
-  });
-
-  const seedKey = `${exceptionsString || ""}|${taxonomy ? "1" : "0"}`;
-  if (exceptionsString && seedKey !== seededKey) {
-    setSeededKey(seedKey);
-    setExceptionsValue(
-      exceptionsString.split(",").map((code) => {
-        const taxon = taxonomy?.find((it) => it.code === code);
-        return {
-          label: taxon?.name || `Unknown (${code})`,
-          value: taxon?.code ?? code,
-        };
-      }),
-    );
-  }
-
-  const taxonomySearch = (input: string, callback: (options: Option[]) => void) => {
-    const options = taxonomy?.filter((it) => it.name.toLowerCase().includes(input.toLowerCase()))?.slice(0, 25) || [];
-    const formattedOptions = options.map((it) => ({ value: it.code, label: it.name }));
-    callback(formattedOptions);
-  };
-
   return (
     <DashboardPage
       title="World life list"
@@ -89,6 +44,7 @@ export default function ImportLifelist() {
       iconClassName="text-success"
       documentTitle="World Life List | BirdPlan.app"
       back={isOnboarding ? undefined : { to: redirectUrl, label: `Back to ${backLabel}` }}
+      maxWidth="6xl"
     >
       {hasList && (
         <Card className="rounded-2xl p-5 mb-6">
@@ -154,36 +110,7 @@ export default function ImportLifelist() {
         </ol>
       </Card>
 
-      <Card className="p-5 mb-6">
-        <h3 className="text-lg font-medium mb-1 text-secondary-foreground">Exceptions</h3>
-        <p className="text-sm text-secondary-foreground mb-3">
-          Species you want to see again — they stay on your targets even though they&apos;re on your list. Applies to
-          all your trips.
-        </p>
-        {isError && (
-          <EmptyState inline variant="destructive" title="Failed to load eBird taxonomy" onRetry={() => refetch()} />
-        )}
-        {isLoading ? (
-          <LoadingState className="h-20 py-0" spinnerClassName="size-4" />
-        ) : (
-          <AsyncSelect
-            value={exceptionsValue}
-            loadOptions={taxonomySearch}
-            noOptionsMessage={({ inputValue }) =>
-              inputValue.length > 0 ? "No species found" : "Search for a species..."
-            }
-            menuPortalTarget={document.body}
-            isMulti
-            isLoading={isLoading}
-            onChange={(newValue: Option[]) => {
-              setExceptionsValue(newValue);
-              setExceptionsMutation.mutate({
-                exceptions: newValue.map((it) => it.value),
-              });
-            }}
-          />
-        )}
-      </Card>
+      <Card className="p-5 mb-6"><ExceptionsEditor /></Card>
 
       <div className="flex">
         <Button
