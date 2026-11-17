@@ -30,7 +30,7 @@ export default function RecentChecklistList({ hotspotId, speciesCode, speciesNam
   const { data: targets, isLoading: isLoadingTargets } = useLocationTargets(hotspotId);
   const { groupedChecklists, isLoading, error, refetch } = useFetchRecentChecklists(hotspotId);
   const { allSpecies, isLoading: isLoadingSpecies } = useFetchRecentSpecies(hotspotId);
-  const { data: obs, error: obsError } = useFetchHotspotObs(trip?._id || "", hotspotId, speciesCode);
+  const { data: obs, error: obsError } = useFetchHotspotObs(hotspotId, speciesCode);
 
   const mergedChecklists = mergeSupplementalChecklists(groupedChecklists, allSpecies, trip?.region);
   const checklists = expanded ? mergedChecklists : mergedChecklists.slice(0, 10);

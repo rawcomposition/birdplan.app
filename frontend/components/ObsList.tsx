@@ -2,7 +2,6 @@ import React from "react";
 import Icon from "components/Icon";
 import { Button } from "components/ui/button";
 import { dateTimeToRelative } from "lib/helpers";
-import { useTrip } from "hooks/useTrip";
 import dayjs from "dayjs";
 import useFetchHotspotObs from "hooks/useFetchHotspotObs";
 import useFetchRecentChecklists from "hooks/useFetchRecentChecklists";
@@ -18,9 +17,7 @@ const previewCount = 10;
 
 export default function ObsList({ hotspotId, speciesCode }: Props) {
   const [viewAll, setViewAll] = React.useState(false);
-  const { trip } = useTrip();
-
-  const { data, isLoading, error, refetch } = useFetchHotspotObs(trip?._id || "", hotspotId, speciesCode);
+  const { data, isLoading, error, refetch } = useFetchHotspotObs(hotspotId, speciesCode);
   const { checklists } = useFetchRecentChecklists(hotspotId);
 
   const formattedObs =
